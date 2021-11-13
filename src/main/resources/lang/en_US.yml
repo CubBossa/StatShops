@@ -1,0 +1,143 @@
+#
+#
+#
+
+# general phrases
+general:
+  no_permission: "<red>You don't have permission to do this."
+  gui:
+    back:
+      name: "<gold>Back"
+      lore: ""
+    error:
+      name: "<red>Error"
+      lore: ""
+    delete:
+      name: "<red>Delete"
+      lore: "<gray>Be careful!"
+    next_page:
+      name: "<gold>Next page"
+      lore: ""
+    prev_page:
+      name: "<gold>Previous page"
+      lore: ""
+    accept:
+      name: "<green>Accept"
+      lore: ""
+    decline:
+      name: "<red>Decline"
+      lore: ""
+
+#shop translations that will be visible by users
+shop:
+  no_permission: "<red>You don't have permission for this shop."
+  not_enabled: "<red>This shop is currently disabled."
+  gui:
+    # The title of a shop, possible placeholders are: <name>, <page>, <mode>
+    title: "<name>"
+    # The lore of items that are displayed in a shop.
+    item:
+      lore:
+        spacer: "----------------------"
+        # Valid placeholders: <price>
+        price: "<price>"
+        # Valid placeholders: <name>, <percent>, <start-date>, <duration>, <remaining>
+        discount: "<yellow><percent>% <name>"
+        # Valid placeholders: <transactioncount>, <userlimit>, <globallimit>
+        limit: "<red><transactioncount><gray>/<dark_red><userlimit> personal limit\n<red><transactioncount><gray>/<dark_red><globallimit> global limit"
+
+  modes:
+    buy:
+      name: "<aqua>Buy"
+      lore: "<gray>In this mode you \n<gray>can buy items from \n<gray>the shop."
+    sell:
+      name: "<aqua>Sell"
+      lore: "<gray>In this mode you \n<gray>can sell your items to\n<gray>the shop."
+
+manager:
+  gui:
+    main:
+      title: "Setup your shop system"
+      shops:
+        name: "<dark_green>Shops"
+        lore: "<gray>Click here to create \n<gray>and manage your shops."
+      limits:
+        name: "<dark_gray>Limits"
+        lore: "<gray>Click here to create \n<gray>and manage trade limits."
+      discounts:
+        name: "<purple>Discounts"
+        lore: "<gray>Click here to create \n<gray>and manage trade discounts."
+      language:
+        name: "<gold>Language"
+        lore: "<gray>Click to reload the \n<gray>language file"
+      webinterface:
+        name: "<purple>Webinterface"
+        lore: "<gray>Click to generate a \n<gray>Link for the webinterface."
+    shops:
+      title: "Click a shop to edit"
+      new_shop:
+        name: "<green>New Shop"
+        lore: "<gray>Click to create a \n<gray>new shop."
+      # Defines, how each shop will be displayed in the list
+      entry:
+        # Valid placeholders: <name>
+        name: "<name>"
+        # Valid placeholders: <name>, <permission>, <percent>, <remaining>, <start-date>, <duration>
+        lore: "<percent>% <name>\n<start-date>\n<duration>"
+    shop:
+      set_name:
+        name: "<white>Set Shop Name"
+        lore: "<gray>Click to change the \n<gray>Name of the shop.\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format"
+      set_permission:
+        name: "<white>Set Shop Permission"
+        lore: "<gray>Only players with this \n<gray>permission will be able to \n<gray>open this shop.\n\n<gray>Type \"null\" to reset."
+      set_tags:
+        name: "<white>Open Tag Menu"
+        lore: "<gray>Discounts and Limits can be \n<gray>applied to all Shops and Shopentries \n<gray>that have certain tags.\n\n<gray>Use the tags menu to \n<gray>the tags of this shop."
+      set_limits:
+        name: "<white>Apply Limits"
+        lore: "<gray>Here you can apply \n<gray>a limit to the whole shop at once. \n<gray>This can be also archieved \n<gray>by using tags. With this \n<gray>menu wanted to provide a more \n<gray>userfriendly interface."
+      set_discounts:
+        name: "<white>Apply Discounts"
+        lore: "<gray>Here you can apply \n<gray>a discount to the whole shop at once. \n<gray>This can be also archieved \n<gray>by using tags. With this \n<gray>menu wanted to provide a more \n<gray>userfriendly interface."
+      set_enabled:
+        # Valid placeholders: <value>
+        name: "<white>Shop Enabled: <value>"
+        lore: "<gray>When entering this menu, a \n<gray>shop will automatically turned disabled. \n<gray>Players cannot use a shop while \n<gray>it is disabled."
+      set_remember_page:
+        # Valid placeholders: <value>
+        name: "<white>Remember Page: <value>"
+        lore: "<gray>Decides if a shop will \n<gray>reopen at the page a customer\n<gray> had viewed last or at the \n<gray> default page."
+      set_remember_mode:
+        # Valid placeholders: <value>
+        name: "<white>Remember Mode: <value>"
+        lore: "<gray>Decides if a shop will \n<gray>reopen at the mode a customer\n<gray> had viewed last or at the \n<gray> default mode."
+      set_cyclic:
+        # Valid placeholders: <value>
+        name: "<white>Cyclic Pagination: <value>"
+        lore: "<gray>Decides if you see the \n<gray>first page when clicking on \n<gray>\"next page\" while viewing \n<gray>the last page."
+
+    limits:
+      title: "Create and manage shop limits"
+      entry:
+        # Valid placeholders: <limit>
+        name: "Another Limit: <limit>"
+        # Valid placeholders: <limit>, <combine-transactions>, <uuid>, <recover>
+        lore: "<uuid>\nLimit: <limit>\nRecover: <recover>"
+      new:
+        name: "Create New Limit"
+        lore: "<gray>Click to create a new \n<gray>Limit, that can be applied to \n<gray>Shops and ShopEntries."
+
+    discounts:
+      title: "Create and manage shop discounts"
+      entry:
+        # Valid placeholders: <name>
+        name: "<name>"
+        # Valid placeholders: <name>, <percent>, <permission>, <name>, <remaining>, <start-date>, <duration>
+        lore: "<uuid>\n..."
+
+    MANAGER_GUI_DISCOUNTS("manager.gui.discounts.title"),
+    MANAGER_GUI_DISCOUNTS_ENTRY_NAME("manager.gui.discounts.entry.name"),
+    MANAGER_GUI_DISCOUNTS_ENTRY_LORE("manager.gui.discounts.entry.lore"),
+    MANAGER_GUI_DISCOUNTS_NEW_NAME("manager.gui.discounts.new.name"),
+    MANAGER_GUI_DISCOUNTS_NEW_LORE("manager.gui.discounts.new.lore"),

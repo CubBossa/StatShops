@@ -1,0 +1,54 @@
+####################################################
+#                                                  #
+#    ShopPlugin BLA                                #
+#                                                  #
+####################################################
+
+#All messages are in the according file (en_GB.yml).
+language: "en_GB"
+
+#The logging policy. Available are DEBUG, INFO, WARN, ERROR
+logging: "INFO"
+
+defaults:
+
+  #You can add multiple keys to one action by seperating them with a comma (RIGHT_CLICK,LEFT_CLICK).
+  #All possible keybindings are:
+  # RIGHT_CLICK_SHOP, LEFT_CLICK_SHOP, RIGHT_SHIFT_CLICK_SHOP, LEFT_SHIFT_CLICK_SHOP, MOUSE_WHEEL_SHOP, DOUBLE_CLICK_SHOP
+  # RIGHT_CLICK_INV, LEFT_CLICK_INV, RIGHT_SHIFT_CLICK_INV, LEFT_SHIFT_CLICK_INV, MOUSE_WHEEL_INV, DOUBLE_CLICK_INV
+  keybinding:
+    buy: "RIGHT_CLICK_SHOP,LEFT_CLICK_SHOP"
+    sell: "RIGHT_CLICK_INV,LEFT_CLICK_INV"
+    buy-stack: "RIGHT_SHIFT_CLICK_SHOP,LEFT_SHIFT_CLICK_SHOP"
+    sell-stack: "RIGHT_SHIFT_CLICK_INV,LEFT_SHIFT_CLICK_INV"
+    buy-amount: "MOUSE_WHEEL_SHOP"
+    sell-amount: "MOUSE_WHEEL_INV"
+
+  #The cooldown in milliseconds before the player interact with the shop again.
+  #This helps to prevent racing conditions but if you want do disable it set it to -1
+  cooldown: 100
+
+  #The limits that are used for every shop entry that has no explicit limit.
+  global-limit: -1
+  user-limit: -1
+
+  #How many rows a shop will have by default. Once created, this value needs to be adjusted for every Shop on its own
+  shop-size: 4
+
+  #The default mode for a shop to open. Default possibilities are BUY, SELL and TRADE.
+  #You can create custom modes with our API
+  shop-mode: "BUY"
+
+  #The slots of the next/previous buttons when creating a new shop by template
+  slots:
+    previous: 0
+    next: 1
+    back: 8
+
+
+database:
+
+
+
+
+

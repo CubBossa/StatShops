@@ -54,6 +54,8 @@ shadowJar{
 
     relocate 'co.aikar.commands', 'de.bossascrew.shops.acf'
     relocate 'co.aikar.locales', 'de.bossascrew.shops.locales'
+    relocate 'net.kyori', 'de.bossascrew'
+    relocate 'net.wesjd', 'de.bossascrew'
 
 }
 

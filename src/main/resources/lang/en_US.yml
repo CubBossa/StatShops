@@ -75,6 +75,8 @@ manager:
         lore: "<gray>Click to generate a \n<gray>Link for the webinterface."
     shops:
       title: "Click a shop to edit"
+      # Valid placeholders: <player>
+      already_edited: "<red><player> is already editing this shop. Try again later."
       new_shop:
         name: "<green>New Shop"
         lore: "<gray>Click to create a \n<gray>new shop."
@@ -90,7 +92,8 @@ manager:
         lore: "<gray>Click to change the \n<gray>Name of the shop.\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format"
       set_permission:
         name: "<white>Set Shop Permission"
-        lore: "<gray>Only players with this \n<gray>permission will be able to \n<gray>open this shop.\n\n<gray>Type \"null\" to reset."
+        # Valid placeholders: <permission>
+        lore: "<gray>Current: <red><permission>\n\n<gray>Only players with this \n<gray>permission will be able to \n<gray>open this shop.\n\n<gray>Type \"null\" to reset."
       set_tags:
         name: "<white>Open Tag Menu"
         lore: "<gray>Discounts and Limits can be \n<gray>applied to all Shops and Shopentries \n<gray>that have certain tags.\n\n<gray>Use the tags menu to \n<gray>the tags of this shop."
@@ -100,6 +103,9 @@ manager:
       set_discounts:
         name: "<white>Apply Discounts"
         lore: "<gray>Here you can apply \n<gray>a discount to the whole shop at once. \n<gray>This can be also archieved \n<gray>by using tags. With this \n<gray>menu wanted to provide a more \n<gray>userfriendly interface."
+      set_content:
+        name: "<white>Setup Shop Entries"
+        lore: "<gray>Opens the editor for the actual\n<gray>shop pages. Put all the items you\n<gray>want to trade in your lower\n<gray>inventory to have them available\n<gray>in the editor."
       set_enabled:
         # Valid placeholders: <value>
         name: "<white>Shop Enabled: <value>"

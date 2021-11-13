@@ -23,6 +23,14 @@ import java.util.concurrent.Callable;
 
 public class ShopPlugin extends JavaPlugin {
 
+	//TODO datenstruktur für shop, limits..
+	//TODO logs für debug policy
+	//TODO database implementierung
+	//TODO einzelnes leerzeichen in lore wird angezeigt
+	//TODO limits und discounts in menu auflisten und mit submenü
+	//TODO shop editmode basisklasse und unterer menüzeile um entries zu bearbeiten
+	//TODO shop darstellung für customers
+
 	@Getter
 	private static ShopPlugin instance;
 
@@ -68,7 +76,7 @@ public class ShopPlugin extends JavaPlugin {
 		if (!setupEconomy()) {
 			log(LoggingPolicy.ERROR, "Disabled due to no Vault/Economy dependency found!");
 			getServer().getPluginManager().disablePlugin(this);
-			return;
+			  return;
 		}
 
 		//Load translations

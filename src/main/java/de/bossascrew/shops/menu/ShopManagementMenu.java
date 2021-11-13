@@ -3,6 +3,7 @@ package de.bossascrew.shops.menu;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Config;
 import de.bossascrew.shops.data.Message;
+import de.bossascrew.shops.handler.CustomerHandler;
 import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.handler.TranslationHandler;
@@ -63,9 +64,21 @@ public class ShopManagementMenu {
 
 		for (Shop shop : ShopHandler.getInstance().getShops()) {
 			chestMenu.addMenuEntry(ItemStackUtils.createShopItemStack(shop), clickContext -> {
+				if (shop.getEditingPlayer() != null) {
+					CustomerHandler.getInstance().getCustomer(player).sendMessage(Message.MANAGER_GUI_SHOPS_ALREADY_EDITED.getTranslation(
+							Template.of("player", shop.getEditingPlayer().getName())));
+					return;
+				}
 				if (clickContext.getAction().equals(delete)) {
-					ShopHandler.getInstance().deleteShop(shop);
-					openShopsMenu(player, page);
+					ConfirmMenu confirmMenu = new ConfirmMenu("Are you sure to delete?", backContext -> openShopMenu(player, shop, page));//TODO translation
+					confirmMenu.setAcceptHandler(clickContext1 -> {
+						ShopHandler.getInstance().deleteShop(shop);
+						openShopsMenu(player, 0);
+					});
+					confirmMenu.setDenyHandler(clickContext1 -> {
+						openShopsMenu(player, page);
+					});
+					confirmMenu.openInventory(player);
 				} else {
 					openShopMenu(player, shop, page);
 				}
@@ -77,7 +90,7 @@ public class ShopManagementMenu {
 					.plugin(ShopPlugin.getInstance())
 					.text("Shopname")
 					.title("asd") //TODO translation
-					.onClose(p -> openShopsMenu(p, page))
+					.onClose(p -> openShopsMenu(p, page)) //TODO man kann items aus diesem inv nehmen?
 					.onComplete((p, s) -> {
 						ShopHandler.getInstance().createShop(s);
 						openShopsMenu(player, page);
@@ -92,6 +105,7 @@ public class ShopManagementMenu {
 		//deactivate shop so we can change stuff without worrying about players messing things up
 		//the shop will activate itself automatically when using the back button. Otherwise it needs to be reactivated manually
 		shop.setEnabled(false);
+		shop.setEditingPlayer(player);
 
 		ChestMenu chestMenu = new ChestMenu(shop.getName(), 3);
 		//Set name
@@ -101,7 +115,9 @@ public class ShopManagementMenu {
 		});
 		//Set permissions
 		chestMenu.setItemAndClickHandler(0, 2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
-				Message.MANAGER_GUI_SHOP_SET_PERMISSION_NAME, Message.MANAGER_GUI_SHOP_SET_PERMISSION_LORE), clickContext -> {
+				Message.MANAGER_GUI_SHOP_SET_PERMISSION_NAME.getTranslation(), Message.MANAGER_GUI_SHOP_SET_PERMISSION_LORE.getTranslations(
+						Template.of("permission", shop.getPermission() == null ? "X" : shop.getPermission())
+				)), clickContext -> {
 			//TODO anvil menü öffnen
 		});
 		//Open Tags menu
@@ -120,6 +136,10 @@ public class ShopManagementMenu {
 		chestMenu.setItemAndClickHandler(0, 8, ItemStackUtils.createItemStack(Material.BARRIER,
 				Message.GENERAL_GUI_DELETE_NAME, Message.GENERAL_GUI_DELETE_LORE), clickContext -> {
 			ConfirmMenu confirmMenu = new ConfirmMenu("Are you sure?", backContext -> openShopMenu(player, shop, fromPage));//TODO translation
+			confirmMenu.setCloseHandler(closeContext -> {
+				shop.setEnabled(true); //TODO nur wenn booleansetting verändert wurde
+				shop.setEditingPlayer(null);
+			});
 			confirmMenu.setAcceptHandler(clickContext1 -> {
 				ShopHandler.getInstance().deleteShop(shop);
 				openShopsMenu(player, 0);
@@ -130,8 +150,13 @@ public class ShopManagementMenu {
 			confirmMenu.openInventory(player);
 		});
 
+		chestMenu.setItemAndClickHandler(1, 1, ItemStackUtils.createItemStack(Material.CHEST,
+				Message.MANAGER_GUI_SHOP_SET_CONTENT_NAME, Message.MANAGER_GUI_SHOP_SET_CONTENT_LORE), clickContext -> {
+
+		});
+
 		//Shopmode switch button
-		if(shop.getDefaultShopMode() != null) {
+		if (shop.getDefaultShopMode() != null) {
 			chestMenu.setItem(19, shop.getDefaultShopMode().getDisplayItem());
 			chestMenu.setClickHandler(19, clickContext -> {
 				if (clickContext.getAction().isRightClick()) {
@@ -185,7 +210,12 @@ public class ShopManagementMenu {
 		chestMenu.setBackSlot(26);
 		chestMenu.setBackHandlerAction(backContext -> {
 			shop.setEnabled(true);
+			shop.setEditingPlayer(null);
 			openShopsMenu(player, fromPage);
+		});
+		chestMenu.setCloseHandler(closeContext -> {
+			shop.setEnabled(true);
+			shop.setEditingPlayer(null);
 		});
 		chestMenu.openInventory(player);
 	}
@@ -209,7 +239,10 @@ public class ShopManagementMenu {
 	}
 
 	public void openLimitsMenu(Player player) {
-		PagedChestMenu chestMenu = new PagedChestMenu(Message.MANAGER_GUI_LIMITS.getTranslation(), 4, null, null, backContext -> {
+		PagedChestMenu chestMenu = new PagedChestMenu(Message.MANAGER_GUI_LIMITS.getTranslation(), 4, null,
+				closeContext -> {
+
+				}, backContext -> {
 			openBaseMenu(player);
 		});
 

@@ -56,6 +56,7 @@ public enum Message {
 	MANAGER_GUI_SHOPS_NEW_LORE("manager.gui.shops.new_shop.lore"),
 	MANAGER_GUI_SHOPS_NAME("manager.gui.shops.entry.name"),
 	MANAGER_GUI_SHOPS_LORE("manager.gui.shops.entry.lore"),
+	MANAGER_GUI_SHOPS_ALREADY_EDITED("manager.gui.shops.already_edited"),
 
 	MANAGER_GUI_SHOP_SET_NAME_NAME("manager.gui.shop.set_name.name"),
 	MANAGER_GUI_SHOP_SET_NAME_LORE("manager.gui.shop.set_name.lore"),
@@ -75,6 +76,8 @@ public enum Message {
 	MANAGER_GUI_SHOP_SET_REMEMBER_MODE_LORE("manager.gui.shop.set_remember_mode.lore"),
 	MANAGER_GUI_SHOP_SET_CYCLIC_NAME("manager.gui.shop.set_cyclic.name"),
 	MANAGER_GUI_SHOP_SET_CYCLIC_LORE("manager.gui.shop.set_cyclic.lore"),
+	MANAGER_GUI_SHOP_SET_CONTENT_NAME("manager.gui.shop.set_content.name"),
+	MANAGER_GUI_SHOP_SET_CONTENT_LORE("manager.gui.shop.set_content.lore"),
 
 	MANAGER_GUI_LIMITS("manager.gui.limits.title"),
 	MANAGER_GUI_LIMITS_ENTRY_NAME("manager.gui.limits.entry.name"),

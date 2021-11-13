@@ -8,7 +8,6 @@ import de.bossascrew.shops.util.ItemStackUtils;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -45,6 +44,7 @@ public class ShopHandler {
 
 	public void deleteShop(Shop shop) {
 		shop.closeAll();
+		shopMap.remove(shop.getUUID());
 		ShopPlugin.getInstance().getDatabase().deleteShop(shop);
 	}
 

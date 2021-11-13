@@ -23,7 +23,9 @@ public interface Database {
 
 	Map<UUID, Shop> loadEntries(Shop shop);
 
-	void saveEntry();
+	void saveEntry(ShopEntry shopEntry);
+
+	void deleteEntry(ShopEntry shopEntry);
 
 	Discount createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags);
 

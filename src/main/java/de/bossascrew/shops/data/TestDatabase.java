@@ -44,7 +44,12 @@ public class TestDatabase implements Database {
 	}
 
 	@Override
-	public void saveEntry() {
+	public void saveEntry(ShopEntry shopEntry) {
+
+	}
+
+	@Override
+	public void deleteEntry(ShopEntry shopEntry) {
 
 	}
 

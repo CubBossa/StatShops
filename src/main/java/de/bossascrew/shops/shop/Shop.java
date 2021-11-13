@@ -3,6 +3,7 @@ package de.bossascrew.shops.shop;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -45,6 +46,10 @@ public interface Shop extends Taggable {
 	boolean isEnabled();
 
 	List<Customer> getActiveCustomers();
+
+	@Nullable Player getEditingPlayer();
+
+	void setEditingPlayer(Player player);
 
 	boolean open(Customer customer);
 

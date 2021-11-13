@@ -8,6 +8,7 @@ import de.bossascrew.shops.shop.entry.ShopEntry;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -29,6 +30,8 @@ public class ChestMenuShop implements Shop {
 	private boolean isModeRemembered;
 	private int defaultPage;
 	private ShopMode defaultShopMode;
+
+	private @Nullable Player editingPlayer = null;
 
 	private final Map<ShopMode, Map<Integer, ShopEntry>> modeEntryMap;
 	private final List<Customer> activeCustomers;

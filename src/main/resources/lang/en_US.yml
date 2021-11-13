@@ -135,9 +135,3 @@ manager:
         name: "<name>"
         # Valid placeholders: <name>, <percent>, <permission>, <name>, <remaining>, <start-date>, <duration>
         lore: "<uuid>\n..."
-
-    MANAGER_GUI_DISCOUNTS("manager.gui.discounts.title"),
-    MANAGER_GUI_DISCOUNTS_ENTRY_NAME("manager.gui.discounts.entry.name"),
-    MANAGER_GUI_DISCOUNTS_ENTRY_LORE("manager.gui.discounts.entry.lore"),
-    MANAGER_GUI_DISCOUNTS_NEW_NAME("manager.gui.discounts.new.name"),
-    MANAGER_GUI_DISCOUNTS_NEW_LORE("manager.gui.discounts.new.lore"),

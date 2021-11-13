@@ -28,7 +28,7 @@ public class ChestMenuShop implements Shop {
 	private boolean isPageRemembered;
 	private boolean isModeRemembered;
 	private int defaultPage;
-	private ShopMode defaultMode;
+	private ShopMode defaultShopMode;
 
 	private final Map<ShopMode, Map<Integer, ShopEntry>> modeEntryMap;
 	private final List<Customer> activeCustomers;
@@ -85,7 +85,7 @@ public class ChestMenuShop implements Shop {
 
 	public @Nullable
 	ShopMode getPreferredShopMode(Customer customer) {
-		ShopMode mode = isModeRemembered ? customer.getShopMode(this, defaultMode) : defaultMode;
+		ShopMode mode = isModeRemembered ? customer.getShopMode(this, defaultShopMode) : defaultShopMode;
 		if (!modeEntryMap.containsKey(mode)) {
 			return null;
 		}

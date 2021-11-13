@@ -24,12 +24,12 @@ public class TestDatabase implements Database {
 	}
 
 	@Override
-	public void saveShop() {
+	public void saveShop(Shop shop) {
 
 	}
 
 	@Override
-	public void deleteShop() {
+	public void deleteShop(Shop shop) {
 
 	}
 

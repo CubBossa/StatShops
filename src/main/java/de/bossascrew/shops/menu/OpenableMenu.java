@@ -170,6 +170,7 @@ public abstract class OpenableMenu extends InventoryMenu<ClickType, ClickContext
 
 	@Override
 	protected void setBackHandlerAction(@NotNull ContextConsumer<BackContext> backHandler) {
+		this.backHandler = backHandler;
 		setClickHandler(backSlot, c -> backHandler.accept(new BackContext(c.getPlayer())));
 	}
 }

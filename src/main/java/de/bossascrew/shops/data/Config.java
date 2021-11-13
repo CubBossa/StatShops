@@ -34,7 +34,7 @@ public class Config {
 
 	}
 
-	public void reloadLangauge() {
+	public void reloadLanguage() {
 
 	}
 

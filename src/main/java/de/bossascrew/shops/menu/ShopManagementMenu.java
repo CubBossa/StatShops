@@ -37,15 +37,19 @@ public class ShopManagementMenu {
 		chestMenu.setItemAndClickHandler(1, 3, DefaultSpecialItem.MANAGER_MAIN_DISCOUNTS, clickContext -> openDiscountsMenu(player));
 		chestMenu.setItemAndClickHandler(1, 6, ItemStackUtils.createItemStack(Material.BOOK,
 				Message.MANAGER_GUI_MAIN_LANGUAGE_NAME, Message.MANAGER_GUI_MAIN_LANGUAGE_LORE), clickContext -> {
-			ShopPlugin.getInstance().getShopsConfig().reloadLangauge();
-			TranslationHandler.getInstance().loadLanguage(ShopPlugin.getInstance().getShopsConfig().getLanguage());
-			openBaseMenu(player);
+			ShopPlugin.getInstance().getShopsConfig().reloadLanguage();
+			TranslationHandler.getInstance().loadLanguage(ShopPlugin.getInstance().getShopsConfig().getLanguage()).thenAcceptAsync(success -> {
+				if (success) {
+					openBaseMenu(player);
+					return;
+				}
+				chestMenu.setItem(1, 6, DefaultSpecialItem.ERROR.createSpecialItem());
+			});
 		});
 		chestMenu.setItemAndClickHandler(1, 7, DefaultSpecialItem.MANAGER_MAIN_WEBINTERFACE, clickContext -> {
 			player.sendMessage("Not yet implemented - but Test:");
 			//TODO generate interface link and send to player
-
-			player.sendMessage(WebSessionUtils.generateWebSession());
+			ShopPlugin.getInstance().runAsync(() -> player.sendMessage(WebSessionUtils.generateWebSession()));
 
 			player.closeInventory();
 		});
@@ -63,26 +67,27 @@ public class ShopManagementMenu {
 					ShopHandler.getInstance().deleteShop(shop);
 					openShopsMenu(player, page);
 				} else {
-					openShopMenu(player, shop);
+					openShopMenu(player, shop, page);
 				}
 			});
 		}
 		chestMenu.setNavigationEntry(7, DefaultSpecialItem.MANAGER_SHOPS_NEW.createSpecialItem(), clickContext -> {
+			player.closeInventory();
 			new AnvilGUI.Builder()
 					.plugin(ShopPlugin.getInstance())
-					.text("<gray>Name</gray>")
+					.text("Shopname")
 					.title("asd") //TODO translation
 					.onClose(p -> openShopsMenu(p, page))
 					.onComplete((p, s) -> {
 						ShopHandler.getInstance().createShop(s);
-						chestMenu.openInventoryLastPage(player);
+						openShopsMenu(player, page);
 						return AnvilGUI.Response.close();
 					}).open(player);
 		});
 		chestMenu.openInventory(player, page);
 	}
 
-	public void openShopMenu(Player player, Shop shop) {
+	public void openShopMenu(Player player, Shop shop, int fromPage) {
 
 		//deactivate shop so we can change stuff without worrying about players messing things up
 		//the shop will activate itself automatically when using the back button. Otherwise it needs to be reactivated manually
@@ -105,7 +110,7 @@ public class ShopManagementMenu {
 				clickContext -> openShopTagsMenu(player, shop, 0));
 		//Open Limits menu
 		chestMenu.setItemAndClickHandler(0, 5, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
-						Message.MANAGER_GUI_MAIN_LIMITS_NAME, Message.MANAGER_GUI_MAIN_LIMITS_LORE),
+						Message.MANAGER_GUI_SHOP_SET_LIMITS_NAME, Message.MANAGER_GUI_SHOP_SET_LIMITS_LORE),
 				clickContext -> openShopLimitsMenu(player, shop, 0));
 		//Open Discounts menu
 		chestMenu.setItemAndClickHandler(0, 6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
@@ -114,7 +119,15 @@ public class ShopManagementMenu {
 
 		chestMenu.setItemAndClickHandler(0, 8, ItemStackUtils.createItemStack(Material.BARRIER,
 				Message.GENERAL_GUI_DELETE_NAME, Message.GENERAL_GUI_DELETE_LORE), clickContext -> {
-			//TODO delete shop and move 1 up
+			ConfirmMenu confirmMenu = new ConfirmMenu("Are you sure?", backContext -> openShopMenu(player, shop, fromPage));//TODO translation
+			confirmMenu.setAcceptHandler(clickContext1 -> {
+				ShopHandler.getInstance().deleteShop(shop);
+				openShopsMenu(player, 0);
+			});
+			confirmMenu.setDenyHandler(clickContext1 -> {
+				openShopMenu(player, shop, fromPage);
+			});
+			confirmMenu.openInventory(player);
 		});
 
 		//Shopmode switch button
@@ -142,11 +155,11 @@ public class ShopManagementMenu {
 		});
 		//Set page cycling
 		ItemStack cyclicMode = getButton(shop.isPagingCyclic(),
-				Message.MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_NAME, Message.MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_LORE);
+				Message.MANAGER_GUI_SHOP_SET_CYCLIC_NAME, Message.MANAGER_GUI_SHOP_SET_CYCLIC_LORE);
 		chestMenu.setItemAndClickHandler(22, cyclicMode, clickContext -> {
-			shop.setRememberPage(!shop.isModeRemembered());
+			shop.setPagingCyclic(!shop.isPagingCyclic());
 			chestMenu.setItem(22, getButton(shop.isPagingCyclic(),
-					Message.MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_NAME, Message.MANAGER_GUI_SHOP_SET_CYCLIC_LORE));
+					Message.MANAGER_GUI_SHOP_SET_CYCLIC_NAME, Message.MANAGER_GUI_SHOP_SET_CYCLIC_LORE));
 			chestMenu.refresh(22);
 		});
 		//Set page remembered
@@ -162,7 +175,7 @@ public class ShopManagementMenu {
 		ItemStack rememberMode = getButton(shop.isModeRemembered(),
 				Message.MANAGER_GUI_SHOP_SET_REMEMBER_MODE_NAME, Message.MANAGER_GUI_SHOP_SET_REMEMBER_MODE_LORE);
 		chestMenu.setItemAndClickHandler(24, rememberMode, clickContext -> {
-			shop.setRememberPage(!shop.isModeRemembered());
+			shop.setRememberMode(!shop.isModeRemembered());
 			chestMenu.setItem(24, getButton(shop.isModeRemembered(),
 					Message.MANAGER_GUI_SHOP_SET_REMEMBER_MODE_NAME, Message.MANAGER_GUI_SHOP_SET_REMEMBER_MODE_LORE));
 			chestMenu.refresh(24);
@@ -172,7 +185,7 @@ public class ShopManagementMenu {
 		chestMenu.setBackSlot(26);
 		chestMenu.setBackHandlerAction(backContext -> {
 			shop.setEnabled(true);
-			openShopsMenu(player, 1);
+			openShopsMenu(player, fromPage);
 		});
 		chestMenu.openInventory(player);
 	}
@@ -217,7 +230,7 @@ public class ShopManagementMenu {
 		List<Discount> discounts = DiscountHandler.getInstance().getDiscounts();
 		for (Discount discount : discounts) {
 			chestMenu.addMenuEntry(ItemStackUtils.createDiscountItemStack(discount), clickContext -> {
-
+				openDiscountMenu(player, discount);
 			});
 		}
 		chestMenu.setNavigationEntry(7, ItemStackUtils.createItemStack(Material.EMERALD,
@@ -225,7 +238,6 @@ public class ShopManagementMenu {
 			//TODO Anvilgui für benennung
 		});
 		chestMenu.openInventory(player);
-
 	}
 
 	public void openDiscountMenu(Player player, Discount discount) {

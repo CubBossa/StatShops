@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class TranslationHandler {
 
@@ -23,27 +24,31 @@ public class TranslationHandler {
 		loadLanguage(startlanguage);
 	}
 
-	public void loadLanguage(String languageKey) {
+	public CompletableFuture<Boolean> loadLanguage(String languageKey) {
 		activeLanguage = languageKey;
 		messageFormats.clear();
 
-		File file = new File(ShopPlugin.getInstance().getDataFolder(), "lang/" + languageKey + ".yml");
-		if (!file.exists()) {
-			ShopPlugin.getInstance().saveResource("lang/" + languageKey + ".yml", false);
-			file = new File(ShopPlugin.getInstance().getDataFolder(), "lang/" + languageKey + ".yml");
-			if (!file.exists()) {
+		return CompletableFuture.supplyAsync(() -> {
 
-				ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "Error while creating language.yml for " + languageKey);
-				return;
+			File file = new File(ShopPlugin.getInstance().getDataFolder(), "lang/" + languageKey + ".yml");
+			if (!file.exists()) {
+				ShopPlugin.getInstance().saveResource("lang/" + languageKey + ".yml", false);
+				file = new File(ShopPlugin.getInstance().getDataFolder(), "lang/" + languageKey + ".yml");
+				if (!file.exists()) {
+
+					ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "Error while creating language.yml for " + languageKey);
+					return false;
+				}
 			}
-		}
-		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-		Map<String, Object> map = cfg.getValues(true);
-		for (Map.Entry<String, Object> entry : map.entrySet()) {
-			if (entry.getValue() instanceof String s) {
-				messageFormats.put(entry.getKey(), s);
+			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+			Map<String, Object> map = cfg.getValues(true);
+			for (Map.Entry<String, Object> entry : map.entrySet()) {
+				if (entry.getValue() instanceof String s) {
+					messageFormats.put(entry.getKey(), s);
+				}
 			}
-		}
+			return true;
+		});
 	}
 
 	public String getMessage(String key) {

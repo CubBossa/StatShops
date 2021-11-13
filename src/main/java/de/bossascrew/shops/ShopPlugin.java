@@ -67,8 +67,8 @@ public class ShopPlugin extends JavaPlugin {
 		//Initialize Vault
 		if (!setupEconomy()) {
 			log(LoggingPolicy.ERROR, "Disabled due to no Vault/Economy dependency found!");
-			//getServer().getPluginManager().disablePlugin(this);
-			//return;
+			getServer().getPluginManager().disablePlugin(this);
+			return;
 		}
 
 		//Load translations

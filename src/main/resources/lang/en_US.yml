@@ -65,13 +65,13 @@ manager:
         name: "<dark_gray>Limits"
         lore: "<gray>Click here to create \n<gray>and manage trade limits."
       discounts:
-        name: "<purple>Discounts"
+        name: "<dark_purple>Discounts"
         lore: "<gray>Click here to create \n<gray>and manage trade discounts."
       language:
         name: "<gold>Language"
         lore: "<gray>Click to reload the \n<gray>language file"
       webinterface:
-        name: "<purple>Webinterface"
+        name: "<dark_purple>Webinterface"
         lore: "<gray>Click to generate a \n<gray>Link for the webinterface."
     shops:
       title: "Click a shop to edit"
@@ -81,9 +81,9 @@ manager:
       # Defines, how each shop will be displayed in the list
       entry:
         # Valid placeholders: <name>
-        name: "<name>"
-        # Valid placeholders: <name>, <permission>, <percent>, <remaining>, <start-date>, <duration>
-        lore: "<percent>% <name>\n<start-date>\n<duration>"
+        name: "<green><name>"
+        # Valid placeholders: <name>, <permission>, <pages>
+        lore: "<gray>Perm: <white><permission>"
     shop:
       set_name:
         name: "<white>Set Shop Name"
@@ -133,5 +133,5 @@ manager:
       entry:
         # Valid placeholders: <name>
         name: "<name>"
-        # Valid placeholders: <name>, <percent>, <permission>, <name>, <remaining>, <start-date>, <duration>
-        lore: "<uuid>\n..."
+        # Valid placeholders: <name>, <permission>, <percent>, <remaining>, <start-date>, <duration>
+        lore: "<percent>% <name>\n<start-date>\n<duration>"

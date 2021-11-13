@@ -15,9 +15,9 @@ public interface Database {
 
 	Map<UUID, Shop> loadShops();
 
-	void saveShop();
+	void saveShop(Shop shop);
 
-	void deleteShop();
+	void deleteShop(Shop shop);
 
 	ShopEntry createEntry();
 

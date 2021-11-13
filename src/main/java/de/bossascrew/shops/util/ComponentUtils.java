@@ -2,6 +2,7 @@ package de.bossascrew.shops.util;
 
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 @UtilityClass
@@ -12,6 +13,10 @@ public class ComponentUtils {
 			.hexCharacter('#')
 			.character('§')
 			.build();
+
+	public Component fromLegacy(String legacy) {
+		return SERIALIZER.deserialize(legacy);
+	}
 
 	public String toLegacy(Component component) {
 		return SERIALIZER.serialize(component);

@@ -5,14 +5,13 @@ import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.util.ItemStackUtils;
-import de.bossascrew.shops.util.WebSessionInterface;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class ShopHandler implements WebSessionInterface {
+public class ShopHandler {
 
 	@Getter
 	private static ShopHandler instance;
@@ -96,10 +95,5 @@ public class ShopHandler implements WebSessionInterface {
 				return ItemStackUtils.createItemStack(ShopPlugin.getInstance().getShopsConfig().getShopSellIconMaterial(), Message.SHOP_MODE_SELL_NAME, Message.SHOP_MODE_SELL_LORE);
 			}
 		});
-	}
-
-	@Override
-	public String toJson() {
-		return "";
 	}
 }

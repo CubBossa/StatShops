@@ -29,12 +29,21 @@ repositories {
     }
 }
 
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 configurations {
     provided
     compile.extendsFrom provided
 }
 
 dependencies {
+    shadow 'com.squareup.okhttp3:okhttp:4.9.2'
+    shadow 'org.json:json:20210307'
+    shadow 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
     shadow "org.projectlombok:lombok:1.18.22"
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
     shadow "co.aikar:acf-bukkit:0.5.0-SNAPSHOT"
@@ -75,7 +84,7 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
-/*processResources {
+processResources {
     def props = [version: version]
     inputs.properties props
     filteringCharset 'UTF-8'
@@ -83,4 +92,3 @@ tasks.withType(JavaCompile).configureEach {
         expand props
     }
 }
-*/

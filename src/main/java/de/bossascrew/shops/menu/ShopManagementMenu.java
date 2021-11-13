@@ -9,6 +9,7 @@ import de.bossascrew.shops.handler.TranslationHandler;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.util.WebSessionUtils;
 import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
@@ -41,8 +42,11 @@ public class ShopManagementMenu {
 			openBaseMenu(player);
 		});
 		chestMenu.setItemAndClickHandler(1, 7, DefaultSpecialItem.MANAGER_MAIN_WEBINTERFACE, clickContext -> {
-			player.sendMessage("Not yet implemented");
+			player.sendMessage("Not yet implemented - but Test:");
 			//TODO generate interface link and send to player
+
+			player.sendMessage(WebSessionUtils.generateWebSession());
+
 			player.closeInventory();
 		});
 		chestMenu.openInventory(player);

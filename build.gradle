@@ -29,6 +29,12 @@ repositories {
     }
 }
 
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 configurations {
     provided
     compile.extendsFrom provided
@@ -78,7 +84,7 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
-/*processResources {
+processResources {
     def props = [version: version]
     inputs.properties props
     filteringCharset 'UTF-8'
@@ -86,4 +92,3 @@ tasks.withType(JavaCompile).configureEach {
         expand props
     }
 }
-*/

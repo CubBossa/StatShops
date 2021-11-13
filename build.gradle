@@ -35,6 +35,9 @@ configurations {
 }
 
 dependencies {
+    shadow 'com.squareup.okhttp3:okhttp:4.9.2'
+    shadow 'org.json:json:20210307'
+    shadow 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
     shadow "org.projectlombok:lombok:1.18.22"
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
     shadow "co.aikar:acf-bukkit:0.5.0-SNAPSHOT"

@@ -136,15 +136,15 @@ manager:
         # Valid placeholders: <limit>, <combine-transactions>, <uuid>, <recover>
         lore: "<uuid>\nLimit: <limit>\nRecover: <recover>"
       new:
-        name: "Create New Limit"
+        name: "<green>Create New Limit"
         lore: "<gray>Click to create a new \n<gray>Limit, that can be applied to \n<gray>Shops and ShopEntries."
 
     discounts:
       title: "Create and manage shop discounts"
       # Valid placeholders: <player>
       already_edited: "<red><player> is already editing this discount. Try again later."
-      new_shop:
-        name: "<green>New Discout"
+      new:
+        name: "<green>Create New Discout"
         lore: "<gray>Click to create a \n<gray>new discount."
       # Defines, how each discount will be displayed in the list
       entry:
@@ -152,3 +152,15 @@ manager:
         name: "<dark_purple><name>"
         # Valid placeholders: <name>, <permission>, <percent>, <remaining>, <start-date>, <duration>
         lore: "<light_purple><percent><dark_purple>% <gray><name>\n<gray><start-date>\n<gray><duration>"
+    discount:
+      title: "Edit discount"
+      set_name:
+        name: "<white>Set Name"
+        lore: "<gray>Click to change the \n<gray>name of the discount.\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format"
+      set_permission:
+        name: "<white>Set Permission"
+        # Valid placeholders: <permission>
+        lore: "<gray>Current: <red><permission>\n\n<gray>Only players with this \n<gray>permission will be able to \n<gray>use this discount.\n\n<gray>Type \"null\" to reset."
+      set_tags:
+        name: "<white>Open Tag Menu"
+        lore: "<gray>Apply this discount to all\n<gray>shops and shopentries with\n<gray>certain tags like \"swords\" or \"foor\"."

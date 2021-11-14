@@ -2,6 +2,8 @@ package de.bossascrew.shops.data;
 
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.handler.TranslationHandler;
+import de.bossascrew.shops.util.Pair;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
@@ -102,17 +104,26 @@ public enum Message {
 	MANAGER_GUI_DISCOUNT_SET_TAGS_NAME("manager.gui.discount.set_tags.name"),
 	MANAGER_GUI_DISCOUNT_SET_TAGS_LORE("manager.gui.discount.set_tags.lore"),
 
-
-
 	;
 
+	@Getter
 	private final String key;
+	@Getter
+	private final String comment;
+	@Getter
+	private final Pair<String, String>[] examplePlaceholders;
 
-	Message(String key) {
-		this.key = key;
+	Message(String key, Pair<String, String>... examplePlaceholders) {
+		this(key, "", examplePlaceholders);
 	}
 
-	public Component getTranslation(Template...templates) {
+	Message(String key, String comment, Pair<String, String>... examplePlaceholders) {
+		this.key = key;
+		this.comment = comment;
+		this.examplePlaceholders = examplePlaceholders;
+	}
+
+	public Component getTranslation(Template... templates) {
 		String format = TranslationHandler.getInstance().getMessage(key);
 		return ShopPlugin.getInstance().getMiniMessage().parse(format, templates);
 	}

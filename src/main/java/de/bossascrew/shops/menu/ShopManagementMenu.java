@@ -330,7 +330,7 @@ public class ShopManagementMenu {
 
 		//Set name
 		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
-				Message.MANAGER_GUI_SHOP_SET_NAME_NAME, Message.MANAGER_GUI_SHOP_SET_NAME_LORE), clickContext -> {
+				Message.MANAGER_GUI_DISCOUNT_SET_NAME_NAME, Message.MANAGER_GUI_DISCOUNT_SET_NAME_LORE), clickContext -> {
 			//TODO anvil menü öffnen
 		});
 		//Set permissions

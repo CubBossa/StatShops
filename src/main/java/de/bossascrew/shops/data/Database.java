@@ -15,15 +15,17 @@ public interface Database {
 
 	Map<UUID, Shop> loadShops();
 
-	void saveShop();
+	void saveShop(Shop shop);
 
-	void deleteShop();
+	void deleteShop(Shop shop);
 
 	ShopEntry createEntry();
 
 	Map<UUID, Shop> loadEntries(Shop shop);
 
-	void saveEntry();
+	void saveEntry(ShopEntry shopEntry);
+
+	void deleteEntry(ShopEntry shopEntry);
 
 	Discount createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags);
 

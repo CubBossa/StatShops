@@ -1,8 +1,15 @@
 package de.bossascrew.shops.shop;
 
-import lombok.Data;
+import com.google.common.collect.Lists;
+import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.util.Editable;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -10,22 +17,48 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
-@Data
-public class Discount implements Taggable, Comparable<Discount> {
+@Getter
+@Setter
+public class Discount implements Taggable, Comparable<Discount>, Editable<Player> {
 
 	private final UUID uuid;
-	private final Component name;
-	private final LocalDateTime startTime;
-	private final Duration duration;
-	private final double percent;
-	private final String permission;
+	private String nameFormat;
+	private Component name;
+	private LocalDateTime startTime;
+	private Duration duration;
+	private double percent;
+	private String permission;
 	private final List<String> tags;
+
+	private @Nullable Player editor = null;
+
+	public Discount(UUID uuid, String nameFormat, LocalDateTime startTime, Duration duration, double percent, String permission, String... tags) {
+		this.uuid = uuid;
+		setNameFormat(nameFormat);
+		this.startTime = startTime;
+		this.duration = duration;
+		this.percent = percent;
+		this.permission = permission;
+		this.tags = Lists.newArrayList(tags);
+	}
 
 	/**
 	 * @return The remaining time in seconds
 	 */
 	public long getRemaining() {
 		return LocalDateTime.now().until(startTime.plus(duration), ChronoUnit.SECONDS);
+	}
+
+	public void setNameFormat(String nameFormat) {
+		this.nameFormat = nameFormat;
+		this.name = ShopPlugin.getInstance().getMiniMessage().parse(nameFormat);
+	}
+
+	public Component getFormattedPercent(boolean negativeGreen) {
+		if (percent > 0) {
+			return Component.text("-" + percent, negativeGreen ? NamedTextColor.GREEN : NamedTextColor.RED);
+		}
+		return Component.text("+" + percent, negativeGreen ? NamedTextColor.RED : NamedTextColor.GREEN);
 	}
 
 	@Override

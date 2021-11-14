@@ -25,8 +25,8 @@ public class Config {
 
 	private ClickType keyBindDelete = ClickType.RIGHT;
 
-	private Material shopBuyIconMaterial;
-	private Material shopSellIconMaterial;
+	private Material shopBuyIconMaterial = Material.EMERALD;
+	private Material shopSellIconMaterial = Material.DIAMOND;
 
 
 
@@ -34,7 +34,7 @@ public class Config {
 
 	}
 
-	public void reloadLangauge() {
+	public void reloadLanguage() {
 
 	}
 

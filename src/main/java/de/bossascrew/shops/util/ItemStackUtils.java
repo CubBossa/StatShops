@@ -14,6 +14,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
@@ -112,7 +113,10 @@ public class ItemStackUtils {
 			return itemStack;
 		}
 		meta.setDisplayName(displayName);
-		meta.setLore(lore);
+		if (!lore.isEmpty() && (lore.size() > 1 || !lore.get(0).equals("") || !lore.get(0).equals(" "))) {
+			meta.setLore(lore);
+		}
+		meta.addItemFlags(ItemFlag.values());
 		itemStack.setItemMeta(meta);
 		return itemStack;
 	}
@@ -147,7 +151,7 @@ public class ItemStackUtils {
 				Message.MANAGER_GUI_DISCOUNTS_ENTRY_NAME.getTranslation(
 						Template.of("name", discount.getName())),
 				Message.MANAGER_GUI_DISCOUNTS_ENTRY_LORE.getTranslations(
-						Template.of("percent", "" + discount.getPercent()),
+						Template.of("percent", discount.getFormattedPercent(true)),
 						Template.of("uuid", discount.getUuid().toString()),
 						Template.of("permission", discount.getPermission() == null ? "X" : discount.getPermission()),
 						Template.of("name", discount.getName()),

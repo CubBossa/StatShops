@@ -6,6 +6,7 @@ import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Taggable;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.Inventory;
@@ -14,7 +15,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class DiscountHandler {
+public class DiscountHandler implements WebAccessable<Discount> {
 
 	@Getter
 	private static DiscountHandler instance;
@@ -51,6 +52,7 @@ public class DiscountHandler {
 			discounts.add(discount);
 			tagMap.put(tag, discounts);
 		}
+		//TODO natürlich quatsch, nur wenn der discount startet während er erstellt wird, wird er aber nicht
 		handleDiscountStart(discount);
 	}
 
@@ -101,5 +103,15 @@ public class DiscountHandler {
 			}
 		}
 		return discounts;
+	}
+
+	@Override
+	public List<Discount> getWebData() {
+		return getDiscounts();
+	}
+
+	@Override
+	public void storeWebData(List<Discount> values) {
+		//TODO
 	}
 }

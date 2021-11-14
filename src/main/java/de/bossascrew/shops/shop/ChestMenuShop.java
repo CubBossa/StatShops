@@ -3,11 +3,15 @@ package de.bossascrew.shops.shop;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
+import de.bossascrew.shops.menu.RowedOpenableMenu;
 import de.bossascrew.shops.menu.ShopMenuView;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import de.bossascrew.shops.util.ComponentUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -18,19 +22,23 @@ public class ChestMenuShop implements Shop {
 
 	private final UUID uuid;
 	private String nameFormat;
+
 	private Component name;
+	private String namePlain;
+
 	private @Nullable String permission = null;
 
-	private int rows;
-	private boolean enabled;
+	private int rows = 3;
+	private boolean enabled = true;
 
-	private boolean isPagingCyclic;
-	private boolean isPageRemembered;
-	private boolean isModeRemembered;
-	private int defaultPage;
-	private ShopMode defaultMode;
+	private boolean isPageRemembered = false;
+	private boolean isModeRemembered = false;
+	private int defaultPage = 0;
+	private ShopMode defaultShopMode = null;
 
-	private final Map<ShopMode, Map<Integer, ShopEntry>> modeEntryMap;
+	private @Nullable Player editor = null;
+
+	private final Map<ShopMode, TreeMap<Integer, ShopEntry>> modeEntryMap;
 	private final List<Customer> activeCustomers;
 	private final Map<Customer, ShopMenuView> menuMap;
 	private final List<String> tags;
@@ -52,15 +60,28 @@ public class ChestMenuShop implements Shop {
 	public void setNameFormat(String nameFormat) {
 		this.nameFormat = nameFormat;
 		this.name = ShopPlugin.getInstance().getMiniMessage().parse(nameFormat);
+		this.namePlain = ComponentUtils.toPlain(this.name);
+	}
+
+	@Override
+	public int getPageCount() {
+		int highest = 0;
+		for (TreeMap<Integer, ShopEntry> map : modeEntryMap.values()) {
+			int h = map.lastKey();
+			if (h > highest) {
+				highest = h;
+			}
+		}
+		return highest / (rows * RowedOpenableMenu.ROW_SIZE) + 1;
 	}
 
 	public @Nullable
 	ShopEntry getEntry(ShopMode shopEntry, int slot) {
-		return modeEntryMap.getOrDefault(shopEntry, new HashMap<>()).getOrDefault(slot, null);
+		return modeEntryMap.getOrDefault(shopEntry, new TreeMap<>()).getOrDefault(slot, null);
 	}
 
 	@Override
-	public void setRememberPage(boolean rememberPage) {
+	public void setPageRemembered(boolean rememberPage) {
 		this.isPageRemembered = rememberPage;
 	}
 
@@ -69,23 +90,33 @@ public class ChestMenuShop implements Shop {
 	}
 
 	@Override
-	public void setRememberMode(boolean rememberMode) {
+	public void setModeRemembered(boolean rememberMode) {
 		this.isModeRemembered = rememberMode;
 	}
 
 	@Override
-	public ShopMode setDefaultShopMode(ShopMode shopMode) {
-		return null;
+	public ShopMode getDefaultShopMode() {
+		return defaultShopMode;
 	}
 
 	@Override
-	public ShopMode getDefaultShopMode() {
-		return null;
+	public void setDefaultShopMode(ShopMode shopMode) {
+		this.defaultShopMode = shopMode;
+	}
+
+	@Override
+	public int getDefaultShopPage() {
+		return defaultPage;
+	}
+
+	@Override
+	public void setDefaultShopPage(int page) {
+		this.defaultPage = page;
 	}
 
 	public @Nullable
 	ShopMode getPreferredShopMode(Customer customer) {
-		ShopMode mode = isModeRemembered ? customer.getShopMode(this, defaultMode) : defaultMode;
+		ShopMode mode = isModeRemembered ? customer.getShopMode(this, defaultShopMode) : defaultShopMode;
 		if (!modeEntryMap.containsKey(mode)) {
 			return null;
 		}
@@ -176,5 +207,10 @@ public class ChestMenuShop implements Shop {
 	@Override
 	public boolean hasTag(String tag) {
 		return getTags().contains(tag);
+	}
+
+	@Override
+	public int compareTo(@NotNull Shop o) {
+		return namePlain.compareTo(o.getNamePlain());
 	}
 }

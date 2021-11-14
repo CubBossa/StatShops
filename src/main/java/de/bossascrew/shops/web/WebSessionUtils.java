@@ -1,7 +1,8 @@
-package de.bossascrew.shops.util;
+package de.bossascrew.shops.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.web.justpasteit.JustPasteAPI;
 import de.bossascrew.shops.util.justpasteit.JustPasteAPI;
 import de.bossascrew.shops.util.pasting.ByteBinIntegration;
 import de.bossascrew.shops.util.pasting.Paste;

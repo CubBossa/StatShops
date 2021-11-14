@@ -24,12 +24,12 @@ public class TestDatabase implements Database {
 	}
 
 	@Override
-	public void saveShop() {
+	public void saveShop(Shop shop) {
 
 	}
 
 	@Override
-	public void deleteShop() {
+	public void deleteShop(Shop shop) {
 
 	}
 
@@ -44,13 +44,18 @@ public class TestDatabase implements Database {
 	}
 
 	@Override
-	public void saveEntry() {
+	public void saveEntry(ShopEntry shopEntry) {
+
+	}
+
+	@Override
+	public void deleteEntry(ShopEntry shopEntry) {
 
 	}
 
 	@Override
 	public Discount createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags) {
-		return null;
+		return new Discount(UUID.randomUUID(), nameFormat, start, duration, percent, null, tags);
 	}
 
 	@Override

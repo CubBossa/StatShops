@@ -50,13 +50,11 @@ public enum DefaultSpecialItem {
 	}
 
 	DefaultSpecialItem(int hdbId, Message name, Message lore) {
-		this.item = null;
+		this.item = ItemStackUtils.createItemStack(Material.PLAYER_HEAD, name, lore);
 	}
 
 	DefaultSpecialItem(int hdbId, String displayName, @Nullable String lore) {
-		this.item = ItemStackUtils.createPlayerHead(hdbId);
-		assert this.item != null;
-		ItemStackUtils.setNameAndLore(this.item, displayName, lore);
+		this.item = ItemStackUtils.createItemStack(Material.PLAYER_HEAD, displayName, lore);
 	}
 
 	public ItemStack createSpecialItem() {

@@ -56,25 +56,30 @@ public enum Message {
 	MANAGER_GUI_SHOPS_NEW_LORE("manager.gui.shops.new_shop.lore"),
 	MANAGER_GUI_SHOPS_NAME("manager.gui.shops.entry.name"),
 	MANAGER_GUI_SHOPS_LORE("manager.gui.shops.entry.lore"),
+	MANAGER_GUI_SHOPS_ALREADY_EDITED("manager.gui.shops.already_edited"),
 
-	MANAGER_GUI_SHOP_SET_NAME_NAME("manager.gui.shops.set_name.name"),
-	MANAGER_GUI_SHOP_SET_NAME_LORE("manager.gui.shops.set_name.lore"),
-	MANAGER_GUI_SHOP_SET_PERMISSION_NAME("manager.gui.shops.set_permission.name"),
-	MANAGER_GUI_SHOP_SET_PERMISSION_LORE("manager.gui.shops.set_permission.lore"),
-	MANAGER_GUI_SHOP_SET_TAGS_NAME("manager.gui.shops.set_tags.name"),
-	MANAGER_GUI_SHOP_SET_TAGS_LORE("manager.gui.shops.set_tags.lore"),
-	MANAGER_GUI_SHOP_SET_LIMITS_NAME("manager.gui.shops.set_limits.name"),
-	MANAGER_GUI_SHOP_SET_LIMITS_LORE("manager.gui.shops.set_limits.lore"),
-	MANAGER_GUI_SHOP_SET_DISCOUNTS_NAME("manager.gui.shops.set_discounts.name"),
-	MANAGER_GUI_SHOP_SET_DISCOUNTS_LORE("manager.gui.shops.set_discounts.lore"),
-	MANAGER_GUI_SHOP_SET_ENABLED_NAME("manager.gui.shops.set_enabled.name"),
-	MANAGER_GUI_SHOP_SET_ENABLED_LORE("manager.gui.shops.set_enabled.lore"),
-	MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_NAME("manager.gui.shops.set_remember_page.name"),
-	MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_LORE("manager.gui.shops.set_remember_page.lore"),
-	MANAGER_GUI_SHOP_SET_REMEMBER_MODE_NAME("manager.gui.shops.set_remember_mode.name"),
-	MANAGER_GUI_SHOP_SET_REMEMBER_MODE_LORE("manager.gui.shops.set_remember_mode.lore"),
-	MANAGER_GUI_SHOP_SET_CYCLIC_NAME("manager.gui.shops.set_cyclic.name"),
-	MANAGER_GUI_SHOP_SET_CYCLIC_LORE("manager.gui.shops.set_cyclic.lore"),
+	MANAGER_GUI_SHOP_SET_NAME_NAME("manager.gui.shop.set_name.name"),
+	MANAGER_GUI_SHOP_SET_NAME_LORE("manager.gui.shop.set_name.lore"),
+	MANAGER_GUI_SHOP_SET_PERMISSION_NAME("manager.gui.shop.set_permission.name"),
+	MANAGER_GUI_SHOP_SET_PERMISSION_LORE("manager.gui.shop.set_permission.lore"),
+	MANAGER_GUI_SHOP_SET_TAGS_NAME("manager.gui.shop.set_tags.name"),
+	MANAGER_GUI_SHOP_SET_TAGS_LORE("manager.gui.shop.set_tags.lore"),
+	MANAGER_GUI_SHOP_SET_LIMITS_NAME("manager.gui.shop.set_limits.name"),
+	MANAGER_GUI_SHOP_SET_LIMITS_LORE("manager.gui.shop.set_limits.lore"),
+	MANAGER_GUI_SHOP_SET_DISCOUNTS_NAME("manager.gui.shop.set_discounts.name"),
+	MANAGER_GUI_SHOP_SET_DISCOUNTS_LORE("manager.gui.shop.set_discounts.lore"),
+	MANAGER_GUI_SHOP_SET_ENABLED_NAME("manager.gui.shop.set_enabled.name"),
+	MANAGER_GUI_SHOP_SET_ENABLED_LORE("manager.gui.shop.set_enabled.lore"),
+	MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_NAME("manager.gui.shop.set_remember_page.name"),
+	MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_LORE("manager.gui.shop.set_remember_page.lore"),
+	MANAGER_GUI_SHOP_SET_REMEMBER_MODE_NAME("manager.gui.shop.set_remember_mode.name"),
+	MANAGER_GUI_SHOP_SET_REMEMBER_MODE_LORE("manager.gui.shop.set_remember_mode.lore"),
+	MANAGER_GUI_SHOP_SET_CONTENT_NAME("manager.gui.shop.set_content.name"),
+	MANAGER_GUI_SHOP_SET_CONTENT_LORE("manager.gui.shop.set_content.lore"),
+	MANAGER_GUI_SHOP_SET_DEFAULT_MODE_NAME("manager.gui.shop.set_default_mode.name"),
+	MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE("manager.gui.shop.set_default_mode.lore"),
+	MANAGER_GUI_SHOP_SET_DEFAULT_PAGE_NAME("manager.gui.shop.set_default_page.name"),
+	MANAGER_GUI_SHOP_SET_DEFAULT_PAGE_LORE("manager.gui.shop.set_default_page.lore"),
 
 	MANAGER_GUI_LIMITS("manager.gui.limits.title"),
 	MANAGER_GUI_LIMITS_ENTRY_NAME("manager.gui.limits.entry.name"),
@@ -83,10 +88,19 @@ public enum Message {
 	MANAGER_GUI_LIMITS_NEW_LORE("manager.gui.limits.new.lore"),
 
 	MANAGER_GUI_DISCOUNTS("manager.gui.discounts.title"),
+	MANAGER_GUI_DISCOUNTS_ALREADY_EDITED("manager.gui.discounts.already_edited"),
 	MANAGER_GUI_DISCOUNTS_ENTRY_NAME("manager.gui.discounts.entry.name"),
 	MANAGER_GUI_DISCOUNTS_ENTRY_LORE("manager.gui.discounts.entry.lore"),
 	MANAGER_GUI_DISCOUNTS_NEW_NAME("manager.gui.discounts.new.name"),
 	MANAGER_GUI_DISCOUNTS_NEW_LORE("manager.gui.discounts.new.lore"),
+
+	MANAGER_GUI_DISCOUNT("manager.gui.discount.title"),
+	MANAGER_GUI_DISCOUNT_SET_NAME_NAME("manager.gui.discount.set_name.name"),
+	MANAGER_GUI_DISCOUNT_SET_NAME_LORE("manager.gui.discount.set_name.lore"),
+	MANAGER_GUI_DISCOUNT_SET_PERMISSION_NAME("manager.gui.discount.set_permission.name"),
+	MANAGER_GUI_DISCOUNT_SET_PERMISSION_LORE("manager.gui.discount.set_permission.lore"),
+	MANAGER_GUI_DISCOUNT_SET_TAGS_NAME("manager.gui.discount.set_tags.name"),
+	MANAGER_GUI_DISCOUNT_SET_TAGS_LORE("manager.gui.discount.set_tags.lore"),
 
 
 
@@ -108,7 +122,7 @@ public enum Message {
 		List<Component> result = new ArrayList<>();
 		MiniMessage miniMessage = ShopPlugin.getInstance().getMiniMessage();
 		for(String string : toFormat) {
-			result.add(miniMessage.parse(string));
+			result.add(miniMessage.parse(string, templates));
 		}
 		return result;
 	}

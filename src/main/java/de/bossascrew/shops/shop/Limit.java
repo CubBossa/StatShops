@@ -4,8 +4,11 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
 import de.bossascrew.shops.Customer;
+import de.bossascrew.shops.util.Editable;
 import lombok.Data;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.List;
@@ -14,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 @Data
-public class Limit implements Taggable {
+public class Limit implements Taggable, Comparable<Limit>, Editable<Player> {
 
 	private final UUID uuid;
 	private Duration recover;
@@ -25,6 +28,8 @@ public class Limit implements Taggable {
 	 */
 	private boolean summTagMemberLimits = false;
 	private final List<String> tags;
+
+	private Player editor;
 	private final Cache<@NotNull UUID, @NotNull Transaction> transactionCache;
 
 	public Limit(Duration recover, Predicate<Customer> appliesToCustomer, int limit, String... tags) {
@@ -51,5 +56,10 @@ public class Limit implements Taggable {
 	@Override
 	public boolean hasTag(String tag) {
 		return tags.contains(tag);
+	}
+
+	@Override
+	public int compareTo(@NotNull Limit o) {
+		return Integer.compare(this.transactionLimit, o.transactionLimit);
 	}
 }

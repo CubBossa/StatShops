@@ -5,19 +5,26 @@ import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class ShopHandler {
+public class ShopHandler implements WebAccessable<Shop> {
 
 	@Getter
 	private static ShopHandler instance;
 
 	@Getter
 	private final Map<UUID, Shop> shopMap;
+
+	/**
+	 * Cyclic data structure. shopMode.next() gives the next element and allows to iterate. If you need all ShopModes you can call getShopModes()
+	 */
 	private ShopMode headShopMode = null;
 	private ShopMode tailShopMode = null;
 
@@ -28,11 +35,15 @@ public class ShopHandler {
 	}
 
 	public List<Shop> getShops() {
-		return shopMap.values().stream().toList();
+		return shopMap.values().stream().sorted().collect(Collectors.toList());
 	}
 
-	public Shop createShop(String nameFormat) {
+	public @Nullable
+	Shop createShop(String nameFormat) {
 		Shop shop = ShopPlugin.getInstance().getDatabase().createShop(nameFormat, UUID.randomUUID());
+		if (shop == null) {
+			return null;
+		}
 		shop.setDefaultShopMode(headShopMode);
 		addShop(shop);
 		return shop;
@@ -44,13 +55,14 @@ public class ShopHandler {
 
 	public void deleteShop(Shop shop) {
 		shop.closeAll();
-		ShopPlugin.getInstance().getDatabase().deleteShop();
+		shopMap.remove(shop.getUUID());
+		ShopPlugin.getInstance().getDatabase().deleteShop(shop);
 	}
 
 	public List<ShopMode> getShopModes() {
 		List<ShopMode> shopModes = new ArrayList<>();
 		ShopMode temp = headShopMode;
-		while (temp.getNext() != null) {
+		while (!temp.getNext().equals(headShopMode)) {
 			shopModes.add(temp);
 			temp = temp.getNext();
 		}
@@ -64,7 +76,9 @@ public class ShopHandler {
 			return;
 		}
 		shopMode.setNext(headShopMode);
+		shopMode.setPrevious(tailShopMode);
 		headShopMode.setPrevious(shopMode);
+		tailShopMode.setNext(shopMode);
 		headShopMode = shopMode;
 	}
 
@@ -95,5 +109,15 @@ public class ShopHandler {
 				return ItemStackUtils.createItemStack(ShopPlugin.getInstance().getShopsConfig().getShopSellIconMaterial(), Message.SHOP_MODE_SELL_NAME, Message.SHOP_MODE_SELL_LORE);
 			}
 		});
+	}
+
+	@Override
+	public List<Shop> getWebData() {
+		return getShops();
+	}
+
+	@Override
+	public void storeWebData(List<Shop> values) {
+		//TODO
 	}
 }

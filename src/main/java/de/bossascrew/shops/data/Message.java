@@ -110,10 +110,17 @@ public enum Message {
 	@Getter
 	private final String key;
 	@Getter
+	private final String comment;
+	@Getter
 	private final Pair<String, String>[] examplePlaceholders;
 
 	Message(String key, Pair<String, String>... examplePlaceholders) {
+		this(key, "", examplePlaceholders);
+	}
+
+	Message(String key, String comment, Pair<String, String>... examplePlaceholders) {
 		this.key = key;
+		this.comment = comment;
 		this.examplePlaceholders = examplePlaceholders;
 	}
 

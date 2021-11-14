@@ -57,7 +57,7 @@ public class ShopManagementMenu {
 		chestMenu.setItemAndClickHandler(1, 7, DefaultSpecialItem.MANAGER_MAIN_WEBINTERFACE, clickContext -> {
 			player.sendMessage("Not yet implemented - but Test:");
 			//TODO generate interface link and send to player
-			ShopPlugin.getInstance().runAsync(() -> player.sendMessage(WebSessionUtils.generateWebSession()));
+			ShopPlugin.getInstance().runAsync(() -> player.sendMessage("https://127.0.0.1:"));
 
 			player.closeInventory();
 		});

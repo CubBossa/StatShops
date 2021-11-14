@@ -1,4 +1,4 @@
-package de.bossascrew.shops.util.pasting;
+package de.bossascrew.shops.web.pasting;
 
 import okhttp3.*;
 import org.json.JSONObject;

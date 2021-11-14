@@ -1,4 +1,4 @@
-package de.bossascrew.shops.util.pasting;
+package de.bossascrew.shops.web.pasting;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

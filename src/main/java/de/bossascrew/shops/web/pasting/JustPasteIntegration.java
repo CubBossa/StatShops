@@ -1,6 +1,5 @@
-package de.bossascrew.shops.util.pasting;
+package de.bossascrew.shops.web.pasting;
 
-import de.bossascrew.shops.util.justpasteit.JustPasteAPI;
 import okhttp3.*;
 import org.json.JSONObject;
 

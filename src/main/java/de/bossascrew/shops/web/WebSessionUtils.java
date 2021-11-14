@@ -1,12 +1,11 @@
 package de.bossascrew.shops.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.web.justpasteit.JustPasteAPI;
 import de.bossascrew.shops.util.justpasteit.JustPasteAPI;
-import de.bossascrew.shops.util.pasting.ByteBinIntegration;
-import de.bossascrew.shops.util.pasting.Paste;
-import de.bossascrew.shops.util.pasting.PasteServer;
+import de.bossascrew.shops.web.pasting.ByteBinIntegration;
+import de.bossascrew.shops.web.pasting.Paste;
+import de.bossascrew.shops.web.pasting.PasteServer;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

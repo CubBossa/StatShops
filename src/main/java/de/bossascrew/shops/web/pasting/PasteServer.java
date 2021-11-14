@@ -1,4 +1,4 @@
-package de.bossascrew.shops.util.pasting;
+package de.bossascrew.shops.web.pasting;
 
 public interface PasteServer {
     Paste createPaste(String content);

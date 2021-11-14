@@ -65,7 +65,7 @@ public class TranslationHandler implements WebAccessable<LoadedMessage> {
 	public List<LoadedMessage> getWebData() {
 		List<LoadedMessage> messages = new ArrayList<>();
 		for (Message message : Message.values()) {
-			messages.add(new LoadedMessage(activeLanguage, message.getKey(), getMessage(message.getKey()), message.getExamplePlaceholders()));
+			messages.add(new LoadedMessage(activeLanguage, message.getKey(), getMessage(message.getKey()), message.getComment(), message.getExamplePlaceholders()));
 		}
 		return messages;
 	}

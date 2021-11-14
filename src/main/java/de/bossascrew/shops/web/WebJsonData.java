@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WebJsonData {
-    private List<Shop> shops;
-    private List<Discount> discounts;
-    private List<Limit> limits;
+    private final List<Shop> shops;
+    private final List<Discount> discounts;
+    private final List<Limit> limits;
 
     public WebJsonData() {
         this.shops = ShopPlugin.getInstance().getShopHandler().getShops();

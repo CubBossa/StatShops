@@ -1,16 +1,21 @@
 package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.data.LoadedMessage;
+import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.util.LoggingPolicy;
+import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class TranslationHandler {
+public class TranslationHandler implements WebAccessable<LoadedMessage> {
 
 	@Getter
 	private static TranslationHandler instance;
@@ -53,5 +58,19 @@ public class TranslationHandler {
 
 	public String getMessage(String key) {
 		return messageFormats.getOrDefault(key, activeLanguage + "-missing:" + key);
+	}
+
+	@Override
+	public List<LoadedMessage> getWebData() {
+		List<LoadedMessage> messages = new ArrayList<>();
+		for (Message message : Message.values()) {
+			messages.add(new LoadedMessage(message.getKey(), getMessage(message.getKey()), message.getExamplePlaceholders()));
+		}
+		return messages;
+	}
+
+	@Override
+	public void storeWebData(List<LoadedMessage> values) {
+
 	}
 }

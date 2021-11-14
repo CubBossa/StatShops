@@ -97,6 +97,12 @@ public class TranslationHandler implements WebAccessable<LoadedMessage> {
 			} catch (IOException e) {
 				ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "Error while saving to language file: lang/" + entry.getKey() + ".yml", e);
 			}
+
+			if (entry.getKey().equalsIgnoreCase(activeLanguage)) {
+				for (LoadedMessage message : entry.getValue()) {
+					messageFormats.put(message.getKey(), message.getValue());
+				}
+			}
 		}
 	}
 }

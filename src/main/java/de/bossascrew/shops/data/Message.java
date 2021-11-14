@@ -104,7 +104,6 @@ public enum Message {
 	MANAGER_GUI_DISCOUNT_SET_TAGS_NAME("manager.gui.discount.set_tags.name"),
 	MANAGER_GUI_DISCOUNT_SET_TAGS_LORE("manager.gui.discount.set_tags.lore"),
 
-
 	;
 
 	@Getter

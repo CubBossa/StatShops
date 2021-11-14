@@ -5,6 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
 import de.bossascrew.shops.menu.ShopManagementMenu;
+import lombok.ToString;
 import org.bukkit.entity.Player;
 
 @CommandAlias("shop")

@@ -2,6 +2,7 @@ package de.bossascrew.shops.shop;
 
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import de.bossascrew.shops.util.Editable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public interface Shop extends Taggable, Comparable<Shop> {
+public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 
 	/**
 	 * @return The unique id for this shop. It also servers as a tag for the Taggable interface and allows to apply limits and discounts to all shopentries of this shop
@@ -99,16 +100,6 @@ public interface Shop extends Taggable, Comparable<Shop> {
 	 * @return all customers that currently use this shop and have an open shop interface.
 	 */
 	List<Customer> getActiveCustomers();
-
-	/**
-	 * @return the player that is currently editing this shop. Only one player can edit a shop at a time. If null, no player is editing this shop.
-	 */
-	@Nullable Player getEditingPlayer();
-
-	/**
-	 * @param player sets the currently editing player. If set to null, no one is editing this shop anymore.
-	 */
-	void setEditingPlayer(@Nullable Player player);
 
 	/**
 	 * @param customer the customer to open this shop for.

@@ -141,8 +141,14 @@ manager:
 
     discounts:
       title: "Create and manage shop discounts"
+      # Valid placeholders: <player>
+      already_edited: "<red><player> is already editing this discount. Try again later."
+      new_shop:
+        name: "<green>New Discout"
+        lore: "<gray>Click to create a \n<gray>new discount."
+      # Defines, how each discount will be displayed in the list
       entry:
         # Valid placeholders: <name>
-        name: "<name>"
+        name: "<dark_purple><name>"
         # Valid placeholders: <name>, <permission>, <percent>, <remaining>, <start-date>, <duration>
-        lore: "<percent>% <name>\n<start-date>\n<duration>"
+        lore: "<light_purple><percent><dark_purple>% <gray><name>\n<gray><start-date>\n<gray><duration>"

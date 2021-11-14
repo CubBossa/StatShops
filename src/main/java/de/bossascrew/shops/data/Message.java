@@ -88,10 +88,19 @@ public enum Message {
 	MANAGER_GUI_LIMITS_NEW_LORE("manager.gui.limits.new.lore"),
 
 	MANAGER_GUI_DISCOUNTS("manager.gui.discounts.title"),
+	MANAGER_GUI_DISCOUNTS_ALREADY_EDITED("manager.gui.discounts.already_edited"),
 	MANAGER_GUI_DISCOUNTS_ENTRY_NAME("manager.gui.discounts.entry.name"),
 	MANAGER_GUI_DISCOUNTS_ENTRY_LORE("manager.gui.discounts.entry.lore"),
 	MANAGER_GUI_DISCOUNTS_NEW_NAME("manager.gui.discounts.new.name"),
 	MANAGER_GUI_DISCOUNTS_NEW_LORE("manager.gui.discounts.new.lore"),
+
+	MANAGER_GUI_DISCOUNT("manager.gui.discount.title"),
+	MANAGER_GUI_DISCOUNT_SET_NAME_NAME("manager.gui.discount.set_name.name"),
+	MANAGER_GUI_DISCOUNT_SET_NAME_LORE("manager.gui.discount.set_name.lore"),
+	MANAGER_GUI_DISCOUNT_SET_PERMISSION_NAME("manager.gui.discount.set_permission.name"),
+	MANAGER_GUI_DISCOUNT_SET_PERMISSION_LORE("manager.gui.discount.set_permission.lore"),
+	MANAGER_GUI_DISCOUNT_SET_TAGS_NAME("manager.gui.discount.set_tags.name"),
+	MANAGER_GUI_DISCOUNT_SET_TAGS_LORE("manager.gui.discount.set_tags.lore"),
 
 
 

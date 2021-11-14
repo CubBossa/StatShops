@@ -55,7 +55,7 @@ public class TestDatabase implements Database {
 
 	@Override
 	public Discount createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags) {
-		return null;
+		return new Discount(UUID.randomUUID(), nameFormat, start, duration, percent, null, tags);
 	}
 
 	@Override

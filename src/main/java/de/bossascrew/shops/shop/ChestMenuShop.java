@@ -36,7 +36,7 @@ public class ChestMenuShop implements Shop {
 	private int defaultPage = 0;
 	private ShopMode defaultShopMode = null;
 
-	private @Nullable Player editingPlayer = null;
+	private @Nullable Player editor = null;
 
 	private final Map<ShopMode, TreeMap<Integer, ShopEntry>> modeEntryMap;
 	private final List<Customer> activeCustomers;

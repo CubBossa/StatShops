@@ -151,7 +151,7 @@ public class ItemStackUtils {
 				Message.MANAGER_GUI_DISCOUNTS_ENTRY_NAME.getTranslation(
 						Template.of("name", discount.getName())),
 				Message.MANAGER_GUI_DISCOUNTS_ENTRY_LORE.getTranslations(
-						Template.of("percent", "" + discount.getPercent()),
+						Template.of("percent", discount.getFormattedPercent(true)),
 						Template.of("uuid", discount.getUuid().toString()),
 						Template.of("permission", discount.getPermission() == null ? "X" : discount.getPermission()),
 						Template.of("name", discount.getName()),

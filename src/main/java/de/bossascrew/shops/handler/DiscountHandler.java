@@ -52,6 +52,7 @@ public class DiscountHandler implements WebAccessable<Discount> {
 			discounts.add(discount);
 			tagMap.put(tag, discounts);
 		}
+		//TODO natürlich quatsch, nur wenn der discount startet während er erstellt wird, wird er aber nicht
 		handleDiscountStart(discount);
 	}
 

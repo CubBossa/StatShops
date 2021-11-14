@@ -21,6 +21,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +42,7 @@ public class ShopManagementMenu {
 
 		chestMenu.setItemAndClickHandler(1, 1, DefaultSpecialItem.MANAGER_MAIN_SHOPS, clickContext -> openShopsMenu(player, 0));
 		chestMenu.setItemAndClickHandler(1, 2, DefaultSpecialItem.MANAGER_MAIN_LIMITS, clickContext -> openLimitsMenu(player));
-		chestMenu.setItemAndClickHandler(1, 3, DefaultSpecialItem.MANAGER_MAIN_DISCOUNTS, clickContext -> openDiscountsMenu(player));
+		chestMenu.setItemAndClickHandler(1, 3, DefaultSpecialItem.MANAGER_MAIN_DISCOUNTS, clickContext -> openDiscountsMenu(player, 0));
 		chestMenu.setItemAndClickHandler(1, 6, ItemStackUtils.createItemStack(Material.BOOK,
 				Message.MANAGER_GUI_MAIN_LANGUAGE_NAME, Message.MANAGER_GUI_MAIN_LANGUAGE_LORE), clickContext -> {
 			ShopPlugin.getInstance().getShopsConfig().reloadLanguage();
@@ -68,9 +71,9 @@ public class ShopManagementMenu {
 
 		for (Shop shop : ShopHandler.getInstance().getShops()) {
 			chestMenu.addMenuEntry(ItemStackUtils.createShopItemStack(shop), clickContext -> {
-				if (shop.getEditingPlayer() != null) {
+				if (shop.getEditor() != null) {
 					CustomerHandler.getInstance().getCustomer(player).sendMessage(Message.MANAGER_GUI_SHOPS_ALREADY_EDITED.getTranslation(
-							Template.of("player", shop.getEditingPlayer().getName())));
+							Template.of("player", shop.getEditor().getName())));
 					return;
 				}
 				if (clickContext.getAction().equals(delete)) {
@@ -109,7 +112,7 @@ public class ShopManagementMenu {
 		//deactivate shop so we can change stuff without worrying about players messing things up
 		//the shop will activate itself automatically when using the back button. Otherwise it needs to be reactivated manually
 		shop.setEnabled(false);
-		shop.setEditingPlayer(player);
+		shop.setEditor(player);
 
 		ChestMenu chestMenu = new ChestMenu(shop.getName(), 3);
 		//Set name
@@ -142,15 +145,13 @@ public class ShopManagementMenu {
 			ConfirmMenu confirmMenu = new ConfirmMenu("Are you sure?", backContext -> openShopMenu(player, shop, fromPage));//TODO translation
 			confirmMenu.setCloseHandler(closeContext -> {
 				shop.setEnabled(true); //TODO nur wenn booleansetting verändert wurde
-				shop.setEditingPlayer(null);
+				shop.setEditor(null);
 			});
 			confirmMenu.setAcceptHandler(clickContext1 -> {
 				ShopHandler.getInstance().deleteShop(shop);
 				openShopsMenu(player, 0);
 			});
-			confirmMenu.setDenyHandler(clickContext1 -> {
-				openShopMenu(player, shop, fromPage);
-			});
+			confirmMenu.setDenyHandler(clickContext1 -> openShopMenu(player, shop, fromPage));
 			confirmMenu.openInventory(player);
 		});
 
@@ -216,12 +217,12 @@ public class ShopManagementMenu {
 		chestMenu.setBackSlot(26);
 		chestMenu.setBackHandlerAction(backContext -> {
 			shop.setEnabled(true);
-			shop.setEditingPlayer(null);
+			shop.setEditor(null);
 			openShopsMenu(player, fromPage);
 		});
 		chestMenu.setCloseHandler(closeContext -> {
 			shop.setEnabled(true);
-			shop.setEditingPlayer(null);
+			shop.setEditor(null);
 		});
 		chestMenu.openInventory(player);
 	}
@@ -287,7 +288,7 @@ public class ShopManagementMenu {
 		chestMenu.openInventory(player);
 	}
 
-	public void openDiscountsMenu(Player player) {
+	public void openDiscountsMenu(Player player, int page) {
 		PagedChestMenu chestMenu = new PagedChestMenu(Message.MANAGER_GUI_DISCOUNTS.getTranslation(), 4, null, null, backContext -> {
 			openBaseMenu(player);
 		});
@@ -295,19 +296,64 @@ public class ShopManagementMenu {
 		List<Discount> discounts = DiscountHandler.getInstance().getDiscounts();
 		for (Discount discount : discounts) {
 			chestMenu.addMenuEntry(ItemStackUtils.createDiscountItemStack(discount), clickContext -> {
-				openDiscountMenu(player, discount);
+				if (discount.getEditor() != null) {
+					CustomerHandler.getInstance().getCustomer(player).sendMessage(Message.MANAGER_GUI_DISCOUNTS_ALREADY_EDITED.getTranslation(
+							Template.of("player", discount.getEditor().getName())));
+					return;
+				}
+				openDiscountMenu(player, discount, page);
 			});
 		}
 		chestMenu.setNavigationEntry(7, ItemStackUtils.createItemStack(Material.EMERALD,
 				Message.MANAGER_GUI_DISCOUNTS_NEW_NAME, Message.MANAGER_GUI_DISCOUNTS_NEW_LORE), clickContext -> {
-			//TODO Anvilgui für benennung
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.plugin(ShopPlugin.getInstance())
+					.text("Discountname")
+					.title("asd") //TODO translation
+					.onClose(p -> openDiscountsMenu(p, page)) //TODO man kann items aus diesem inv nehmen?
+					.onComplete((p, s) -> {
+						DiscountHandler.getInstance().createDiscount(s, LocalDateTime.now().plus(1, ChronoUnit.DAYS),
+								Duration.of(3, ChronoUnit.DAYS), 10);
+						openDiscountsMenu(player, page);
+						return AnvilGUI.Response.close();
+					}).open(player);
 		});
 		chestMenu.openInventory(player);
 	}
 
-	public void openDiscountMenu(Player player, Discount discount) {
+	public void openDiscountMenu(Player player, Discount discount, int page) {
+		discount.setEditor(player);
+		ChestMenu chestMenu = new ChestMenu(Message.MANAGER_GUI_DISCOUNT, 3);
+		chestMenu.setBackHandlerAction(backContext -> openDiscountsMenu(player, page));
+		chestMenu.setCloseHandler(closeContext -> discount.setEditor(null));
 
+		//Set name
+		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
+				Message.MANAGER_GUI_SHOP_SET_NAME_NAME, Message.MANAGER_GUI_SHOP_SET_NAME_LORE), clickContext -> {
+			//TODO anvil menü öffnen
+		});
+		//Set permissions
+		chestMenu.setItemAndClickHandler(0, 2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
+				Message.MANAGER_GUI_DISCOUNT_SET_PERMISSION_NAME.getTranslation(), Message.MANAGER_GUI_DISCOUNT_SET_PERMISSION_LORE.getTranslations(
+						Template.of("permission", discount.getPermission() == null ? "X" : discount.getPermission())
+				)), clickContext -> {
+			//TODO anvil menü öffnen
+		});
+		//Open Tags menu
+		chestMenu.setItemAndClickHandler(0, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
+						Message.MANAGER_GUI_DISCOUNT_SET_TAGS_NAME, Message.MANAGER_GUI_DISCOUNT_SET_TAGS_LORE),
+				clickContext -> openDisountTagsMenu(player, discount, 0));
+
+		//TODO setstart
+		//TODO setduration
+		//TODO setrepeatingduration
+		//TODO setpercent
+
+		chestMenu.openInventory(player);
 	}
 
-
+	public void openDisountTagsMenu(Player player, Discount discount, int page) {
+		player.sendMessage("openDisountTagsMenu");
+	}
 }

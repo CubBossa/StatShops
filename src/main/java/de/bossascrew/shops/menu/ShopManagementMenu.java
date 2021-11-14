@@ -10,6 +10,7 @@ import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.util.ItemStackUtils;
 import de.bossascrew.shops.util.WebSessionUtils;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;

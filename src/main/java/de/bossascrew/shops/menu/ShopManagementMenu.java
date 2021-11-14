@@ -10,7 +10,7 @@ import de.bossascrew.shops.handler.TranslationHandler;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.util.ItemStackUtils;
-import de.bossascrew.shops.util.WebSessionUtils;
+import de.bossascrew.shops.web.WebSessionUtils;
 import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;

@@ -1,11 +1,9 @@
-package de.bossascrew.shops.util.justpasteit;
+package de.bossascrew.shops.web.justpasteit;
 
 import okhttp3.*;
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class JustPasteAPI {
 

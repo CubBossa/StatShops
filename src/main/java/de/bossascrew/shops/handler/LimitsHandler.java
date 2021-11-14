@@ -4,13 +4,14 @@ import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.menu.ShopMenuView;
 import de.bossascrew.shops.shop.Limit;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 
 import java.util.*;
 
 @Getter
-public class LimitsHandler {
+public class LimitsHandler implements WebAccessable<Limit> {
 
 	@Getter
 	private static LimitsHandler instance;
@@ -28,6 +29,10 @@ public class LimitsHandler {
 		this.tagMap = new HashMap<>();
 	}
 
+	public List<Limit> getLimits() {
+		return new ArrayList<>(limitMap.values());
+	}
+
 	public void handleLimitDisplay(ShopMenuView inventory, ShopEntry shopEntry, List<Component> existingLore) {
 
 	}
@@ -39,5 +44,15 @@ public class LimitsHandler {
 
 			}
 		}
+	}
+
+	@Override
+	public List<Limit> getValues() {
+		return getLimits();
+	}
+
+	@Override
+	public void storeValues(List<Limit> values) {
+		//TODO
 	}
 }

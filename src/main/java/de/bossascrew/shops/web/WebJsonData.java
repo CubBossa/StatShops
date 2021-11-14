@@ -1,4 +1,4 @@
-package de.bossascrew.shops.util;
+package de.bossascrew.shops.web;
 
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.shop.Discount;

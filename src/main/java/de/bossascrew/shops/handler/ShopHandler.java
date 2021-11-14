@@ -5,13 +5,14 @@ import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class ShopHandler {
+public class ShopHandler implements WebAccessable<Shop> {
 
 	@Getter
 	private static ShopHandler instance;
@@ -96,5 +97,15 @@ public class ShopHandler {
 				return ItemStackUtils.createItemStack(ShopPlugin.getInstance().getShopsConfig().getShopSellIconMaterial(), Message.SHOP_MODE_SELL_NAME, Message.SHOP_MODE_SELL_LORE);
 			}
 		});
+	}
+
+	@Override
+	public List<Shop> getValues() {
+		return getShops();
+	}
+
+	@Override
+	public void storeValues(List<Shop> values) {
+		//TODO
 	}
 }

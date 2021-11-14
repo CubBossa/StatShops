@@ -1,14 +1,13 @@
 package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.Customer;
+import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-public class CustomerHandler {
+public class CustomerHandler implements WebAccessable<Customer> {
 
 	@Getter
 	private static CustomerHandler instance;
@@ -27,5 +26,19 @@ public class CustomerHandler {
 			customerMap.put(player.getUniqueId(), customer);
 		}
 		return customer;
+	}
+
+	public List<Customer> getCustomers() {
+		return new ArrayList<>(customerMap.values());
+	}
+
+	@Override
+	public List<Customer> getValues() {
+		return getCustomers();
+	}
+
+	@Override
+	public void storeValues(List<Customer> values) {
+		//TODO
 	}
 }

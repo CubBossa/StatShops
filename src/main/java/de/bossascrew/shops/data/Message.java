@@ -74,10 +74,12 @@ public enum Message {
 	MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_LORE("manager.gui.shop.set_remember_page.lore"),
 	MANAGER_GUI_SHOP_SET_REMEMBER_MODE_NAME("manager.gui.shop.set_remember_mode.name"),
 	MANAGER_GUI_SHOP_SET_REMEMBER_MODE_LORE("manager.gui.shop.set_remember_mode.lore"),
-	MANAGER_GUI_SHOP_SET_CYCLIC_NAME("manager.gui.shop.set_cyclic.name"),
-	MANAGER_GUI_SHOP_SET_CYCLIC_LORE("manager.gui.shop.set_cyclic.lore"),
 	MANAGER_GUI_SHOP_SET_CONTENT_NAME("manager.gui.shop.set_content.name"),
 	MANAGER_GUI_SHOP_SET_CONTENT_LORE("manager.gui.shop.set_content.lore"),
+	MANAGER_GUI_SHOP_SET_DEFAULT_MODE_NAME("manager.gui.shop.set_default_mode.name"),
+	MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE("manager.gui.shop.set_default_mode.lore"),
+	MANAGER_GUI_SHOP_SET_DEFAULT_PAGE_NAME("manager.gui.shop.set_default_page.name"),
+	MANAGER_GUI_SHOP_SET_DEFAULT_PAGE_LORE("manager.gui.shop.set_default_page.lore"),
 
 	MANAGER_GUI_LIMITS("manager.gui.limits.title"),
 	MANAGER_GUI_LIMITS_ENTRY_NAME("manager.gui.limits.entry.name"),
@@ -111,7 +113,7 @@ public enum Message {
 		List<Component> result = new ArrayList<>();
 		MiniMessage miniMessage = ShopPlugin.getInstance().getMiniMessage();
 		for(String string : toFormat) {
-			result.add(miniMessage.parse(string));
+			result.add(miniMessage.parse(string, templates));
 		}
 		return result;
 	}

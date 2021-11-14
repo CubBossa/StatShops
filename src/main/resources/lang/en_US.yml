@@ -118,10 +118,15 @@ manager:
         # Valid placeholders: <value>
         name: "<white>Remember Mode: <value>"
         lore: "<gray>Decides if a shop will \n<gray>reopen at the mode a customer\n<gray> had viewed last or at the \n<gray> default mode."
-      set_cyclic:
-        # Valid placeholders: <value>
-        name: "<white>Cyclic Pagination: <value>"
-        lore: "<gray>Decides if you see the \n<gray>first page when clicking on \n<gray>\"next page\" while viewing \n<gray>the last page."
+      set_default_mode:
+        # Valid placeholders: <name>
+        name: "<white>Default Mode: <name>"
+        # Valid placeholders: <mode>
+        lore: "<gray>» <mode>"
+      # Valid placeholders: <page>
+      set_default_page:
+        name: "<white>Default Page: <page>"
+        lore: "<gray>» <page>"
 
     limits:
       title: "Create and manage shop limits"

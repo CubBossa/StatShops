@@ -9,8 +9,11 @@ import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.handler.TranslationHandler;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Shop;
+import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.util.ItemStackUtils;
 import de.bossascrew.shops.web.WebSessionUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
@@ -18,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ShopManagementMenu {
@@ -150,48 +154,50 @@ public class ShopManagementMenu {
 			confirmMenu.openInventory(player);
 		});
 
-		chestMenu.setItemAndClickHandler(1, 1, ItemStackUtils.createItemStack(Material.CHEST,
+		chestMenu.setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(Material.CHEST,
 				Message.MANAGER_GUI_SHOP_SET_CONTENT_NAME, Message.MANAGER_GUI_SHOP_SET_CONTENT_LORE), clickContext -> {
-
+			player.sendMessage("openShopEditor");
 		});
 
 		//Shopmode switch button
 		if (shop.getDefaultShopMode() != null) {
-			chestMenu.setItem(19, shop.getDefaultShopMode().getDisplayItem());
+
+			chestMenu.setItem(19, getDefaultModeItem(shop.getDefaultShopMode()));
 			chestMenu.setClickHandler(19, clickContext -> {
 				if (clickContext.getAction().isRightClick()) {
-					shop.setDefaultShopMode(shop.getDefaultShopMode().getNext()); //TODO cyclic, otherwise check nullpointers
+					shop.setDefaultShopMode(shop.getDefaultShopMode().getNext());
 				} else if (clickContext.getAction().isLeftClick()) {
 					shop.setDefaultShopMode(shop.getDefaultShopMode().getPrevious());
 				}
-				chestMenu.setItem(19, shop.getDefaultShopMode().getDisplayItem());
+				chestMenu.setItem(19, getDefaultModeItem(shop.getDefaultShopMode()));
 				chestMenu.refresh(19);
 			});
 		}
+		chestMenu.setItemAndClickHandler(20, getDefaultPageItem(shop, shop.getDefaultShopPage()), clickContext -> {
+			if (clickContext.getAction().isRightClick()) {
+				shop.setDefaultShopPage((shop.getDefaultShopPage() - 1) % shop.getPageCount());
+			} else if (clickContext.getAction().isLeftClick()) {
+				shop.setDefaultShopPage((shop.getDefaultShopPage() + 1) % shop.getPageCount());
+			}
+			chestMenu.setItem(20, getDefaultPageItem(shop, shop.getDefaultShopPage()));
+			chestMenu.refresh(20);
+		});
+
 
 		//Set shop enabled
 		ItemStack shopEnabled = getButton(shop.isEnabled(),
 				Message.MANAGER_GUI_SHOP_SET_ENABLED_NAME, Message.MANAGER_GUI_SHOP_SET_ENABLED_LORE);
-		chestMenu.setItemAndClickHandler(21, shopEnabled, clickContext -> {
+		chestMenu.setItemAndClickHandler(22, shopEnabled, clickContext -> {
 			shop.setEnabled(!shop.isEnabled());
-			chestMenu.setItem(21, getButton(shop.isEnabled(),
+			chestMenu.setItem(22, getButton(shop.isEnabled(),
 					Message.MANAGER_GUI_SHOP_SET_ENABLED_NAME, Message.MANAGER_GUI_SHOP_SET_ENABLED_LORE));
-			chestMenu.refresh(21);
-		});
-		//Set page cycling
-		ItemStack cyclicMode = getButton(shop.isPagingCyclic(),
-				Message.MANAGER_GUI_SHOP_SET_CYCLIC_NAME, Message.MANAGER_GUI_SHOP_SET_CYCLIC_LORE);
-		chestMenu.setItemAndClickHandler(22, cyclicMode, clickContext -> {
-			shop.setPagingCyclic(!shop.isPagingCyclic());
-			chestMenu.setItem(22, getButton(shop.isPagingCyclic(),
-					Message.MANAGER_GUI_SHOP_SET_CYCLIC_NAME, Message.MANAGER_GUI_SHOP_SET_CYCLIC_LORE));
 			chestMenu.refresh(22);
 		});
 		//Set page remembered
 		ItemStack rememberPage = getButton(shop.isPageRemembered(),
 				Message.MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_NAME, Message.MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_LORE);
 		chestMenu.setItemAndClickHandler(23, rememberPage, clickContext -> {
-			shop.setRememberPage(!shop.isPageRemembered());
+			shop.setPageRemembered(!shop.isPageRemembered());
 			chestMenu.setItem(23, getButton(shop.isPageRemembered(),
 					Message.MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_NAME, Message.MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_LORE));
 			chestMenu.refresh(23);
@@ -200,7 +206,7 @@ public class ShopManagementMenu {
 		ItemStack rememberMode = getButton(shop.isModeRemembered(),
 				Message.MANAGER_GUI_SHOP_SET_REMEMBER_MODE_NAME, Message.MANAGER_GUI_SHOP_SET_REMEMBER_MODE_LORE);
 		chestMenu.setItemAndClickHandler(24, rememberMode, clickContext -> {
-			shop.setRememberMode(!shop.isModeRemembered());
+			shop.setModeRemembered(!shop.isModeRemembered());
 			chestMenu.setItem(24, getButton(shop.isModeRemembered(),
 					Message.MANAGER_GUI_SHOP_SET_REMEMBER_MODE_NAME, Message.MANAGER_GUI_SHOP_SET_REMEMBER_MODE_LORE));
 			chestMenu.refresh(24);
@@ -218,6 +224,32 @@ public class ShopManagementMenu {
 			shop.setEditingPlayer(null);
 		});
 		chestMenu.openInventory(player);
+	}
+
+	private ItemStack getDefaultModeItem(ShopMode shopMode) {
+		ItemStack modeItem = shopMode.getDisplayItem();
+		List<Component> lore = new ArrayList<>();
+		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
+		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getPrevious().getDisplayName().color(NamedTextColor.GRAY))));
+		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getDisplayName())));
+		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getPrevious().getDisplayName().color(NamedTextColor.GRAY))));
+		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
+		ItemStack item = ItemStackUtils.createItemStack(modeItem.getType(),
+				Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_NAME.getTranslation(Template.of("name", modeItem.getItemMeta().getDisplayName())),
+				lore);
+		return item;
+	}
+
+	private ItemStack getDefaultPageItem(Shop shop, int page) {
+		int pageCount = shop.getPageCount();
+		List<Component> lore = new ArrayList<>();
+		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
+		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_PAGE_LORE.getTranslation(Template.of("page", "" + ((page - 1) % pageCount))));
+		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_PAGE_LORE.getTranslation(Template.of("page", "" + page)));
+		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_PAGE_LORE.getTranslation(Template.of("page", "" + ((page + 1) % pageCount))));
+		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
+		return ItemStackUtils.createItemStack(Material.BOOK,
+				Message.MANAGER_GUI_SHOP_SET_DEFAULT_PAGE_NAME.getTranslation(Template.of("page", "" + page)), lore);
 	}
 
 	private ItemStack getButton(boolean val, Message name, Message lore) {

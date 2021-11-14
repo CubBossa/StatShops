@@ -10,11 +10,11 @@ public interface WebAccessable<T> {
 	/**
 	 * @return a sorted list of the cached objects
 	 */
-	List<T> getValues();
+	List<T> getWebData();
 
 	/**
 	 * @param values a list of all changed values of the webinterface that need to be updated in cache and database
 	 */
-	void storeValues(List<T> values);
+	void storeWebData(List<T> values);
 
 }

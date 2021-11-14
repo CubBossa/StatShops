@@ -9,8 +9,10 @@ import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ShopHandler implements WebAccessable<Shop> {
 
@@ -19,6 +21,10 @@ public class ShopHandler implements WebAccessable<Shop> {
 
 	@Getter
 	private final Map<UUID, Shop> shopMap;
+
+	/**
+	 * Cyclic data structure. shopMode.next() gives the next element and allows to iterate. If you need all ShopModes you can call getShopModes()
+	 */
 	private ShopMode headShopMode = null;
 	private ShopMode tailShopMode = null;
 
@@ -29,11 +35,15 @@ public class ShopHandler implements WebAccessable<Shop> {
 	}
 
 	public List<Shop> getShops() {
-		return shopMap.values().stream().toList();
+		return shopMap.values().stream().sorted().collect(Collectors.toList());
 	}
 
-	public Shop createShop(String nameFormat) {
+	public @Nullable
+	Shop createShop(String nameFormat) {
 		Shop shop = ShopPlugin.getInstance().getDatabase().createShop(nameFormat, UUID.randomUUID());
+		if (shop == null) {
+			return null;
+		}
 		shop.setDefaultShopMode(headShopMode);
 		addShop(shop);
 		return shop;
@@ -52,7 +62,7 @@ public class ShopHandler implements WebAccessable<Shop> {
 	public List<ShopMode> getShopModes() {
 		List<ShopMode> shopModes = new ArrayList<>();
 		ShopMode temp = headShopMode;
-		while (temp.getNext() != null) {
+		while (!temp.getNext().equals(headShopMode)) {
 			shopModes.add(temp);
 			temp = temp.getNext();
 		}
@@ -66,7 +76,9 @@ public class ShopHandler implements WebAccessable<Shop> {
 			return;
 		}
 		shopMode.setNext(headShopMode);
+		shopMode.setPrevious(tailShopMode);
 		headShopMode.setPrevious(shopMode);
+		tailShopMode.setNext(shopMode);
 		headShopMode = shopMode;
 	}
 
@@ -100,12 +112,12 @@ public class ShopHandler implements WebAccessable<Shop> {
 	}
 
 	@Override
-	public List<Shop> getValues() {
+	public List<Shop> getWebData() {
 		return getShops();
 	}
 
 	@Override
-	public void storeValues(List<Shop> values) {
+	public void storeWebData(List<Shop> values) {
 		//TODO
 	}
 }

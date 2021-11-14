@@ -47,12 +47,12 @@ public class LimitsHandler implements WebAccessable<Limit> {
 	}
 
 	@Override
-	public List<Limit> getValues() {
+	public List<Limit> getWebData() {
 		return getLimits();
 	}
 
 	@Override
-	public void storeValues(List<Limit> values) {
+	public void storeWebData(List<Limit> values) {
 		//TODO
 	}
 }

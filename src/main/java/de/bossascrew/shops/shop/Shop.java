@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public interface Shop extends Taggable {
+public interface Shop extends Taggable, Comparable<Shop> {
 
 	UUID getUUID();
 

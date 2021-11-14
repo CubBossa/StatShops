@@ -105,12 +105,12 @@ public class DiscountHandler implements WebAccessable<Discount> {
 	}
 
 	@Override
-	public List<Discount> getValues() {
+	public List<Discount> getWebData() {
 		return getDiscounts();
 	}
 
 	@Override
-	public void storeValues(List<Discount> values) {
+	public void storeWebData(List<Discount> values) {
 		//TODO
 	}
 }

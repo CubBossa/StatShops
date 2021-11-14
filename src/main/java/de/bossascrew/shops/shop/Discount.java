@@ -1,8 +1,12 @@
 package de.bossascrew.shops.shop;
 
-import lombok.Data;
+import de.bossascrew.shops.ShopPlugin;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -10,15 +14,18 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class Discount implements Taggable, Comparable<Discount> {
 
 	private final UUID uuid;
-	private final Component name;
-	private final LocalDateTime startTime;
-	private final Duration duration;
-	private final double percent;
-	private final String permission;
+	private String nameFormat;
+	private @Nullable Component name;
+	private LocalDateTime startTime;
+	private Duration duration;
+	private double percent;
+	private String permission;
 	private final List<String> tags;
 
 	/**
@@ -27,6 +34,12 @@ public class Discount implements Taggable, Comparable<Discount> {
 	public long getRemaining() {
 		return LocalDateTime.now().until(startTime.plus(duration), ChronoUnit.SECONDS);
 	}
+
+	public void setNameFormat(String nameFormat) {
+		this.nameFormat = nameFormat;
+		this.name = ShopPlugin.getInstance().getMiniMessage().parse(nameFormat);
+	}
+
 
 	@Override
 	public boolean addTag(String tag) {

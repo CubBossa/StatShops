@@ -33,12 +33,12 @@ public class CustomerHandler implements WebAccessable<Customer> {
 	}
 
 	@Override
-	public List<Customer> getValues() {
+	public List<Customer> getWebData() {
 		return getCustomers();
 	}
 
 	@Override
-	public void storeValues(List<Customer> values) {
+	public void storeWebData(List<Customer> values) {
 		//TODO
 	}
 }

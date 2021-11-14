@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 @Data
-public class Limit implements Taggable {
+public class Limit implements Taggable, Comparable<Limit> {
 
 	private final UUID uuid;
 	private Duration recover;
@@ -51,5 +51,10 @@ public class Limit implements Taggable {
 	@Override
 	public boolean hasTag(String tag) {
 		return tags.contains(tag);
+	}
+
+	@Override
+	public int compareTo(@NotNull Limit o) {
+		return Integer.compare(this.transactionLimit, o.transactionLimit);
 	}
 }

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -179,5 +180,10 @@ public class ChestMenuShop implements Shop {
 	@Override
 	public boolean hasTag(String tag) {
 		return getTags().contains(tag);
+	}
+
+	@Override
+	public int compareTo(@NotNull Shop o) {
+		return 0;
 	}
 }

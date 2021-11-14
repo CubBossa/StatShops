@@ -72,7 +72,6 @@ public abstract class OpenableMenu extends InventoryMenu<ClickType, ClickContext
 			inventory.setItem(backSlot, DefaultSpecialItem.BACK.createSpecialItem());
 		}
 
-
 		if (inventoryPreparer != null) {
 			try {
 				inventoryPreparer.accept(inventory);

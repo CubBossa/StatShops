@@ -72,7 +72,8 @@ public class ChestMenuShop implements Shop {
 				highest = h;
 			}
 		}
-		return highest / (rows * RowedOpenableMenu.ROW_SIZE) + 1;
+		//important to divide with largest inventory size so entries dont move to other pages when changing the row size
+		return highest / RowedOpenableMenu.LARGEST_INV_SIZE + 1;
 	}
 
 	public @Nullable

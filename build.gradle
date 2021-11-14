@@ -27,6 +27,10 @@ repositories {
         name = 'codemc-snapshots'
         url = 'https://repo.codemc.io/repository/maven-snapshots/'
     }
+    maven { //GameProfile for custom heads
+        name = 'minecraft-repo'
+        url = 'https://libraries.minecraft.net/'
+    }
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -57,6 +61,7 @@ dependencies {
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     shadow 'com.github.ben-manes.caffeine:caffeine:3.0.4'
     shadow "net.wesjd:anvilgui:1.5.3-SNAPSHOT"
+    compileOnly 'com.mojang:authlib:1.5.21'
 }
 
 shadowJar{

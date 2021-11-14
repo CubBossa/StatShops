@@ -7,11 +7,11 @@ import de.bossascrew.shops.handler.CustomerHandler;
 import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.handler.TranslationHandler;
+import de.bossascrew.shops.shop.ChestMenuShop;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.util.ItemStackUtils;
-import de.bossascrew.shops.web.WebSessionUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.Template;
@@ -157,7 +157,11 @@ public class ShopManagementMenu {
 
 		chestMenu.setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(Material.CHEST,
 				Message.MANAGER_GUI_SHOP_SET_CONTENT_NAME, Message.MANAGER_GUI_SHOP_SET_CONTENT_LORE), clickContext -> {
-			player.sendMessage("openShopEditor");
+			if (shop instanceof ChestMenuShop chestMenuShop) {
+				openShopEditor(player, chestMenuShop, fromPage, 0);
+			} else {
+				player.sendMessage("not possible due to shop type"); //TODO
+			}
 		});
 
 		//Shopmode switch button
@@ -257,6 +261,20 @@ public class ShopManagementMenu {
 		return ItemStackUtils.createItemStack(val ? Material.LIME_DYE : Material.GRAY_DYE,
 				name.getTranslation(Template.of("value", val + "")),
 				lore.getTranslations(Template.of("value", val + "")));
+	}
+
+	public void openShopEditor(Player player, ChestMenuShop shop, int fromPage, int shopPage) {
+		BottomTopChestMenu menu = new BottomTopChestMenu(shop.getName(), shop.getRows(), 1);
+		menu.fillBottom();
+		menu.setBackSlotBottom(8);
+		menu.setBackHandlerAction(backContext -> openShopMenu(player, shop, fromPage));
+		menu.setItemAndClickHandlerBottom(0, 0, DefaultSpecialItem.PREV_PAGE, clickContext -> {
+
+		});
+		menu.setItemAndClickHandlerBottom(0, 1, DefaultSpecialItem.NEXT_PAGE, clickContext -> {
+
+		});
+		menu.openInventory(player);
 	}
 
 	public void openShopTagsMenu(Player player, Shop shop, int page) {

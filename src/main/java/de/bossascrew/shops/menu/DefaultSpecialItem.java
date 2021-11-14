@@ -8,14 +8,14 @@ import org.jetbrains.annotations.Nullable;
 
 public enum DefaultSpecialItem {
 
-	//TODO translations
-
 	EMPTY_LIGHT(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ", null),
 	EMPTY_MIDDLE(Material.GRAY_STAINED_GLASS_PANE, " ", null),
 	EMPTY_DARK(Material.BLACK_STAINED_GLASS_PANE, " ", null),
 
-	PREVIOUS_PAGE(7827, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE),
-	NEXT_PAGE(7826, Message.GENERAL_GUI_PREV_PAGE_NAME, Message.GENERAL_GUI_PREV_PAGE_LORE),
+	PREV_PAGE(ItemStackUtils.HEAD_URL_ARROW_PREV, Message.GENERAL_GUI_PREV_PAGE_NAME, Message.GENERAL_GUI_PREV_PAGE_LORE),
+	PREV_PAGE_OFF(ItemStackUtils.HEAD_URL_ARROW_PREV_OFF, Message.GENERAL_GUI_PREV_PAGE_NAME, Message.GENERAL_GUI_PREV_PAGE_LORE),
+	NEXT_PAGE(ItemStackUtils.HEAD_URL_ARROW_NEXT, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE),
+	NEXT_PAGE_OFF(ItemStackUtils.HEAD_URL_ARROW_NEXT_OFF, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE),
 
 	ACCEPT(Material.LIME_CONCRETE, Message.GENERAL_GUI_ACCEPT_NAME, Message.GENERAL_GUI_ACCEPT_LORE),
 	DECLINE(Material.RED_CONCRETE, Message.GENERAL_GUI_DECLINE_NAME, Message.GENERAL_GUI_DECLINE_LORE),
@@ -30,7 +30,6 @@ public enum DefaultSpecialItem {
 	MANAGER_MAIN_WEBINTERFACE(ItemStackUtils.MATERIAL_WEBINTERFACE, Message.MANAGER_GUI_MAIN_WEBINTERFACE_NAME, Message.MANAGER_GUI_MAIN_WEBINTERFACE_LORE),
 
 	MANAGER_SHOPS_NEW(Material.EMERALD, Message.MANAGER_GUI_SHOPS_NEW_NAME, Message.MANAGER_GUI_SHOPS_NEW_LORE),
-
 
 	;
 
@@ -49,12 +48,8 @@ public enum DefaultSpecialItem {
 		this.item = ItemStackUtils.createItemStack(material, displayName.getTranslation(), lore.getTranslations());
 	}
 
-	DefaultSpecialItem(int hdbId, Message name, Message lore) {
-		this.item = ItemStackUtils.createItemStack(Material.PLAYER_HEAD, name, lore);
-	}
-
-	DefaultSpecialItem(int hdbId, String displayName, @Nullable String lore) {
-		this.item = ItemStackUtils.createItemStack(Material.PLAYER_HEAD, displayName, lore);
+	DefaultSpecialItem(String headUrl, Message name, Message lore) {
+		this.item = ItemStackUtils.createCustomHead(headUrl, name, lore);
 	}
 
 	public ItemStack createSpecialItem() {

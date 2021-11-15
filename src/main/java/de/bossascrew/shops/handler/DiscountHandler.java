@@ -56,6 +56,11 @@ public class DiscountHandler implements WebAccessable<Discount> {
 		handleDiscountStart(discount);
 	}
 
+	public void deleteDiscount(Discount discount) {
+		ShopPlugin.getInstance().getDatabase().deleteDiscount(discount);
+		discountMap.remove(discount.getUuid()); //TODO update all shops
+	}
+
 	public void handleDiscountStart(Discount discount) {
 		for (Map.Entry<ShopMenu, ShopEntry> subscriber : subscribers.getOrDefault(discount, new HashMap<>()).entrySet()) {
 			//Update all subscribed shop menus that are currently open (so the player sees the new price without discount)

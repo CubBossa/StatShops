@@ -29,7 +29,7 @@ public class Config {
 	private Material shopSellIconMaterial = Material.GOLD_INGOT;
 	private Material shopTradeIconMaterial = Material.EMERALD;
 
-
+	private boolean confirmTagDeletion = false;
 
 	public Config(String fileName) {
 

@@ -26,6 +26,13 @@ public class TestDatabase implements Database {
 	public Map<UUID, Shop> loadShops() {
 		Map<UUID, Shop> map = new HashMap<>();
 		Shop s1 = createShop("<rainbow>ExampleShop</rainbow>", UUID.randomUUID());
+		s1.addTag("swords");
+		s1.addTag("rainbow");
+		s1.addTag("i am a tag");
+		s1.addTag("ululu");
+		for (int i = 0; i < 14; i++) {
+			s1.addTag("tag" + i);
+		}
 		Shop s2 = createShop("<white>Boring Shop", UUID.randomUUID());
 		map.put(s1.getUUID(), s1);
 		map.put(s2.getUUID(), s2);
@@ -79,6 +86,11 @@ public class TestDatabase implements Database {
 
 	@Override
 	public void saveDiscount(Discount discount) {
+
+	}
+
+	@Override
+	public void deleteDiscount(Discount discount) {
 
 	}
 }

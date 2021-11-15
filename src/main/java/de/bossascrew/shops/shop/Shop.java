@@ -46,6 +46,8 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 	 */
 	@Nullable String getPermission();
 
+	void setPermission(@Nullable String permission);
+
 	/**
 	 * @return The amount of pages of this shop. It may be calculated from the highest slot index.
 	 */

@@ -17,6 +17,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -78,17 +79,18 @@ public class ShopManagementMenu {
 					return;
 				}
 				if (clickContext.getAction().equals(delete)) {
-					ConfirmMenu confirmMenu = new ConfirmMenu("Are you sure to delete?", backContext -> openShopMenu(player, shop, page));//TODO translation
+					ConfirmMenu confirmMenu = new ConfirmMenu(Message.MANAGER_GUI_SHOPS_DELETE_CONFIRM
+							.getTranslation(Template.of("shop", shop.getName())), backContext -> openShopsMenu(player, chestMenu.getCurrentPage()));
 					confirmMenu.setAcceptHandler(clickContext1 -> {
 						ShopHandler.getInstance().deleteShop(shop);
-						openShopsMenu(player, 0);
+						openShopsMenu(player, chestMenu.getCurrentPage());
 					});
 					confirmMenu.setDenyHandler(clickContext1 -> {
-						openShopsMenu(player, page);
+						openShopsMenu(player, chestMenu.getCurrentPage());
 					});
 					confirmMenu.openInventory(player);
 				} else {
-					openShopMenu(player, shop, page);
+					openShopMenu(player, shop, chestMenu.getCurrentPage());
 				}
 			});
 		}
@@ -96,12 +98,12 @@ public class ShopManagementMenu {
 			player.closeInventory();
 			new AnvilGUI.Builder()
 					.plugin(ShopPlugin.getInstance())
-					.text("Shopname")
-					.title("asd") //TODO translation
-					.onClose(p -> openShopsMenu(p, page)) //TODO man kann items aus diesem inv nehmen?
+					.text("name")
+					.title(Message.MANAGER_GUI_SHOPS_NEW_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openShopsMenu(p, chestMenu.getCurrentPage()), 1L))
 					.onComplete((p, s) -> {
 						ShopHandler.getInstance().createShop(s);
-						openShopsMenu(player, page);
+						openShopsMenu(player, chestMenu.getCurrentPage());
 						return AnvilGUI.Response.close();
 					}).open(player);
 		});
@@ -119,19 +121,39 @@ public class ShopManagementMenu {
 		//Set name
 		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_SHOP,
 				Message.MANAGER_GUI_SHOP_SET_NAME_NAME, Message.MANAGER_GUI_SHOP_SET_NAME_LORE), clickContext -> {
-			//TODO anvil menü öffnen
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.plugin(ShopPlugin.getInstance())
+					.text(shop.getNameFormat())
+					.title(Message.MANAGER_GUI_SHOP_SET_NAME_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openShopMenu(p, shop, fromPage), 1L))
+					.onComplete((p, s) -> {
+						shop.setNameFormat(s);
+						openShopMenu(player, shop, fromPage);
+						return AnvilGUI.Response.close();
+					}).open(player);
 		});
 		//Set permissions
 		chestMenu.setItemAndClickHandler(0, 2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
 				Message.MANAGER_GUI_SHOP_SET_PERMISSION_NAME.getTranslation(), Message.MANAGER_GUI_SHOP_SET_PERMISSION_LORE.getTranslations(
 						Template.of("permission", shop.getPermission() == null ? "X" : shop.getPermission())
 				)), clickContext -> {
-			//TODO anvil menü öffnen
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.plugin(ShopPlugin.getInstance())
+					.text("shop.open." + shop.getNamePlain().toLowerCase() + ".")
+					.title(Message.MANAGER_GUI_SHOP_SET_PERMISSION_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openShopMenu(p, shop, fromPage), 1L))
+					.onComplete((p, s) -> {
+						shop.setPermission(s);
+						openShopMenu(player, shop, fromPage);
+						return AnvilGUI.Response.close();
+					}).open(player);
 		});
 		//Open Tags menu
 		chestMenu.setItemAndClickHandler(0, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
 						Message.MANAGER_GUI_SHOP_SET_TAGS_NAME, Message.MANAGER_GUI_SHOP_SET_TAGS_LORE),
-				clickContext -> openShopTagsMenu(player, shop, 0));
+				clickContext -> openShopTagsMenu(player, shop, fromPage, 0));
 		//Open Limits menu
 		chestMenu.setItemAndClickHandler(0, 5, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
 						Message.MANAGER_GUI_SHOP_SET_LIMITS_NAME, Message.MANAGER_GUI_SHOP_SET_LIMITS_LORE),
@@ -143,7 +165,8 @@ public class ShopManagementMenu {
 
 		chestMenu.setItemAndClickHandler(0, 8, ItemStackUtils.createItemStack(Material.BARRIER,
 				Message.GENERAL_GUI_DELETE_NAME, Message.GENERAL_GUI_DELETE_LORE), clickContext -> {
-			ConfirmMenu confirmMenu = new ConfirmMenu("Are you sure?", backContext -> openShopMenu(player, shop, fromPage));//TODO translation
+			ConfirmMenu confirmMenu = new ConfirmMenu(Message.MANAGER_GUI_SHOPS_DELETE_CONFIRM
+					.getTranslation(Template.of("shop", shop.getName())), backContext -> openShopMenu(player, shop, fromPage));
 			confirmMenu.setCloseHandler(closeContext -> {
 				shop.setEnabled(true); //TODO nur wenn booleansetting verändert wurde
 				shop.setEditor(null);
@@ -322,11 +345,52 @@ public class ShopManagementMenu {
 				openShopEditor(player, shop, fromPage, shopMode.getNext(), shopPage);
 			}
 		});
+		menu.setItemAndClickHandlerBottom(0, 7, ItemStackUtils.createCustomHead(ItemStackUtils.HEAD_URL_LETTER_T,
+				Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME, Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE), clickContext -> {
+			//TODO template entries adden
+		});
 		menu.openInventory(player);
 	}
 
-	public void openShopTagsMenu(Player player, Shop shop, int page) {
-		player.sendMessage("openShopTagsMenu");
+	public void openShopTagsMenu(Player player, Shop shop, int fromPage, int page) {
+		PagedChestMenu menu = new PagedChestMenu(Message.MANAGER_GUI_SHOP_TAGS_TITLE.getTranslation(
+				Template.of("shop", shop.getName())), 3, null, null, backContext -> {
+			openShopMenu(player, shop, fromPage);
+		});
+		menu.setNavigationEntry(7, ItemStackUtils.createItemStack(Material.EMERALD,
+				Message.MANAGER_GUI_SHOP_TAGS_NEW_TAG_NAME, Message.MANAGER_GUI_SHOP_TAGS_NEW_TAG_LORE), clickContext -> {
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.plugin(ShopPlugin.getInstance())
+					.text("tag-me")
+					.title(Message.MANAGER_GUI_SHOP_TAGS_NEW_TAG_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openShopTagsMenu(p, shop, fromPage, page), 1L))
+					.onComplete((p, s) -> {
+						shop.addTag(s);
+						openShopTagsMenu(player, shop, fromPage, menu.getPageCount() - 1);
+						return AnvilGUI.Response.close();
+					}).open(player);
+		});
+		for (String tag : shop.getTags()) {
+			menu.addMenuEntry(ItemStackUtils.createItemStack(Material.NAME_TAG, Component.text(tag, NamedTextColor.WHITE), new ArrayList<>()), clickContext -> {
+				if (clickContext.getAction().isRightClick()) {
+					if (ShopPlugin.getInstance().getShopsConfig().isConfirmTagDeletion()) {
+						ConfirmMenu confirmMenu = new ConfirmMenu(Message.GENERAL_GUI_REMOVE_TAG.getTranslation(Template.of("tag", tag)));
+						confirmMenu.setDenyHandler(c -> openShopTagsMenu(player, shop, fromPage, menu.getCurrentPage()));
+						confirmMenu.setCloseHandler(c -> openShopTagsMenu(player, shop, fromPage, menu.getCurrentPage()));
+						confirmMenu.setAcceptHandler(c -> {
+							shop.removeTag(tag);
+							openShopTagsMenu(player, shop, fromPage, menu.getCurrentPage());
+						});
+						confirmMenu.openInventory(player);
+					} else {
+						shop.removeTag(tag);
+						openShopTagsMenu(player, shop, fromPage, menu.getCurrentPage());
+					}
+				}
+			});
+		}
+		menu.openInventory(player, page);
 	}
 
 	public void openShopLimitsMenu(Player player, Shop shop, int page) {
@@ -367,7 +431,20 @@ public class ShopManagementMenu {
 							Template.of("player", discount.getEditor().getName())));
 					return;
 				}
-				openDiscountMenu(player, discount, page);
+				if (clickContext.getAction().equals(delete)) {
+					ConfirmMenu confirmMenu = new ConfirmMenu(Message.MANAGER_GUI_DISCOUNTS_DELETE_CONFIRM
+							.getTranslation(Template.of("discount", discount.getName())), backContext -> openShopsMenu(player, page));
+					confirmMenu.setAcceptHandler(clickContext1 -> {
+						DiscountHandler.getInstance().deleteDiscount(discount);
+						openDiscountsMenu(player, 0);
+					});
+					confirmMenu.setDenyHandler(clickContext1 -> {
+						openDiscountsMenu(player, page);
+					});
+					confirmMenu.openInventory(player);
+				} else {
+					openDiscountMenu(player, discount, page);
+				}
 			});
 		}
 		chestMenu.setNavigationEntry(7, ItemStackUtils.createItemStack(Material.EMERALD,
@@ -375,9 +452,9 @@ public class ShopManagementMenu {
 			player.closeInventory();
 			new AnvilGUI.Builder()
 					.plugin(ShopPlugin.getInstance())
-					.text("Discountname")
-					.title("asd") //TODO translation
-					.onClose(p -> openDiscountsMenu(p, page)) //TODO man kann items aus diesem inv nehmen?
+					.text("name")
+					.title(Message.MANAGER_GUI_DISCOUNTS_NEW_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openDiscountsMenu(player, page), 1L))
 					.onComplete((p, s) -> {
 						DiscountHandler.getInstance().createDiscount(s, LocalDateTime.now().plus(1, ChronoUnit.DAYS),
 								Duration.of(3, ChronoUnit.DAYS), 10);

@@ -224,15 +224,23 @@ public class ChestMenuShop implements Shop {
 		return uuid;
 	}
 
+	public void setPermission(String permission) {
+		this.permission = permission != null ? permission.equalsIgnoreCase("null") ? null : permission : null;
+	}
+
 	@Override
 	public List<String> getTags() {
 		List<String> list = new ArrayList<>(tags);
 		list.add(uuid.toString());
+		list.sort(String::compareTo);
 		return list;
 	}
 
 	@Override
 	public boolean addTag(String tag) {
+		if (tags.contains(tag)) {
+			return false;
+		}
 		return tags.add(tag);
 	}
 

@@ -29,6 +29,7 @@ public enum Message {
 	GENERAL_GUI_ACCEPT_LORE("general.gui.accept.lore"),
 	GENERAL_GUI_DECLINE_NAME("general.gui.decline.name"),
 	GENERAL_GUI_DECLINE_LORE("general.gui.decline.lore"),
+	GENERAL_GUI_REMOVE_TAG("general.gui.remove_tag"),
 
 	SHOP_NO_PERMISSION("shop.no_permission"),
 	SHOP_NOT_ENABLED("shop.not_enabled"),
@@ -57,14 +58,18 @@ public enum Message {
 	MANAGER_GUI_MAIN_WEBINTERFACE_LORE("manager.gui.main.webinterface.lore"),
 
 	MANAGER_GUI_SHOPS_TITLE("manager.gui.shops.title"),
+	MANAGER_GUI_SHOPS_DELETE_CONFIRM("manager.gui.shops.confirm_delete"),
+	MANAGER_GUI_SHOPS_NEW_TITLE("manager.gui.shops.new_shop.title"),
 	MANAGER_GUI_SHOPS_NEW_NAME("manager.gui.shops.new_shop.name"),
 	MANAGER_GUI_SHOPS_NEW_LORE("manager.gui.shops.new_shop.lore"),
 	MANAGER_GUI_SHOPS_NAME("manager.gui.shops.entry.name"),
 	MANAGER_GUI_SHOPS_LORE("manager.gui.shops.entry.lore"),
 	MANAGER_GUI_SHOPS_ALREADY_EDITED("manager.gui.shops.already_edited"),
 
+	MANAGER_GUI_SHOP_SET_NAME_TITLE("manager.gui.shop.set_name.title"),
 	MANAGER_GUI_SHOP_SET_NAME_NAME("manager.gui.shop.set_name.name"),
 	MANAGER_GUI_SHOP_SET_NAME_LORE("manager.gui.shop.set_name.lore"),
+	MANAGER_GUI_SHOP_SET_PERMISSION_TITLE("manager.gui.shop.set_permission.title"),
 	MANAGER_GUI_SHOP_SET_PERMISSION_NAME("manager.gui.shop.set_permission.name"),
 	MANAGER_GUI_SHOP_SET_PERMISSION_LORE("manager.gui.shop.set_permission.lore"),
 	MANAGER_GUI_SHOP_SET_TAGS_NAME("manager.gui.shop.set_tags.name"),
@@ -90,6 +95,14 @@ public enum Message {
 	MANAGER_GUI_SHOP_SET_ROWS_NAME("manager.gui.shop.set_rows.name"),
 	MANAGER_GUI_SHOP_SET_ROWS_LORE("manager.gui.shop.set_rows.lore"),
 
+	MANAGER_GUI_SHOP_TAGS_TITLE("manager.gui.shop_tags.title"),
+	MANAGER_GUI_SHOP_TAGS_NEW_TAG_TITLE("manager.gui.shop_tags.new_tag.title"),
+	MANAGER_GUI_SHOP_TAGS_NEW_TAG_NAME("manager.gui.shop_tags.new_tag.name"),
+	MANAGER_GUI_SHOP_TAGS_NEW_TAG_LORE("manager.gui.shop_tags.new_tag.lore"),
+
+	MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME("manager.gui.shop_editor.template.name"),
+	MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE("manager.gui.shop_editor.template.lore"),
+
 	MANAGER_GUI_LIMITS("manager.gui.limits.title"),
 	MANAGER_GUI_LIMITS_ENTRY_NAME("manager.gui.limits.entry.name"),
 	MANAGER_GUI_LIMITS_ENTRY_LORE("manager.gui.limits.entry.lore"),
@@ -97,9 +110,11 @@ public enum Message {
 	MANAGER_GUI_LIMITS_NEW_LORE("manager.gui.limits.new.lore"),
 
 	MANAGER_GUI_DISCOUNTS("manager.gui.discounts.title"),
+	MANAGER_GUI_DISCOUNTS_DELETE_CONFIRM("manager.gui.discounts.confirm_delete"),
 	MANAGER_GUI_DISCOUNTS_ALREADY_EDITED("manager.gui.discounts.already_edited"),
 	MANAGER_GUI_DISCOUNTS_ENTRY_NAME("manager.gui.discounts.entry.name"),
 	MANAGER_GUI_DISCOUNTS_ENTRY_LORE("manager.gui.discounts.entry.lore"),
+	MANAGER_GUI_DISCOUNTS_NEW_TITLE("manager.gui.discounts.new.title"),
 	MANAGER_GUI_DISCOUNTS_NEW_NAME("manager.gui.discounts.new.name"),
 	MANAGER_GUI_DISCOUNTS_NEW_LORE("manager.gui.discounts.new.lore"),
 

@@ -33,4 +33,6 @@ public interface Database {
 
 	void saveDiscount(Discount discount);
 
+	void deleteDiscount(Discount discount);
+
 }

@@ -41,6 +41,9 @@ public class PagedChestMenu {
 
 	private final int entriesPerPage;
 
+	@Getter
+	private int currentPage;
+
 	private final List<PagedMenuEntry> menuEntries = Lists.newArrayList();
 
 	private final PagedMenuEntry[] navigationEntries = new PagedMenuEntry[RowedOpenableMenu.ROW_SIZE - 2];
@@ -141,7 +144,7 @@ public class PagedChestMenu {
 		menu.setItemAndClickHandler(menu.getRowCount() - 1, 0, page > 0 ?
 				DefaultSpecialItem.PREV_PAGE.createSpecialItem() : DefaultSpecialItem.PREV_PAGE_OFF.createSpecialItem(), c -> {
 			if (page > 0) {
-				getInvMenuForPage(page - 1).openInventory(c.getPlayer());
+				openInventory(c.getPlayer(), page - 1);
 			}
 		});
 
@@ -149,7 +152,7 @@ public class PagedChestMenu {
 		menu.setItemAndClickHandler(menu.getRowCount() - 1, 1, hasPrev ?
 				DefaultSpecialItem.NEXT_PAGE.createSpecialItem() : DefaultSpecialItem.NEXT_PAGE_OFF.createSpecialItem(), c -> {
 			if (hasPrev) {
-				getInvMenuForPage(page + 1).openInventory(c.getPlayer());
+				openInventory(c.getPlayer(), page + 1);
 			}
 		});
 
@@ -161,11 +164,17 @@ public class PagedChestMenu {
 	}
 
 	public void openInventory(Player player, int page) {
-		getInvMenuForPage(page).openInventory(player);
+		this.currentPage = Integer.min(page, getPageCount() - 1);
+		System.out.println("current page " + this.currentPage);
+		getInvMenuForPage(this.currentPage).openInventory(player);
 	}
 
 	public void openInventoryLastPage(Player player) {
 		getInvMenuForLastPage().openInventory(player);
+	}
+
+	public int getPageCount() {
+		return (this.menuEntries.size() - 1) / entriesPerPage + 1;
 	}
 
 	@Data

@@ -1,5 +1,6 @@
 package de.bossascrew.shops.data;
 
+import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.shop.ChestMenuShop;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Shop;
@@ -7,6 +8,7 @@ import de.bossascrew.shops.shop.entry.ShopEntry;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,12 +17,19 @@ public class TestDatabase implements Database {
 
 	@Override
 	public Shop createShop(String nameFormat, UUID uuid) {
-		return new ChestMenuShop(nameFormat, uuid);
+		Shop shop = new ChestMenuShop(nameFormat, uuid);
+		shop.setDefaultShopMode(ShopHandler.getInstance().getShopModes().get(0));
+		return shop;
 	}
 
 	@Override
 	public Map<UUID, Shop> loadShops() {
-		return new HashMap<>();
+		Map<UUID, Shop> map = new HashMap<>();
+		Shop s1 = createShop("<rainbow>ExampleShop</rainbow>", UUID.randomUUID());
+		Shop s2 = createShop("<white>Boring Shop", UUID.randomUUID());
+		map.put(s1.getUUID(), s1);
+		map.put(s2.getUUID(), s2);
+		return map;
 	}
 
 	@Override
@@ -60,7 +69,12 @@ public class TestDatabase implements Database {
 
 	@Override
 	public Map<UUID, Discount> loadDiscounts() {
-		return new HashMap<>();
+		Map<UUID, Discount> map = new HashMap<>();
+		Discount d1 = new Discount(UUID.randomUUID(), "<red>XMas Discount", LocalDateTime.now(), Duration.of(3, ChronoUnit.DAYS), 10, null);
+
+
+		map.put(d1.getUuid(), d1);
+		return map;
 	}
 
 	@Override

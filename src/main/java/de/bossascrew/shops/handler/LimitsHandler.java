@@ -1,7 +1,6 @@
 package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.Customer;
-import de.bossascrew.shops.menu.ShopMenuView;
 import de.bossascrew.shops.shop.Limit;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.web.WebAccessable;
@@ -33,7 +32,7 @@ public class LimitsHandler implements WebAccessable<Limit> {
 		return new ArrayList<>(limitMap.values());
 	}
 
-	public void handleLimitDisplay(ShopMenuView inventory, ShopEntry shopEntry, List<Component> existingLore) {
+	public void handleLimitDisplay(ShopEntry shopEntry, List<Component> existingLore) {
 
 	}
 

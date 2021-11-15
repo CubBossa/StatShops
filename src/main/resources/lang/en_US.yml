@@ -33,8 +33,8 @@ shop:
   no_permission: "<red>You don't have permission for this shop."
   not_enabled: "<red>This shop is currently disabled."
   gui:
-    # The title of a shop, possible placeholders are: <name>, <page>, <mode>
-    title: "<name>"
+    # The title of a shop, possible placeholders are: <name>, <page>, <mode>, <pages>
+    title: "<name> - Page <page>/<pages> - <mode>"
     # The lore of items that are displayed in a shop.
     item:
       lore:
@@ -51,8 +51,11 @@ shop:
       name: "<aqua>Buy"
       lore: "<gray>In this mode you \n<gray>can buy items from \n<gray>the shop."
     sell:
-      name: "<aqua>Sell"
+      name: "<gold>Sell"
       lore: "<gray>In this mode you \n<gray>can sell your items to\n<gray>the shop."
+    trade:
+      name: "<green>Trade"
+      lore: "<gray>In this mode you \n<gray>can trade your items with\n<gray>other items from the shop."
 
 manager:
   gui:
@@ -118,15 +121,18 @@ manager:
         # Valid placeholders: <value>
         name: "<white>Remember Mode: <value>"
         lore: "<gray>Decides if a shop will \n<gray>reopen at the mode a customer\n<gray> had viewed last or at the \n<gray> default mode."
+      # Valid placeholders: <name>
       set_default_mode:
-        # Valid placeholders: <name>
         name: "<white>Default Mode: <name>"
-        # Valid placeholders: <mode>
         lore: "<gray>» <mode>"
       # Valid placeholders: <page>
       set_default_page:
         name: "<white>Default Page: <page>"
         lore: "<gray>» <page>"
+      # Valid placeholders: <rows>
+      set_rows:
+        name: "<white>Menu Size: <rows> Rows"
+        lore: "<gray>» <rows> Rows"
 
     limits:
       title: "Create and manage shop limits"

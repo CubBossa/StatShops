@@ -14,6 +14,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -85,10 +86,10 @@ public class ShopPlugin extends JavaPlugin {
 		//Setup Database
 		this.database = new TestDatabase(); //TODO
 
-		//Setup ShopHandler and load shops and entrie
+		//Setup ShopHandler and load shops and entries
 		this.shopHandler = new ShopHandler();
-		//TODO load Shops with entries from Database
 		this.shopHandler.registerDefaultShopModes();
+		this.shopHandler.loadShopsFromDatabase(this.database);
 
 		//Setup and load Discounts
 		this.discountHandler = new DiscountHandler();
@@ -117,6 +118,10 @@ public class ShopPlugin extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			InventoryHandler.getInstance().handleInventoryClose(player);
+		}
 
 		if (this.bukkitAudiences != null) {
 			this.bukkitAudiences.close();

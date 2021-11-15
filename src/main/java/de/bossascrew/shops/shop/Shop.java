@@ -1,6 +1,8 @@
 package de.bossascrew.shops.shop;
 
 import de.bossascrew.shops.Customer;
+import de.bossascrew.shops.menu.contexts.BackContext;
+import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.Editable;
 import net.kyori.adventure.text.Component;
@@ -107,12 +109,16 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 	 */
 	boolean open(Customer customer);
 
+	boolean open(Customer customer, ContextConsumer<BackContext> backHandler);
+
 	/**
 	 * @param customer the customer to open this shop for.
 	 * @param page     the page to open this shop at.
 	 * @return true if the shop was opened successfully, false if errors occured
 	 */
 	boolean open(Customer customer, int page);
+
+	boolean open(Customer customer, int page, ContextConsumer<BackContext> backHandler);
 
 	/**
 	 * @param customer the customer to open this shop for.
@@ -121,6 +127,8 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 	 */
 	boolean open(Customer customer, ShopMode shopMode);
 
+	boolean open(Customer customer, ShopMode shopMode, ContextConsumer<BackContext> backHandler);
+
 	/**
 	 * @param customer the customer to open this shop for.
 	 * @param page     the page to open this shop at.
@@ -128,6 +136,8 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 	 * @return true if the shop was opened successfully, false if errors occured
 	 */
 	boolean open(Customer customer, int page, ShopMode shopMode);
+
+	boolean open(Customer customer, int page, ShopMode shopMode, ContextConsumer<BackContext> backHandler);
 
 	/**
 	 * @param customer the customer to close this shop if he currently uses it.

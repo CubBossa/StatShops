@@ -3,10 +3,14 @@ package de.bossascrew.shops.shop;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
+import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.menu.RowedOpenableMenu;
-import de.bossascrew.shops.menu.ShopMenuView;
+import de.bossascrew.shops.menu.ShopMenu;
+import de.bossascrew.shops.menu.contexts.BackContext;
+import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ComponentUtils;
+import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -40,7 +44,7 @@ public class ChestMenuShop implements Shop {
 
 	private final Map<ShopMode, TreeMap<Integer, ShopEntry>> modeEntryMap;
 	private final List<Customer> activeCustomers;
-	private final Map<Customer, ShopMenuView> menuMap;
+	private final Map<Customer, ShopMenu> menuMap;
 	private final List<String> tags;
 
 	public ChestMenuShop(String nameFormat) {
@@ -118,8 +122,9 @@ public class ChestMenuShop implements Shop {
 	public @Nullable
 	ShopMode getPreferredShopMode(Customer customer) {
 		ShopMode mode = isModeRemembered ? customer.getShopMode(this, defaultShopMode) : defaultShopMode;
-		if (!modeEntryMap.containsKey(mode)) {
-			return null;
+		if (mode == null) {
+			ShopPlugin.getInstance().log(LoggingPolicy.WARN, "Default ShopMode was null, using first registered mode.");
+			return ShopHandler.getInstance().getShopModes().get(0);
 		}
 		return mode;
 	}
@@ -128,15 +133,35 @@ public class ChestMenuShop implements Shop {
 		return open(customer, getPreferredOpenPage(customer), getPreferredShopMode(customer));
 	}
 
+	@Override
+	public boolean open(Customer customer, ContextConsumer<BackContext> backHandler) {
+		return open(customer, getPreferredOpenPage(customer), getPreferredShopMode(customer), backHandler);
+	}
+
 	public boolean open(Customer customer, int page) {
 		return open(customer, page, getPreferredShopMode(customer));
+	}
+
+	@Override
+	public boolean open(Customer customer, int page, ContextConsumer<BackContext> backHandler) {
+		return open(customer, page, getPreferredShopMode(customer), backHandler);
 	}
 
 	public boolean open(Customer customer, ShopMode mode) {
 		return open(customer, getPreferredOpenPage(customer), mode);
 	}
 
+	@Override
+	public boolean open(Customer customer, ShopMode shopMode, ContextConsumer<BackContext> backHandler) {
+		return open(customer, getPreferredOpenPage(customer), shopMode, backHandler);
+	}
+
 	public boolean open(Customer customer, int page, ShopMode mode) {
+		return open(customer, getPreferredOpenPage(customer), mode, null);
+	}
+
+	@Override
+	public boolean open(Customer customer, int page, ShopMode shopMode, @Nullable ContextConsumer<BackContext> backHandler) {
 		if (!enabled) {
 			customer.sendMessage(Message.SHOP_NOT_ENABLED);
 			return false;
@@ -145,17 +170,20 @@ public class ChestMenuShop implements Shop {
 			customer.sendMessage(Message.SHOP_NO_PERMISSION);
 			return false;
 		}
-		ShopMenuView menu = new ShopMenuView(this);
-		menu.openShop(customer);
+		ShopMenu menu = new ShopMenu(this, backHandler);
+		menu.openInventory(customer);
 		menuMap.put(customer, menu);
+
+		customer.setActiveShop(this);
 		activeCustomers.add(customer);
+
 		return true;
 	}
 
 	public boolean close(Customer customer) {
-		ShopMenuView menu = menuMap.get(customer);
+		ShopMenu menu = menuMap.get(customer);
 		if (menu != null) {
-			if (customer.getPlayer().getOpenInventory().equals(menu.getInventoryView())) {
+			if (customer.getPlayer().getOpenInventory().getTopInventory().equals(menu.getInventory())) {
 				customer.getPlayer().closeInventory();
 			}
 			menuMap.remove(customer);
@@ -181,6 +209,14 @@ public class ChestMenuShop implements Shop {
 			return ShopInteractionResult.FAIL_NO_PERMISSION;
 		}
 		return entry.buy(customer);
+	}
+
+	public void setRows(int rows) {
+		this.rows = rows % 6;
+		if(this.rows <= 0) {
+			this.rows += 6;
+		}
+		//all rows between 1 - 6
 	}
 
 	@Override

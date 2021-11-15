@@ -1,7 +1,7 @@
 package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.ShopPlugin;
-import de.bossascrew.shops.menu.ShopMenuView;
+import de.bossascrew.shops.menu.ShopMenu;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Taggable;
 import de.bossascrew.shops.shop.entry.ShopEntry;
@@ -23,7 +23,7 @@ public class DiscountHandler implements WebAccessable<Discount> {
 	private final Map<UUID, Discount> discountMap;
 	private final Map<String, List<Discount>> tagMap;
 
-	private final Hashtable<Discount, Map<ShopMenuView, ShopEntry>> subscribers;
+	private final Hashtable<Discount, Map<ShopMenu, ShopEntry>> subscribers;
 
 	public DiscountHandler() {
 		instance = this;
@@ -57,16 +57,16 @@ public class DiscountHandler implements WebAccessable<Discount> {
 	}
 
 	public void handleDiscountStart(Discount discount) {
-		for (Map.Entry<ShopMenuView, ShopEntry> subscriber : subscribers.getOrDefault(discount, new HashMap<>()).entrySet()) {
+		for (Map.Entry<ShopMenu, ShopEntry> subscriber : subscribers.getOrDefault(discount, new HashMap<>()).entrySet()) {
 			//Update all subscribed shop menus that are currently open (so the player sees the new price without discount)
-			subscriber.getKey().update(subscriber.getValue());
+			subscriber.getKey().updateEntry(subscriber.getValue());
 		}
 	}
 
 	public void handleDiscountExpire(Discount discount) {
-		for (Map.Entry<ShopMenuView, ShopEntry> subscriber : subscribers.getOrDefault(discount, new HashMap<>()).entrySet()) {
+		for (Map.Entry<ShopMenu, ShopEntry> subscriber : subscribers.getOrDefault(discount, new HashMap<>()).entrySet()) {
 			//Update all subscribed shop menus that are currently open (so the player sees the new price without discount)
-			subscriber.getKey().update(subscriber.getValue());
+			subscriber.getKey().updateEntry(subscriber.getValue());
 		}
 	}
 
@@ -74,14 +74,14 @@ public class DiscountHandler implements WebAccessable<Discount> {
 		//TODO aus allen subscribern rausnehmen
 	}
 
-	public void subscribeToDisplayUpdates(ShopMenuView view, ShopEntry shopEntry) {
+	public void subscribeToDisplayUpdates(ShopMenu view, ShopEntry shopEntry) {
 		List<Discount> discounts = getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
 		for (Discount discount : discounts) {
 			//TODO subscriben
 		}
 	}
 
-	public void addDiscountsLore(ShopMenuView view, ShopEntry shopEntry, List<Component> lore) {
+	public void addDiscountsLore(ShopEntry shopEntry, List<Component> lore) {
 		List<Discount> discounts = getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
 		ItemStackUtils.addLoreDiscount(lore, discounts);
 	}

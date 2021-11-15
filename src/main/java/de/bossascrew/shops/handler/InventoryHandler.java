@@ -2,7 +2,6 @@ package de.bossascrew.shops.handler;
 
 import com.google.common.collect.Maps;
 import de.bossascrew.shops.ShopPlugin;
-import de.bossascrew.shops.menu.InventoryMenu;
 import de.bossascrew.shops.menu.OpenableMenu;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -29,11 +28,9 @@ public class InventoryHandler {
 		instance = this;
 	}
 
-	public void handleMenuOpen(Player player) {
-		InventoryMenu<?, ?, ?, ?> open = openOpenableMenus.get(player.getUniqueId());
-		if (open != null) {
-			open.closeInventory(player);
-		}
+	public void handleMenuOpen(Player player, OpenableMenu menu) {
+		handleInventoryClose(player);
+		this.openOpenableMenus.put(player.getUniqueId(), menu);
 	}
 
 	public void handleInventoryClick(Player player, InventoryClickEvent event) {

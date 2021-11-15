@@ -1,5 +1,6 @@
 package de.bossascrew.shops.menu;
 
+import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Config;
 import de.bossascrew.shops.data.Message;
@@ -155,29 +156,30 @@ public class ShopManagementMenu {
 			confirmMenu.openInventory(player);
 		});
 
-		chestMenu.setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(Material.CHEST,
+		chestMenu.setItemAndClickHandler(1, 1, ItemStackUtils.createItemStack(Material.SMITHING_TABLE,
 				Message.MANAGER_GUI_SHOP_SET_CONTENT_NAME, Message.MANAGER_GUI_SHOP_SET_CONTENT_LORE), clickContext -> {
 			if (shop instanceof ChestMenuShop chestMenuShop) {
-				openShopEditor(player, chestMenuShop, fromPage, 0);
+				openShopEditor(player, chestMenuShop, fromPage, shop.getDefaultShopMode(), shop.getDefaultShopPage());
 			} else {
 				player.sendMessage("not possible due to shop type"); //TODO
 			}
 		});
+		chestMenu.setItemAndClickHandler(1, 2, ItemStackUtils.createItemStack(Material.CHEST,
+				Message.MANAGER_GUI_SHOP_SET_PREVIEW_NAME, Message.MANAGER_GUI_SHOP_SET_PREVIEW_LORE), clickContext -> {
+			shop.open(Customer.wrap(player), backContext -> openShopMenu(player, shop, fromPage));
+		});
 
 		//Shopmode switch button
-		if (shop.getDefaultShopMode() != null) {
-
+		chestMenu.setItem(19, getDefaultModeItem(shop.getDefaultShopMode()));
+		chestMenu.setClickHandler(19, clickContext -> {
+			if (clickContext.getAction().isRightClick()) {
+				shop.setDefaultShopMode(shop.getDefaultShopMode().getPrevious());
+			} else if (clickContext.getAction().isLeftClick()) {
+				shop.setDefaultShopMode(shop.getDefaultShopMode().getNext());
+			}
 			chestMenu.setItem(19, getDefaultModeItem(shop.getDefaultShopMode()));
-			chestMenu.setClickHandler(19, clickContext -> {
-				if (clickContext.getAction().isRightClick()) {
-					shop.setDefaultShopMode(shop.getDefaultShopMode().getNext());
-				} else if (clickContext.getAction().isLeftClick()) {
-					shop.setDefaultShopMode(shop.getDefaultShopMode().getPrevious());
-				}
-				chestMenu.setItem(19, getDefaultModeItem(shop.getDefaultShopMode()));
-				chestMenu.refresh(19);
-			});
-		}
+			chestMenu.refresh(19);
+		});
 		chestMenu.setItemAndClickHandler(20, getDefaultPageItem(shop, shop.getDefaultShopPage()), clickContext -> {
 			if (clickContext.getAction().isRightClick()) {
 				shop.setDefaultShopPage((shop.getDefaultShopPage() - 1) % shop.getPageCount());
@@ -187,7 +189,17 @@ public class ShopManagementMenu {
 			chestMenu.setItem(20, getDefaultPageItem(shop, shop.getDefaultShopPage()));
 			chestMenu.refresh(20);
 		});
-
+		if (shop instanceof ChestMenuShop chestMenuShop) {
+			chestMenu.setItemAndClickHandler(21, getRowsItem(chestMenuShop.getRows()), clickContext -> {
+				if (clickContext.getAction().isRightClick()) {
+					chestMenuShop.setRows(chestMenuShop.getRows() - 1);
+				} else if (clickContext.getAction().isLeftClick()) {
+					chestMenuShop.setRows(chestMenuShop.getRows() + 1);
+				}
+				chestMenu.setItem(21, getRowsItem(chestMenuShop.getRows()));
+				chestMenu.refresh(21);
+			});
+		}
 
 		//Set shop enabled
 		ItemStack shopEnabled = getButton(shop.isEnabled(),
@@ -231,13 +243,36 @@ public class ShopManagementMenu {
 		chestMenu.openInventory(player);
 	}
 
+	private ItemStack getRowsItem(int row) {
+		List<Component> lore = new ArrayList<>();
+		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
+		int prev = row - 1 % 6;
+		if(prev <= 0) {
+			prev +=6;
+		}
+		int next = row + 1 % 6;
+		if(next <= 0) {
+			next +=6;
+		}
+		if(row == 0) {
+			row = 6;
+		}
+		lore.add(Message.MANAGER_GUI_SHOP_SET_ROWS_LORE.getTranslation(Template.of("rows", "" + prev)));
+		lore.add(Message.MANAGER_GUI_SHOP_SET_ROWS_LORE.getTranslation(Template.of("rows", "" + row)));
+		lore.add(Message.MANAGER_GUI_SHOP_SET_ROWS_LORE.getTranslation(Template.of("rows", "" + next)));
+		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
+
+		return ItemStackUtils.createItemStack(Material.RAIL, Message.MANAGER_GUI_SHOP_SET_ROWS_NAME.getTranslation(
+				Template.of("rows", "" + row)), lore);
+	}
+
 	private ItemStack getDefaultModeItem(ShopMode shopMode) {
 		ItemStack modeItem = shopMode.getDisplayItem();
 		List<Component> lore = new ArrayList<>();
 		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
 		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getPrevious().getDisplayName().color(NamedTextColor.GRAY))));
 		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getDisplayName())));
-		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getPrevious().getDisplayName().color(NamedTextColor.GRAY))));
+		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getNext().getDisplayName().color(NamedTextColor.GRAY))));
 		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
 		ItemStack item = ItemStackUtils.createItemStack(modeItem.getType(),
 				Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_NAME.getTranslation(Template.of("name", modeItem.getItemMeta().getDisplayName())),
@@ -263,16 +298,29 @@ public class ShopManagementMenu {
 				lore.getTranslations(Template.of("value", val + "")));
 	}
 
-	public void openShopEditor(Player player, ChestMenuShop shop, int fromPage, int shopPage) {
-		BottomTopChestMenu menu = new BottomTopChestMenu(shop.getName(), shop.getRows(), 1);
+	public void openShopEditor(Player player, ChestMenuShop shop, int fromPage, ShopMode shopMode, int shopPage) {
+		BottomTopChestMenu menu = new BottomTopChestMenu(Message.SHOP_GUI_TITLE.getTranslation(
+				Template.of("name", shop.getName()),
+				Template.of("page", "" + (shopPage + 1)),
+				Template.of("pages", "" + Integer.max(shop.getPageCount(), shopPage + 1)),
+				Template.of("mode", shopMode.getDisplayName())), shop.getRows(), 1);
 		menu.fillBottom();
 		menu.setBackSlotBottom(8);
 		menu.setBackHandlerAction(backContext -> openShopMenu(player, shop, fromPage));
-		menu.setItemAndClickHandlerBottom(0, 0, DefaultSpecialItem.PREV_PAGE, clickContext -> {
-
+		menu.setItemAndClickHandlerBottom(0, 0, shopPage > 0 ? DefaultSpecialItem.PREV_PAGE : DefaultSpecialItem.PREV_PAGE_OFF, clickContext -> {
+			openShopEditor(player, shop, fromPage, shopMode, shopPage > 0 ? shopPage - 1 : shopPage);
 		});
 		menu.setItemAndClickHandlerBottom(0, 1, DefaultSpecialItem.NEXT_PAGE, clickContext -> {
-
+			openShopEditor(player, shop, fromPage, shopMode, shopPage + 1);
+		});
+		menu.setItemAndClickHandlerBottom(0, 2, getDefaultModeItem(shop.getDefaultShopMode()), clickContext -> {
+			if (clickContext.getAction().isRightClick()) {
+				shop.setDefaultShopMode(shop.getDefaultShopMode().getPrevious());
+				openShopEditor(player, shop, fromPage, shopMode.getPrevious(), shopPage);
+			} else if (clickContext.getAction().isLeftClick()) {
+				shop.setDefaultShopMode(shop.getDefaultShopMode().getNext());
+				openShopEditor(player, shop, fromPage, shopMode.getNext(), shopPage);
+			}
 		});
 		menu.openInventory(player);
 	}

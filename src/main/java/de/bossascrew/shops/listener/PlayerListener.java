@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 @RequiredArgsConstructor
 public class PlayerListener implements Listener {
@@ -19,7 +20,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		if(ShopPlugin.getInstance().isLoading()) {
+		if (ShopPlugin.getInstance().isLoading()) {
 			event.getPlayer().kickPlayer("Server is still starting");
 			return;
 		}
@@ -27,8 +28,13 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler
+	public void onQuit(PlayerQuitEvent event) {
+		InventoryHandler.getInstance().handleInventoryClose(event.getPlayer());
+	}
+
+	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		if(shopPlugin.isLoading()) {
+		if (shopPlugin.isLoading()) {
 			return;
 		}
 		if (event.getWhoClicked() instanceof Player player) {

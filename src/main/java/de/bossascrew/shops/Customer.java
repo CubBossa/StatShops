@@ -52,6 +52,14 @@ public class Customer {
 		return rememberedShopModes.getOrDefault(shop, fallback);
 	}
 
+	public void setPage(Shop shop, int page) {
+		this.rememberedShopPages.put(shop, page);
+	}
+
+	public void setMode(Shop shop, ShopMode shopMode) {
+		this.rememberedShopModes.put(shop, shopMode);
+	}
+
 	public void sendMessage(Message message) {
 		sendMessage(message.getTranslation());
 	}

@@ -36,7 +36,7 @@ public class BottomTopChestMenu extends ChestMenu {
 
 	private final Map<Player, ItemStack[]> inventories;
 
-	public BottomTopChestMenu(Component title, int rows, int bottomRows) { //TODO spielerinventar zwischenspeichern
+	public BottomTopChestMenu(Component title, int rows, int bottomRows) {
 		super(title, rows);
 		this.bottomRows = bottomRows;
 		this.slots = getSlotsFromRows(rows, bottomRows);
@@ -60,19 +60,6 @@ public class BottomTopChestMenu extends ChestMenu {
 		for (int i = 0; i < bottomRows * ROW_SIZE; i++) {
 			player.getInventory().setItem(i + ROW_SIZE, inventories.get(player)[i]);
 		}
-	}
-
-	@Override
-	public void setCloseHandler(@Nullable ContextConsumer<CloseContext> closeHandler) {
-		super.setCloseHandler(closeContext -> {
-			for (int i = ROW_SIZE; i < (bottomRows + 1) * ROW_SIZE; i++) {
-				closeContext.getPlayer().getInventory().setItem(i, null);
-			}
-			loadInventory(closeContext.getPlayer());
-			if (closeHandler != null) {
-				closeHandler.accept(closeContext);
-			}
-		});
 	}
 
 	@Override
@@ -120,6 +107,9 @@ public class BottomTopChestMenu extends ChestMenu {
 			player.wakeup(true);
 		}
 
+		// close actual inventories first so we don't override the original inventory
+		InventoryHandler.getInstance().handleInventoryClose(player);
+
 		saveInventory(player);
 		for (int i = ROW_SIZE; i < (bottomRows + 1) * ROW_SIZE; i++) {
 			player.getInventory().setItem(i, null);
@@ -156,10 +146,31 @@ public class BottomTopChestMenu extends ChestMenu {
 		}
 
 		UUID playerId = player.getUniqueId();
-		InventoryHandler.getInstance().getOpenOpenableMenus().put(playerId, this);
 		openInventories.put(playerId, inventory);
+		InventoryHandler.getInstance().handleMenuOpen(player, this);
 
 		return view;
+	}
+
+	@Override
+	public boolean closeInventory(Player player) {
+		openInventories.remove(player.getUniqueId());
+
+		for (int i = ROW_SIZE; i < (bottomRows + 1) * ROW_SIZE; i++) {
+			player.getInventory().setItem(i, null);
+		}
+		loadInventory(player);
+
+		if (closeHandler == null) {
+			return false;
+		}
+
+		try {
+			closeHandler.accept(new CloseContext(player));
+		} catch (Exception exc) {
+			ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "Fehler bei handleInventoryClose() von Spieler " + player.getName(), exc);
+		}
+		return true;
 	}
 
 	private int[] getSlotsFromRows(int rows, int bottomRows) {

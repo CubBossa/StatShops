@@ -1,10 +1,12 @@
 package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.data.Database;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.util.LoggingPolicy;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -32,6 +34,10 @@ public class ShopHandler implements WebAccessable<Shop> {
 		instance = this;
 
 		this.shopMap = new HashMap<>();
+	}
+
+	public void loadShopsFromDatabase(Database database) {
+		this.shopMap.putAll(database.loadShops());
 	}
 
 	public List<Shop> getShops() {
@@ -62,24 +68,33 @@ public class ShopHandler implements WebAccessable<Shop> {
 	public List<ShopMode> getShopModes() {
 		List<ShopMode> shopModes = new ArrayList<>();
 		ShopMode temp = headShopMode;
-		while (!temp.getNext().equals(headShopMode)) {
+		while (temp != null) {
 			shopModes.add(temp);
-			temp = temp.getNext();
+			if (temp.getNext() != null && !temp.getNext().equals(headShopMode)) {
+				temp = temp.getNext();
+			} else {
+				temp = null;
+			}
 		}
 		return shopModes;
 	}
 
 	public void registerShopMode(ShopMode shopMode) {
-		if (tailShopMode == null) {
-			tailShopMode = shopMode;
-			headShopMode = shopMode;
+		if (getShopModes().stream().anyMatch(sm -> sm.equals(shopMode))) {
+			ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "A shopmode with the key " + shopMode.getKey() + " already exists.");
 			return;
 		}
-		shopMode.setNext(headShopMode);
-		shopMode.setPrevious(tailShopMode);
-		headShopMode.setPrevious(shopMode);
-		tailShopMode.setNext(shopMode);
+
+		if (tailShopMode == null) {
+			tailShopMode = shopMode;
+		} else {
+			shopMode.setNext(headShopMode);
+			shopMode.setPrevious(tailShopMode);
+			headShopMode.setPrevious(shopMode);
+			tailShopMode.setNext(shopMode);
+		}
 		headShopMode = shopMode;
+		ShopPlugin.getInstance().log(LoggingPolicy.INFO, "ShopMode \"" + shopMode.getKey() + "\" registered successfully.");
 	}
 
 	public void registerDefaultShopModes() {
@@ -107,6 +122,19 @@ public class ShopHandler implements WebAccessable<Shop> {
 
 			public ItemStack getDisplayItem() {
 				return ItemStackUtils.createItemStack(ShopPlugin.getInstance().getShopsConfig().getShopSellIconMaterial(), Message.SHOP_MODE_SELL_NAME, Message.SHOP_MODE_SELL_LORE);
+			}
+		});
+		registerShopMode(new ShopMode() {
+			public String getKey() {
+				return "TRADE";
+			}
+
+			public Component getDisplayName() {
+				return Message.SHOP_MODE_TRADE_NAME.getTranslation();
+			}
+
+			public ItemStack getDisplayItem() {
+				return ItemStackUtils.createItemStack(ShopPlugin.getInstance().getShopsConfig().getShopTradeIconMaterial(), Message.SHOP_MODE_TRADE_NAME, Message.SHOP_MODE_TRADE_LORE);
 			}
 		});
 	}

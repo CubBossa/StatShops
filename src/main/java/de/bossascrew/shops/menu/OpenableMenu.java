@@ -86,7 +86,7 @@ public abstract class OpenableMenu extends InventoryMenu<ClickType, ClickContext
 		}
 
 		UUID playerId = player.getUniqueId();
-		InventoryHandler.getInstance().getOpenOpenableMenus().put(playerId, this);
+		InventoryHandler.getInstance().handleMenuOpen(player, this);
 		openInventories.put(playerId, inventory);
 
 		return view;

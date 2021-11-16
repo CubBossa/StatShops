@@ -7,6 +7,7 @@ import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.Editable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -54,6 +55,12 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 	int getPageCount();
 
 	ShopEntry getEntry(ShopMode mode, int slot);
+
+	ShopEntry createEntry(ItemStack displayItem, ShopMode shopMode, int slot);
+
+	boolean deleteEntry(ShopMode shopMode, int slot);
+
+	boolean deleteEntry(ShopEntry entry);
 
 	/**
 	 * @return true, if customers open the shop at the same page they have closed it

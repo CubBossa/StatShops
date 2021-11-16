@@ -5,6 +5,7 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.menu.RowedOpenableMenu;
+import de.bossascrew.shops.menu.ShopEditorMenu;
 import de.bossascrew.shops.menu.ShopMenu;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
@@ -15,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,6 +85,33 @@ public class ChestMenuShop implements Shop {
 	public @Nullable
 	ShopEntry getEntry(ShopMode shopEntry, int slot) {
 		return modeEntryMap.getOrDefault(shopEntry, new TreeMap<>()).getOrDefault(slot, null);
+	}
+
+	@Override
+	public ShopEntry createEntry(ItemStack displayItem, ShopMode shopMode, int slot) {
+		ShopEntry entry = ShopPlugin.getInstance().getDatabase().createEntry(UUID.randomUUID(), this, displayItem, shopMode, slot);
+		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.getOrDefault(shopMode, new TreeMap<>());
+		innerMap.put(slot, entry);
+		modeEntryMap.put(shopMode, innerMap);
+		return entry;
+	}
+
+	@Override
+	public boolean deleteEntry(ShopMode shopMode, int slot) {
+		return deleteEntry(getEntry(shopMode, slot));
+	}
+
+	@Override
+	public boolean deleteEntry(ShopEntry entry) {
+		if(entry == null) {
+			return false;
+		}
+		ShopPlugin.getInstance().getDatabase().deleteEntry(entry);
+		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.get(entry.getShopMode());
+		if (innerMap == null) {
+			return false;
+		}
+		return innerMap.remove(entry.getSlot(), entry);
 	}
 
 	@Override

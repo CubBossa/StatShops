@@ -111,16 +111,20 @@ public class ItemStackUtils {
 		return existingLore;
 	}
 
+	public ItemStack prepareEditorEntryItemStack(ShopEntry entry, boolean selected) {
+		return entry.getDisplayItem();
+	}
+
 
 	public ItemStack createItemStack(Material material, String displayName, @Nullable String lore) {
 		if (lore != null) {
 			List<String> loreList = Lists.newArrayList(lore.split("\n"));
 			return createItemStack(material, displayName, loreList);
 		}
-		return createItemStack(material, displayName, "");
+		return createItemStack(material, displayName, (List<String>) null);
 	}
 
-	public ItemStack createItemStack(Material material, String displayName, List<String> lore) {
+	public ItemStack createItemStack(Material material, String displayName, @Nullable List<String> lore) {
 
 		ItemStack itemStack = new ItemStack(material);
 		ItemMeta meta = itemStack.getItemMeta();
@@ -128,8 +132,10 @@ public class ItemStackUtils {
 			return itemStack;
 		}
 		meta.setDisplayName(displayName);
-		if (!lore.isEmpty() && (lore.size() > 1 || !lore.get(0).equals("") || !lore.get(0).equals(" "))) {
+		if (lore != null && !lore.isEmpty() && (lore.size() > 1 || !lore.get(0).equals("") || !lore.get(0).equals(" "))) {
 			meta.setLore(lore);
+		} else {
+			meta.setLore(null);
 		}
 		meta.addItemFlags(ItemFlag.values());
 		itemStack.setItemMeta(meta);

@@ -90,7 +90,7 @@ public class BottomTopChestMenu extends ChestMenu {
 		if (context.isItemStackChanged()) {
 			ItemStack newStack = context.getEffectiveItemStack();
 			specialItems.put(clickedSlot, newStack);
-			clickedInventory.setItem(clickedSlot - INDEX_DIFFERENCE, newStack);
+			clickedInventory.setItem(clickedSlot < INDEX_DIFFERENCE ? clickedSlot : clickedSlot - INDEX_DIFFERENCE, newStack);
 		}
 		return true;
 	}

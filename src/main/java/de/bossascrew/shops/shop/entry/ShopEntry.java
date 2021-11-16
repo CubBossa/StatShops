@@ -3,12 +3,15 @@ package de.bossascrew.shops.shop.entry;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopInteractionResult;
+import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.shop.Taggable;
 import org.bukkit.inventory.ItemStack;
 
 public interface ShopEntry extends Taggable {
 
 	int getSlot();
+
+	ShopMode getShopMode();
 
 	Shop getShop();
 

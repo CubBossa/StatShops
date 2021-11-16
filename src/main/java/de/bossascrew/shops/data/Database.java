@@ -2,7 +2,9 @@ package de.bossascrew.shops.data;
 
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Shop;
+import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -19,7 +21,7 @@ public interface Database {
 
 	void deleteShop(Shop shop);
 
-	ShopEntry createEntry();
+	ShopEntry createEntry(UUID uuid, Shop shop, ItemStack displayItem, ShopMode shopMode, int slot);
 
 	Map<UUID, Shop> loadEntries(Shop shop);
 

@@ -107,7 +107,7 @@ public class ShopMenu extends ChestMenu {
 		}
 
 		Map<Integer, ShopEntry> entries = shop.getModeEntryMap().getOrDefault(shopMode, new TreeMap<>());
-		int pageSlots = shop.getRows() * RowedOpenableMenu.ROW_SIZE; //TODO immer bis 6*9
+		int pageSlots = shop.getRows() * RowedOpenableMenu.ROW_SIZE;
 
 		for (int i = LARGEST_INV_SIZE * page; i < LARGEST_INV_SIZE * page + pageSlots; i++) {
 			if (!entries.containsKey(i)) {

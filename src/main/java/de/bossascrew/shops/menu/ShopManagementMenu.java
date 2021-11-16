@@ -12,6 +12,7 @@ import de.bossascrew.shops.shop.ChestMenuShop;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopMode;
+import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -322,11 +323,39 @@ public class ShopManagementMenu {
 	}
 
 	public void openShopEditor(Player player, ChestMenuShop shop, int fromPage, ShopMode shopMode, int shopPage) {
-		BottomTopChestMenu menu = new BottomTopChestMenu(Message.SHOP_GUI_TITLE.getTranslation(
+		ShopEditorMenu menu = new ShopEditorMenu(Message.SHOP_GUI_TITLE.getTranslation(
 				Template.of("name", shop.getName()),
 				Template.of("page", "" + (shopPage + 1)),
 				Template.of("pages", "" + Integer.max(shop.getPageCount(), shopPage + 1)),
 				Template.of("mode", shopMode.getDisplayName())), shop.getRows(), 1);
+		menu.fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
+		for (int i = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE; i < (shopPage + 1) * RowedOpenableMenu.LARGEST_INV_SIZE; i++) {
+			ShopEntry entry = shop.getEntry(shopMode, i);
+			if (entry == null) {
+				continue;
+			}
+			menu.setItem(i - shopPage * RowedOpenableMenu.LARGEST_INV_SIZE, ItemStackUtils.prepareEditorEntryItemStack(entry, false));
+		}
+		menu.setDefaultClickHandler(ClickType.LEFT, clickContext -> {
+			ShopEntry oldEntry = shop.getEntry(shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
+
+			//TODO zu umständlich gedacht. Stattdessen nbttag setzen wenn item reingelegt
+			if (clickContext.getPlayer().getItemOnCursor() == null) {
+				menu.setSelectedEntry(oldEntry);
+				clickContext.setItemStack(ItemStackUtils.prepareEditorEntryItemStack(oldEntry, true));
+			} else {
+				ItemStack temp = clickContext.getPlayer().getItemOnCursor();
+				ShopEntry entry = shop.createEntry(temp, shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
+				clickContext.getPlayer().setItemOnCursor(oldEntry == null ? null : oldEntry.getDisplayItem());
+				menu.setSelectedEntry(entry);
+				clickContext.setItemStack(ItemStackUtils.prepareEditorEntryItemStack(entry, true));
+			}
+		});
+		menu.setDefaultClickHandler(ClickType.RIGHT, clickContext -> {
+			shop.deleteEntry(shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
+			clickContext.setItemStack(DefaultSpecialItem.EMPTY_LIGHT.createSpecialItem());
+			menu.refresh(clickContext.getSlot());
+		});
 		menu.fillBottom();
 		menu.setBackSlotBottom(8);
 		menu.setBackHandlerAction(backContext -> openShopMenu(player, shop, fromPage));

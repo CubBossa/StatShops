@@ -30,7 +30,7 @@ public class BaseShopEntry implements ShopEntry {
 	private final List<String> tags;
 
 	private int slot;
-	private ShopMode mode;
+	private ShopMode shopMode;
 
 	public BaseShopEntry(UUID uuid, Shop shop, ItemStack displayItem, EntryElement pay, EntryElement gain, int slot, ShopMode shopMode) {
 		this(uuid, shop, displayItem, pay, gain, null, slot, shopMode);
@@ -46,7 +46,7 @@ public class BaseShopEntry implements ShopEntry {
 		this.tags = new ArrayList<>();
 
 		this.slot = slot;
-		this.mode = shopMode;
+		this.shopMode = shopMode;
 	}
 
 	@Override

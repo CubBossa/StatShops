@@ -4,7 +4,10 @@ import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.shop.ChestMenuShop;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Shop;
+import de.bossascrew.shops.shop.ShopMode;
+import de.bossascrew.shops.shop.entry.BaseShopEntry;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -50,8 +53,8 @@ public class TestDatabase implements Database {
 	}
 
 	@Override
-	public ShopEntry createEntry() {
-		return null;
+	public ShopEntry createEntry(UUID uuid, Shop shop, ItemStack displayItem, ShopMode shopMode, int slot) {
+		return new BaseShopEntry(uuid, shop, displayItem, null, null, slot, shopMode);
 	}
 
 	@Override

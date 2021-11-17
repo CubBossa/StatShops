@@ -1,6 +1,7 @@
 package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.menu.ListMenuElementHolder;
 import de.bossascrew.shops.menu.ShopMenu;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Taggable;
@@ -13,9 +14,12 @@ import org.bukkit.inventory.Inventory;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-public class DiscountHandler implements WebAccessable<Discount> {
+public class DiscountHandler implements
+		WebAccessable<Discount>,
+		ListMenuElementHolder<Discount> {
 
 	@Getter
 	private static DiscountHandler instance;
@@ -44,7 +48,7 @@ public class DiscountHandler implements WebAccessable<Discount> {
 		return new ArrayList<>(discountMap.values());
 	}
 
-	public void createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags) {
+	public Discount createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags) {
 		Discount discount = ShopPlugin.getInstance().getDatabase().createDiscount(nameFormat, start, duration, percent, tags);
 		discountMap.put(discount.getUuid(), discount);
 		for (String tag : tags) {
@@ -54,11 +58,12 @@ public class DiscountHandler implements WebAccessable<Discount> {
 		}
 		//TODO natürlich quatsch, nur wenn der discount startet während er erstellt wird, wird er aber nicht
 		handleDiscountStart(discount);
+		return discount;
 	}
 
-	public void deleteDiscount(Discount discount) {
+	public boolean deleteDiscount(Discount discount) {
 		ShopPlugin.getInstance().getDatabase().deleteDiscount(discount);
-		discountMap.remove(discount.getUuid()); //TODO update all shops
+		return discountMap.remove(discount.getUuid()) != null; //TODO update all shops
 	}
 
 	public void handleDiscountStart(Discount discount) {
@@ -118,5 +123,30 @@ public class DiscountHandler implements WebAccessable<Discount> {
 	@Override
 	public void storeWebData(List<Discount> values) {
 		//TODO
+	}
+
+	@Override
+	public List<Discount> getValues() {
+		return getDiscounts();
+	}
+
+	@Override
+	public Discount createNew(String input) {
+		return createDiscount(input, LocalDateTime.now(), Duration.of(10, ChronoUnit.DAYS), 10);
+	}
+
+	@Override
+	public Discount createDuplicate(Discount element) {
+		Discount discount = createDiscount(element.getNameFormat(), element.getStartTime(), element.getDuration(), element.getPercent());
+		for (String tag : element.getTags()) {
+			discount.addTag(tag);
+		}
+		ShopPlugin.getInstance().getDatabase().saveDiscount(discount);
+		return discount;
+	}
+
+	@Override
+	public boolean delete(Discount element) {
+		return deleteDiscount(element);
 	}
 }

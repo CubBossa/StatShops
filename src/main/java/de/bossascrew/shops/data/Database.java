@@ -1,6 +1,7 @@
 package de.bossascrew.shops.data;
 
 import de.bossascrew.shops.shop.Discount;
+import de.bossascrew.shops.shop.Limit;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.shop.entry.ShopEntry;
@@ -37,4 +38,11 @@ public interface Database {
 
 	void deleteDiscount(Discount discount);
 
+	Limit createLimit(int limit);
+
+	Map<UUID, Limit> loadLimits();
+
+	void saveLimit(Limit limit);
+
+	void deleteLimit(Limit limit);
 }

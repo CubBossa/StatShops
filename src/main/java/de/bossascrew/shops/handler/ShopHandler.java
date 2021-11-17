@@ -3,6 +3,7 @@ package de.bossascrew.shops.handler;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Database;
 import de.bossascrew.shops.data.Message;
+import de.bossascrew.shops.menu.ListMenuElementHolder;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.util.ItemStackUtils;
@@ -16,7 +17,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ShopHandler implements WebAccessable<Shop> {
+public class ShopHandler implements
+		WebAccessable<Shop>,
+		ListMenuElementHolder<Shop> {
 
 	@Getter
 	private static ShopHandler instance;
@@ -59,10 +62,10 @@ public class ShopHandler implements WebAccessable<Shop> {
 		shopMap.put(shop.getUUID(), shop);
 	}
 
-	public void deleteShop(Shop shop) {
+	public boolean deleteShop(Shop shop) {
 		shop.closeAll();
-		shopMap.remove(shop.getUUID());
 		ShopPlugin.getInstance().getDatabase().deleteShop(shop);
+		return shopMap.remove(shop.getUUID()) != null;
 	}
 
 	public List<ShopMode> getShopModes() {
@@ -147,5 +150,37 @@ public class ShopHandler implements WebAccessable<Shop> {
 	@Override
 	public void storeWebData(List<Shop> values) {
 		//TODO
+	}
+
+	@Override
+	public List<Shop> getValues() {
+		return getShops();
+	}
+
+	@Override
+	public Shop createNew(String input) {
+		return createShop(input);
+	}
+
+	@Override
+	public Shop createDuplicate(Shop element) {
+		Shop shop = createShop(element.getNameFormat());
+		shop.setDisplayMaterial(element.getDisplayMaterial());
+		shop.setPermission(element.getPermission());
+		shop.setEnabled(element.isEnabled());
+		shop.setDefaultShopMode(element.getDefaultShopMode());
+		shop.setPageRemembered(element.isPageRemembered());
+		shop.setModeRemembered(element.isModeRemembered());
+		for (String tag : element.getTags()) {
+			shop.addTag(tag);
+		}
+		//TODO clone all entries
+		ShopPlugin.getInstance().getDatabase().saveShop(shop);
+		return null;
+	}
+
+	@Override
+	public boolean delete(Shop element) {
+		return deleteShop(element);
 	}
 }

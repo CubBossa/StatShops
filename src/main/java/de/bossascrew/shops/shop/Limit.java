@@ -4,11 +4,14 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
 import de.bossascrew.shops.Customer;
+import de.bossascrew.shops.menu.ListMenuElement;
 import de.bossascrew.shops.util.Editable;
+import de.bossascrew.shops.util.ItemStackUtils;
 import lombok.Data;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.List;
@@ -17,7 +20,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 @Data
-public class Limit implements Taggable, Comparable<Limit>, Editable<Player> {
+public class Limit implements
+		Taggable,
+		Comparable<Limit>,
+		Editable<Player>,
+		ListMenuElement {
 
 	private final UUID uuid;
 	private Duration recover;
@@ -61,5 +68,15 @@ public class Limit implements Taggable, Comparable<Limit>, Editable<Player> {
 	@Override
 	public int compareTo(@NotNull Limit o) {
 		return Integer.compare(this.transactionLimit, o.transactionLimit);
+	}
+
+	@Override
+	public Component getName() {
+		return Component.text("Limit: " + transactionLimit);
+	}
+
+	@Override
+	public ItemStack getListDisplayItem() {
+		return ItemStackUtils.createLimitsItemStack(this);
 	}
 }

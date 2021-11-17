@@ -5,6 +5,8 @@
 # general phrases
 general:
   no_permission: "<red>You don't have permission to do this."
+  language_reloaded: "<green>Language file reloaded in <ms>ms."
+  language_error: "<red>Could not reload the language file."
   gui:
     back:
       name: "<gold>Back"
@@ -27,6 +29,9 @@ general:
     decline:
       name: "<red>Decline"
       lore: ""
+    list_info:
+      name: "<gold>Info"
+      lore: "<gray>» <yellow>left-click: <gray>edit element\n<gray>» <yellow>middle-click: <gray>duplicate element\n<gray>» <yellow>right-click: <gray>delete element"
     # Valid placeholders: <tag>
     remove_tag: "Remove Tag <tag>?"
 
@@ -82,8 +87,8 @@ manager:
       title: "Click a shop to edit"
       # Valid placeholders: <player>
       already_edited: "<red><player> is already editing this shop. Try again later."
-      # Valid placeholders: <shop>
-      confirm_delete: "<red>Delete Shop <shop>?"
+      # Valid placeholders: <name>
+      confirm_delete: "<red>Delete Shop <name>?"
       new_shop:
         # The title of the anvil gui
         title: "Create a new Shop"
@@ -99,8 +104,8 @@ manager:
       set_name:
         # The title of the anvil gui
         title: "Change shop name"
-        name: "<white>Set Shop Name"
-        lore: "<gray>Click to change the \n<gray>Name of the shop.\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format"
+        name: "<white>Name and Material"
+        lore: "<gray>Click to change the \n<gray>Name of the shop.\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format\n\n<gray>Click this icon with an item\n<gray>in your Hand to change the display\n<gray>material in guis."
       set_permission:
         # The title of the anvil gui
         title: "Change shop permission"
@@ -126,11 +131,11 @@ manager:
       set_remember_page:
         # Valid placeholders: <value>
         name: "<white>Remember Page: <value>"
-        lore: "<gray>Decides if a shop will \n<gray>reopen at the page a customer\n<gray> had viewed last or at the \n<gray> default page."
+        lore: "<gray>Decides if a shop will \n<gray>reopen at the page a customer\n<gray>had viewed last or at the \n<gray>default page."
       set_remember_mode:
         # Valid placeholders: <value>
         name: "<white>Remember Mode: <value>"
-        lore: "<gray>Decides if a shop will \n<gray>reopen at the mode a customer\n<gray> had viewed last or at the \n<gray> default mode."
+        lore: "<gray>Decides if a shop will \n<gray>reopen at the mode a customer\n<gray>had viewed last or at the \n<gray>default mode."
       # Valid placeholders: <name>
       set_default_mode:
         name: "<white>Default Mode: <name>"
@@ -153,12 +158,18 @@ manager:
 
     limits:
       title: "Create and manage shop limits"
+      # Valid placeholders: <player>
+      already_edited: "<red><player> is already editing this limit. Try again later."
+      # Valid placeholders: <name>
+      confirm_delete: "<red>Delete <name>?"
       entry:
         # Valid placeholders: <limit>
         name: "Another Limit: <limit>"
         # Valid placeholders: <limit>, <combine-transactions>, <uuid>, <recover>
         lore: "<uuid>\nLimit: <limit>\nRecover: <recover>"
       new:
+        # The title of the anvil gui
+        title: "Create New Limit"
         name: "<green>Create New Limit"
         lore: "<gray>Click to create a new \n<gray>Limit, that can be applied to \n<gray>Shops and ShopEntries."
 
@@ -166,8 +177,8 @@ manager:
       title: "Create and manage shop discounts"
       # Valid placeholders: <player>
       already_edited: "<red><player> is already editing this discount. Try again later."
-      # Valid placeholders: <discount>
-      confirm_delete: "<red>Delete <discount>?"
+      # Valid placeholders: <name>
+      confirm_delete: "<red>Delete <name>?"
       new:
         # The title of the anvil gui
         title: "Create a new discount"

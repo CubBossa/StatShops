@@ -15,6 +15,8 @@ import java.util.List;
 public enum Message {
 
 	GENERAL_NO_PERMISSION("general.no_permission"),
+	GENERAL_LANGUAGE_RELOADED_IN_MS("general.language_reloaded"),
+	GENERAL_LANGUAGE_RELOAD_ERROR("general.language_error"),
 	GENERAL_GUI_BACK_NAME("general.gui.back.name"),
 	GENERAL_GUI_BACK_LORE("general.gui.back.lore"),
 	GENERAL_GUI_ERROR_NAME("general.gui.error.name"),
@@ -30,6 +32,8 @@ public enum Message {
 	GENERAL_GUI_DECLINE_NAME("general.gui.decline.name"),
 	GENERAL_GUI_DECLINE_LORE("general.gui.decline.lore"),
 	GENERAL_GUI_REMOVE_TAG("general.gui.remove_tag"),
+	GENERAL_GUI_LIST_INFO_NAME("general.gui.list_info.name"),
+	GENERAL_GUI_LIST_INFO_LORE("general.gui.list_info.lore"),
 
 	SHOP_NO_PERMISSION("shop.no_permission"),
 	SHOP_NOT_ENABLED("shop.not_enabled"),
@@ -104,8 +108,11 @@ public enum Message {
 	MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE("manager.gui.shop_editor.template.lore"),
 
 	MANAGER_GUI_LIMITS("manager.gui.limits.title"),
+	MANAGER_GUI_LIMITS_ALREADY_EDITED("manager.gui.limits.already_edited"),
+	MANAGER_GUI_LIMITS_DELETE_CONFIRM("manager.gui.limits.confirm_delete"),
 	MANAGER_GUI_LIMITS_ENTRY_NAME("manager.gui.limits.entry.name"),
 	MANAGER_GUI_LIMITS_ENTRY_LORE("manager.gui.limits.entry.lore"),
+	MANAGER_GUI_LIMITS_NEW_TITLE("manager.gui.limits.new.title"),
 	MANAGER_GUI_LIMITS_NEW_NAME("manager.gui.limits.new.name"),
 	MANAGER_GUI_LIMITS_NEW_LORE("manager.gui.limits.new.lore"),
 

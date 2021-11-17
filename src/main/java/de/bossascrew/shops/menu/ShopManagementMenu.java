@@ -4,14 +4,8 @@ import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Config;
 import de.bossascrew.shops.data.Message;
-import de.bossascrew.shops.handler.CustomerHandler;
-import de.bossascrew.shops.handler.DiscountHandler;
-import de.bossascrew.shops.handler.ShopHandler;
-import de.bossascrew.shops.handler.TranslationHandler;
-import de.bossascrew.shops.shop.ChestMenuShop;
-import de.bossascrew.shops.shop.Discount;
-import de.bossascrew.shops.shop.Shop;
-import de.bossascrew.shops.shop.ShopMode;
+import de.bossascrew.shops.handler.*;
+import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
 import net.kyori.adventure.text.Component;
@@ -44,16 +38,19 @@ public class ShopManagementMenu {
 		ChestMenu chestMenu = new ChestMenu(Message.MANAGER_GUI_MAIN_TITLE, 3);
 
 		chestMenu.setItemAndClickHandler(1, 1, DefaultSpecialItem.MANAGER_MAIN_SHOPS, clickContext -> openShopsMenu(player, 0));
-		chestMenu.setItemAndClickHandler(1, 2, DefaultSpecialItem.MANAGER_MAIN_LIMITS, clickContext -> openLimitsMenu(player));
+		chestMenu.setItemAndClickHandler(1, 2, DefaultSpecialItem.MANAGER_MAIN_LIMITS, clickContext -> openLimitsMenu(player, 0));
 		chestMenu.setItemAndClickHandler(1, 3, DefaultSpecialItem.MANAGER_MAIN_DISCOUNTS, clickContext -> openDiscountsMenu(player, 0));
 		chestMenu.setItemAndClickHandler(1, 6, ItemStackUtils.createItemStack(Material.BOOK,
 				Message.MANAGER_GUI_MAIN_LANGUAGE_NAME, Message.MANAGER_GUI_MAIN_LANGUAGE_LORE), clickContext -> {
+			long ms = System.currentTimeMillis();
 			ShopPlugin.getInstance().getShopsConfig().reloadLanguage();
 			TranslationHandler.getInstance().loadLanguage(ShopPlugin.getInstance().getShopsConfig().getLanguage()).thenAcceptAsync(success -> {
 				if (success) {
 					openBaseMenu(player);
+					Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getTranslation(Template.of("ms", System.currentTimeMillis() - ms + "")));
 					return;
 				}
+				Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOAD_ERROR);
 				chestMenu.setItem(1, 6, DefaultSpecialItem.ERROR.createSpecialItem());
 			});
 		});
@@ -68,47 +65,11 @@ public class ShopManagementMenu {
 	}
 
 	public void openShopsMenu(Player player, int page) {
-		PagedChestMenu chestMenu = new PagedChestMenu(Message.MANAGER_GUI_SHOPS_TITLE.getTranslation(), 4, null, null, backContext -> {
-			openBaseMenu(player);
-		});
-
-		for (Shop shop : ShopHandler.getInstance().getShops()) {
-			chestMenu.addMenuEntry(ItemStackUtils.createShopItemStack(shop), clickContext -> {
-				if (shop.getEditor() != null) {
-					CustomerHandler.getInstance().getCustomer(player).sendMessage(Message.MANAGER_GUI_SHOPS_ALREADY_EDITED.getTranslation(
-							Template.of("player", shop.getEditor().getName())));
-					return;
-				}
-				if (clickContext.getAction().equals(delete)) {
-					ConfirmMenu confirmMenu = new ConfirmMenu(Message.MANAGER_GUI_SHOPS_DELETE_CONFIRM
-							.getTranslation(Template.of("shop", shop.getName())), backContext -> openShopsMenu(player, chestMenu.getCurrentPage()));
-					confirmMenu.setAcceptHandler(clickContext1 -> {
-						ShopHandler.getInstance().deleteShop(shop);
-						openShopsMenu(player, chestMenu.getCurrentPage());
-					});
-					confirmMenu.setDenyHandler(clickContext1 -> {
-						openShopsMenu(player, chestMenu.getCurrentPage());
-					});
-					confirmMenu.openInventory(player);
-				} else {
-					openShopMenu(player, shop, chestMenu.getCurrentPage());
-				}
-			});
-		}
-		chestMenu.setNavigationEntry(7, DefaultSpecialItem.MANAGER_SHOPS_NEW.createSpecialItem(), clickContext -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.plugin(ShopPlugin.getInstance())
-					.text("name")
-					.title(Message.MANAGER_GUI_SHOPS_NEW_TITLE.getLegacyTranslation())
-					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openShopsMenu(p, chestMenu.getCurrentPage()), 1L))
-					.onComplete((p, s) -> {
-						ShopHandler.getInstance().createShop(s);
-						openShopsMenu(player, chestMenu.getCurrentPage());
-						return AnvilGUI.Response.close();
-					}).open(player);
-		});
-		chestMenu.openInventory(player, page);
+		ListMenu<Shop> menu = new ListMenu<>(4, ShopHandler.getInstance(), ShopPlugin.getInstance().getShopsConfig().isConfirmTagDeletion(),
+				Message.MANAGER_GUI_SHOPS_TITLE, Message.MANAGER_GUI_SHOPS_ALREADY_EDITED, Message.MANAGER_GUI_SHOPS_NEW_NAME,
+				Message.MANAGER_GUI_SHOPS_NEW_LORE, Message.MANAGER_GUI_SHOPS_DELETE_CONFIRM, Message.MANAGER_GUI_SHOPS_NEW_TITLE, backContext -> openBaseMenu(player));
+		menu.setLeftClickHandler(targetContext -> openShopMenu(player, targetContext.getTarget(), menu.getCurrentPage()));
+		menu.openInventory(player, page);
 	}
 
 	public void openShopMenu(Player player, Shop shop, int fromPage) {
@@ -120,8 +81,17 @@ public class ShopManagementMenu {
 
 		ChestMenu chestMenu = new ChestMenu(shop.getName(), 3);
 		//Set name
-		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_SHOP,
+		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(shop.getDisplayMaterial() == null ?
+						ItemStackUtils.MATERIAL_SHOP : shop.getDisplayMaterial(),
 				Message.MANAGER_GUI_SHOP_SET_NAME_NAME, Message.MANAGER_GUI_SHOP_SET_NAME_LORE), clickContext -> {
+			if (clickContext.getPlayer().getItemOnCursor() != null) {
+				shop.setDisplayMaterial(clickContext.getPlayer().getItemOnCursor().getType());
+				ShopPlugin.getInstance().getDatabase().saveShop(shop);
+				clickContext.setItemStack(ItemStackUtils.createShopItemStack(shop));
+				clickContext.getPlayer().setItemOnCursor(null);
+				//chestMenu.refresh(1);
+				return;
+			}
 			player.closeInventory();
 			new AnvilGUI.Builder()
 					.plugin(ShopPlugin.getInstance())
@@ -430,68 +400,24 @@ public class ShopManagementMenu {
 		player.sendMessage("openShopDiscountsMenu");
 	}
 
-	public void openLimitsMenu(Player player) {
-		PagedChestMenu chestMenu = new PagedChestMenu(Message.MANAGER_GUI_LIMITS.getTranslation(), 4, null,
-				closeContext -> {
+	public void openLimitsMenu(Player player, int page) {
+		ListMenu<Limit> menu = new ListMenu<>(4, LimitsHandler.getInstance(), ShopPlugin.getInstance().getShopsConfig().isConfirmTagDeletion(),
+				Message.MANAGER_GUI_LIMITS, Message.MANAGER_GUI_LIMITS_ALREADY_EDITED, Message.MANAGER_GUI_LIMITS_NEW_NAME, Message.MANAGER_GUI_LIMITS_NEW_LORE,
+				Message.MANAGER_GUI_LIMITS_DELETE_CONFIRM, Message.MANAGER_GUI_LIMITS_NEW_TITLE, backContext -> openBaseMenu(player));
+		menu.setLeftClickHandler(targetContext -> openLimitMenu(player, targetContext.getTarget(), menu.currentPage));
+		menu.openInventory(player);
+	}
 
-				}, backContext -> {
-			openBaseMenu(player);
-		});
+	public void openLimitMenu(Player player, Limit limit, int fromPage) {
 
-		//List<Limit> limitList = LimitsHandler.getInstance().getLimits();
-
-		chestMenu.setNavigationEntry(7, ItemStackUtils.createItemStack(Material.EMERALD,
-				Message.MANAGER_GUI_LIMITS_NEW_NAME, Message.MANAGER_GUI_LIMITS_NEW_LORE), clickContext -> {
-			//TODO Anvilgui für benennung
-		});
-		chestMenu.openInventory(player);
 	}
 
 	public void openDiscountsMenu(Player player, int page) {
-		PagedChestMenu chestMenu = new PagedChestMenu(Message.MANAGER_GUI_DISCOUNTS.getTranslation(), 4, null, null, backContext -> {
-			openBaseMenu(player);
-		});
-
-		List<Discount> discounts = DiscountHandler.getInstance().getDiscounts();
-		for (Discount discount : discounts) {
-			chestMenu.addMenuEntry(ItemStackUtils.createDiscountItemStack(discount), clickContext -> {
-				if (discount.getEditor() != null) {
-					CustomerHandler.getInstance().getCustomer(player).sendMessage(Message.MANAGER_GUI_DISCOUNTS_ALREADY_EDITED.getTranslation(
-							Template.of("player", discount.getEditor().getName())));
-					return;
-				}
-				if (clickContext.getAction().equals(delete)) {
-					ConfirmMenu confirmMenu = new ConfirmMenu(Message.MANAGER_GUI_DISCOUNTS_DELETE_CONFIRM
-							.getTranslation(Template.of("discount", discount.getName())), backContext -> openShopsMenu(player, page));
-					confirmMenu.setAcceptHandler(clickContext1 -> {
-						DiscountHandler.getInstance().deleteDiscount(discount);
-						openDiscountsMenu(player, 0);
-					});
-					confirmMenu.setDenyHandler(clickContext1 -> {
-						openDiscountsMenu(player, page);
-					});
-					confirmMenu.openInventory(player);
-				} else {
-					openDiscountMenu(player, discount, page);
-				}
-			});
-		}
-		chestMenu.setNavigationEntry(7, ItemStackUtils.createItemStack(Material.EMERALD,
-				Message.MANAGER_GUI_DISCOUNTS_NEW_NAME, Message.MANAGER_GUI_DISCOUNTS_NEW_LORE), clickContext -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.plugin(ShopPlugin.getInstance())
-					.text("name")
-					.title(Message.MANAGER_GUI_DISCOUNTS_NEW_TITLE.getLegacyTranslation())
-					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openDiscountsMenu(player, page), 1L))
-					.onComplete((p, s) -> {
-						DiscountHandler.getInstance().createDiscount(s, LocalDateTime.now().plus(1, ChronoUnit.DAYS),
-								Duration.of(3, ChronoUnit.DAYS), 10);
-						openDiscountsMenu(player, page);
-						return AnvilGUI.Response.close();
-					}).open(player);
-		});
-		chestMenu.openInventory(player);
+		ListMenu<Discount> menu = new ListMenu<>(4, DiscountHandler.getInstance(), ShopPlugin.getInstance().getShopsConfig().isConfirmTagDeletion(),
+				Message.MANAGER_GUI_DISCOUNTS, Message.MANAGER_GUI_DISCOUNTS_ALREADY_EDITED, Message.MANAGER_GUI_DISCOUNTS_NEW_NAME,
+				Message.MANAGER_GUI_DISCOUNTS_NEW_LORE, Message.MANAGER_GUI_DISCOUNTS_DELETE_CONFIRM, Message.MANAGER_GUI_DISCOUNTS_NEW_TITLE, backContext -> openBaseMenu(player));
+		menu.setLeftClickHandler(targetContext -> openDiscountMenu(player, targetContext.getTarget(), menu.getCurrentPage()));
+		menu.openInventory(player, page);
 	}
 
 	public void openDiscountMenu(Player player, Discount discount, int page) {

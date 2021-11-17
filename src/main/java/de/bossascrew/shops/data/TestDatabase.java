@@ -1,10 +1,7 @@
 package de.bossascrew.shops.data;
 
 import de.bossascrew.shops.handler.ShopHandler;
-import de.bossascrew.shops.shop.ChestMenuShop;
-import de.bossascrew.shops.shop.Discount;
-import de.bossascrew.shops.shop.Shop;
-import de.bossascrew.shops.shop.ShopMode;
+import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.BaseShopEntry;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import org.bukkit.inventory.ItemStack;
@@ -94,6 +91,29 @@ public class TestDatabase implements Database {
 
 	@Override
 	public void deleteDiscount(Discount discount) {
+
+	}
+
+	@Override
+	public Limit createLimit(int limit) {
+		return new Limit(Duration.of(3, ChronoUnit.DAYS), customer -> true, limit);
+	}
+
+	@Override
+	public Map<UUID, Limit> loadLimits() {
+		Map<UUID, Limit> map = new HashMap<>();
+		Limit limit = new Limit(Duration.of(1, ChronoUnit.DAYS), asd -> true, 32);
+		map.put(limit.getUuid(), limit);
+		return map;
+	}
+
+	@Override
+	public void saveLimit(Limit limit) {
+
+	}
+
+	@Override
+	public void deleteLimit(Limit limit) {
 
 	}
 }

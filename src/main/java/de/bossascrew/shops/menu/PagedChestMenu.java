@@ -42,9 +42,9 @@ public class PagedChestMenu {
 	private final int entriesPerPage;
 
 	@Getter
-	private int currentPage;
+	protected int currentPage;
 
-	private final List<PagedMenuEntry> menuEntries = Lists.newArrayList();
+	protected final List<PagedMenuEntry> menuEntries = Lists.newArrayList();
 
 	private final PagedMenuEntry[] navigationEntries = new PagedMenuEntry[RowedOpenableMenu.ROW_SIZE - 2];
 
@@ -84,6 +84,10 @@ public class PagedChestMenu {
 			c.put(t, clickHandler);
 		}
 		menuEntries.add(new PagedMenuEntry(specialItem, c));
+	}
+
+	public void clearMenuEntries() {
+		menuEntries.clear();
 	}
 
 	public void setSortingComparator(@Nullable Comparator<ItemStack> sortingComparator) {
@@ -165,7 +169,6 @@ public class PagedChestMenu {
 
 	public void openInventory(Player player, int page) {
 		this.currentPage = Integer.min(page, getPageCount() - 1);
-		System.out.println("current page " + this.currentPage);
 		getInvMenuForPage(this.currentPage).openInventory(player);
 	}
 

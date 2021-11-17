@@ -1,11 +1,13 @@
 package de.bossascrew.shops.shop;
 
 import de.bossascrew.shops.Customer;
+import de.bossascrew.shops.menu.ListMenuElement;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.Editable;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
+public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, ListMenuElement {
 
 	/**
 	 * @return The unique id for this shop. It also servers as a tag for the Taggable interface and allows to apply limits and discounts to all shopentries of this shop
@@ -41,6 +43,10 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 	 * @return The bare text name without formats and colors
 	 */
 	String getNamePlain();
+
+	Material getDisplayMaterial();
+
+	void setDisplayMaterial(Material material);
 
 	/**
 	 * @return The permission node that allows customers to use this shop or null if no permission is set

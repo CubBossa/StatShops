@@ -5,16 +5,17 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.menu.RowedOpenableMenu;
-import de.bossascrew.shops.menu.ShopEditorMenu;
 import de.bossascrew.shops.menu.ShopMenu;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ComponentUtils;
+import de.bossascrew.shops.util.ItemStackUtils;
 import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +29,10 @@ public class ChestMenuShop implements Shop {
 
 	private final UUID uuid;
 	private String nameFormat;
-
 	private Component name;
 	private String namePlain;
 
+	private Material displayMaterial;
 	private @Nullable String permission = null;
 
 	private int rows = 3;
@@ -286,5 +287,10 @@ public class ChestMenuShop implements Shop {
 	@Override
 	public int compareTo(@NotNull Shop o) {
 		return namePlain.compareTo(o.getNamePlain());
+	}
+
+	@Override
+	public ItemStack getListDisplayItem() {
+		return ItemStackUtils.createShopItemStack(this);
 	}
 }

@@ -184,7 +184,7 @@ public class ItemStackUtils {
 		if (shop == null) {
 			return DefaultSpecialItem.ERROR.createSpecialItem();
 		}
-		return createItemStack(MATERIAL_SHOP,
+		return createItemStack(shop.getDisplayMaterial() == null ? MATERIAL_SHOP : shop.getDisplayMaterial(),
 				Message.MANAGER_GUI_SHOPS_NAME.getTranslation(
 						Template.of("name", shop.getName())),
 				Message.MANAGER_GUI_SHOPS_LORE.getTranslations(

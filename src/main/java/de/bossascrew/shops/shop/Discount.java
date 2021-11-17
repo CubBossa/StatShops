@@ -2,12 +2,15 @@ package de.bossascrew.shops.shop;
 
 import com.google.common.collect.Lists;
 import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.menu.ListMenuElement;
 import de.bossascrew.shops.util.Editable;
+import de.bossascrew.shops.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +22,11 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class Discount implements Taggable, Comparable<Discount>, Editable<Player> {
+public class Discount implements
+		Taggable,
+		Comparable<Discount>,
+		Editable<Player>,
+		ListMenuElement {
 
 	private final UUID uuid;
 	private String nameFormat;
@@ -79,5 +86,10 @@ public class Discount implements Taggable, Comparable<Discount>, Editable<Player
 	@Override
 	public int compareTo(@NotNull Discount o) {
 		return Double.compare(percent, o.percent);
+	}
+
+	@Override
+	public ItemStack getListDisplayItem() {
+		return ItemStackUtils.createDiscountItemStack(this);
 	}
 }

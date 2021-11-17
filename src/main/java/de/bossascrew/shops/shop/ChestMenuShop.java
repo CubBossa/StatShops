@@ -284,6 +284,10 @@ public class ChestMenuShop implements Shop {
 		return getTags().contains(tag);
 	}
 
+	public int[] applyTemplate(Template template) {
+		return new int[0]; //TODO
+	}
+
 	@Override
 	public int compareTo(@NotNull Shop o) {
 		return namePlain.compareTo(o.getNamePlain());

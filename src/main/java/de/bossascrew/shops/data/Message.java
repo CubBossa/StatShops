@@ -106,6 +106,8 @@ public enum Message {
 
 	MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME("manager.gui.shop_editor.template.name"),
 	MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE("manager.gui.shop_editor.template.lore"),
+	MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME("manager.gui.shop_editor.freeze.name"),
+	MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE("manager.gui.shop_editor.freeze.lore"),
 
 	MANAGER_GUI_LIMITS("manager.gui.limits.title"),
 	MANAGER_GUI_LIMITS_ALREADY_EDITED("manager.gui.limits.already_edited"),

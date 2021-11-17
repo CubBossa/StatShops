@@ -4,7 +4,10 @@ import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Config;
 import de.bossascrew.shops.data.Message;
-import de.bossascrew.shops.handler.*;
+import de.bossascrew.shops.handler.DiscountHandler;
+import de.bossascrew.shops.handler.LimitsHandler;
+import de.bossascrew.shops.handler.ShopHandler;
+import de.bossascrew.shops.handler.TranslationHandler;
 import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
@@ -18,9 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +36,7 @@ public class ShopManagementMenu {
 
 	public void openBaseMenu(Player player) {
 		ChestMenu chestMenu = new ChestMenu(Message.MANAGER_GUI_MAIN_TITLE, 3);
+		chestMenu.fillMenu();
 
 		chestMenu.setItemAndClickHandler(1, 1, DefaultSpecialItem.MANAGER_MAIN_SHOPS, clickContext -> openShopsMenu(player, 0));
 		chestMenu.setItemAndClickHandler(1, 2, DefaultSpecialItem.MANAGER_MAIN_LIMITS, clickContext -> openLimitsMenu(player, 0));
@@ -80,16 +81,16 @@ public class ShopManagementMenu {
 		shop.setEditor(player);
 
 		ChestMenu chestMenu = new ChestMenu(shop.getName(), 3);
+		chestMenu.fillMenu();
 		//Set name
 		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(shop.getDisplayMaterial() == null ?
 						ItemStackUtils.MATERIAL_SHOP : shop.getDisplayMaterial(),
 				Message.MANAGER_GUI_SHOP_SET_NAME_NAME, Message.MANAGER_GUI_SHOP_SET_NAME_LORE), clickContext -> {
-			if (clickContext.getPlayer().getItemOnCursor() != null) {
+			if (clickContext.getPlayer().getItemOnCursor().getType() != Material.AIR) {
 				shop.setDisplayMaterial(clickContext.getPlayer().getItemOnCursor().getType());
 				ShopPlugin.getInstance().getDatabase().saveShop(shop);
 				clickContext.setItemStack(ItemStackUtils.createShopItemStack(shop));
 				clickContext.getPlayer().setItemOnCursor(null);
-				//chestMenu.refresh(1);
 				return;
 			}
 			player.closeInventory();
@@ -223,7 +224,6 @@ public class ShopManagementMenu {
 			chestMenu.refresh(24);
 		});
 
-
 		chestMenu.setBackSlot(26);
 		chestMenu.setBackHandlerAction(backContext -> {
 			shop.setEnabled(true);
@@ -293,62 +293,7 @@ public class ShopManagementMenu {
 	}
 
 	public void openShopEditor(Player player, ChestMenuShop shop, int fromPage, ShopMode shopMode, int shopPage) {
-		ShopEditorMenu menu = new ShopEditorMenu(Message.SHOP_GUI_TITLE.getTranslation(
-				Template.of("name", shop.getName()),
-				Template.of("page", "" + (shopPage + 1)),
-				Template.of("pages", "" + Integer.max(shop.getPageCount(), shopPage + 1)),
-				Template.of("mode", shopMode.getDisplayName())), shop.getRows(), 1);
-		menu.fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
-		for (int i = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE; i < (shopPage + 1) * RowedOpenableMenu.LARGEST_INV_SIZE; i++) {
-			ShopEntry entry = shop.getEntry(shopMode, i);
-			if (entry == null) {
-				continue;
-			}
-			menu.setItem(i - shopPage * RowedOpenableMenu.LARGEST_INV_SIZE, ItemStackUtils.prepareEditorEntryItemStack(entry, false));
-		}
-		menu.setDefaultClickHandler(ClickType.LEFT, clickContext -> {
-			ShopEntry oldEntry = shop.getEntry(shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
-
-			//TODO zu umständlich gedacht. Stattdessen nbttag setzen wenn item reingelegt
-			if (clickContext.getPlayer().getItemOnCursor() == null) {
-				menu.setSelectedEntry(oldEntry);
-				clickContext.setItemStack(ItemStackUtils.prepareEditorEntryItemStack(oldEntry, true));
-			} else {
-				ItemStack temp = clickContext.getPlayer().getItemOnCursor();
-				ShopEntry entry = shop.createEntry(temp, shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
-				clickContext.getPlayer().setItemOnCursor(oldEntry == null ? null : oldEntry.getDisplayItem());
-				menu.setSelectedEntry(entry);
-				clickContext.setItemStack(ItemStackUtils.prepareEditorEntryItemStack(entry, true));
-			}
-		});
-		menu.setDefaultClickHandler(ClickType.RIGHT, clickContext -> {
-			shop.deleteEntry(shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
-			clickContext.setItemStack(DefaultSpecialItem.EMPTY_LIGHT.createSpecialItem());
-			menu.refresh(clickContext.getSlot());
-		});
-		menu.fillBottom();
-		menu.setBackSlotBottom(8);
-		menu.setBackHandlerAction(backContext -> openShopMenu(player, shop, fromPage));
-		menu.setItemAndClickHandlerBottom(0, 0, shopPage > 0 ? DefaultSpecialItem.PREV_PAGE : DefaultSpecialItem.PREV_PAGE_OFF, clickContext -> {
-			openShopEditor(player, shop, fromPage, shopMode, shopPage > 0 ? shopPage - 1 : shopPage);
-		});
-		menu.setItemAndClickHandlerBottom(0, 1, DefaultSpecialItem.NEXT_PAGE, clickContext -> {
-			openShopEditor(player, shop, fromPage, shopMode, shopPage + 1);
-		});
-		menu.setItemAndClickHandlerBottom(0, 2, getDefaultModeItem(shop.getDefaultShopMode()), clickContext -> {
-			if (clickContext.getAction().isRightClick()) {
-				shop.setDefaultShopMode(shop.getDefaultShopMode().getPrevious());
-				openShopEditor(player, shop, fromPage, shopMode.getPrevious(), shopPage);
-			} else if (clickContext.getAction().isLeftClick()) {
-				shop.setDefaultShopMode(shop.getDefaultShopMode().getNext());
-				openShopEditor(player, shop, fromPage, shopMode.getNext(), shopPage);
-			}
-		});
-		menu.setItemAndClickHandlerBottom(0, 7, ItemStackUtils.createCustomHead(ItemStackUtils.HEAD_URL_LETTER_T,
-				Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME, Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE), clickContext -> {
-			//TODO template entries adden
-		});
-		menu.openInventory(player);
+		new ShopEditor(shop, backContext -> openShopMenu(player, shop, fromPage)).openInventory(player, shopMode, shopPage);
 	}
 
 	public void openShopTagsMenu(Player player, Shop shop, int fromPage, int page) {

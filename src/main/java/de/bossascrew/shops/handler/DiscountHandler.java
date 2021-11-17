@@ -109,7 +109,9 @@ public class DiscountHandler implements
 		List<Discount> discounts = new ArrayList<>();
 		for (Taggable taggable : taggables) {
 			for (String tag : taggable.getTags()) {
-				discounts.addAll(tagMap.get(tag));
+				if (tagMap.containsKey(tag)) {
+					discounts.addAll(tagMap.get(tag));
+				}
 			}
 		}
 		return discounts;

@@ -14,7 +14,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -112,7 +112,7 @@ public class ItemStackUtils {
 	}
 
 	public ItemStack prepareEditorEntryItemStack(ShopEntry entry, boolean selected) {
-		return entry.getDisplayItem();
+		return selected ? setGlow(entry.getDisplayItem()) : entry.getDisplayItem();
 	}
 
 
@@ -224,15 +224,16 @@ public class ItemStackUtils {
 						Template.of("recover", "" + limit.getRecover()))); //TODO nice format
 	}
 
-	public ItemStack createPlayerHead(int id) {
-		return null;
-	}
-
-	public ItemStack createPlayerHead(OfflinePlayer player) {
-		return null;
-	}
-
 	public void setNameAndLore(ItemStack item, String displayName, String lore) {
 
+	}
+
+	public ItemStack setGlow(ItemStack item) {
+		ItemMeta meta = item.getItemMeta();
+		if (meta != null) {
+			meta.addEnchant(Enchantment.LUCK, 1, true);
+			item.setItemMeta(meta);
+		}
+		return item;
 	}
 }

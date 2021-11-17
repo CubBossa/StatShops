@@ -104,7 +104,7 @@ manager:
       set_name:
         # The title of the anvil gui
         title: "Change shop name"
-        name: "<white>Name and Material"
+        name: "<white>Set Name and Material"
         lore: "<gray>Click to change the \n<gray>Name of the shop.\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format\n\n<gray>Click this icon with an item\n<gray>in your Hand to change the display\n<gray>material in guis."
       set_permission:
         # The title of the anvil gui
@@ -155,6 +155,13 @@ manager:
         title: "Add New Tag"
         name: "<white>Create New Tag"
         lore: "<gray>Click here to create a\n<gray>new tag.\n<gray>Right click tags in the list\n<gray>to delete them."
+    shop_editor:
+      template:
+        name: "<white>Apply Templates to this Page"
+        lore: "<gray>You can speed up your\n<gray>work by using shop templates.\n<gray>You can create custom templates\n<gray>and apply them easily to\n<gray>your shop page."
+      freeze:
+        name: "<white>Move items: <value>"
+        lore: "<gray>You can toggle between\n<gray>Move and Edit Mode.\n<gray>Freeze your shop to edit\n<gray>price, discounts etc."
 
     limits:
       title: "Create and manage shop limits"

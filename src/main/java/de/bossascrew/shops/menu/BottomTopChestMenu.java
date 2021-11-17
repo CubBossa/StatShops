@@ -255,4 +255,14 @@ public class BottomTopChestMenu extends ChestMenu {
 			});
 		}
 	}
+
+	public void refresh(Player player, int... slots) {
+		for (int slot : slots) {
+			Inventory inv = slot > INDEX_DIFFERENCE ? player.getInventory() : inventory;
+			if (inventory == null) {
+				return;
+			}
+			inventory.setItem(slot > INDEX_DIFFERENCE ? slot - INDEX_DIFFERENCE : slot, specialItems.getOrDefault(slot, null));
+		}
+	}
 }

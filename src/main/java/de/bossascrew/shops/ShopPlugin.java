@@ -55,6 +55,8 @@ public class ShopPlugin extends JavaPlugin {
 	private LimitsHandler limitsHandler;
 	@Getter
 	private CustomerHandler customerHandler;
+	@Getter
+	private TemplateHandler templateHandler;
 
 	@Getter
 	private boolean loading = true;
@@ -99,6 +101,9 @@ public class ShopPlugin extends JavaPlugin {
 
 		//Setup customers
 		this.customerHandler = new CustomerHandler();
+
+		//Setup and load shop templates
+		this.templateHandler = new TemplateHandler();
 
 		//Setup inventory handler to process menus
 		new InventoryHandler(this);

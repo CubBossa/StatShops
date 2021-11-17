@@ -305,7 +305,7 @@ public abstract class InventoryMenu<T, A extends ActionContext<T>, B extends Bac
 		Preconditions.checkNotNull(fillItem, "fillItem");
 		ItemStack fillItemStack = fillItem.createSpecialItem();
 
-		Arrays.stream(getSlots()).forEach(index -> setItemAndClickHandler(index, fillItemStack, (Map<T, ContextConsumer<A>>) null));
+		Arrays.stream(getSlots()).forEach(index -> setItem(index, fillItemStack));
 		if (backHandler != null) {
 			setBackHandlerAction(backHandler);
 		}

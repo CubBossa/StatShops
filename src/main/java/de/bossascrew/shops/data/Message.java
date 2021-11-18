@@ -14,6 +14,8 @@ import java.util.List;
 
 public enum Message {
 
+	PREFIX("general.prefix"),
+
 	GENERAL_NO_PERMISSION("general.no_permission"),
 	GENERAL_LANGUAGE_RELOADED_IN_MS("general.language_reloaded"),
 	GENERAL_LANGUAGE_RELOAD_ERROR("general.language_error"),
@@ -167,8 +169,12 @@ public enum Message {
 	}
 
 	public Component getTranslation(Template... templates) {
+		List<Template> t = new ArrayList<>(List.of(templates));
+		if (!this.equals(Message.PREFIX)) {
+			t.add(Template.of("prefix", Message.PREFIX.getTranslation()));
+		}
 		String format = TranslationHandler.getInstance().getMessage(key);
-		return ShopPlugin.getInstance().getMiniMessage().parse(format, templates);
+		return ShopPlugin.getInstance().getMiniMessage().parse(format, t);
 	}
 
 	public List<Component> getTranslations(Template...templates) {

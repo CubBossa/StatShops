@@ -3,15 +3,17 @@
 #
 
 # general phrases
+# Valid global placeholders: <prefix>
 general:
-  no_permission: "<red>You don't have permission to do this."
+  prefix: "<bold><gold>Shops</gold> </bold><gray>» "
+  no_permission: "<prefix><red>You don't have permission to do this."
   language_reloaded: "<green>Language file reloaded in <ms>ms."
-  language_error: "<red>Could not reload the language file."
+  language_error: "<prefix><red>Could not reload the language file."
   webinterface:
-    loading: "<yellow>Generating session..."
+    loading: "<prefix>Generating session..."
     # Valid placeholders: <link>
-    link: "<green><click:open_url:<link>><hover:show_text:Open webinterface>Click here to open Webinterface <link></hover></click>"
-    error: "<red>An error occured while generating webinterface session."
+    link: "<prefix><green><click:open_url:<link>><hover:show_text:Open webinterface>Link to websession: <link></hover></click>"
+    error: "<prefix><red>An error occured while generating webinterface session."
   gui:
     back:
       name: "<gold>Back"

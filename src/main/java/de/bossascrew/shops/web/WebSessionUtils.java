@@ -8,7 +8,7 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class WebSessionUtils {
-    public static String generateWebSession(){
+    public static Paste generateWebSession(){
 
         WebJsonData data = new WebJsonData();
 
@@ -16,12 +16,11 @@ public class WebSessionUtils {
         try{
             String jsonString = mapper.writeValueAsString(data);
             PasteServer server = new ByteBinIntegration();
-            Paste paste = server.createPaste(jsonString);
-            return "https://localhost:8080/" + paste.getId();
+            return server.createPaste(jsonString);
         }catch(Exception e){
             e.printStackTrace();
         }
 
-        return "error";
+        return null;
     }
 }

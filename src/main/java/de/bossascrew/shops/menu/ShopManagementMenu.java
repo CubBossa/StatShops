@@ -10,6 +10,8 @@ import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.handler.TranslationHandler;
 import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.web.WebSessionUtils;
+import de.bossascrew.shops.web.pasting.Paste;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.Template;
@@ -57,7 +59,11 @@ public class ShopManagementMenu {
 		chestMenu.setItemAndClickHandler(1, 7, DefaultSpecialItem.MANAGER_MAIN_WEBINTERFACE, clickContext -> {
 			player.sendMessage("Not yet implemented - but Test:");
 			//TODO generate interface link and send to player
-			ShopPlugin.getInstance().runAsync(() -> player.sendMessage("https://127.0.0.1:"));
+
+			Paste paste = WebSessionUtils.generateWebSession();
+
+			ShopPlugin.getInstance().runAsync(() -> player.sendMessage("https://127.0.0.1:8080/" + paste.getId()));
+			System.out.println(paste.getId());
 
 			player.closeInventory();
 		});

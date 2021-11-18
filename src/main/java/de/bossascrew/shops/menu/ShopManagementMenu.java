@@ -132,7 +132,7 @@ public class ShopManagementMenu {
 				clickContext -> new TagsEditorMenu(
 						shop, Message.MANAGER_GUI_TAGS_TITLE.getTranslation(Template.of("name", shop.getName())),
 						Message.MANAGER_GUI_TAGS_NEW_TAG_TITLE, Message.MANAGER_GUI_TAGS_NEW_TAG_NAME, Message.MANAGER_GUI_TAGS_NEW_TAG_LORE,
-						Message.GENERAL_GUI_REMOVE_TAG, backContext -> openShopMenu(player, shop, fromPage)).openInventory(player));
+						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openShopMenu(player, shop, fromPage)).openInventory(player));
 
 		//Open Limits menu
 		chestMenu.setItemAndClickHandler(0, 5, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
@@ -356,7 +356,7 @@ public class ShopManagementMenu {
 				clickContext -> new TagsEditorMenu(
 						discount, Message.MANAGER_GUI_TAGS_TITLE.getTranslation(Template.of("name", discount.getName())),
 						Message.MANAGER_GUI_TAGS_NEW_TAG_TITLE, Message.MANAGER_GUI_TAGS_NEW_TAG_NAME, Message.MANAGER_GUI_TAGS_NEW_TAG_LORE,
-						Message.GENERAL_GUI_REMOVE_TAG, backContext -> openDiscountMenu(player, discount, page)).openInventory(player));
+						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openDiscountMenu(player, discount, page)).openInventory(player));
 
 		//TODO setstart
 		//TODO setduration

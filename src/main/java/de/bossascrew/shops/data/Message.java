@@ -31,7 +31,6 @@ public enum Message {
 	GENERAL_GUI_ACCEPT_LORE("general.gui.accept.lore"),
 	GENERAL_GUI_DECLINE_NAME("general.gui.decline.name"),
 	GENERAL_GUI_DECLINE_LORE("general.gui.decline.lore"),
-	GENERAL_GUI_REMOVE_TAG("general.gui.remove_tag"),
 	GENERAL_GUI_LIST_INFO_NAME("general.gui.list_info.name"),
 	GENERAL_GUI_LIST_INFO_LORE("general.gui.list_info.lore"),
 
@@ -103,8 +102,9 @@ public enum Message {
 	MANAGER_GUI_TAGS_NEW_TAG_TITLE("manager.gui.tags.new_tag.title"),
 	MANAGER_GUI_TAGS_NEW_TAG_NAME("manager.gui.tags.new_tag.name"),
 	MANAGER_GUI_TAGS_NEW_TAG_LORE("manager.gui.tags.new_tag.lore"),
-	GENERAL_GUI_TAGS_INFO_NAME("general.gui.tags.info.name"),
-	GENERAL_GUI_TAGS_INFO_LORE("general.gui.tags.info.lore"),
+	GENERAL_GUI_TAGS_INFO_NAME("manager.gui.tags.info.name"),
+	GENERAL_GUI_TAGS_INFO_LORE("manager.gui.tags.info.lore"),
+	GENERAL_GUI_TAGS_REMOVE_TAG("manager.gui.tags.remove_tag"),
 
 	MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME("manager.gui.shop_editor.template.name"),
 	MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE("manager.gui.shop_editor.template.lore"),

@@ -75,6 +75,9 @@ public class Discount implements
 
 	@Override
 	public boolean addTag(String tag) {
+		if (hasTag(tag)) {
+			return false;
+		}
 		return tags.add(tag);
 	}
 

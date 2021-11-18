@@ -32,8 +32,6 @@ general:
     list_info:
       name: "<gold>Info"
       lore: "<gray>» <yellow>left-click: <gray>edit element\n<gray>» <yellow>middle-click: <gray>duplicate element\n<gray>» <yellow>right-click: <gray>delete element"
-    # Valid placeholders: <tag>
-    remove_tag: "Remove Tag <tag>?"
 
 #shop translations that will be visible by users
 shop:
@@ -161,6 +159,8 @@ manager:
     tags:
       # Valid placehholders: <name>
       title: "Manage tags for <name>"
+      # Valid placeholders: <tag>
+      remove_tag: "Remove Tag <tag>?"
       new_tag:
         title: "Add New Tag"
         name: "<white>Create New Tag"

@@ -1,5 +1,6 @@
 package de.bossascrew.shops.shop;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.DatabaseObject;
@@ -19,8 +20,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
 @Getter
@@ -35,13 +38,17 @@ public class Discount implements
 
 	private final UUID uuid;
 	private String nameFormat;
+	@JsonIgnore
 	private Component name;
+	@JsonIgnore
 	private LocalDateTime startTime;
+	@JsonIgnore
 	private Duration duration;
 	private double percent;
 	private String permission;
 	private final List<String> tags;
 
+	@JsonIgnore
 	private @Nullable Player editor = null;
 
 	public Discount(UUID uuid, String nameFormat, LocalDateTime startTime, Duration duration, double percent, String permission, String... tags) {
@@ -66,6 +73,7 @@ public class Discount implements
 		this.name = ShopPlugin.getInstance().getMiniMessage().parse(nameFormat);
 	}
 
+	@JsonIgnore
 	public Component getFormattedPercent(boolean negativeGreen) {
 		if (percent > 0) {
 			return Component.text("-" + percent, negativeGreen ? NamedTextColor.GREEN : NamedTextColor.RED);
@@ -97,6 +105,7 @@ public class Discount implements
 	}
 
 	@Override
+	@JsonIgnore
 	public ItemStack getListDisplayItem() {
 		return ItemStackUtils.createDiscountItemStack(this);
 	}
@@ -109,5 +118,13 @@ public class Discount implements
 	@Override
 	public Discount duplicate() {
 		return DiscountHandler.getInstance().createDuplicate(this);
+	}
+
+	public long getUnixStartTime(){
+		return startTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+	}
+
+	public long getDurationSeconds(){
+		return duration.getSeconds();
 	}
 }

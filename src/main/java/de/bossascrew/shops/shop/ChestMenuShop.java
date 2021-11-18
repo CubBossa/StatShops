@@ -1,5 +1,6 @@
 package de.bossascrew.shops.shop;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
@@ -30,9 +31,12 @@ public class ChestMenuShop implements Shop {
 
 	private final UUID uuid;
 	private String nameFormat;
+
+	@JsonIgnore
 	private Component name;
 	private String namePlain;
 
+	@JsonIgnore
 	private Material displayMaterial;
 	private @Nullable String permission = null;
 
@@ -43,12 +47,15 @@ public class ChestMenuShop implements Shop {
 	private boolean isModeRemembered = false;
 	private int defaultPage = 0;
 	private ShopMode defaultShopMode = null;
-
+	@JsonIgnore
 	private @Nullable Player editor = null;
 
 	private final Map<ShopMode, TreeMap<Integer, ShopEntry>> modeEntryMap;
+
 	private final List<Customer> activeCustomers;
+
 	private final Map<Customer, ShopMenu> menuMap;
+
 	private final List<String> tags;
 
 	public ChestMenuShop(String nameFormat) {
@@ -235,6 +242,7 @@ public class ChestMenuShop implements Shop {
 		}
 	}
 
+	@JsonIgnore
 	public ShopInteractionResult interact(Customer customer, ShopMode shopMode, int slot) {
 		if (!enabled) {
 			return ShopInteractionResult.FAIL_SHOP_DISABLED;
@@ -307,6 +315,7 @@ public class ChestMenuShop implements Shop {
 	}
 
 	@Override
+	@JsonIgnore
 	public ItemStack getListDisplayItem() {
 		return ItemStackUtils.createShopItemStack(this);
 	}

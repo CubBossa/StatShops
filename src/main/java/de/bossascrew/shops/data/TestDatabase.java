@@ -4,6 +4,8 @@ import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.BaseShopEntry;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import de.bossascrew.shops.util.ItemStackUtils;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
@@ -114,6 +116,31 @@ public class TestDatabase implements Database {
 
 	@Override
 	public void deleteLimit(Limit limit) {
+
+	}
+
+	@Override
+	public EntryTemplate createTemplate(String name) {
+		return new EntryTemplate(UUID.randomUUID(), "<aqua>new-template");
+	}
+
+	@Override
+	public Map<UUID, EntryTemplate> loadTemplates() {
+		EntryTemplate template = new EntryTemplate(UUID.randomUUID(), "<gradient:dark_green:green:dark_green>Default Template");
+		for (int i = 0; i < 9; i++) {
+			template.put(i, new BaseShopEntry(UUID.randomUUID(), null, ItemStackUtils.createItemStack(Material.DIAMOND, "lol", ""),
+					null, null, i, ShopHandler.getInstance().getShopModes().get(0)));
+		}
+		return Map.of(template.getUuid(), template);
+	}
+
+	@Override
+	public void saveTemplate(EntryTemplate template) {
+
+	}
+
+	@Override
+	public void deleteTemplate(EntryTemplate template) {
 
 	}
 }

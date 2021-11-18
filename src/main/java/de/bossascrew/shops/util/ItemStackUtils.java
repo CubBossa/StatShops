@@ -6,6 +6,7 @@ import com.mojang.authlib.properties.Property;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.menu.DefaultSpecialItem;
 import de.bossascrew.shops.shop.Discount;
+import de.bossascrew.shops.shop.EntryTemplate;
 import de.bossascrew.shops.shop.Limit;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.entry.ShopEntry;
@@ -40,6 +41,9 @@ public class ItemStackUtils {
 
 	public static String HEAD_URL_LETTER_T = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTU2MmU4YzFkNjZiMjFlNDU5YmU5YTI0ZTVjMDI3YTM0ZDI2OWJkY2U0ZmJlZTJmNzY3OGQyZDNlZTQ3MTgifX19";
 
+	public static String HEAD_URL_LETTER_CHECK_MARK = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTkyZTMxZmZiNTljOTBhYjA4ZmM5ZGMxZmUyNjgwMjAzNWEzYTQ3YzQyZmVlNjM0MjNiY2RiNDI2MmVjYjliNiJ9fX0=";
+	public static String HEAD_URL_LETTER_X = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==";
+
 	public static Material MATERIAL_SHOP = Material.VILLAGER_SPAWN_EGG;
 	public static Material MATERIAL_LIMIT = Material.HOPPER;
 	public static Material MATERIAL_DISCOUNT = Material.POTION;
@@ -56,7 +60,7 @@ public class ItemStackUtils {
 			.build();
 
 	public void giveOrDrop(Player player, ItemStack itemStack) {
-
+		player.getInventory().addItem(itemStack); //TODO
 	}
 
 	public void addLore(ItemStack itemStack, List<Component> lore) {
@@ -94,7 +98,7 @@ public class ItemStackUtils {
 			existingLore.addAll(Message.SHOP_ITEM_LORE_DISCOUNT.getTranslations(
 					Template.of("percent", discount.getPercent() + ""),
 					Template.of("name", discount.getName()),
-					Template.of("start-date", discount.getStartTime() + ""),//TODO schön parsen natürlich
+					Template.of("start-date", ComponentUtils.formatLocalDateTime(discount.getStartTime())),//TODO schön parsen natürlich
 					Template.of("duration", discount.getDuration() + ""),
 					Template.of("remaining", discount.getRemaining() + "")
 			));
@@ -111,8 +115,8 @@ public class ItemStackUtils {
 		return existingLore;
 	}
 
-	public ItemStack prepareEditorEntryItemStack(ShopEntry entry, boolean selected) {
-		return selected ? setGlow(entry.getDisplayItem()) : entry.getDisplayItem();
+	public ItemStack prepareEditorEntryItemStack(ShopEntry entry) {
+		return entry.getDisplayItem();
 	}
 
 
@@ -205,8 +209,8 @@ public class ItemStackUtils {
 						Template.of("uuid", discount.getUuid().toString()),
 						Template.of("permission", discount.getPermission() == null ? "X" : discount.getPermission()),
 						Template.of("name", discount.getName()),
-						Template.of("remaining", "" + discount.getRemaining()),
-						Template.of("start-date", "" + discount.getStartTime()),//TODO schön parsen natürlich
+						Template.of("remaining", "" + discount.getRemaining()),//TODO schön parsen natürlich
+						Template.of("start-date", ComponentUtils.formatLocalDateTime(discount.getStartTime())),
 						Template.of("duration", "" + discount.getDuration())));
 	}
 
@@ -222,6 +226,13 @@ public class ItemStackUtils {
 						Template.of("combine-transactions", "" + limit.isSummTagMemberLimits()),
 						Template.of("uuid", limit.getUuid().toString()),
 						Template.of("recover", "" + limit.getRecover()))); //TODO nice format
+	}
+
+	public ItemStack createTemplatesItemStack(EntryTemplate template) {
+		if (template == null) {
+			return DefaultSpecialItem.ERROR.createSpecialItem();
+		}
+		return DefaultSpecialItem.ERROR.createSpecialItem(); //TODO
 	}
 
 	public void setNameAndLore(ItemStack item, String displayName, String lore) {

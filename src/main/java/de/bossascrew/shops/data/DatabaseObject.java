@@ -1,6 +1,6 @@
 package de.bossascrew.shops.data;
 
-public interface Savable {
+public interface DatabaseObject {
 
 	void saveToDatabase();
 }

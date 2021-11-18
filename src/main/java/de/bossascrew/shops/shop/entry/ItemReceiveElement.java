@@ -30,4 +30,9 @@ public class ItemReceiveElement implements EntryElement {
 		ItemStackUtils.giveOrDrop(customer.getPlayer(), itemStack);
 		return ShopInteractionResult.SUCCESS;
 	}
+
+	@Override
+	public EntryElement duplicate() {
+		return new ItemReceiveElement(itemStack.clone());
+	}
 }

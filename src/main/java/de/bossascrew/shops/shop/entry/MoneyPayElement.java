@@ -26,4 +26,9 @@ public class MoneyPayElement implements EntryElement {
 				ShopInteractionResult.SUCCESS :
 				ShopInteractionResult.FAIL_CANT_AFFORD;
 	}
+
+	@Override
+	public EntryElement duplicate() {
+		return new MoneyPayElement(costs);
+	}
 }

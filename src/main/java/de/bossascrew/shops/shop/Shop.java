@@ -1,6 +1,7 @@
 package de.bossascrew.shops.shop;
 
 import de.bossascrew.shops.Customer;
+import de.bossascrew.shops.data.DatabaseObject;
 import de.bossascrew.shops.menu.ListMenuElement;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
@@ -12,10 +13,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import javax.xml.crypto.Data;
 import java.util.List;
 import java.util.UUID;
 
-public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, ListMenuElement {
+public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, ListMenuElement, DatabaseObject {
 
 	/**
 	 * @return The unique id for this shop. It also servers as a tag for the Taggable interface and allows to apply limits and discounts to all shopentries of this shop

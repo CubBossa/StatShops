@@ -1,9 +1,6 @@
 package de.bossascrew.shops.data;
 
-import de.bossascrew.shops.shop.Discount;
-import de.bossascrew.shops.shop.Limit;
-import de.bossascrew.shops.shop.Shop;
-import de.bossascrew.shops.shop.ShopMode;
+import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import org.bukkit.inventory.ItemStack;
 
@@ -45,4 +42,12 @@ public interface Database {
 	void saveLimit(Limit limit);
 
 	void deleteLimit(Limit limit);
+
+	EntryTemplate createTemplate(String name);
+
+	Map<UUID, EntryTemplate> loadTemplates();
+
+	void saveTemplate(EntryTemplate template);
+
+	void deleteTemplate(EntryTemplate template);
 }

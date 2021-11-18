@@ -189,6 +189,10 @@ public class BottomTopChestMenu extends ChestMenu {
 		setSpecialItem(calcIndexBottom(row, column), item);
 	}
 
+	public void setItemBottom(int index, @Nullable ItemStack stack) {
+		setItem(index + INDEX_DIFFERENCE, stack);
+	}
+
 	public void setItemBottom(int row, int column, @Nullable ItemStack stack) {
 		setItem(calcIndexBottom(row, column), stack);
 	}
@@ -251,18 +255,17 @@ public class BottomTopChestMenu extends ChestMenu {
 			if (slot < INDEX_DIFFERENCE) {
 				continue;
 			}
-			setItemAndClickHandler(slot, DefaultSpecialItem.EMPTY_DARK, context -> {
-			});
+			setItem(slot, item.createSpecialItem());
 		}
 	}
 
 	public void refresh(Player player, int... slots) {
 		for (int slot : slots) {
 			Inventory inv = slot > INDEX_DIFFERENCE ? player.getInventory() : inventory;
-			if (inventory == null) {
+			if (inv == null) {
 				return;
 			}
-			inventory.setItem(slot > INDEX_DIFFERENCE ? slot - INDEX_DIFFERENCE : slot, specialItems.getOrDefault(slot, null));
+			inv.setItem(slot > INDEX_DIFFERENCE ? slot - INDEX_DIFFERENCE : slot, specialItems.getOrDefault(slot, null));
 		}
 	}
 }

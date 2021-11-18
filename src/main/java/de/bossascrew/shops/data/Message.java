@@ -135,6 +135,13 @@ public enum Message {
 	MANAGER_GUI_DISCOUNT_SET_TAGS_NAME("manager.gui.discount.set_tags.name"),
 	MANAGER_GUI_DISCOUNT_SET_TAGS_LORE("manager.gui.discount.set_tags.lore"),
 
+	MANAGER_GUI_SHOP_ENTRY("manager.gui.shop_entry.title"),
+
+	MANAGER_GUI_TEMPLATES("manager.gui.templates.title"),
+	MANAGER_GUI_TEMPLATES_CHOOSE("manager.gui.templates.choose_title"),
+	MANAGER_GUI_TEMPLATES_APPLY("manager.gui.templates.apply_title"),
+
+
 	;
 
 	@Getter

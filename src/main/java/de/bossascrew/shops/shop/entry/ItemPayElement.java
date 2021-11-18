@@ -22,10 +22,15 @@ public class ItemPayElement implements EntryElement {
 	}
 
 	public ShopInteractionResult act(Customer customer) {
-		if(!canAct(customer)) {
+		if (!canAct(customer)) {
 			return ShopInteractionResult.FAIL_CANT_AFFORD;
 		}
 		customer.getPlayer().getInventory().removeItem(itemStack);
 		return ShopInteractionResult.SUCCESS;
+	}
+
+	@Override
+	public EntryElement duplicate() {
+		return new ItemPayElement(this.itemStack.clone());
 	}
 }

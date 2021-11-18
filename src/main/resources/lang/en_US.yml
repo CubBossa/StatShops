@@ -158,10 +158,14 @@ manager:
     shop_editor:
       template:
         name: "<white>Apply Templates to this Page"
-        lore: "<gray>You can speed up your\n<gray>work by using shop templates.\n<gray>You can create custom templates\n<gray>and apply them easily to\n<gray>your shop page."
+        lore: "<gray>You can speed up your\n<gray>work by using shop templates.\n<gray>You can create custom templates\n<gray>and apply them easily to\n<gray>your shop page.\n\n<gray>» <yellow>left-click: <gray>load template\n<gray>» <yellow>right-click: <gray>save page as template"
       freeze:
         name: "<white>Move items: <value>"
         lore: "<gray>You can toggle between\n<gray>Move and Edit Mode.\n<gray>Freeze your shop to edit\n<gray>price, discounts etc."
+    shop_entry:
+      title: "Edit Shop Entry"
+
+
 
     limits:
       title: "Create and manage shop limits"
@@ -209,3 +213,6 @@ manager:
       set_tags:
         name: "<white>Open Tag Menu"
         lore: "<gray>Apply this discount to all\n<gray>shops and shopentries with\n<gray>certain tags like \"swords\" or \"foor\"."
+
+    templates:
+      title: "Manage Shop Templates"

@@ -5,11 +5,10 @@ import de.bossascrew.shops.handler.TemplateHandler;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.ChestMenuShop;
+import de.bossascrew.shops.shop.EntryTemplate;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
-import lombok.Getter;
-import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.Template;
@@ -35,10 +34,6 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 	private final ShopEditor shopEditor;
 	private final ContextConsumer<BackContext> backHandler;
 
-	@Getter
-	@Setter
-	private @Nullable ShopEntry selectedEntry = null;
-
 	private boolean itemsMovable = true;
 
 	public ShopEditorPageMenu(ChestMenuShop shop, ShopMode shopMode, int shopPage, ContextConsumer<BackContext> backHandler, ShopEditor shopEditor) {
@@ -62,21 +57,34 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 			if (entry == null) {
 				continue;
 			}
-			setItem(i - shopPage * RowedOpenableMenu.LARGEST_INV_SIZE, ItemStackUtils.prepareEditorEntryItemStack(entry, false));
+			setItem(i - shopPage * RowedOpenableMenu.LARGEST_INV_SIZE, ItemStackUtils.prepareEditorEntryItemStack(entry));
 		}
 		setDefaultClickHandler(ClickType.LEFT, clickContext -> {
-			ShopEntry oldEntry = shop.getEntry(shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
+			ShopEntry clickedEntry = shop.getEntry(shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
 
-			//TODO zu umständlich gedacht. Stattdessen nbttag setzen wenn item reingelegt
-			if (clickContext.getPlayer().getItemOnCursor().getType() == Material.AIR) {
-				setSelectedEntry(oldEntry);
-				clickContext.setItemStack(ItemStackUtils.prepareEditorEntryItemStack(oldEntry, true));
-			} else {
+			if (shopEditor.isFreezeItems()) {
+
+				// Open the editor for the clicked ShopEntry, no matter what item in hand
+				if (clickedEntry != null) {
+					new EntryEditor(clickedEntry, backHandler -> shopEditor.openInventory(clickContext.getPlayer(), shopMode, shopPage))
+							.openInventory(clickContext.getPlayer());
+				}
+
+			} else if (clickContext.getPlayer().getItemOnCursor().getType() != Material.AIR &&
+					clickContext.getPlayer().getItemOnCursor().isSimilar(DefaultSpecialItem.EMPTY_LIGHT.createSpecialItem())) {
+
+				// If item in hand switch clicked ShopEntries, no matter what key
 				ItemStack temp = clickContext.getPlayer().getItemOnCursor();
 				ShopEntry entry = shop.createEntry(temp, shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
-				clickContext.getPlayer().setItemOnCursor(oldEntry == null ? null : oldEntry.getDisplayItem());
-				setSelectedEntry(entry);
-				clickContext.setItemStack(ItemStackUtils.prepareEditorEntryItemStack(entry, true));
+				clickContext.getPlayer().setItemOnCursor(clickedEntry == null ? null : clickedEntry.getDisplayItem());
+				clickContext.setItemStack(ItemStackUtils.prepareEditorEntryItemStack(entry));
+
+			} else {
+				if (clickContext.getAction() == ClickType.MIDDLE) {
+					//TODO clone clicked stack in hand
+				} else {
+					//TODO regular swap
+				}
 			}
 		});
 		setDefaultClickHandler(ClickType.RIGHT, clickContext -> {
@@ -102,16 +110,20 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 				shopEditor.openInventory(clickContext.getPlayer(), shopMode.getNext(), shopPage);
 			}
 		});
-		setItemAndClickHandlerBottom(0, 4, getButton(shopEditor.isFreezeItems(), Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
+		setItemAndClickHandlerBottom(0, 4, getButton(!shopEditor.isFreezeItems(), Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
 				Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE), clickContext -> {
 			shopEditor.setFreezeItems(!shopEditor.isFreezeItems());
-			setItemBottom(0, 4, getButton(shopEditor.isFreezeItems(), Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
+			setItemBottom(0, 4, getButton(!shopEditor.isFreezeItems(), Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
 					Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE));
-			refresh(clickContext.getPlayer(), 4 + INDEX_DIFFERENCE); //TODO refresht nicht
+			refresh(clickContext.getPlayer(), 4 + INDEX_DIFFERENCE + ROW_SIZE);
 		});
 		setItemAndClickHandlerBottom(0, 7, ItemStackUtils.createCustomHead(ItemStackUtils.HEAD_URL_LETTER_T,
 				Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME, Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE), clickContext -> {
-			refresh(shop.applyTemplate(TemplateHandler.getInstance().getDefaultTemplate()));
+			if (clickContext.getAction().isRightClick()) {
+				//TODO open safe by name menu
+			} else {
+				openTemplatesListMenu(clickContext.getPlayer());
+			}
 		});
 	}
 
@@ -119,6 +131,36 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer) {
 		prepareMenu();
 		return super.openInventorySync(player, inventoryPreparer);
+	}
+
+	public void openTemplatesListMenu(Player player) {
+		ListMenu<EntryTemplate> menu = new ListMenu<>(3, TemplateHandler.getInstance(),
+				Message.MANAGER_GUI_TEMPLATES_CHOOSE, backHandler -> openInventory(player));
+		menu.setClickHandler(clickContext -> openTemplateApplyMenu(player, clickContext.getTarget()));
+		menu.openInventory(player);
+	}
+
+	public void openTemplateApplyMenu(Player player, EntryTemplate template) {
+		BottomTopChestMenu menu = new BottomTopChestMenu(Message.MANAGER_GUI_TEMPLATES_APPLY.getTranslation(), shop.getRows(), 1);
+		menu.fillMenu();
+		menu.fillBottom();
+		int dif = shopPage * INDEX_DIFFERENCE;
+		for (int i = 0; i < shop.getRows() + ROW_SIZE; i++) {
+			ShopEntry entry = shop.getEntry(shopMode, i + dif);
+			if (entry == null) {
+				continue;
+			}
+			menu.setItem(i, entry.getDisplayItem());
+		}
+		for (ShopEntry entry : template.values()) {
+			menu.setItem(dif != 0 ? entry.getSlot() % dif : entry.getSlot(), entry.getDisplayItem());
+		}
+		menu.setItemAndClickHandlerBottom(ROW_SIZE + 2, DefaultSpecialItem.ACCEPT, clickContext -> {
+			shop.applyTemplate(template, shopMode, shopPage);
+			openInventory(player);
+		});
+		menu.setItemAndClickHandlerBottom(ROW_SIZE + 6, DefaultSpecialItem.DECLINE, clickContext -> openInventory(player));
+		menu.openInventory(player);
 	}
 
 	private ItemStack getButton(boolean val, Message name, Message lore) {

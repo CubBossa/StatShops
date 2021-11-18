@@ -4,6 +4,7 @@ import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.ShopHandler;
+import de.bossascrew.shops.menu.BottomTopChestMenu;
 import de.bossascrew.shops.menu.RowedOpenableMenu;
 import de.bossascrew.shops.menu.ShopMenu;
 import de.bossascrew.shops.menu.contexts.BackContext;
@@ -91,6 +92,13 @@ public class ChestMenuShop implements Shop {
 	@Override
 	public ShopEntry createEntry(ItemStack displayItem, ShopMode shopMode, int slot) {
 		ShopEntry entry = ShopPlugin.getInstance().getDatabase().createEntry(UUID.randomUUID(), this, displayItem, shopMode, slot);
+		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.getOrDefault(shopMode, new TreeMap<>());
+		innerMap.put(slot, entry);
+		modeEntryMap.put(shopMode, innerMap);
+		return entry;
+	}
+
+	public ShopEntry addEntry(ShopMode shopMode, int slot, ShopEntry entry) {
 		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.getOrDefault(shopMode, new TreeMap<>());
 		innerMap.put(slot, entry);
 		modeEntryMap.put(shopMode, innerMap);
@@ -284,8 +292,13 @@ public class ChestMenuShop implements Shop {
 		return getTags().contains(tag);
 	}
 
-	public int[] applyTemplate(Template template) {
-		return new int[0]; //TODO
+	public void applyTemplate(EntryTemplate template, ShopMode shopMode, int shopPage) {
+		for(ShopEntry entry : template.values()) {
+			ShopEntry newEntry = entry.duplicate();
+			newEntry.setShopMode(shopMode);
+			newEntry.setSlot(shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + (entry.getSlot() % RowedOpenableMenu.LARGEST_INV_SIZE));
+			newEntry.saveToDatabase();
+		}
 	}
 
 	@Override
@@ -296,5 +309,10 @@ public class ChestMenuShop implements Shop {
 	@Override
 	public ItemStack getListDisplayItem() {
 		return ItemStackUtils.createShopItemStack(this);
+	}
+
+	@Override
+	public void saveToDatabase() {
+		ShopPlugin.getInstance().getDatabase().saveShop(this);
 	}
 }

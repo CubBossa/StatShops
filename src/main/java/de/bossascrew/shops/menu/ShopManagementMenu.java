@@ -9,7 +9,6 @@ import de.bossascrew.shops.handler.LimitsHandler;
 import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.handler.TranslationHandler;
 import de.bossascrew.shops.shop.*;
-import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -66,7 +65,7 @@ public class ShopManagementMenu {
 	}
 
 	public void openShopsMenu(Player player, int page) {
-		ListMenu<Shop> menu = new ListMenu<>(4, ShopHandler.getInstance(), ShopPlugin.getInstance().getShopsConfig().isConfirmTagDeletion(),
+		ListManagerMenu<Shop> menu = new ListManagerMenu<>(4, ShopHandler.getInstance(), ShopPlugin.getInstance().getShopsConfig().isConfirmTagDeletion(),
 				Message.MANAGER_GUI_SHOPS_TITLE, Message.MANAGER_GUI_SHOPS_ALREADY_EDITED, Message.MANAGER_GUI_SHOPS_NEW_NAME,
 				Message.MANAGER_GUI_SHOPS_NEW_LORE, Message.MANAGER_GUI_SHOPS_DELETE_CONFIRM, Message.MANAGER_GUI_SHOPS_NEW_TITLE, backContext -> openBaseMenu(player));
 		menu.setLeftClickHandler(targetContext -> openShopMenu(player, targetContext.getTarget(), menu.getCurrentPage()));
@@ -90,7 +89,6 @@ public class ShopManagementMenu {
 				shop.setDisplayMaterial(clickContext.getPlayer().getItemOnCursor().getType());
 				ShopPlugin.getInstance().getDatabase().saveShop(shop);
 				clickContext.setItemStack(ItemStackUtils.createShopItemStack(shop));
-				clickContext.getPlayer().setItemOnCursor(null);
 				return;
 			}
 			player.closeInventory();
@@ -138,7 +136,7 @@ public class ShopManagementMenu {
 		chestMenu.setItemAndClickHandler(0, 8, ItemStackUtils.createItemStack(Material.BARRIER,
 				Message.GENERAL_GUI_DELETE_NAME, Message.GENERAL_GUI_DELETE_LORE), clickContext -> {
 			ConfirmMenu confirmMenu = new ConfirmMenu(Message.MANAGER_GUI_SHOPS_DELETE_CONFIRM
-					.getTranslation(Template.of("shop", shop.getName())), backContext -> openShopMenu(player, shop, fromPage));
+					.getTranslation(Template.of("name", shop.getName())), backContext -> openShopMenu(player, shop, fromPage));
 			confirmMenu.setCloseHandler(closeContext -> {
 				shop.setEnabled(true); //TODO nur wenn booleansetting verändert wurde
 				shop.setEditor(null);
@@ -346,7 +344,7 @@ public class ShopManagementMenu {
 	}
 
 	public void openLimitsMenu(Player player, int page) {
-		ListMenu<Limit> menu = new ListMenu<>(4, LimitsHandler.getInstance(), ShopPlugin.getInstance().getShopsConfig().isConfirmTagDeletion(),
+		ListManagerMenu<Limit> menu = new ListManagerMenu<>(4, LimitsHandler.getInstance(), ShopPlugin.getInstance().getShopsConfig().isConfirmTagDeletion(),
 				Message.MANAGER_GUI_LIMITS, Message.MANAGER_GUI_LIMITS_ALREADY_EDITED, Message.MANAGER_GUI_LIMITS_NEW_NAME, Message.MANAGER_GUI_LIMITS_NEW_LORE,
 				Message.MANAGER_GUI_LIMITS_DELETE_CONFIRM, Message.MANAGER_GUI_LIMITS_NEW_TITLE, backContext -> openBaseMenu(player));
 		menu.setLeftClickHandler(targetContext -> openLimitMenu(player, targetContext.getTarget(), menu.currentPage));
@@ -358,7 +356,7 @@ public class ShopManagementMenu {
 	}
 
 	public void openDiscountsMenu(Player player, int page) {
-		ListMenu<Discount> menu = new ListMenu<>(4, DiscountHandler.getInstance(), ShopPlugin.getInstance().getShopsConfig().isConfirmTagDeletion(),
+		ListManagerMenu<Discount> menu = new ListManagerMenu<>(4, DiscountHandler.getInstance(), ShopPlugin.getInstance().getShopsConfig().isConfirmTagDeletion(),
 				Message.MANAGER_GUI_DISCOUNTS, Message.MANAGER_GUI_DISCOUNTS_ALREADY_EDITED, Message.MANAGER_GUI_DISCOUNTS_NEW_NAME,
 				Message.MANAGER_GUI_DISCOUNTS_NEW_LORE, Message.MANAGER_GUI_DISCOUNTS_DELETE_CONFIRM, Message.MANAGER_GUI_DISCOUNTS_NEW_TITLE, backContext -> openBaseMenu(player));
 		menu.setLeftClickHandler(targetContext -> openDiscountMenu(player, targetContext.getTarget(), menu.getCurrentPage()));

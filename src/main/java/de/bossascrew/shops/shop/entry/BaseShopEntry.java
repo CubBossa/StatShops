@@ -1,6 +1,7 @@
 package de.bossascrew.shops.shop.entry;
 
 import de.bossascrew.shops.Customer;
+import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopInteractionResult;
 import de.bossascrew.shops.shop.ShopMode;
@@ -82,5 +83,16 @@ public class BaseShopEntry implements ShopEntry {
 	@Override
 	public boolean hasTag(String tag) {
 		return getTags().contains(tag);
+	}
+
+	@Override
+	public void saveToDatabase() {
+		ShopPlugin.getInstance().getDatabase().saveEntry(this);
+	}
+
+	@Override
+	public ShopEntry duplicate() {
+		return new BaseShopEntry(UUID.randomUUID(), shop, displayItem.clone(),
+				pay == null ? null : pay.duplicate(), gain == null ? null : gain.duplicate(), slot, shopMode);
 	}
 }

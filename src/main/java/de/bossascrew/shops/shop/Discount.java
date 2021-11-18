@@ -2,7 +2,10 @@ package de.bossascrew.shops.shop;
 
 import com.google.common.collect.Lists;
 import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.data.DatabaseObject;
+import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.menu.ListMenuElement;
+import de.bossascrew.shops.util.Duplicable;
 import de.bossascrew.shops.util.Editable;
 import de.bossascrew.shops.util.ItemStackUtils;
 import lombok.Getter;
@@ -26,7 +29,9 @@ public class Discount implements
 		Taggable,
 		Comparable<Discount>,
 		Editable<Player>,
-		ListMenuElement {
+		ListMenuElement,
+		DatabaseObject,
+		Duplicable<Discount> {
 
 	private final UUID uuid;
 	private String nameFormat;
@@ -91,5 +96,15 @@ public class Discount implements
 	@Override
 	public ItemStack getListDisplayItem() {
 		return ItemStackUtils.createDiscountItemStack(this);
+	}
+
+	@Override
+	public void saveToDatabase() {
+		ShopPlugin.getInstance().getDatabase().saveDiscount(this);
+	}
+
+	@Override
+	public Discount duplicate() {
+		return DiscountHandler.getInstance().createDuplicate(this);
 	}
 }

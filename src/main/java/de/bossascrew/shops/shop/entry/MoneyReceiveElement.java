@@ -26,4 +26,9 @@ public class MoneyReceiveElement implements EntryElement {
 				ShopInteractionResult.SUCCESS :
 				ShopInteractionResult.FAIL_VAULT_UNKNOWN;
 	}
+
+	@Override
+	public EntryElement duplicate() {
+		return new MoneyPayElement(costs);
+	}
 }

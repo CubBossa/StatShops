@@ -19,6 +19,7 @@ import java.util.Map;
 public abstract class RowedOpenableMenu extends OpenableMenu {
 
 	public static final int ROW_SIZE = 9;
+	public static final int LARGEST_INV_SIZE = 6 * ROW_SIZE;
 
 	@Getter
 	private int rowCount = 3;

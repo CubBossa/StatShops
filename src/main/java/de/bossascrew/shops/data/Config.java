@@ -25,10 +25,11 @@ public class Config {
 
 	private ClickType keyBindDelete = ClickType.RIGHT;
 
-	private Material shopBuyIconMaterial = Material.EMERALD;
-	private Material shopSellIconMaterial = Material.DIAMOND;
+	private Material shopBuyIconMaterial = Material.DIAMOND;
+	private Material shopSellIconMaterial = Material.GOLD_INGOT;
+	private Material shopTradeIconMaterial = Material.EMERALD;
 
-
+	private boolean confirmTagDeletion = false;
 
 	public Config(String fileName) {
 

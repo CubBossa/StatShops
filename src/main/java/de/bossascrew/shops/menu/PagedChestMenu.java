@@ -41,7 +41,10 @@ public class PagedChestMenu {
 
 	private final int entriesPerPage;
 
-	private final List<PagedMenuEntry> menuEntries = Lists.newArrayList();
+	@Getter
+	protected int currentPage;
+
+	protected final List<PagedMenuEntry> menuEntries = Lists.newArrayList();
 
 	private final PagedMenuEntry[] navigationEntries = new PagedMenuEntry[RowedOpenableMenu.ROW_SIZE - 2];
 
@@ -81,6 +84,10 @@ public class PagedChestMenu {
 			c.put(t, clickHandler);
 		}
 		menuEntries.add(new PagedMenuEntry(specialItem, c));
+	}
+
+	public void clearMenuEntries() {
+		menuEntries.clear();
 	}
 
 	public void setSortingComparator(@Nullable Comparator<ItemStack> sortingComparator) {
@@ -138,15 +145,20 @@ public class PagedChestMenu {
 						.setItemAndClickHandler(menu.getRowCount() - 1, navigationIndex.get(), menuEntry.getDisplayItemStack(),
 								menuEntry.getClickHandler()));
 
-		if (page > 0) {
-			menu.setItemAndClickHandler(menu.getRowCount() - 1, 0, DefaultSpecialItem.PREVIOUS_PAGE.createSpecialItem(),
-					c -> getInvMenuForPage(page - 1).openInventory(c.getPlayer()));
-		}
+		menu.setItemAndClickHandler(menu.getRowCount() - 1, 0, page > 0 ?
+				DefaultSpecialItem.PREV_PAGE.createSpecialItem() : DefaultSpecialItem.PREV_PAGE_OFF.createSpecialItem(), c -> {
+			if (page > 0) {
+				openInventory(c.getPlayer(), page - 1);
+			}
+		});
 
-		if ((menuEntries.size() - 1) / entriesPerPage > page) {
-			menu.setItemAndClickHandler(menu.getRowCount() - 1, 1, DefaultSpecialItem.NEXT_PAGE.createSpecialItem(),
-					c -> getInvMenuForPage(page + 1).openInventory(c.getPlayer()));
-		}
+		boolean hasPrev = (menuEntries.size() - 1) / entriesPerPage > page;
+		menu.setItemAndClickHandler(menu.getRowCount() - 1, 1, hasPrev ?
+				DefaultSpecialItem.NEXT_PAGE.createSpecialItem() : DefaultSpecialItem.NEXT_PAGE_OFF.createSpecialItem(), c -> {
+			if (hasPrev) {
+				openInventory(c.getPlayer(), page + 1);
+			}
+		});
 
 		return menu;
 	}
@@ -156,11 +168,16 @@ public class PagedChestMenu {
 	}
 
 	public void openInventory(Player player, int page) {
-		getInvMenuForPage(page).openInventory(player);
+		this.currentPage = Integer.min(page, getPageCount() - 1);
+		getInvMenuForPage(this.currentPage).openInventory(player);
 	}
 
 	public void openInventoryLastPage(Player player) {
 		getInvMenuForLastPage().openInventory(player);
+	}
+
+	public int getPageCount() {
+		return (this.menuEntries.size() - 1) / entriesPerPage + 1;
 	}
 
 	@Data

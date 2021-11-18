@@ -5,6 +5,8 @@
 # general phrases
 general:
   no_permission: "<red>You don't have permission to do this."
+  language_reloaded: "<green>Language file reloaded in <ms>ms."
+  language_error: "<red>Could not reload the language file."
   gui:
     back:
       name: "<gold>Back"
@@ -27,14 +29,19 @@ general:
     decline:
       name: "<red>Decline"
       lore: ""
+    list_info:
+      name: "<gold>Info"
+      lore: "<gray>» <yellow>left-click: <gray>edit element\n<gray>» <yellow>middle-click: <gray>duplicate element\n<gray>» <yellow>right-click: <gray>delete element"
+    # Valid placeholders: <tag>
+    remove_tag: "Remove Tag <tag>?"
 
 #shop translations that will be visible by users
 shop:
   no_permission: "<red>You don't have permission for this shop."
   not_enabled: "<red>This shop is currently disabled."
   gui:
-    # The title of a shop, possible placeholders are: <name>, <page>, <mode>
-    title: "<name>"
+    # The title of a shop, possible placeholders are: <name>, <page>, <mode>, <pages>
+    title: "<name> - Page <page>/<pages> - <mode>"
     # The lore of items that are displayed in a shop.
     item:
       lore:
@@ -51,8 +58,11 @@ shop:
       name: "<aqua>Buy"
       lore: "<gray>In this mode you \n<gray>can buy items from \n<gray>the shop."
     sell:
-      name: "<aqua>Sell"
+      name: "<gold>Sell"
       lore: "<gray>In this mode you \n<gray>can sell your items to\n<gray>the shop."
+    trade:
+      name: "<green>Trade"
+      lore: "<gray>In this mode you \n<gray>can trade your items with\n<gray>other items from the shop."
 
 manager:
   gui:
@@ -77,7 +87,11 @@ manager:
       title: "Click a shop to edit"
       # Valid placeholders: <player>
       already_edited: "<red><player> is already editing this shop. Try again later."
+      # Valid placeholders: <name>
+      confirm_delete: "<red>Delete Shop <name>?"
       new_shop:
+        # The title of the anvil gui
+        title: "Create a new Shop"
         name: "<green>New Shop"
         lore: "<gray>Click to create a \n<gray>new shop."
       # Defines, how each shop will be displayed in the list
@@ -88,15 +102,19 @@ manager:
         lore: "<gray>Perm: <white><permission>"
     shop:
       set_name:
-        name: "<white>Set Shop Name"
-        lore: "<gray>Click to change the \n<gray>Name of the shop.\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format"
+        # The title of the anvil gui
+        title: "Change shop name"
+        name: "<white>Set Name and Material"
+        lore: "<gray>Click to change the \n<gray>Name of the shop.\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format\n\n<gray>Click this icon with an item\n<gray>in your Hand to change the display\n<gray>material in guis."
       set_permission:
+        # The title of the anvil gui
+        title: "Change shop permission"
         name: "<white>Set Shop Permission"
         # Valid placeholders: <permission>
         lore: "<gray>Current: <red><permission>\n\n<gray>Only players with this \n<gray>permission will be able to \n<gray>open this shop.\n\n<gray>Type \"null\" to reset."
       set_tags:
         name: "<white>Open Tag Menu"
-        lore: "<gray>Discounts and Limits can be \n<gray>applied to all Shops and Shopentries \n<gray>that have certain tags.\n\n<gray>Use the tags menu to \n<gray>the tags of this shop."
+        lore: "<gray>Discounts and Limits can be \n<gray>applied to all Shops and Shopentries \n<gray>that have certain tags.\n\n<gray>Use the tags menu to configure\n<gray>tags for this shop."
       set_limits:
         name: "<white>Apply Limits"
         lore: "<gray>Here you can apply \n<gray>a limit to the whole shop at once. \n<gray>This can be also archieved \n<gray>by using tags. With this \n<gray>menu wanted to provide a more \n<gray>userfriendly interface."
@@ -113,29 +131,58 @@ manager:
       set_remember_page:
         # Valid placeholders: <value>
         name: "<white>Remember Page: <value>"
-        lore: "<gray>Decides if a shop will \n<gray>reopen at the page a customer\n<gray> had viewed last or at the \n<gray> default page."
+        lore: "<gray>Decides if a shop will \n<gray>reopen at the page a customer\n<gray>had viewed last or at the \n<gray>default page."
       set_remember_mode:
         # Valid placeholders: <value>
         name: "<white>Remember Mode: <value>"
-        lore: "<gray>Decides if a shop will \n<gray>reopen at the mode a customer\n<gray> had viewed last or at the \n<gray> default mode."
+        lore: "<gray>Decides if a shop will \n<gray>reopen at the mode a customer\n<gray>had viewed last or at the \n<gray>default mode."
+      # Valid placeholders: <name>
       set_default_mode:
-        # Valid placeholders: <name>
         name: "<white>Default Mode: <name>"
-        # Valid placeholders: <mode>
         lore: "<gray>» <mode>"
       # Valid placeholders: <page>
       set_default_page:
         name: "<white>Default Page: <page>"
         lore: "<gray>» <page>"
+      # Valid placeholders: <rows>
+      set_rows:
+        name: "<white>Menu Size: <rows> Rows"
+        lore: "<gray>» <rows> Rows"
+    shop_editor:
+      template:
+        name: "<white>Apply Templates to this Page"
+        lore: "<gray>You can speed up your\n<gray>work by using shop templates.\n<gray>You can create custom templates\n<gray>and apply them easily to\n<gray>your shop page.\n\n<gray>» <yellow>left-click: <gray>load template\n<gray>» <yellow>right-click: <gray>save page as template"
+      freeze:
+        name: "<white>Move items: <value>"
+        lore: "<gray>You can toggle between\n<gray>Move and Edit Mode.\n<gray>Freeze your shop to edit\n<gray>price, discounts etc."
+    shop_entry:
+      title: "Edit Shop Entry"
+
+    tags:
+      # Valid placehholders: <name>
+      title: "Manage tags for <name>"
+      new_tag:
+        title: "Add New Tag"
+        name: "<white>Create New Tag"
+        lore: "<gray>Click here to create a\n<gray>new tag.\n<gray>Right click tags in the list\n<gray>to delete them."
+      info:
+        name: "<gold>Info"
+        lore: "<gray>» <yellow>right-click: <gray>delete element"
 
     limits:
       title: "Create and manage shop limits"
+      # Valid placeholders: <player>
+      already_edited: "<red><player> is already editing this limit. Try again later."
+      # Valid placeholders: <name>
+      confirm_delete: "<red>Delete <name>?"
       entry:
         # Valid placeholders: <limit>
         name: "Another Limit: <limit>"
         # Valid placeholders: <limit>, <combine-transactions>, <uuid>, <recover>
         lore: "<uuid>\nLimit: <limit>\nRecover: <recover>"
       new:
+        # The title of the anvil gui
+        title: "Create New Limit"
         name: "<green>Create New Limit"
         lore: "<gray>Click to create a new \n<gray>Limit, that can be applied to \n<gray>Shops and ShopEntries."
 
@@ -143,7 +190,11 @@ manager:
       title: "Create and manage shop discounts"
       # Valid placeholders: <player>
       already_edited: "<red><player> is already editing this discount. Try again later."
+      # Valid placeholders: <name>
+      confirm_delete: "<red>Delete <name>?"
       new:
+        # The title of the anvil gui
+        title: "Create a new discount"
         name: "<green>Create New Discout"
         lore: "<gray>Click to create a \n<gray>new discount."
       # Defines, how each discount will be displayed in the list
@@ -164,3 +215,6 @@ manager:
       set_tags:
         name: "<white>Open Tag Menu"
         lore: "<gray>Apply this discount to all\n<gray>shops and shopentries with\n<gray>certain tags like \"swords\" or \"foor\"."
+
+    templates:
+      title: "Manage Shop Templates"

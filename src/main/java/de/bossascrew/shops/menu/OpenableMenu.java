@@ -72,7 +72,6 @@ public abstract class OpenableMenu extends InventoryMenu<ClickType, ClickContext
 			inventory.setItem(backSlot, DefaultSpecialItem.BACK.createSpecialItem());
 		}
 
-
 		if (inventoryPreparer != null) {
 			try {
 				inventoryPreparer.accept(inventory);
@@ -87,7 +86,7 @@ public abstract class OpenableMenu extends InventoryMenu<ClickType, ClickContext
 		}
 
 		UUID playerId = player.getUniqueId();
-		InventoryHandler.getInstance().getOpenOpenableMenus().put(playerId, this);
+		InventoryHandler.getInstance().handleMenuOpen(player, this);
 		openInventories.put(playerId, inventory);
 
 		return view;

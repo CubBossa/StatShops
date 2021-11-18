@@ -1,12 +1,16 @@
 package de.bossascrew.shops.data;
 
-import de.bossascrew.shops.shop.ChestMenuShop;
-import de.bossascrew.shops.shop.Discount;
-import de.bossascrew.shops.shop.Shop;
+import de.bossascrew.shops.handler.ShopHandler;
+import de.bossascrew.shops.shop.*;
+import de.bossascrew.shops.shop.entry.BaseShopEntry;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import de.bossascrew.shops.util.ItemStackUtils;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,12 +19,26 @@ public class TestDatabase implements Database {
 
 	@Override
 	public Shop createShop(String nameFormat, UUID uuid) {
-		return new ChestMenuShop(nameFormat, uuid);
+		Shop shop = new ChestMenuShop(nameFormat, uuid);
+		shop.setDefaultShopMode(ShopHandler.getInstance().getShopModes().get(0));
+		return shop;
 	}
 
 	@Override
 	public Map<UUID, Shop> loadShops() {
-		return new HashMap<>();
+		Map<UUID, Shop> map = new HashMap<>();
+		Shop s1 = createShop("<rainbow>ExampleShop</rainbow>", UUID.randomUUID());
+		s1.addTag("swords");
+		s1.addTag("rainbow");
+		s1.addTag("i am a tag");
+		s1.addTag("ululu");
+		for (int i = 0; i < 14; i++) {
+			s1.addTag("tag" + i);
+		}
+		Shop s2 = createShop("<white>Boring Shop", UUID.randomUUID());
+		map.put(s1.getUUID(), s1);
+		map.put(s2.getUUID(), s2);
+		return map;
 	}
 
 	@Override
@@ -34,8 +52,8 @@ public class TestDatabase implements Database {
 	}
 
 	@Override
-	public ShopEntry createEntry() {
-		return null;
+	public ShopEntry createEntry(UUID uuid, Shop shop, ItemStack displayItem, ShopMode shopMode, int slot) {
+		return new BaseShopEntry(uuid, shop, displayItem, null, null, slot, shopMode);
 	}
 
 	@Override
@@ -60,11 +78,69 @@ public class TestDatabase implements Database {
 
 	@Override
 	public Map<UUID, Discount> loadDiscounts() {
-		return new HashMap<>();
+		Map<UUID, Discount> map = new HashMap<>();
+		Discount d1 = new Discount(UUID.randomUUID(), "<red>XMas Discount", LocalDateTime.now(), Duration.of(3, ChronoUnit.DAYS), 10, null);
+
+
+		map.put(d1.getUuid(), d1);
+		return map;
 	}
 
 	@Override
 	public void saveDiscount(Discount discount) {
+
+	}
+
+	@Override
+	public void deleteDiscount(Discount discount) {
+
+	}
+
+	@Override
+	public Limit createLimit(int limit) {
+		return new Limit(Duration.of(3, ChronoUnit.DAYS), customer -> true, limit);
+	}
+
+	@Override
+	public Map<UUID, Limit> loadLimits() {
+		Map<UUID, Limit> map = new HashMap<>();
+		Limit limit = new Limit(Duration.of(1, ChronoUnit.DAYS), asd -> true, 32);
+		map.put(limit.getUuid(), limit);
+		return map;
+	}
+
+	@Override
+	public void saveLimit(Limit limit) {
+
+	}
+
+	@Override
+	public void deleteLimit(Limit limit) {
+
+	}
+
+	@Override
+	public EntryTemplate createTemplate(String name) {
+		return new EntryTemplate(UUID.randomUUID(), "<aqua>new-template");
+	}
+
+	@Override
+	public Map<UUID, EntryTemplate> loadTemplates() {
+		EntryTemplate template = new EntryTemplate(UUID.randomUUID(), "<gradient:dark_green:green:dark_green>Default Template");
+		for (int i = 0; i < 9; i++) {
+			template.put(i, new BaseShopEntry(UUID.randomUUID(), null, ItemStackUtils.createItemStack(Material.DIAMOND, "lol", ""),
+					null, null, i, ShopHandler.getInstance().getShopModes().get(0)));
+		}
+		return Map.of(template.getUuid(), template);
+	}
+
+	@Override
+	public void saveTemplate(EntryTemplate template) {
+
+	}
+
+	@Override
+	public void deleteTemplate(EntryTemplate template) {
 
 	}
 }

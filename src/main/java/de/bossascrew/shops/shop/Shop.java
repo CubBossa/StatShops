@@ -1,16 +1,23 @@
 package de.bossascrew.shops.shop;
 
 import de.bossascrew.shops.Customer;
+import de.bossascrew.shops.data.DatabaseObject;
+import de.bossascrew.shops.menu.ListMenuElement;
+import de.bossascrew.shops.menu.contexts.BackContext;
+import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.Editable;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import javax.xml.crypto.Data;
 import java.util.List;
 import java.util.UUID;
 
-public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
+public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, ListMenuElement, DatabaseObject {
 
 	/**
 	 * @return The unique id for this shop. It also servers as a tag for the Taggable interface and allows to apply limits and discounts to all shopentries of this shop
@@ -39,10 +46,16 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 	 */
 	String getNamePlain();
 
+	Material getDisplayMaterial();
+
+	void setDisplayMaterial(Material material);
+
 	/**
 	 * @return The permission node that allows customers to use this shop or null if no permission is set
 	 */
 	@Nullable String getPermission();
+
+	void setPermission(@Nullable String permission);
 
 	/**
 	 * @return The amount of pages of this shop. It may be calculated from the highest slot index.
@@ -50,6 +63,12 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 	int getPageCount();
 
 	ShopEntry getEntry(ShopMode mode, int slot);
+
+	ShopEntry createEntry(ItemStack displayItem, ShopMode shopMode, int slot);
+
+	boolean deleteEntry(ShopMode shopMode, int slot);
+
+	boolean deleteEntry(ShopEntry entry);
 
 	/**
 	 * @return true, if customers open the shop at the same page they have closed it
@@ -107,12 +126,16 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 	 */
 	boolean open(Customer customer);
 
+	boolean open(Customer customer, ContextConsumer<BackContext> backHandler);
+
 	/**
 	 * @param customer the customer to open this shop for.
 	 * @param page     the page to open this shop at.
 	 * @return true if the shop was opened successfully, false if errors occured
 	 */
 	boolean open(Customer customer, int page);
+
+	boolean open(Customer customer, int page, ContextConsumer<BackContext> backHandler);
 
 	/**
 	 * @param customer the customer to open this shop for.
@@ -121,6 +144,8 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 	 */
 	boolean open(Customer customer, ShopMode shopMode);
 
+	boolean open(Customer customer, ShopMode shopMode, ContextConsumer<BackContext> backHandler);
+
 	/**
 	 * @param customer the customer to open this shop for.
 	 * @param page     the page to open this shop at.
@@ -128,6 +153,8 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player> {
 	 * @return true if the shop was opened successfully, false if errors occured
 	 */
 	boolean open(Customer customer, int page, ShopMode shopMode);
+
+	boolean open(Customer customer, int page, ShopMode shopMode, ContextConsumer<BackContext> backHandler);
 
 	/**
 	 * @param customer the customer to close this shop if he currently uses it.

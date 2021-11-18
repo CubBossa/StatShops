@@ -3,6 +3,8 @@ package de.bossascrew.shops.web;
 import java.util.List;
 
 /**
+ * Provides data for the webinterface and handles the data that is returned by the webinterface
+ *
  * @param <T> the cached objects, like shops, discounts and limits
  */
 public interface WebAccessable<T> {

@@ -4,14 +4,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
+import de.bossascrew.shops.handler.ShopHandler;
+import de.bossascrew.shops.menu.BottomTopChestMenu;
 import de.bossascrew.shops.menu.RowedOpenableMenu;
-import de.bossascrew.shops.menu.ShopMenuView;
+import de.bossascrew.shops.menu.ShopMenu;
+import de.bossascrew.shops.menu.contexts.BackContext;
+import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ComponentUtils;
+import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +36,8 @@ public class ChestMenuShop implements Shop {
 	private Component name;
 	private String namePlain;
 
+	@JsonIgnore
+	private Material displayMaterial;
 	private @Nullable String permission = null;
 
 	private int rows = 3;
@@ -44,7 +54,7 @@ public class ChestMenuShop implements Shop {
 
 	private final List<Customer> activeCustomers;
 
-	private final Map<Customer, ShopMenuView> menuMap;
+	private final Map<Customer, ShopMenu> menuMap;
 
 	private final List<String> tags;
 
@@ -77,12 +87,47 @@ public class ChestMenuShop implements Shop {
 				highest = h;
 			}
 		}
-		return highest / (rows * RowedOpenableMenu.ROW_SIZE) + 1;
+		//important to divide with largest inventory size so entries dont move to other pages when changing the row size
+		return highest / RowedOpenableMenu.LARGEST_INV_SIZE + 1;
 	}
 
 	public @Nullable
 	ShopEntry getEntry(ShopMode shopEntry, int slot) {
 		return modeEntryMap.getOrDefault(shopEntry, new TreeMap<>()).getOrDefault(slot, null);
+	}
+
+	@Override
+	public ShopEntry createEntry(ItemStack displayItem, ShopMode shopMode, int slot) {
+		ShopEntry entry = ShopPlugin.getInstance().getDatabase().createEntry(UUID.randomUUID(), this, displayItem, shopMode, slot);
+		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.getOrDefault(shopMode, new TreeMap<>());
+		innerMap.put(slot, entry);
+		modeEntryMap.put(shopMode, innerMap);
+		return entry;
+	}
+
+	public ShopEntry addEntry(ShopMode shopMode, int slot, ShopEntry entry) {
+		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.getOrDefault(shopMode, new TreeMap<>());
+		innerMap.put(slot, entry);
+		modeEntryMap.put(shopMode, innerMap);
+		return entry;
+	}
+
+	@Override
+	public boolean deleteEntry(ShopMode shopMode, int slot) {
+		return deleteEntry(getEntry(shopMode, slot));
+	}
+
+	@Override
+	public boolean deleteEntry(ShopEntry entry) {
+		if(entry == null) {
+			return false;
+		}
+		ShopPlugin.getInstance().getDatabase().deleteEntry(entry);
+		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.get(entry.getShopMode());
+		if (innerMap == null) {
+			return false;
+		}
+		return innerMap.remove(entry.getSlot(), entry);
 	}
 
 	@Override
@@ -122,8 +167,9 @@ public class ChestMenuShop implements Shop {
 	public @Nullable
 	ShopMode getPreferredShopMode(Customer customer) {
 		ShopMode mode = isModeRemembered ? customer.getShopMode(this, defaultShopMode) : defaultShopMode;
-		if (!modeEntryMap.containsKey(mode)) {
-			return null;
+		if (mode == null) {
+			ShopPlugin.getInstance().log(LoggingPolicy.WARN, "Default ShopMode was null, using first registered mode.");
+			return ShopHandler.getInstance().getShopModes().get(0);
 		}
 		return mode;
 	}
@@ -132,15 +178,35 @@ public class ChestMenuShop implements Shop {
 		return open(customer, getPreferredOpenPage(customer), getPreferredShopMode(customer));
 	}
 
+	@Override
+	public boolean open(Customer customer, ContextConsumer<BackContext> backHandler) {
+		return open(customer, getPreferredOpenPage(customer), getPreferredShopMode(customer), backHandler);
+	}
+
 	public boolean open(Customer customer, int page) {
 		return open(customer, page, getPreferredShopMode(customer));
+	}
+
+	@Override
+	public boolean open(Customer customer, int page, ContextConsumer<BackContext> backHandler) {
+		return open(customer, page, getPreferredShopMode(customer), backHandler);
 	}
 
 	public boolean open(Customer customer, ShopMode mode) {
 		return open(customer, getPreferredOpenPage(customer), mode);
 	}
 
+	@Override
+	public boolean open(Customer customer, ShopMode shopMode, ContextConsumer<BackContext> backHandler) {
+		return open(customer, getPreferredOpenPage(customer), shopMode, backHandler);
+	}
+
 	public boolean open(Customer customer, int page, ShopMode mode) {
+		return open(customer, getPreferredOpenPage(customer), mode, null);
+	}
+
+	@Override
+	public boolean open(Customer customer, int page, ShopMode shopMode, @Nullable ContextConsumer<BackContext> backHandler) {
 		if (!enabled) {
 			customer.sendMessage(Message.SHOP_NOT_ENABLED);
 			return false;
@@ -149,17 +215,20 @@ public class ChestMenuShop implements Shop {
 			customer.sendMessage(Message.SHOP_NO_PERMISSION);
 			return false;
 		}
-		ShopMenuView menu = new ShopMenuView(this);
-		menu.openShop(customer);
+		ShopMenu menu = new ShopMenu(this, backHandler);
+		menu.openInventory(customer);
 		menuMap.put(customer, menu);
+
+		customer.setActiveShop(this);
 		activeCustomers.add(customer);
+
 		return true;
 	}
 
 	public boolean close(Customer customer) {
-		ShopMenuView menu = menuMap.get(customer);
+		ShopMenu menu = menuMap.get(customer);
 		if (menu != null) {
-			if (customer.getPlayer().getOpenInventory().equals(menu.getInventoryView())) {
+			if (customer.getPlayer().getOpenInventory().getTopInventory().equals(menu.getInventory())) {
 				customer.getPlayer().closeInventory();
 			}
 			menuMap.remove(customer);
@@ -188,20 +257,36 @@ public class ChestMenuShop implements Shop {
 		return entry.buy(customer);
 	}
 
+	public void setRows(int rows) {
+		this.rows = rows % 6;
+		if(this.rows <= 0) {
+			this.rows += 6;
+		}
+		//all rows between 1 - 6
+	}
+
 	@Override
 	public UUID getUUID() {
 		return uuid;
+	}
+
+	public void setPermission(String permission) {
+		this.permission = permission != null ? permission.equalsIgnoreCase("null") ? null : permission : null;
 	}
 
 	@Override
 	public List<String> getTags() {
 		List<String> list = new ArrayList<>(tags);
 		list.add(uuid.toString());
+		list.sort(String::compareTo);
 		return list;
 	}
 
 	@Override
 	public boolean addTag(String tag) {
+		if (tags.contains(tag)) {
+			return false;
+		}
 		return tags.add(tag);
 	}
 
@@ -215,8 +300,28 @@ public class ChestMenuShop implements Shop {
 		return getTags().contains(tag);
 	}
 
+	public void applyTemplate(EntryTemplate template, ShopMode shopMode, int shopPage) {
+		for(ShopEntry entry : template.values()) {
+			ShopEntry newEntry = entry.duplicate();
+			newEntry.setShopMode(shopMode);
+			newEntry.setSlot(shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + (entry.getSlot() % RowedOpenableMenu.LARGEST_INV_SIZE));
+			newEntry.saveToDatabase();
+		}
+	}
+
 	@Override
 	public int compareTo(@NotNull Shop o) {
 		return namePlain.compareTo(o.getNamePlain());
+	}
+
+	@Override
+	@JsonIgnore
+	public ItemStack getListDisplayItem() {
+		return ItemStackUtils.createShopItemStack(this);
+	}
+
+	@Override
+	public void saveToDatabase() {
+		ShopPlugin.getInstance().getDatabase().saveShop(this);
 	}
 }

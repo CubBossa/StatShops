@@ -6,6 +6,8 @@ import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 /**
  * Buy, Sell, Trade, etc...
  */
@@ -25,4 +27,16 @@ public abstract class ShopMode {
 
 	@JsonIgnore
 	public abstract ItemStack getDisplayItem();
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof ShopMode)) {
+			return false;
+		}
+		ShopMode mode = (ShopMode) o;
+		return getKey().equalsIgnoreCase(mode.getKey());
+	}
 }

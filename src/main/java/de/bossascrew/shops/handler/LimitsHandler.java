@@ -1,7 +1,8 @@
 package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.Customer;
-import de.bossascrew.shops.menu.ShopMenuView;
+import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.menu.ListMenuElementHolder;
 import de.bossascrew.shops.shop.Limit;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.web.WebAccessable;
@@ -11,7 +12,9 @@ import net.kyori.adventure.text.Component;
 import java.util.*;
 
 @Getter
-public class LimitsHandler implements WebAccessable<Limit> {
+public class LimitsHandler implements
+		WebAccessable<Limit>,
+		ListMenuElementHolder<Limit> {
 
 	@Getter
 	private static LimitsHandler instance;
@@ -33,7 +36,7 @@ public class LimitsHandler implements WebAccessable<Limit> {
 		return new ArrayList<>(limitMap.values());
 	}
 
-	public void handleLimitDisplay(ShopMenuView inventory, ShopEntry shopEntry, List<Component> existingLore) {
+	public void handleLimitDisplay(ShopEntry shopEntry, List<Component> existingLore) {
 
 	}
 
@@ -54,5 +57,42 @@ public class LimitsHandler implements WebAccessable<Limit> {
 	@Override
 	public void storeWebData(List<Limit> values) {
 		//TODO
+	}
+
+	@Override
+	public List<Limit> getValues() {
+		return getLimits();
+	}
+
+	@Override
+	public Limit createNew(String input) {
+		int l;
+		try {
+			l = Integer.parseInt(input);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+		Limit limit = ShopPlugin.getInstance().getDatabase().createLimit(l);
+		limitMap.put(limit.getUuid(), limit);
+		return limit;
+	}
+
+	@Override
+	public Limit createDuplicate(Limit element) {
+		Limit limit = createNew(element.getTransactionLimit() + "");
+		limit.setRecover(element.getRecover());
+		limit.setAppliesToCustomer(element.getAppliesToCustomer());
+		limit.setSummTagMemberLimits(element.isSummTagMemberLimits());
+		ShopPlugin.getInstance().getDatabase().saveLimit(limit);
+		return limit;
+	}
+
+	@Override
+	public boolean delete(Limit limit) {
+		//TODO alle shops aktuallisieren, die dem limit entsprechen.
+
+		ShopPlugin.getInstance().getDatabase().deleteLimit(limit);
+		limitMap.remove(limit.getUuid());
+		return false;
 	}
 }

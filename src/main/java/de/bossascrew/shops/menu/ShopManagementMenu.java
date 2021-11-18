@@ -57,15 +57,20 @@ public class ShopManagementMenu {
 			});
 		});
 		chestMenu.setItemAndClickHandler(1, 7, DefaultSpecialItem.MANAGER_MAIN_WEBINTERFACE, clickContext -> {
-			player.sendMessage("Not yet implemented - but Test:");
-			//TODO generate interface link and send to player
-
-			Paste paste = WebSessionUtils.generateWebSession();
-
-			ShopPlugin.getInstance().runAsync(() -> player.sendMessage("https://127.0.0.1:8080/" + paste.getId()));
-			System.out.println(paste.getId());
-
 			player.closeInventory();
+			Customer customer = Customer.wrap(player);
+			customer.sendMessage(Message.GENERAL_WEBINTERFACE_LOADING);
+
+			ShopPlugin.getInstance().runAsync(() -> {
+
+				Paste paste = WebSessionUtils.generateWebSession();
+				if (paste == null) {
+					customer.sendMessage(Message.GENERAL_WEBINTERFACE_ERROR);
+					return;
+				}
+				customer.sendMessage(Message.GENERAL_WEBINTERFACE_LINK.getTranslation(Template.of("link", "https://127.0.0.1:8080/" + paste.getId())));
+			});
+
 		});
 		chestMenu.openInventory(player);
 	}
@@ -94,7 +99,7 @@ public class ShopManagementMenu {
 			if (clickContext.getPlayer().getItemOnCursor().getType() != Material.AIR) {
 				shop.setDisplayMaterial(clickContext.getPlayer().getItemOnCursor().getType());
 				ShopPlugin.getInstance().getDatabase().saveShop(shop);
-				clickContext.setItemStack(ItemStackUtils.createShopItemStack(shop));
+				clickContext.setItemStack(ItemStackUtils.createItemStack(shop.getDisplayMaterial(), Message.MANAGER_GUI_SHOP_SET_NAME_NAME, Message.MANAGER_GUI_SHOP_SET_NAME_LORE));
 				return;
 			}
 			player.closeInventory();

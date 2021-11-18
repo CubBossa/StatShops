@@ -33,6 +33,9 @@ public enum Message {
 	GENERAL_GUI_DECLINE_LORE("general.gui.decline.lore"),
 	GENERAL_GUI_LIST_INFO_NAME("general.gui.list_info.name"),
 	GENERAL_GUI_LIST_INFO_LORE("general.gui.list_info.lore"),
+	GENERAL_WEBINTERFACE_LOADING("general.webinterface.loading"),
+	GENERAL_WEBINTERFACE_LINK("general.webinterface.link"),
+	GENERAL_WEBINTERFACE_ERROR("general.webinterface.error"),
 
 	SHOP_NO_PERMISSION("shop.no_permission"),
 	SHOP_NOT_ENABLED("shop.not_enabled"),

@@ -41,7 +41,7 @@ public class ChestMenuShop implements Shop {
 	private @Nullable String permission = null;
 
 	private int rows = 3;
-	private boolean enabled = true;
+	private boolean enabled = true; //TODO raus damit
 
 	private boolean isPageRemembered = false;
 	private boolean isModeRemembered = false;

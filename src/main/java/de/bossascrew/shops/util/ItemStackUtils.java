@@ -14,6 +14,7 @@ import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -60,7 +62,19 @@ public class ItemStackUtils {
 			.build();
 
 	public void giveOrDrop(Player player, ItemStack itemStack) {
-		player.getInventory().addItem(itemStack); //TODO
+		giveOrDrop(player, itemStack, player.getLocation());
+	}
+
+	public void giveOrDrop(Player player, @Nullable ItemStack item, Location location) {
+
+		if (item == null || item.getType() == Material.AIR) {
+			return;
+		}
+		Map<Integer, ItemStack> leftoverItems = player.getInventory().addItem(item.clone());
+		if (leftoverItems.isEmpty()) {
+			return;
+		}
+		leftoverItems.forEach((index, item2) -> location.getWorld().dropItemNaturally(location, item2));
 	}
 
 	public void addLore(ItemStack itemStack, List<Component> lore) {

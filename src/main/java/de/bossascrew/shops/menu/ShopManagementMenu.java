@@ -129,7 +129,11 @@ public class ShopManagementMenu {
 		//Open Tags menu
 		chestMenu.setItemAndClickHandler(0, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
 						Message.MANAGER_GUI_SHOP_SET_TAGS_NAME, Message.MANAGER_GUI_SHOP_SET_TAGS_LORE),
-				clickContext -> openShopTagsMenu(player, shop, fromPage, 0));
+				clickContext -> new TagsEditorMenu(
+						shop, Message.MANAGER_GUI_TAGS_TITLE.getTranslation(Template.of("name", shop.getName())),
+						Message.MANAGER_GUI_TAGS_NEW_TAG_TITLE, Message.MANAGER_GUI_TAGS_NEW_TAG_NAME, Message.MANAGER_GUI_TAGS_NEW_TAG_LORE,
+						Message.GENERAL_GUI_REMOVE_TAG, backContext -> openShopMenu(player, shop, fromPage)).openInventory(player));
+
 		//Open Limits menu
 		chestMenu.setItemAndClickHandler(0, 5, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
 						Message.MANAGER_GUI_SHOP_SET_LIMITS_NAME, Message.MANAGER_GUI_SHOP_SET_LIMITS_LORE),
@@ -300,47 +304,6 @@ public class ShopManagementMenu {
 		new ShopEditor(shop, backContext -> openShopMenu(player, shop, fromPage)).openInventory(player, shopMode, shopPage);
 	}
 
-	public void openShopTagsMenu(Player player, Shop shop, int fromPage, int page) {
-		PagedChestMenu menu = new PagedChestMenu(Message.MANAGER_GUI_SHOP_TAGS_TITLE.getTranslation(
-				Template.of("shop", shop.getName())), 3, null, null, backContext -> {
-			openShopMenu(player, shop, fromPage);
-		});
-		menu.setNavigationEntry(7, ItemStackUtils.createItemStack(Material.EMERALD,
-				Message.MANAGER_GUI_SHOP_TAGS_NEW_TAG_NAME, Message.MANAGER_GUI_SHOP_TAGS_NEW_TAG_LORE), clickContext -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.plugin(ShopPlugin.getInstance())
-					.text("tag-me")
-					.title(Message.MANAGER_GUI_SHOP_TAGS_NEW_TAG_TITLE.getLegacyTranslation())
-					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openShopTagsMenu(p, shop, fromPage, page), 1L))
-					.onComplete((p, s) -> {
-						shop.addTag(s);
-						openShopTagsMenu(player, shop, fromPage, menu.getPageCount() - 1);
-						return AnvilGUI.Response.close();
-					}).open(player);
-		});
-		for (String tag : shop.getTags()) {
-			menu.addMenuEntry(ItemStackUtils.createItemStack(Material.NAME_TAG, Component.text(tag, NamedTextColor.WHITE), new ArrayList<>()), clickContext -> {
-				if (clickContext.getAction().isRightClick()) {
-					if (ShopPlugin.getInstance().getShopsConfig().isConfirmTagDeletion()) {
-						ConfirmMenu confirmMenu = new ConfirmMenu(Message.GENERAL_GUI_REMOVE_TAG.getTranslation(Template.of("tag", tag)));
-						confirmMenu.setDenyHandler(c -> openShopTagsMenu(player, shop, fromPage, menu.getCurrentPage()));
-						confirmMenu.setCloseHandler(c -> openShopTagsMenu(player, shop, fromPage, menu.getCurrentPage()));
-						confirmMenu.setAcceptHandler(c -> {
-							shop.removeTag(tag);
-							openShopTagsMenu(player, shop, fromPage, menu.getCurrentPage());
-						});
-						confirmMenu.openInventory(player);
-					} else {
-						shop.removeTag(tag);
-						openShopTagsMenu(player, shop, fromPage, menu.getCurrentPage());
-					}
-				}
-			});
-		}
-		menu.openInventory(player, page);
-	}
-
 	public void openShopLimitsMenu(Player player, Shop shop, int page) {
 		player.sendMessage("openShopLimitsMenu");
 	}
@@ -390,7 +353,10 @@ public class ShopManagementMenu {
 		//Open Tags menu
 		chestMenu.setItemAndClickHandler(0, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
 						Message.MANAGER_GUI_DISCOUNT_SET_TAGS_NAME, Message.MANAGER_GUI_DISCOUNT_SET_TAGS_LORE),
-				clickContext -> openDisountTagsMenu(player, discount, 0));
+				clickContext -> new TagsEditorMenu(
+						discount, Message.MANAGER_GUI_TAGS_TITLE.getTranslation(Template.of("name", discount.getName())),
+						Message.MANAGER_GUI_TAGS_NEW_TAG_TITLE, Message.MANAGER_GUI_TAGS_NEW_TAG_NAME, Message.MANAGER_GUI_TAGS_NEW_TAG_LORE,
+						Message.GENERAL_GUI_REMOVE_TAG, backContext -> openDiscountMenu(player, discount, page)).openInventory(player));
 
 		//TODO setstart
 		//TODO setduration
@@ -398,9 +364,5 @@ public class ShopManagementMenu {
 		//TODO setpercent
 
 		chestMenu.openInventory(player);
-	}
-
-	public void openDisountTagsMenu(Player player, Discount discount, int page) {
-		player.sendMessage("openDisountTagsMenu");
 	}
 }

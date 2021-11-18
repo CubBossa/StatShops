@@ -99,10 +99,12 @@ public enum Message {
 	MANAGER_GUI_SHOP_SET_ROWS_NAME("manager.gui.shop.set_rows.name"),
 	MANAGER_GUI_SHOP_SET_ROWS_LORE("manager.gui.shop.set_rows.lore"),
 
-	MANAGER_GUI_SHOP_TAGS_TITLE("manager.gui.shop_tags.title"),
-	MANAGER_GUI_SHOP_TAGS_NEW_TAG_TITLE("manager.gui.shop_tags.new_tag.title"),
-	MANAGER_GUI_SHOP_TAGS_NEW_TAG_NAME("manager.gui.shop_tags.new_tag.name"),
-	MANAGER_GUI_SHOP_TAGS_NEW_TAG_LORE("manager.gui.shop_tags.new_tag.lore"),
+	MANAGER_GUI_TAGS_TITLE("manager.gui.tags.title"),
+	MANAGER_GUI_TAGS_NEW_TAG_TITLE("manager.gui.tags.new_tag.title"),
+	MANAGER_GUI_TAGS_NEW_TAG_NAME("manager.gui.tags.new_tag.name"),
+	MANAGER_GUI_TAGS_NEW_TAG_LORE("manager.gui.tags.new_tag.lore"),
+	GENERAL_GUI_TAGS_INFO_NAME("general.gui.tags.info.name"),
+	GENERAL_GUI_TAGS_INFO_LORE("general.gui.tags.info.lore"),
 
 	MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME("manager.gui.shop_editor.template.name"),
 	MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE("manager.gui.shop_editor.template.lore"),

@@ -148,13 +148,6 @@ manager:
       set_rows:
         name: "<white>Menu Size: <rows> Rows"
         lore: "<gray>» <rows> Rows"
-    shop_tags:
-      # Valid placehholders: <shop>
-      title: "Manage tags for <shop>"
-      new_tag:
-        title: "Add New Tag"
-        name: "<white>Create New Tag"
-        lore: "<gray>Click here to create a\n<gray>new tag.\n<gray>Right click tags in the list\n<gray>to delete them."
     shop_editor:
       template:
         name: "<white>Apply Templates to this Page"
@@ -165,7 +158,16 @@ manager:
     shop_entry:
       title: "Edit Shop Entry"
 
-
+    tags:
+      # Valid placehholders: <name>
+      title: "Manage tags for <name>"
+      new_tag:
+        title: "Add New Tag"
+        name: "<white>Create New Tag"
+        lore: "<gray>Click here to create a\n<gray>new tag.\n<gray>Right click tags in the list\n<gray>to delete them."
+      info:
+        name: "<gold>Info"
+        lore: "<gray>» <yellow>right-click: <gray>delete element"
 
     limits:
       title: "Create and manage shop limits"

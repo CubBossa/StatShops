@@ -5,7 +5,6 @@ import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.ShopHandler;
-import de.bossascrew.shops.menu.BottomTopChestMenu;
 import de.bossascrew.shops.menu.RowedOpenableMenu;
 import de.bossascrew.shops.menu.ShopMenu;
 import de.bossascrew.shops.menu.contexts.BackContext;
@@ -306,6 +305,7 @@ public class ChestMenuShop implements Shop {
 			newEntry.setShopMode(shopMode);
 			newEntry.setSlot(shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + (entry.getSlot() % RowedOpenableMenu.LARGEST_INV_SIZE));
 			newEntry.saveToDatabase();
+			addEntry(shopMode, entry.getSlot(), entry);
 		}
 	}
 

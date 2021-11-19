@@ -2,6 +2,7 @@ package de.bossascrew.shops.data;
 
 import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
@@ -35,7 +36,7 @@ public interface Database {
 
 	void deleteDiscount(Discount discount);
 
-	Limit createLimit(int limit);
+	Limit createLimit(String name);
 
 	Map<UUID, Limit> loadLimits();
 
@@ -50,4 +51,13 @@ public interface Database {
 	void saveTemplate(EntryTemplate template);
 
 	void deleteTemplate(EntryTemplate template);
+
+	Map<Location, UUID> loadShopBlockMapping();
+
+	void mapShopToBlock(Shop shop, Location location);
+
+	Map<Integer, UUID> loadShopCitizensMapping();
+
+	void mapShopToCitizens(Shop shop, int citizensId);
+
 }

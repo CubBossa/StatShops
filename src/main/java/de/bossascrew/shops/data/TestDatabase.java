@@ -5,6 +5,7 @@ import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.BaseShopEntry;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -97,14 +98,14 @@ public class TestDatabase implements Database {
 	}
 
 	@Override
-	public Limit createLimit(int limit) {
-		return new Limit(Duration.of(3, ChronoUnit.DAYS), customer -> true, limit);
+	public Limit createLimit(String name) {
+		return new Limit(name, Duration.of(3, ChronoUnit.DAYS), customer -> true, 32);
 	}
 
 	@Override
 	public Map<UUID, Limit> loadLimits() {
 		Map<UUID, Limit> map = new HashMap<>();
-		Limit limit = new Limit(Duration.of(1, ChronoUnit.DAYS), asd -> true, 32);
+		Limit limit = createLimit("Example Limit");
 		map.put(limit.getUuid(), limit);
 		return map;
 	}
@@ -141,6 +142,26 @@ public class TestDatabase implements Database {
 
 	@Override
 	public void deleteTemplate(EntryTemplate template) {
+
+	}
+
+	@Override
+	public Map<Location, UUID> loadShopBlockMapping() {
+		return null;
+	}
+
+	@Override
+	public void mapShopToBlock(Shop shop, Location location) {
+
+	}
+
+	@Override
+	public Map<Integer, UUID> loadShopCitizensMapping() {
+		return null;
+	}
+
+	@Override
+	public void mapShopToCitizens(Shop shop, int citizensId) {
 
 	}
 }

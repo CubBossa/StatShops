@@ -1,6 +1,7 @@
 package de.bossascrew.shops.menu;
 
 import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.data.DatabaseObject;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
@@ -28,7 +29,11 @@ public class TagsEditorMenu extends PagedChestMenu {
 	public TagsEditorMenu(Taggable taggable, Component title,
 						  Message newTagTitle, Message newTagName, Message newTagLore, Message confirmRemove,
 						  ContextConsumer<BackContext> backHandler) {
-		super(title, 3, null, null, backHandler);
+		super(title, 3, null, closeContext -> {
+			if (taggable instanceof DatabaseObject databaseObject) {
+				databaseObject.saveToDatabase();
+			}
+		}, backHandler);
 		this.taggable = taggable;
 		this.newTagTitle = newTagTitle;
 		this.newTagName = newTagName;

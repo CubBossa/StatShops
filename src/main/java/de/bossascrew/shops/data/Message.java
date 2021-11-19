@@ -42,7 +42,12 @@ public enum Message {
 	SHOP_NO_PERMISSION("shop.no_permission"),
 	SHOP_NOT_ENABLED("shop.not_enabled"),
 
-	SHOP_GUI_TITLE("shop.gui.title"),
+	SHOP_GUI_TITLE("shop.gui.title",
+			"Defines the title of the shop menu",
+			new Pair<>("name", "<gradient:dark_green:green:dark_green>Example Shop"),
+			new Pair<>("page", "" + 2),
+			new Pair<>("mode", "<gold>Sell</gold>"),
+			new Pair<>("pages", "" + 3)),
 	SHOP_ITEM_LORE_PRICE("shop.gui.item.lore.price"),
 	SHOP_ITEM_LORE_DISCOUNT("shop.gui.item.lore.discount"),
 	SHOP_ITEM_LORE_LIMIT("shop.gui.item.lore.limit"),
@@ -125,6 +130,15 @@ public enum Message {
 	MANAGER_GUI_LIMITS_NEW_NAME("manager.gui.limits.new.name"),
 	MANAGER_GUI_LIMITS_NEW_LORE("manager.gui.limits.new.lore"),
 
+	MANAGER_GUI_LIMIT_SET_NAME_TITLE("manager.gui.limit.set_name.title"),
+	MANAGER_GUI_LIMIT_SET_NAME_NAME("manager.gui.limit.set_name.name"),
+	MANAGER_GUI_LIMIT_SET_NAME_LORE("manager.gui.limit.set_name.lore"),
+	MANAGER_GUI_LIMIT_SET_TAGS_NAME("manager.gui.limit.set_tags.name"),
+	MANAGER_GUI_LIMIT_SET_TAGS_LORE("manager.gui.limit.set_tags.lore"),
+	MANAGER_GUI_LIMIT_SET_PERMISSION_TITLE("manager.gui.limit.set_permission.title"),
+	MANAGER_GUI_LIMIT_SET_PERMISSION_NAME("manager.gui.limit.set_permission.name"),
+	MANAGER_GUI_LIMIT_SET_PERMISSION_LORE("manager.gui.limit.set_permission.lore"),
+
 	MANAGER_GUI_DISCOUNTS("manager.gui.discounts.title"),
 	MANAGER_GUI_DISCOUNTS_DELETE_CONFIRM("manager.gui.discounts.confirm_delete"),
 	MANAGER_GUI_DISCOUNTS_ALREADY_EDITED("manager.gui.discounts.already_edited"),
@@ -147,6 +161,7 @@ public enum Message {
 	MANAGER_GUI_TEMPLATES("manager.gui.templates.title"),
 	MANAGER_GUI_TEMPLATES_CHOOSE("manager.gui.templates.choose_title"),
 	MANAGER_GUI_TEMPLATES_APPLY("manager.gui.templates.apply_title"),
+	MANAGER_GUI_TEMPLATES_NEW("manager.gui.templates.new_title"),
 
 
 	;

@@ -3,6 +3,8 @@ package de.bossascrew.shops.handler;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.menu.ListMenuElementHolder;
 import de.bossascrew.shops.shop.EntryTemplate;
+import de.bossascrew.shops.shop.Shop;
+import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 
@@ -28,6 +30,10 @@ public class TemplateHandler implements
 	@Override
 	public List<EntryTemplate> getValues() {
 		return new ArrayList<>(templateMap.values());
+	}
+
+	public EntryTemplate createNew(String nameFormat, Shop shop, ShopMode shopMode, int page) {
+		return null;
 	}
 
 	@Override

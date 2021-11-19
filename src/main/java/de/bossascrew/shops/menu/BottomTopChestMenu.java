@@ -175,12 +175,12 @@ public class BottomTopChestMenu extends ChestMenu {
 
 	private int[] getSlotsFromRows(int rows, int bottomRows) {
 		int size = rows * ROW_SIZE;
-		int[] slots = new int[size + 3 * ROW_SIZE];
+		int[] slots = new int[size + bottomRows * ROW_SIZE];
 		for (int i = 0; i < size; i++) {
 			slots[i] = i;
 		}
 		for (int i = ROW_SIZE; i < (bottomRows + 1) * ROW_SIZE; i++) {
-			slots[i] = i + INDEX_DIFFERENCE;
+			slots[i - ROW_SIZE + size] = i + INDEX_DIFFERENCE;
 		}
 		return slots;
 	}
@@ -255,6 +255,7 @@ public class BottomTopChestMenu extends ChestMenu {
 			if (slot < INDEX_DIFFERENCE) {
 				continue;
 			}
+			System.out.print(slot + ", ");
 			setItem(slot, item.createSpecialItem());
 		}
 	}

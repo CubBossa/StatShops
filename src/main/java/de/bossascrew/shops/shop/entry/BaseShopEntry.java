@@ -60,6 +60,9 @@ public class BaseShopEntry implements ShopEntry {
 	}
 
 	public ShopInteractionResult buy(Customer customer) {
+		if (!hasPermission(customer)) {
+			return ShopInteractionResult.FAIL_NO_PERMISSION;
+		}
 		return pay.act(customer).compare(gain.act(customer));
 	}
 

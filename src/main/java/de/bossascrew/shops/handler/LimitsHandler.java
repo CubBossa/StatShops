@@ -66,13 +66,7 @@ public class LimitsHandler implements
 
 	@Override
 	public Limit createNew(String input) {
-		int l;
-		try {
-			l = Integer.parseInt(input);
-		} catch (NumberFormatException e) {
-			return null;
-		}
-		Limit limit = ShopPlugin.getInstance().getDatabase().createLimit(l);
+		Limit limit = ShopPlugin.getInstance().getDatabase().createLimit(input);
 		limitMap.put(limit.getUuid(), limit);
 		return limit;
 	}

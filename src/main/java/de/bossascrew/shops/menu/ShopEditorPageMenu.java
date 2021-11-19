@@ -1,5 +1,6 @@
 package de.bossascrew.shops.menu;
 
+import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.TemplateHandler;
 import de.bossascrew.shops.menu.contexts.BackContext;
@@ -12,7 +13,10 @@ import de.bossascrew.shops.util.ItemStackUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.Template;
+import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
@@ -71,9 +75,8 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 				}
 
 			} else if (clickContext.getPlayer().getItemOnCursor().getType() != Material.AIR &&
-					clickContext.getPlayer().getItemOnCursor().isSimilar(DefaultSpecialItem.EMPTY_LIGHT.createSpecialItem())) {
+					clickContext.getItemStack().isSimilar(DefaultSpecialItem.EMPTY_LIGHT.createSpecialItem())) {
 
-				// If item in hand switch clicked ShopEntries, no matter what key
 				ItemStack temp = clickContext.getPlayer().getItemOnCursor();
 				ShopEntry entry = shop.createEntry(temp, shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
 				clickContext.getPlayer().setItemOnCursor(clickedEntry == null ? null : clickedEntry.getDisplayItem());
@@ -120,7 +123,19 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 		setItemAndClickHandlerBottom(0, 7, ItemStackUtils.createCustomHead(ItemStackUtils.HEAD_URL_LETTER_T,
 				Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME, Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE), clickContext -> {
 			if (clickContext.getAction().isRightClick()) {
-				//TODO open safe by name menu
+				clickContext.getPlayer().closeInventory();
+				new AnvilGUI.Builder()
+						.plugin(ShopPlugin.getInstance())
+						.text("name")
+						.title(Message.MANAGER_GUI_TEMPLATES_NEW.getLegacyTranslation())
+						.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openInventory(p), 1L))
+						.onComplete((p, s) -> {
+							if (TemplateHandler.getInstance().createNew(s, shop, shopMode, shopPage) == null) {
+								p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+							}
+							openTemplatesListMenu(p);
+							return AnvilGUI.Response.close();
+						}).open(clickContext.getPlayer());
 			} else {
 				openTemplatesListMenu(clickContext.getPlayer());
 			}
@@ -142,7 +157,7 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 
 	public void openTemplateApplyMenu(Player player, EntryTemplate template) {
 		BottomTopChestMenu menu = new BottomTopChestMenu(Message.MANAGER_GUI_TEMPLATES_APPLY.getTranslation(), shop.getRows(), 1);
-		menu.fillMenu();
+		menu.fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
 		menu.fillBottom();
 		int dif = shopPage * INDEX_DIFFERENCE;
 		for (int i = 0; i < shop.getRows() + ROW_SIZE; i++) {

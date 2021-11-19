@@ -8,6 +8,7 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.DatabaseObject;
 import de.bossascrew.shops.handler.LimitsHandler;
 import de.bossascrew.shops.menu.ListMenuElement;
+import de.bossascrew.shops.util.ComponentUtils;
 import de.bossascrew.shops.util.Duplicable;
 import de.bossascrew.shops.util.Editable;
 import de.bossascrew.shops.util.ItemStackUtils;
@@ -16,6 +17,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.List;
@@ -33,6 +35,10 @@ public class Limit implements
 		Duplicable<Limit> {
 
 	private final UUID uuid;
+	private String nameFormat;
+	private Component name;
+	private String namePlain;
+	private @Nullable String permission;
 	private Duration recover;
 	private Predicate<Customer> appliesToCustomer;
 	private int transactionLimit;
@@ -45,8 +51,9 @@ public class Limit implements
 	private Player editor;
 	private final Cache<@NotNull UUID, @NotNull Transaction> transactionCache;
 
-	public Limit(Duration recover, Predicate<Customer> appliesToCustomer, int limit, String... tags) {
+	public Limit(String nameFormat, Duration recover, Predicate<Customer> appliesToCustomer, int limit, String... tags) {
 		this.uuid = UUID.randomUUID();
+		setNameFormat(nameFormat);
 		this.recover = recover;
 		this.appliesToCustomer = appliesToCustomer;
 		this.transactionLimit = limit;
@@ -54,6 +61,12 @@ public class Limit implements
 		this.transactionCache = Caffeine.newBuilder()
 				.expireAfterWrite(recover.getSeconds(), TimeUnit.SECONDS) //TODO vllt in TransactionsHandler
 				.build();
+	}
+
+	public void setNameFormat(String nameFormat) {
+		this.nameFormat = nameFormat;
+		this.name = ShopPlugin.getInstance().getMiniMessage().parse(nameFormat);
+		this.namePlain = ComponentUtils.toPlain(name);
 	}
 
 	@Override
@@ -77,11 +90,6 @@ public class Limit implements
 	@Override
 	public int compareTo(@NotNull Limit o) {
 		return Integer.compare(this.transactionLimit, o.transactionLimit);
-	}
-
-	@Override
-	public Component getName() {
-		return Component.text("Limit: " + transactionLimit);
 	}
 
 	@Override

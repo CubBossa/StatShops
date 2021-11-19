@@ -114,9 +114,9 @@ public abstract class OpenableMenu extends InventoryMenu<ClickType, ClickContext
 			((PlayerSwapHandItemsEvent) anyEvent).setCancelled(true);
 			return false;
 		}
-		if (anyEvent instanceof InventoryDragEvent) {
-			if (((InventoryDragEvent) anyEvent).getInventory().equals(inventory)) {
-				((InventoryDragEvent) anyEvent).setCancelled(true);
+		if (anyEvent instanceof InventoryDragEvent event) {
+			if (event.getInventory().equals(inventory)) {
+				event.setCancelled(true);
 				return false;
 			}
 		}

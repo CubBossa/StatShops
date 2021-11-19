@@ -7,7 +7,7 @@
 general:
   prefix: "<bold><gold>Shops</gold> </bold><gray>» "
   no_permission: "<prefix><red>You don't have permission to do this."
-  language_reloaded: "<green>Language file reloaded in <ms>ms."
+  language_reloaded: "<prefix><gray>Language file reloaded in <green><ms><dark_green>ms<gray>."
   language_error: "<prefix><red>Could not reload the language file."
   webinterface:
     loading: "<prefix>Generating session..."
@@ -17,13 +17,10 @@ general:
   gui:
     back:
       name: "<gold>Back"
-      lore: ""
+      lore: " "
     error:
       name: "<red>Error"
       lore: ""
-    delete:
-      name: "<red>Delete"
-      lore: "<gray>Be careful!"
     next_page:
       name: "<gold>Next page"
       lore: ""
@@ -84,7 +81,8 @@ manager:
         lore: "<gray>Click here to create \n<gray>and manage trade discounts."
       language:
         name: "<gold>Language"
-        lore: "<gray>Click to reload the \n<gray>language file"
+        # Valid placeholders: <file>
+        lore: "<gray>» <yellow>left-click: <gray>open web editor\n<gray>» <yellow>right-click: <gray>reload language from <file>"
       webinterface:
         name: "<dark_purple>Webinterface"
         lore: "<gray>Click to generate a \n<gray>Link for the webinterface."
@@ -129,6 +127,9 @@ manager:
       set_content:
         name: "<white>Setup Shop Entries"
         lore: "<gray>Opens the editor for the actual\n<gray>shop pages. Put all the items you\n<gray>want to trade in your lower\n<gray>inventory to have them available\n<gray>in the editor."
+      preview:
+        name: "<white>Preview This Shop"
+        lore: "<gray>Open this shop menu\n<gray>without enabling it for\n<gray>players."
       set_enabled:
         # Valid placeholders: <value>
         name: "<white>Shop Enabled: <value>"
@@ -192,6 +193,22 @@ manager:
         title: "Create New Limit"
         name: "<green>Create New Limit"
         lore: "<gray>Click to create a new \n<gray>Limit, that can be applied to \n<gray>Shops and ShopEntries."
+    limit:
+      set_name:
+        # The title of the anvil gui
+        title: "Change limit name"
+        name: "<white>Set Limit Name"
+        lore: "<gray>Click to change the \n<gray>Name of this limit.\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format."
+      set_permission:
+        # The title of the anvil gui
+        title: "Change limit permission"
+        name: "<white>Set Limit Permission"
+        # Valid placeholders: <permission>
+        lore: "<gray>Current: <red><permission>\n\n<gray>Only players with this \n<gray>permission will be affected by\n<gray>this limit.\n\n<gray>Type \"null\" to reset."
+      set_tags:
+        name: "<white>Open Tag Menu"
+        lore: "<gray>Discounts and Limits can be \n<gray>applied to all Shops and Shopentries \n<gray>that have certain tags.\n\n<gray>Use the tags menu to configure\n<gray>tags for this limit."
+
 
     discounts:
       title: "Create and manage shop discounts"
@@ -224,4 +241,7 @@ manager:
         lore: "<gray>Apply this discount to all\n<gray>shops and shopentries with\n<gray>certain tags like \"swords\" or \"foor\"."
 
     templates:
-      title: "Manage Shop Templates"
+      title: "Manage shop templates"
+      choose_title: "Choose a template"
+      apply_title: "Apply template <name>?"
+      new_title: "Save as template?"

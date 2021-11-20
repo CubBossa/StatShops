@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
@@ -363,8 +364,9 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 	}
 
 	public void applyTemplate(EntryTemplate template, ShopMode shopMode, int shopPage) {
-		for(ShopEntry entry : template.values()) {
-			int shopSlot = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + entry.getSlot();
+		for (Map.Entry<Function<Integer, Integer>, ShopEntry> mapEntry : template.entrySet()) {
+			ShopEntry entry = mapEntry.getValue();
+			int shopSlot = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + mapEntry.getKey().apply(rows);
 			ShopEntry newEntry = entry.duplicate();
 			newEntry.setShopMode(shopMode);
 			newEntry.setSlot(shopSlot);

@@ -199,10 +199,10 @@ manager:
       # Valid placeholders: <name>
       confirm_delete: "<red>Delete <name>?"
       entry:
-        # Valid placeholders: <limit>
-        name: "Another Limit: <limit>"
+        # Valid placeholders: <name>
+        name: "<white><name>"
         # Valid placeholders: <limit>, <combine-transactions>, <uuid>, <recover>
-        lore: "<uuid>\nLimit: <limit>\nRecover: <recover>"
+        lore: "<gray>Limit: <yellow><limit>\n<gray>Recover: <yellow><recover>\n<gray>Global: <yellow><combine-transactions>"
       new:
         # The title of the anvil gui
         title: "Create New Limit"
@@ -241,7 +241,7 @@ manager:
         # Valid placeholders: <name>
         name: "<dark_purple><name>"
         # Valid placeholders: <name>, <permission>, <percent>, <remaining>, <start-date>, <duration>
-        lore: "<light_purple><percent><dark_purple>% <gray><name>\n<gray><start-date>\n<gray><duration>"
+        lore: "<gray><percent>% <name>\n<gray>Start date: <yellow><start-date>\n<gray>Duration: <yellow><duration>"
     discount:
       title: "Edit discount"
       set_name:
@@ -262,4 +262,4 @@ manager:
       new_title: "Save as template?"
       entry:
         name: "<template>"
-        lore: "<gray><uuid>\n<gray>Size: <size>"
+        lore: "<gray>Size: <size>"

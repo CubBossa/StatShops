@@ -11,11 +11,12 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.UUID;
+import java.util.function.Function;
 
 @Getter
-public class EntryTemplate extends TreeMap<Integer, ShopEntry> implements
+public class EntryTemplate extends HashMap<Function<Integer, Integer>, ShopEntry> implements
 		ListMenuElement {
 
 	private final UUID uuid;
@@ -41,11 +42,9 @@ public class EntryTemplate extends TreeMap<Integer, ShopEntry> implements
 		return ItemStackUtils.createTemplatesItemStack(this);
 	}
 
-	@Override
 	public ShopEntry put(Integer key, ShopEntry value) {
-		Preconditions.checkArgument(key != null);
-		Preconditions.checkArgument(value != null);
-		Preconditions.checkArgument(key > 0 && key < RowedOpenableMenu.LARGEST_INV_SIZE);
-		return super.put(key, value);
+		Preconditions.checkNotNull(key);
+		Preconditions.checkArgument(key >= 0 && key < RowedOpenableMenu.LARGEST_INV_SIZE, "slot \"%d\" needs to be \"0 <= slot < 6 * 9\" ", key);
+		return put(rows -> key, value);
 	}
 }

@@ -27,14 +27,6 @@ import java.util.List;
 
 public class ShopManagementMenu {
 
-	private final ClickType delete;
-
-	public ShopManagementMenu() {
-		Config sc = ShopPlugin.getInstance().getShopsConfig();
-		delete = sc.getKeyBindDelete();
-	}
-
-
 	public void openBaseMenu(Player player) {
 		ChestMenu chestMenu = new ChestMenu(Message.MANAGER_GUI_MAIN_TITLE, 3);
 		chestMenu.fillMenu();
@@ -327,7 +319,7 @@ public class ShopManagementMenu {
 				Message.MANAGER_GUI_LIMITS, Message.MANAGER_GUI_LIMITS_ALREADY_EDITED, Message.MANAGER_GUI_LIMITS_NEW_NAME, Message.MANAGER_GUI_LIMITS_NEW_LORE,
 				Message.MANAGER_GUI_LIMITS_DELETE_CONFIRM, Message.MANAGER_GUI_LIMITS_NEW_TITLE, backContext -> openBaseMenu(player));
 		menu.setLeftClickHandler(targetContext -> openLimitMenu(player, targetContext.getTarget(), menu.currentPage));
-		menu.openInventory(player);
+		menu.openInventory(player, page);
 	}
 
 	public void openLimitMenu(Player player, Limit limit, int fromPage) {

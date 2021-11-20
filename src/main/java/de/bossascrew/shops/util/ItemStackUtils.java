@@ -27,6 +27,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,7 @@ public class ItemStackUtils {
 			.useUnusualXRepeatedCharacterHexFormat()
 			.hexCharacter('x')
 			.build();
+	public DurationParser DURATION_PARSER = new DurationParser(ChronoUnit.DAYS, ChronoUnit.HOURS, ChronoUnit.MINUTES);
 
 	public void giveOrDrop(Player player, ItemStack itemStack) {
 		giveOrDrop(player, itemStack, player.getLocation());
@@ -116,9 +118,9 @@ public class ItemStackUtils {
 			existingLore.addAll(Message.SHOP_ITEM_LORE_DISCOUNT.getTranslations(
 					Template.of("percent", discount.getPercent() + ""),
 					Template.of("name", discount.getName()),
-					Template.of("start-date", ComponentUtils.formatLocalDateTime(discount.getStartTime())),//TODO schön parsen natürlich
-					Template.of("duration", discount.getDuration() + ""),
-					Template.of("remaining", discount.getRemaining() + "")
+					Template.of("start-date", ComponentUtils.formatLocalDateTime(discount.getStartTime())),
+					Template.of("duration", DURATION_PARSER.parse(discount.getDuration())),
+					Template.of("remaining", DURATION_PARSER.parse(discount.getRemaining()))
 			));
 		}
 		return existingLore;
@@ -212,7 +214,7 @@ public class ItemStackUtils {
 				Message.MANAGER_GUI_SHOPS_LORE.getTranslations(
 						Template.of("permission", shop.getPermission() == null ? "X" : shop.getPermission()),
 						Template.of("name", shop.getName()),
-						Template.of("pages", "" + 1))); //TODO
+						Template.of("pages", "" + shop.getPageCount())));
 	}
 
 	public ItemStack createDiscountItemStack(Discount discount) {
@@ -227,9 +229,9 @@ public class ItemStackUtils {
 						Template.of("uuid", discount.getUuid().toString()),
 						Template.of("permission", discount.getPermission() == null ? "X" : discount.getPermission()),
 						Template.of("name", discount.getName()),
-						Template.of("remaining", "" + discount.getRemaining()),//TODO schön parsen natürlich
+						Template.of("remaining", DURATION_PARSER.parse(discount.getRemaining())),
 						Template.of("start-date", ComponentUtils.formatLocalDateTime(discount.getStartTime())),
-						Template.of("duration", "" + discount.getDuration())));
+						Template.of("duration", DURATION_PARSER.parse(discount.getDuration()))));
 	}
 
 	public ItemStack createLimitsItemStack(Limit limit) {
@@ -238,12 +240,12 @@ public class ItemStackUtils {
 		}
 		return createItemStack(MATERIAL_LIMIT,
 				Message.MANAGER_GUI_LIMITS_ENTRY_NAME.getTranslation(
-						Template.of("limit", "" + limit.getTransactionLimit())),
+						Template.of("name", limit.getName())),
 				Message.MANAGER_GUI_LIMITS_ENTRY_LORE.getTranslations(
 						Template.of("limit", "" + limit.getTransactionLimit()),
 						Template.of("combine-transactions", "" + limit.isSummTagMemberLimits()),
 						Template.of("uuid", limit.getUuid().toString()),
-						Template.of("recover", "" + limit.getRecover()))); //TODO nice format
+						Template.of("recover", DURATION_PARSER.parse(limit.getRecover()))));
 	}
 
 	public ItemStack createTemplatesItemStack(EntryTemplate template) {

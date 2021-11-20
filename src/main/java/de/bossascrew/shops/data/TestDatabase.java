@@ -129,7 +129,8 @@ public class TestDatabase implements Database {
 	public Map<UUID, EntryTemplate> loadTemplates() {
 		EntryTemplate template = new EntryTemplate(UUID.randomUUID(), "<gradient:dark_green:green:dark_green>Default Template");
 		for (int i = 0; i < 9; i++) {
-			template.put(i, new BaseShopEntry(UUID.randomUUID(), null, ItemStackUtils.createItemStack(Material.DIAMOND, "lol", ""),
+			int finalI = i;
+			template.put(rows -> (rows - 1) * 9 + finalI, new BaseShopEntry(UUID.randomUUID(), null, ItemStackUtils.createItemStack(Material.DIAMOND, "lol", ""),
 					null, null, i, ShopHandler.getInstance().getShopModes().get(0)));
 		}
 		return Map.of(template.getUuid(), template);

@@ -29,8 +29,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class ShopEditorPageMenu extends BottomTopChestMenu {
 
@@ -215,7 +217,7 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 	}
 
 	public void openTemplateApplyMenu(Player player, EntryTemplate template) {
-		BottomTopChestMenu menu = new BottomTopChestMenu(Message.MANAGER_GUI_TEMPLATES_APPLY.getTranslation(), shop.getRows(), 1);
+		BottomTopChestMenu menu = new BottomTopChestMenu(Message.MANAGER_GUI_TEMPLATES_APPLY.getTranslation(Template.of("name", template.getName())), shop.getRows(), 1);
 		menu.fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
 		menu.fillBottom();
 		int dif = shopPage * INDEX_DIFFERENCE;
@@ -226,8 +228,10 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 			}
 			menu.setItem(i, entry.getDisplayItem());
 		}
-		for (ShopEntry entry : template.values()) {
-			menu.setItem(dif != 0 ? entry.getSlot() % dif : entry.getSlot(), entry.getDisplayItem());
+		for (Map.Entry<Function<Integer, Integer>, ShopEntry> mapEntry : template.entrySet()) {
+			int slot = mapEntry.getKey().apply(getRowCount());
+			ShopEntry entry = mapEntry.getValue();
+			menu.setItem(slot, entry.getDisplayItem());
 		}
 		menu.setItemAndClickHandlerBottom(ROW_SIZE + 2, DefaultSpecialItem.ACCEPT, clickContext -> {
 			shop.applyTemplate(template, shopMode, shopPage);

@@ -61,7 +61,7 @@ public class Customer {
 	}
 
 	public void sendMessage(Message message) {
-		sendMessage(message.getTranslation());
+		sendMessage(message.getTranslation()); //TODO translation
 	}
 
 	public void sendMessage(Component component) {

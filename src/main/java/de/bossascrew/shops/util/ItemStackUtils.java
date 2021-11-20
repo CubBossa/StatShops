@@ -3,6 +3,7 @@ package de.bossascrew.shops.util;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.menu.DefaultSpecialItem;
 import de.bossascrew.shops.shop.Discount;
@@ -12,6 +13,7 @@ import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Location;
@@ -25,6 +27,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -50,6 +53,7 @@ public class ItemStackUtils {
 	public static Material MATERIAL_LIMIT = Material.HOPPER;
 	public static Material MATERIAL_DISCOUNT = Material.POTION;
 	public static Material MATERIAL_WEBINTERFACE = Material.ENDER_EYE;
+	public static Material MATERIAL_TEMPLATE = Material.MUSIC_DISC_CHIRP;
 
 	public static Material MATERIAL_TAGS = Material.NAME_TAG;
 	public static Material MATERIAL_PERMISSIONS = Material.STRUCTURE_VOID;
@@ -246,11 +250,26 @@ public class ItemStackUtils {
 		if (template == null) {
 			return DefaultSpecialItem.ERROR.createSpecialItem();
 		}
-		return DefaultSpecialItem.ERROR.createSpecialItem(); //TODO
+		return createItemStack(MATERIAL_TEMPLATE,
+				Message.MANAGER_GUI_TEMPLATES_ENTRY_NAME.getTranslation(
+						Template.of("template", template.getName())),
+				Message.MANAGER_GUI_TEMPLATES_ENTRY_LORE.getTranslations(
+						Template.of("template", template.getName()),
+						Template.of("uuid", "" + template.getUuid()),
+						Template.of("size", "" + template.size())));
 	}
 
-	public void setNameAndLore(ItemStack item, String displayName, String lore) {
-
+	public ItemStack setNameAndLore(ItemStack item, String displayName, String lore) {
+		ItemMeta meta = item.getItemMeta();
+		if (meta == null) {
+			return item;
+		}
+		MiniMessage miniMessage = ShopPlugin.getInstance().getMiniMessage();
+		meta.setDisplayName(SERIALIZER.serialize(miniMessage.parse(displayName)));
+		List<String> legacyLore = Arrays.stream(lore.split("\n")).map(s -> SERIALIZER.serialize(miniMessage.parse(s))).collect(Collectors.toList());
+		meta.setLore(legacyLore);
+		item.setItemMeta(meta);
+		return item;
 	}
 
 	public ItemStack setGlow(ItemStack item) {

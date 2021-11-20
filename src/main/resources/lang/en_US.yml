@@ -177,6 +177,21 @@ manager:
         name: "<gold>Info"
         lore: "<gray>» <yellow>right-click: <gray>delete element"
 
+    entry:
+      title: ""
+      set_lore:
+        name: "<white>Set Info Lore"
+        lore: "<gray>Click to change the \n<gray>description of the entry.\n\n<gray>This is NOT similar to setting a\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format"
+      set_permission:
+        # The title of the anvil gui
+        title: "Change entry permission"
+        name: "<white>Set Entry Permission"
+        # Valid placeholders: <permission>
+        lore: "<gray>Current: <red><permission>\n\n<gray>Only players with this \n<gray>permission will be able to \n<gray>use this entry.\n\n<gray>Type \"null\" to reset."
+      set_tags:
+        name: "<white>Open Tag Menu"
+        lore: "<gray>Discounts and Limits can be \n<gray>applied to all Shops and Shopentries \n<gray>that have certain tags.\n\n<gray>Use the tags menu to configure\n<gray>tags for this entry."
+
     limits:
       title: "Create and manage shop limits"
       # Valid placeholders: <player>
@@ -245,3 +260,6 @@ manager:
       choose_title: "Choose a template"
       apply_title: "Apply template <name>?"
       new_title: "Save as template?"
+      entry:
+        name: "<template>"
+        lore: "<gray><uuid>\n<gray>Size: <size>"

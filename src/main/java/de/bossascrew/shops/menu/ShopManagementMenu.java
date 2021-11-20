@@ -39,9 +39,12 @@ public class ShopManagementMenu {
 		ChestMenu chestMenu = new ChestMenu(Message.MANAGER_GUI_MAIN_TITLE, 3);
 		chestMenu.fillMenu();
 
-		chestMenu.setItemAndClickHandler(1, 1, DefaultSpecialItem.MANAGER_MAIN_SHOPS, clickContext -> openShopsMenu(player, 0));
-		chestMenu.setItemAndClickHandler(1, 2, DefaultSpecialItem.MANAGER_MAIN_LIMITS, clickContext -> openLimitsMenu(player, 0));
-		chestMenu.setItemAndClickHandler(1, 3, DefaultSpecialItem.MANAGER_MAIN_DISCOUNTS, clickContext -> openDiscountsMenu(player, 0));
+		chestMenu.setItemAndClickHandler(1, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_SHOP,
+				Message.MANAGER_GUI_MAIN_SHOPS_NAME, Message.MANAGER_GUI_MAIN_SHOPS_LORE), clickContext -> openShopsMenu(player, 0));
+		chestMenu.setItemAndClickHandler(1, 2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
+				Message.MANAGER_GUI_MAIN_LIMITS_NAME, Message.MANAGER_GUI_MAIN_LIMITS_LORE), clickContext -> openLimitsMenu(player, 0));
+		chestMenu.setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
+				Message.MANAGER_GUI_MAIN_DISCOUNTS_NAME, Message.MANAGER_GUI_MAIN_DISCOUNTS_LORE), clickContext -> openDiscountsMenu(player, 0));
 		chestMenu.setItemAndClickHandler(1, 6, ItemStackUtils.createItemStack(Material.BOOK,
 				Message.MANAGER_GUI_MAIN_LANGUAGE_NAME.getTranslation(), Message.MANAGER_GUI_MAIN_LANGUAGE_LORE.getTranslations(Template.of("file",
 						ShopPlugin.getInstance().getShopsConfig().getLanguage() + ".yml"))), clickContext -> {
@@ -73,7 +76,8 @@ public class ShopManagementMenu {
 				});
 			}
 		});
-		chestMenu.setItemAndClickHandler(1, 7, DefaultSpecialItem.MANAGER_MAIN_WEBINTERFACE, clickContext -> {
+		chestMenu.setItemAndClickHandler(1, 7, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_WEBINTERFACE,
+				Message.MANAGER_GUI_MAIN_WEBINTERFACE_NAME, Message.MANAGER_GUI_MAIN_WEBINTERFACE_LORE), clickContext -> {
 			player.closeInventory();
 			Customer customer = Customer.wrap(player);
 			customer.sendMessage(Message.GENERAL_WEBINTERFACE_LOADING);

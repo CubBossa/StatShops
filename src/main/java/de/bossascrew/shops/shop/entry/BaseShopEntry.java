@@ -28,6 +28,7 @@ public class BaseShopEntry implements ShopEntry {
 	private EntryElement gain;
 	@Nullable
 	private String permission;
+	private String infoLoreFormat;
 	private final List<String> tags;
 
 	private int slot;
@@ -51,6 +52,11 @@ public class BaseShopEntry implements ShopEntry {
 	}
 
 	@Override
+	public UUID getUUID() {
+		return uuid;
+	}
+
+	@Override
 	public String getDisplayPrice() {
 		return pay.getAmountDisplay();
 	}
@@ -68,7 +74,6 @@ public class BaseShopEntry implements ShopEntry {
 
 	public List<String> getTags() {
 		List<String> tags = new ArrayList<>(this.tags);
-		tags.addAll(shop.getTags());
 		tags.add(uuid.toString());
 		return tags;
 	}

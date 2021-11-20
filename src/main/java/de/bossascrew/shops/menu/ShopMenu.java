@@ -114,11 +114,15 @@ public class ShopMenu extends ChestMenu {
 				continue;
 			}
 			ShopEntry entry = entries.get(i);
+			if (entry == null) {
+				ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "Entry is null but contained in map at slot " + i);
+				continue;
+			}
 
 			//Subscribe to limits and discounts so changes can be displayed live
 			DiscountHandler.getInstance().subscribeToDisplayUpdates(this, entry);
 
-			setEntry(entry);
+			updateEntry(entry);
 		}
 
 		InventoryView view = player.openInventory(inventory);
@@ -142,6 +146,7 @@ public class ShopMenu extends ChestMenu {
 		ItemStack itemStack = entry.getDisplayItem().clone();
 
 		List<Component> additionalLore = new ArrayList<>();
+
 
 		//TODO price and limit lore
 		DiscountHandler.getInstance().addDiscountsLore(entry, additionalLore);

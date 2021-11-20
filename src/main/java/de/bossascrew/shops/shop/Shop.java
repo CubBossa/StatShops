@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,11 +63,21 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 
 	ShopEntry getEntry(ShopMode mode, int slot);
 
+	ShopEntry getEntry(UUID uuid);
+
+	ShopEntry getUnusedEntry(UUID uuid);
+
+	List<ShopEntry> getEntries(ShopMode shopMode, int shopPage);
+
 	ShopEntry createEntry(ItemStack displayItem, ShopMode shopMode, int slot);
+
+	boolean moveEntry(ShopEntry entry, ShopMode shopMode, int slot);
 
 	boolean deleteEntry(ShopMode shopMode, int slot);
 
 	boolean deleteEntry(ShopEntry entry);
+
+	boolean setEntryUnused(ShopEntry entry);
 
 	/**
 	 * @return true, if customers open the shop at the same page they have closed it
@@ -166,7 +175,4 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	 * closes the shop for all active customers, for example when setting enabled to false.
 	 */
 	void closeAll();
-
-	//TODO nah das muss noch anders
-	ShopInteractionResult interact(Customer customer, ShopMode shopMode, int slot);
 }

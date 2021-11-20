@@ -11,6 +11,7 @@ import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public enum Message {
 
@@ -162,6 +163,23 @@ public enum Message {
 	MANAGER_GUI_TEMPLATES_CHOOSE("manager.gui.templates.choose_title"),
 	MANAGER_GUI_TEMPLATES_APPLY("manager.gui.templates.apply_title"),
 	MANAGER_GUI_TEMPLATES_NEW("manager.gui.templates.new_title"),
+	MANAGER_GUI_TEMPLATES_ENTRY_NAME("manager.gui.templates.entry.name",
+			"Sets the display name of a template entry in the templates menu",
+			new Pair<>("template", "<white>Default Shop Layout")),
+	MANAGER_GUI_TEMPLATES_ENTRY_LORE("manager.gui.templates.entry.lore",
+			"Sets the lore of a template entry in the templates menu",
+			new Pair<>("template", "<white>Default Shop Layout"),
+			new Pair<>("uuid", UUID.randomUUID().toString()),
+			new Pair<>("size", "7")),
+
+	MANAGER_GUI_ENTRY_TITLE("manager.gui.entry.title"),
+	MANAGER_GUI_ENTRY_SET_LORE_NAME("manager.gui.entry.set_lore.name"),
+	MANAGER_GUI_ENTRY_SET_LORE_LORE("manager.gui.entry.set_lore.lore"),
+	MANAGER_GUI_ENTRY_SET_PERMISSION_TITLE("manager.gui.entry.set_permission.title"),
+	MANAGER_GUI_ENTRY_SET_PERMISSION_NAME("manager.gui.entry.set_permission.name"),
+	MANAGER_GUI_ENTRY_SET_PERMISSION_LORE("manager.gui.entry.set_permission.lore"),
+	MANAGER_GUI_ENTRY_SET_TAGS_NAME("manager.gui.entry.set_tags.name"),
+	MANAGER_GUI_ENTRY_SET_TAGS_LORE("manager.gui.entry.set_tags.lore"),
 
 
 	;

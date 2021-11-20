@@ -10,6 +10,8 @@ import de.bossascrew.shops.shop.EntryTemplate;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.util.LoggingPolicy;
+import de.tr7zw.nbtapi.NBTItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.Template;
@@ -27,9 +29,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class ShopEditorPageMenu extends BottomTopChestMenu {
+
+	public static final String UUID_TAG_KEY = "shops-entry-uuid";
 
 	private final ChestMenuShop shop;
 	private final ShopMode shopMode;
@@ -54,8 +59,6 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 	}
 
 	private void prepareMenu() {
-		fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
-
 		for (int i = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE; i < (shopPage + 1) * RowedOpenableMenu.LARGEST_INV_SIZE; i++) {
 			ShopEntry entry = shop.getEntry(shopMode, i);
 			if (entry == null) {
@@ -65,6 +68,7 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 		}
 		setDefaultClickHandler(ClickType.LEFT, clickContext -> {
 			ShopEntry clickedEntry = shop.getEntry(shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
+			clickContext.setCancelled(shopEditor.isFreezeItems());
 
 			if (shopEditor.isFreezeItems()) {
 
@@ -73,21 +77,8 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 					new EntryEditor(clickedEntry, backHandler -> shopEditor.openInventory(clickContext.getPlayer(), shopMode, shopPage))
 							.openInventory(clickContext.getPlayer());
 				}
-
-			} else if (clickContext.getPlayer().getItemOnCursor().getType() != Material.AIR &&
-					clickContext.getItemStack().isSimilar(DefaultSpecialItem.EMPTY_LIGHT.createSpecialItem())) {
-
-				ItemStack temp = clickContext.getPlayer().getItemOnCursor();
-				ShopEntry entry = shop.createEntry(temp, shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
-				clickContext.getPlayer().setItemOnCursor(clickedEntry == null ? null : clickedEntry.getDisplayItem());
-				clickContext.setItemStack(ItemStackUtils.prepareEditorEntryItemStack(entry));
-
-			} else {
-				if (clickContext.getAction() == ClickType.MIDDLE) {
-					//TODO clone clicked stack in hand
-				} else {
-					//TODO regular swap
-				}
+			} else if (clickContext.getAction() == ClickType.MIDDLE) {
+				//TODO clone clicked stack in hand
 			}
 		});
 		setDefaultClickHandler(ClickType.RIGHT, clickContext -> {
@@ -115,12 +106,80 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 		});
 		setItemAndClickHandlerBottom(0, 4, getButton(!shopEditor.isFreezeItems(), Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
 				Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE), clickContext -> {
+
+			if (shopEditor.isFreezeItems()) {
+				//Handle unfreeze
+
+				for (int slot : getSlots()) {
+					// Only process items in upper inventory
+					if (slot >= INDEX_DIFFERENCE) {
+						continue;
+					}
+					// Only process not empty stacks
+					ItemStack stack = getItemStack(slot);
+					if (stack == null || stack.getType() == Material.AIR) {
+						continue;
+					}
+					// Get entry from this slot
+					ShopEntry entry = shop.getEntry(shopMode, slot + LARGEST_INV_SIZE * shopPage);
+					if (entry == null) {
+						ShopPlugin.getInstance().log(LoggingPolicy.WARN, "Item was in menu but no entry was found.");
+						continue;
+					}
+					// Set uuid tag from entry
+					NBTItem nbtItem = new NBTItem(stack);
+					nbtItem.setUUID(UUID_TAG_KEY, entry.getUUID());
+
+					//Put item in unfrozen inventory
+					setItem(slot, nbtItem.getItem());
+					refresh(slot);
+				}
+			} else {
+				//Handle freeze
+
+				List<ShopEntry> containedEntries = shop.getEntries(shopMode, shopPage);
+
+				for (int slot : getSlots()) {
+					// Only process items in upper inventory
+					if (slot >= INDEX_DIFFERENCE) {
+						continue;
+					}
+					int shopSlot = shopPage * LARGEST_INV_SIZE + slot;
+					// Only process not empty stacks
+					ItemStack stack = getItemStack(slot);
+					if (stack == null || stack.getType() == Material.AIR) {
+						continue;
+					}
+					NBTItem nbtItem = new NBTItem(stack);
+					UUID uuid = null;
+					if (nbtItem.hasKey(UUID_TAG_KEY)) {
+						uuid = nbtItem.getUUID(UUID_TAG_KEY);
+					}
+					if (uuid == null) {
+						shop.createEntry(stack, shopMode, shopSlot);
+					} else {
+						UUID finalUuid = uuid;
+						ShopEntry entry = containedEntries.stream().filter(e -> e.getUUID().equals(finalUuid)).findFirst().orElse(null);
+						if (entry == null) {
+							ShopEntry unusedEntry = shop.getUnusedEntry(uuid);
+							if (unusedEntry != null) {
+								shop.addEntry(shopMode, shopSlot, unusedEntry);
+							}
+						} else {
+							shop.moveEntry(entry, shopMode, shopSlot);
+							containedEntries.remove(entry);
+						}
+					}
+				}
+				containedEntries.forEach(shop::setEntryUnused);
+			}
+
 			shopEditor.setFreezeItems(!shopEditor.isFreezeItems());
 			setItemBottom(0, 4, getButton(!shopEditor.isFreezeItems(), Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
 					Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE));
 			refresh(clickContext.getPlayer(), 4 + INDEX_DIFFERENCE + ROW_SIZE);
 		});
-		setItemAndClickHandlerBottom(0, 7, ItemStackUtils.createCustomHead(ItemStackUtils.HEAD_URL_LETTER_T,
+		setItemAndClickHandlerBottom(0, 7, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TEMPLATE,
 				Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME, Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE), clickContext -> {
 			if (clickContext.getAction().isRightClick()) {
 				clickContext.getPlayer().closeInventory();
@@ -192,9 +251,8 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getDisplayName())));
 		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getNext().getDisplayName().color(NamedTextColor.GRAY))));
 		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
-		ItemStack item = ItemStackUtils.createItemStack(modeItem.getType(),
+		return ItemStackUtils.createItemStack(modeItem.getType(),
 				Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_NAME.getTranslation(Template.of("name", modeItem.getItemMeta().getDisplayName())),
 				lore);
-		return item;
 	}
 }

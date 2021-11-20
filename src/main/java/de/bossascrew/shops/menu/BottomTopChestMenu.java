@@ -255,7 +255,6 @@ public class BottomTopChestMenu extends ChestMenu {
 			if (slot < INDEX_DIFFERENCE) {
 				continue;
 			}
-			System.out.print(slot + ", ");
 			setItem(slot, item.createSpecialItem());
 		}
 	}

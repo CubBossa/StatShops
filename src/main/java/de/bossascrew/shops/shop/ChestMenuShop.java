@@ -23,10 +23,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class ChestMenuShop implements Shop {
+public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 
 	private final UUID uuid;
 	private String nameFormat;
@@ -49,7 +50,12 @@ public class ChestMenuShop implements Shop {
 	@JsonIgnore
 	private @Nullable Player editor = null;
 
+	private final Map<UUID, ShopEntry> uuidEntryMap;
 	private final Map<ShopMode, TreeMap<Integer, ShopEntry>> modeEntryMap;
+	/**
+	 * contains all entries that were removed via editor. When later on an item with the uuid tag of this entry was added, it can be restored from cache.
+	 */
+	private final Map<UUID, ShopEntry> unusedEntryCache;
 
 	private final List<Customer> activeCustomers;
 
@@ -65,7 +71,9 @@ public class ChestMenuShop implements Shop {
 		setNameFormat(nameFormat);
 		this.uuid = uuid;
 
+		this.uuidEntryMap = new HashMap<>();
 		this.modeEntryMap = new HashMap<>();
+		this.unusedEntryCache = new HashMap<>();
 		this.activeCustomers = new ArrayList<>();
 		this.menuMap = new HashMap<>();
 		this.tags = new ArrayList<>();
@@ -96,11 +104,40 @@ public class ChestMenuShop implements Shop {
 	}
 
 	@Override
+	public ShopEntry getEntry(UUID uuid) {
+		return uuidEntryMap.get(uuid);
+	}
+
+	@Override
+	public ShopEntry getUnusedEntry(UUID uuid) {
+		return unusedEntryCache.get(uuid);
+	}
+
+	@Override
+	public List<ShopEntry> getEntries(ShopMode shopMode, int shopPage) {
+		int lowerBound = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE;
+		int upperBound = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + rows * RowedOpenableMenu.ROW_SIZE;
+
+		List<ShopEntry> entries;
+		Map<Integer, ShopEntry> inner = modeEntryMap.get(shopMode);
+		if (inner != null) {
+			entries = inner.entrySet().stream()
+					.filter(e -> e.getKey() >= lowerBound && e.getKey() < upperBound)
+					.map(Map.Entry::getValue)
+					.collect(Collectors.toList());
+		} else {
+			entries = new ArrayList<>();
+		}
+		return entries;
+	}
+
+	@Override
 	public ShopEntry createEntry(ItemStack displayItem, ShopMode shopMode, int slot) {
 		ShopEntry entry = ShopPlugin.getInstance().getDatabase().createEntry(UUID.randomUUID(), this, displayItem, shopMode, slot);
 		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.getOrDefault(shopMode, new TreeMap<>());
 		innerMap.put(slot, entry);
 		modeEntryMap.put(shopMode, innerMap);
+		uuidEntryMap.put(entry.getUUID(), entry);
 		return entry;
 	}
 
@@ -108,7 +145,22 @@ public class ChestMenuShop implements Shop {
 		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.getOrDefault(shopMode, new TreeMap<>());
 		innerMap.put(slot, entry);
 		modeEntryMap.put(shopMode, innerMap);
+		uuidEntryMap.put(entry.getUUID(), entry);
+		unusedEntryCache.remove(entry.getUUID());
 		return entry;
+	}
+
+	@Override
+	public boolean moveEntry(ShopEntry entry, ShopMode shopMode, int slot) {
+		if (getEntry(entry.getUUID()) == null) {
+			ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "Tried to move an entry that was not contained in this shop.");
+			return false;
+		}
+		boolean override = getEntry(shopMode, slot) != null;
+		entry.setShopMode(shopMode);
+		entry.setSlot(slot);
+		addEntry(shopMode, slot, entry);
+		return override;
 	}
 
 	@Override
@@ -118,14 +170,25 @@ public class ChestMenuShop implements Shop {
 
 	@Override
 	public boolean deleteEntry(ShopEntry entry) {
-		if(entry == null) {
+		if (entry == null) {
 			return false;
 		}
+		uuidEntryMap.remove(entry.getUUID());
 		ShopPlugin.getInstance().getDatabase().deleteEntry(entry);
 		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.get(entry.getShopMode());
 		if (innerMap == null) {
 			return false;
 		}
+		return innerMap.remove(entry.getSlot(), entry);
+	}
+
+	@Override
+	public boolean setEntryUnused(ShopEntry entry) {
+		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.get(entry.getShopMode());
+		if (innerMap == null) {
+			return false;
+		}
+		unusedEntryCache.put(entry.getUUID(), entry);
 		return innerMap.remove(entry.getSlot(), entry);
 	}
 
@@ -301,11 +364,13 @@ public class ChestMenuShop implements Shop {
 
 	public void applyTemplate(EntryTemplate template, ShopMode shopMode, int shopPage) {
 		for(ShopEntry entry : template.values()) {
+			int shopSlot = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + entry.getSlot();
 			ShopEntry newEntry = entry.duplicate();
 			newEntry.setShopMode(shopMode);
-			newEntry.setSlot(shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + (entry.getSlot() % RowedOpenableMenu.LARGEST_INV_SIZE));
+			newEntry.setSlot(shopSlot);
+			newEntry.setShop(this);
 			newEntry.saveToDatabase();
-			addEntry(shopMode, entry.getSlot(), entry);
+			addEntry(shopMode, shopSlot, entry);
 		}
 	}
 

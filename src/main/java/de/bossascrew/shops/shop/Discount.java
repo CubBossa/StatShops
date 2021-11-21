@@ -6,6 +6,7 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.DatabaseObject;
 import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.menu.ListMenuElement;
+import de.bossascrew.shops.util.ComponentUtils;
 import de.bossascrew.shops.util.Duplicable;
 import de.bossascrew.shops.util.Editable;
 import de.bossascrew.shops.util.ItemStackUtils;
@@ -23,7 +24,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.UUID;
 
 @Getter
@@ -40,6 +40,8 @@ public class Discount implements
 	private String nameFormat;
 	@JsonIgnore
 	private Component name;
+	@JsonIgnore
+	private String namePlain;
 	@JsonIgnore
 	private LocalDateTime startTime;
 	@JsonIgnore
@@ -71,6 +73,7 @@ public class Discount implements
 	public void setNameFormat(String nameFormat) {
 		this.nameFormat = nameFormat;
 		this.name = ShopPlugin.getInstance().getMiniMessage().parse(nameFormat);
+		this.namePlain = ComponentUtils.toPlain(name);
 	}
 
 	@JsonIgnore

@@ -1,5 +1,6 @@
 package de.bossascrew.shops.util;
 
+import de.bossascrew.shops.ShopPlugin;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -13,9 +14,10 @@ import java.time.format.DateTimeFormatter;
 public class ComponentUtils {
 
 	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder()
-			.hexColors()
-			.hexCharacter('#')
 			.character('§')
+			.hexColors()
+			.hexCharacter('x')
+			.useUnusualXRepeatedCharacterHexFormat()
 			.build();
 
 	private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.builder().build();
@@ -34,8 +36,12 @@ public class ComponentUtils {
 		return PLAIN_SERIALIZER.serialize(component);
 	}
 
+	public String toLegacyFromMiniMessage(String minimessage) {
+		return toLegacy(ShopPlugin.getInstance().getMiniMessage().parse(minimessage));
+	}
+
 	public String formatDuration(Duration duration) {
-		return duration.toMillis() + "ms";
+		return new DurationParser().parse(duration);
 	}
 
 	public String formatLocalDateTime(LocalDateTime localDateTime) {

@@ -35,6 +35,7 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 
 	@JsonIgnore
 	private Component name;
+	@JsonIgnore
 	private String namePlain;
 
 	@JsonIgnore
@@ -42,6 +43,7 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 	private @Nullable String permission = null;
 
 	private int rows = 3;
+	@JsonIgnore
 	private boolean enabled = true; //TODO raus damit
 
 	private boolean isPageRemembered = false;
@@ -51,13 +53,16 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 	@JsonIgnore
 	private @Nullable Player editor = null;
 
+	@JsonIgnore
 	private final Map<UUID, ShopEntry> uuidEntryMap;
 	private final Map<ShopMode, TreeMap<Integer, ShopEntry>> modeEntryMap;
 	/**
 	 * contains all entries that were removed via editor. When later on an item with the uuid tag of this entry was added, it can be restored from cache.
 	 */
+	@JsonIgnore
 	private final Map<UUID, ShopEntry> unusedEntryCache;
 
+	@JsonIgnore
 	private final List<Customer> activeCustomers;
 
 	private final Map<Customer, ShopMenu> menuMap;
@@ -305,7 +310,6 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 		}
 	}
 
-	@JsonIgnore
 	public ShopInteractionResult interact(Customer customer, ShopMode shopMode, int slot) {
 		if (!enabled) {
 			return ShopInteractionResult.FAIL_SHOP_DISABLED;

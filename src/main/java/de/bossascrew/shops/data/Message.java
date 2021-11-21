@@ -108,6 +108,12 @@ public enum Message {
 	MANAGER_GUI_SHOP_SET_DEFAULT_PAGE_LORE("manager.gui.shop.set_default_page.lore"),
 	MANAGER_GUI_SHOP_SET_ROWS_NAME("manager.gui.shop.set_rows.name"),
 	MANAGER_GUI_SHOP_SET_ROWS_LORE("manager.gui.shop.set_rows.lore"),
+	MANAGER_GUI_SHOP_LIMITS_TITLE("manager.gui.shop.limits.title"),
+	MANAGER_GUI_SHOP_LIMITS_INFO_NAME("manager.gui.shop.limits.info.name"),
+	MANAGER_GUI_SHOP_LIMITS_INFO_LORE("manager.gui.shop.limits.info.lore"),
+	MANAGER_GUI_SHOP_DISCOUNTS_TITLE("manager.gui.shop.discounts.title"),
+	MANAGER_GUI_SHOP_DISCOUNTS_INFO_NAME("manager.gui.shop.discounts.info.name"),
+	MANAGER_GUI_SHOP_DISCOUNTS_INFO_LORE("manager.gui.shop.discounts.info.lore"),
 
 	MANAGER_GUI_TAGS_TITLE("manager.gui.tags.title"),
 	MANAGER_GUI_TAGS_NEW_TAG_TITLE("manager.gui.tags.new_tag.title"),
@@ -150,12 +156,20 @@ public enum Message {
 	MANAGER_GUI_DISCOUNTS_NEW_LORE("manager.gui.discounts.new.lore"),
 
 	MANAGER_GUI_DISCOUNT("manager.gui.discount.title"),
+	MANAGER_GUI_DISCOUNT_SET_NAME_TITLE("manager.gui.discount.set_name.title"),
 	MANAGER_GUI_DISCOUNT_SET_NAME_NAME("manager.gui.discount.set_name.name"),
 	MANAGER_GUI_DISCOUNT_SET_NAME_LORE("manager.gui.discount.set_name.lore"),
+	MANAGER_GUI_DISCOUNT_SET_PERMISSION_TITLE("manager.gui.discount.set_permission.title"),
 	MANAGER_GUI_DISCOUNT_SET_PERMISSION_NAME("manager.gui.discount.set_permission.name"),
 	MANAGER_GUI_DISCOUNT_SET_PERMISSION_LORE("manager.gui.discount.set_permission.lore"),
 	MANAGER_GUI_DISCOUNT_SET_TAGS_NAME("manager.gui.discount.set_tags.name"),
 	MANAGER_GUI_DISCOUNT_SET_TAGS_LORE("manager.gui.discount.set_tags.lore"),
+	MANAGER_GUI_DISCOUNT_SET_DURATION_NAME("manager.gui.discount.set_duration.name"),
+	MANAGER_GUI_DISCOUNT_SET_DURATION_LORE("manager.gui.discount.set_duration.lore"),
+	MANAGER_GUI_DISCOUNT_SET_START_NAME("manager.gui.discount.set_start.name"),
+	MANAGER_GUI_DISCOUNT_SET_START_LORE("manager.gui.discount.set_start.lore"),
+	MANAGER_GUI_DISCOUNT_SET_PERCENT_NAME("manager.gui.discount.set_percent.name"),
+	MANAGER_GUI_DISCOUNT_SET_PERCENT_LORE("manager.gui.discount.set_percent.lore"),
 
 	MANAGER_GUI_SHOP_ENTRY("manager.gui.shop_entry.title"),
 

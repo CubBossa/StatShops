@@ -1,5 +1,6 @@
 package de.bossascrew.shops.shop;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
@@ -36,10 +37,13 @@ public class Limit implements
 
 	private final UUID uuid;
 	private String nameFormat;
+	@JsonIgnore
 	private Component name;
+	@JsonIgnore
 	private String namePlain;
 	private @Nullable String permission;
 	private Duration recover;
+	@JsonIgnore
 	private Predicate<Customer> appliesToCustomer;
 	private int transactionLimit;
 	/**
@@ -48,7 +52,9 @@ public class Limit implements
 	private boolean summTagMemberLimits = false;
 	private final List<String> tags;
 
+	@JsonIgnore
 	private Player editor;
+	@JsonIgnore
 	private final Cache<@NotNull UUID, @NotNull Transaction> transactionCache;
 
 	public Limit(String nameFormat, Duration recover, Predicate<Customer> appliesToCustomer, int limit, String... tags) {

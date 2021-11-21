@@ -1,12 +1,16 @@
 package de.bossascrew.shops;
 
 import co.aikar.commands.BukkitCommandManager;
+import co.aikar.commands.ConditionFailedException;
+import co.aikar.commands.InvalidCommandArgument;
+import de.bossascrew.shops.commands.ItemEditorCommand;
 import de.bossascrew.shops.commands.ShopCommand;
 import de.bossascrew.shops.data.Config;
 import de.bossascrew.shops.data.Database;
 import de.bossascrew.shops.data.TestDatabase;
 import de.bossascrew.shops.handler.*;
 import de.bossascrew.shops.listener.PlayerListener;
+import de.bossascrew.shops.util.ItemFlags;
 import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -14,27 +18,43 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SpawnEggMeta;
+import org.bukkit.material.Colorable;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 public class ShopPlugin extends JavaPlugin {
 
-	//TODO datenstruktur für shop, limits..
 	//TODO logs für debug policy
 	//TODO database implementierung
 	//TODO einzelnes leerzeichen in lore wird angezeigt
-	//TODO limits und discounts in menu auflisten und mit submenü
-	//TODO shop editmode basisklasse und unterer menüzeile um entries zu bearbeiten
-	//TODO shop darstellung für customers
+
+	public static final String CONDITION_ITEM_IN_HAND = "item_in_hand";
+	public static final String CONDITION_ITEM_HAS_META = "item_has_meta";
+	public static final String CONDITION_ITEM_SPAWNABLE = "item_spawnable";
+	public static final String CONDITION_ITEM_COLORABLE = "item_colorable";
+	public static final String COMPLETION_ENCHANTMENTS = "@enchantments";
+	public static final String COMPLETION_ENCHANTMENTS_CONTAINED = "@enchantments_on_item";
+	public static final String COMPLETION_ITEM_FLAGS = "@commandflags";
 
 	@Getter
 	private static ShopPlugin instance;
 
+	@Getter
+	private BukkitCommandManager commandManager;
 	private BukkitAudiences bukkitAudiences;
 	@Getter
 	private MiniMessage miniMessage;
@@ -112,10 +132,15 @@ public class ShopPlugin extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
 
 		//All Commands
-		BukkitCommandManager commandManager = new BukkitCommandManager(this);
+		commandManager = new BukkitCommandManager(this);
 		commandManager.addSupportedLanguage(Locale.ENGLISH);
+		registerContexts();
+		registerConditions();
 
 		commandManager.registerCommand(new ShopCommand());
+		commandManager.registerCommand(new ItemEditorCommand());
+
+		registerCompletions();
 
 		//allow Transactions
 		this.loading = false;
@@ -190,5 +215,87 @@ public class ShopPlugin extends JavaPlugin {
 		if (shopsConfig.getLoggingPolicy().getPriotiry() <= policy.getPriotiry()) {
 			getLogger().log(policy.getLevel(), message, exception);
 		}
+	}
+
+	public void registerCompletions() {
+		commandManager.getCommandCompletions().registerCompletion(COMPLETION_ENCHANTMENTS, context -> {
+			return Arrays.stream(Enchantment.values()).map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.toList());
+		});
+		commandManager.getCommandCompletions().registerCompletion(COMPLETION_ENCHANTMENTS_CONTAINED, context -> {
+			if (context.getSender() instanceof Player player) {
+				ItemStack hand = player.getInventory().getItemInMainHand();
+				if (hand.hasItemMeta()) {
+					return hand.getItemMeta().getEnchants().keySet().stream()
+							.map(enchantment -> enchantment.getKey().getKey().toLowerCase())
+							.collect(Collectors.toList());
+				}
+			}
+			return null;
+
+		});
+		commandManager.getCommandCompletions().registerCompletion(COMPLETION_ITEM_FLAGS, context -> {
+			String beforeLastComma = context.getInput().substring(0, context.getInput().lastIndexOf(',') + 1);
+			List<String> completions = Arrays.stream(ItemFlag.values())
+					.map(itemFlag -> itemFlag.toString().toLowerCase())
+					.filter(itemFlag -> !beforeLastComma.toLowerCase().contains(itemFlag))
+					.map(itemFlag -> beforeLastComma + itemFlag)
+					.collect(Collectors.toList());
+			completions.add("*");
+			return completions;
+		});
+	}
+
+	public void registerContexts() {
+		commandManager.getCommandContexts().registerContext(ItemFlags.class, context -> {
+			if (context.getFirstArg().equalsIgnoreCase("*")) {
+				return new ItemFlags(ItemFlag.values());
+			}
+			String[] splits = context.getFirstArg().split(",");
+			ItemFlags flags = new ItemFlags();
+			for (String split : splits) {
+				try {
+					flags.add(ItemFlag.valueOf(split.toUpperCase()));
+				} catch (IllegalArgumentException e) {
+					throw new InvalidCommandArgument("\"" + split + "\" is not a valid command flag.");
+				}
+			}
+			return flags;
+		});
+		commandManager.getCommandContexts().registerContext(Enchantment.class, context -> {
+			String input = context.getFirstArg();
+			Enchantment e = Enchantment.getByKey(NamespacedKey.minecraft(input));
+			if (e == null) {
+				throw new InvalidCommandArgument("There is no enchantment with the name \"" + input + "\".");
+			}
+			return e;
+		});
+	}
+
+	public void registerConditions() {
+		commandManager.getCommandConditions().addCondition(CONDITION_ITEM_IN_HAND, context -> {
+			if (!(context.getIssuer().getIssuer() instanceof Player player) || player.getInventory().getItemInMainHand().getType() == Material.AIR) {
+				throw new ConditionFailedException("You need to hold an Item in your main hand to run this command."); //TODO translations
+			}
+		});
+		commandManager.getCommandConditions().addCondition(CONDITION_ITEM_HAS_META, context -> {
+			if (context.getIssuer().getIssuer() instanceof Player player) {
+				ItemStack hand = player.getInventory().getItemInMainHand();
+				if (!hand.hasItemMeta()) {
+					hand.setItemMeta(Bukkit.getItemFactory().getItemMeta(hand.getType()));
+				}
+			}
+		});
+		commandManager.getCommandConditions().addCondition(CONDITION_ITEM_SPAWNABLE, context -> {
+			ItemStack stack = context.getIssuer().getPlayer().getInventory().getItemInMainHand();
+			if (!(stack.getItemMeta() instanceof SpawnEggMeta)) {
+				throw new ConditionFailedException("The item in your main hand needs to be a spawner or a spawn egg.");
+			}
+		});
+		commandManager.getCommandConditions().addCondition(CONDITION_ITEM_COLORABLE, context -> {
+			ItemStack stack = context.getIssuer().getPlayer().getInventory().getItemInMainHand();
+			if (!(stack.getItemMeta() instanceof Colorable)) {
+				throw new ConditionFailedException("The item in your main hand needs to be a colorable object.");
+			}
+		});
 	}
 }

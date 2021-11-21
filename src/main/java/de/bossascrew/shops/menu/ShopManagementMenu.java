@@ -2,7 +2,6 @@ package de.bossascrew.shops.menu;
 
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
-import de.bossascrew.shops.data.Config;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.handler.LimitsHandler;
@@ -10,6 +9,7 @@ import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.handler.TranslationHandler;
 import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.util.TagUtils;
 import de.bossascrew.shops.web.WebSessionUtils;
 import de.bossascrew.shops.web.pasting.Paste;
 import net.kyori.adventure.text.Component;
@@ -155,11 +155,11 @@ public class ShopManagementMenu {
 		//Open Limits menu
 		chestMenu.setItemAndClickHandler(0, 5, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
 						Message.MANAGER_GUI_SHOP_SET_LIMITS_NAME, Message.MANAGER_GUI_SHOP_SET_LIMITS_LORE),
-				clickContext -> openShopLimitsMenu(player, shop, 0));
+				clickContext -> openShopLimitsMenu(player, shop, fromPage, 0));
 		//Open Discounts menu
 		chestMenu.setItemAndClickHandler(0, 6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
 						Message.MANAGER_GUI_SHOP_SET_DISCOUNTS_NAME, Message.MANAGER_GUI_SHOP_SET_DISCOUNTS_LORE),
-				clickContext -> openShopDiscountsMenu(player, shop, 0));
+				clickContext -> openShopDiscountsMenu(player, shop, fromPage, 0));
 
 		chestMenu.setItemAndClickHandler(1, 1, ItemStackUtils.createItemStack(Material.SMITHING_TABLE,
 				Message.MANAGER_GUI_SHOP_SET_CONTENT_NAME, Message.MANAGER_GUI_SHOP_SET_CONTENT_LORE), clickContext -> {
@@ -306,12 +306,36 @@ public class ShopManagementMenu {
 		new ShopEditor(shop, backContext -> openShopMenu(player, shop, fromPage)).openInventory(player, shopMode, shopPage);
 	}
 
-	public void openShopLimitsMenu(Player player, Shop shop, int page) {
-		player.sendMessage("openShopLimitsMenu");
+	public void openShopLimitsMenu(Player player, Shop shop, int fromPage, int page) {
+		ListMenu<Limit> listMenu = new ListMenu<>(3, LimitsHandler.getInstance(), Message.MANAGER_GUI_SHOP_LIMITS_TITLE, backContext -> openShopMenu(player, shop, fromPage));
+		listMenu.setNavigationEntry(4, ItemStackUtils.createItemStack(Material.PAPER, Message.MANAGER_GUI_SHOP_LIMITS_INFO_NAME, Message.MANAGER_GUI_SHOP_LIMITS_INFO_LORE), clickContext -> {
+		});
+		listMenu.setGlowPredicate(limit -> TagUtils.hasCommonTags(shop, limit));
+		listMenu.setClickHandler(targetContext -> {
+			Limit limit = targetContext.getTarget();
+			if (targetContext.getAction().isRightClick()) {
+				limit.removeTag(shop.getUUID().toString());
+			} else if (targetContext.getAction().isLeftClick()) {
+				limit.addTag(shop.getUUID().toString());
+			}
+		});
+		listMenu.openInventory(player, page);
 	}
 
-	public void openShopDiscountsMenu(Player player, Shop shop, int page) {
-		player.sendMessage("openShopDiscountsMenu");
+	public void openShopDiscountsMenu(Player player, Shop shop, int fromPage, int page) {
+		ListMenu<Discount> listMenu = new ListMenu<>(3, DiscountHandler.getInstance(), Message.MANAGER_GUI_SHOP_DISCOUNTS_TITLE, backContext -> openShopMenu(player, shop, fromPage));
+		listMenu.setNavigationEntry(4, ItemStackUtils.createItemStack(Material.PAPER, Message.MANAGER_GUI_SHOP_DISCOUNTS_INFO_NAME, Message.MANAGER_GUI_SHOP_DISCOUNTS_INFO_LORE), clickContext -> {
+		});
+		listMenu.setGlowPredicate(discount -> TagUtils.hasCommonTags(shop, discount));
+		listMenu.setClickHandler(targetContext -> {
+			Discount discount = targetContext.getTarget();
+			if (targetContext.getAction().isRightClick()) {
+				discount.removeTag(shop.getUUID().toString());
+			} else if (targetContext.getAction().isLeftClick()) {
+				discount.addTag(shop.getUUID().toString());
+			}
+		});
+		listMenu.openInventory(player, page);
 	}
 
 	public void openLimitsMenu(Player player, int page) {
@@ -325,6 +349,7 @@ public class ShopManagementMenu {
 	public void openLimitMenu(Player player, Limit limit, int fromPage) {
 		limit.setEditor(player);
 		ChestMenu chestMenu = new ChestMenu(limit.getName(), 3);
+		chestMenu.setCloseHandler(closeContext -> limit.setEditor(null));
 		chestMenu.setBackHandlerAction(backContext -> openLimitsMenu(player, fromPage));
 		//Set name
 		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT, Message.MANAGER_GUI_LIMIT_SET_NAME_NAME, Message.MANAGER_GUI_LIMIT_SET_NAME_LORE), clickContext -> {
@@ -377,23 +402,42 @@ public class ShopManagementMenu {
 		menu.openInventory(player, page);
 	}
 
-	public void openDiscountMenu(Player player, Discount discount, int page) {
+	public void openDiscountMenu(Player player, Discount discount, int fromPage) {
 		discount.setEditor(player);
 		ChestMenu chestMenu = new ChestMenu(Message.MANAGER_GUI_DISCOUNT, 3);
-		chestMenu.setBackHandlerAction(backContext -> openDiscountsMenu(player, page));
+		chestMenu.setBackHandlerAction(backContext -> openDiscountsMenu(player, fromPage));
 		chestMenu.setCloseHandler(closeContext -> discount.setEditor(null));
 
 		//Set name
-		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
-				Message.MANAGER_GUI_DISCOUNT_SET_NAME_NAME, Message.MANAGER_GUI_DISCOUNT_SET_NAME_LORE), clickContext -> {
-			//TODO anvil menü öffnen
+		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT, Message.MANAGER_GUI_DISCOUNT_SET_NAME_NAME, Message.MANAGER_GUI_DISCOUNT_SET_NAME_LORE), clickContext -> {
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.plugin(ShopPlugin.getInstance())
+					.text(discount.getNameFormat())
+					.title(Message.MANAGER_GUI_DISCOUNT_SET_NAME_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openDiscountMenu(p, discount, fromPage), 1L))
+					.onComplete((p, s) -> {
+						discount.setNameFormat(s);
+						openDiscountMenu(player, discount, fromPage);
+						return AnvilGUI.Response.close();
+					}).open(player);
 		});
 		//Set permissions
 		chestMenu.setItemAndClickHandler(0, 2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
 				Message.MANAGER_GUI_DISCOUNT_SET_PERMISSION_NAME.getTranslation(), Message.MANAGER_GUI_DISCOUNT_SET_PERMISSION_LORE.getTranslations(
 						Template.of("permission", discount.getPermission() == null ? "X" : discount.getPermission())
 				)), clickContext -> {
-			//TODO anvil menü öffnen
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.plugin(ShopPlugin.getInstance())
+					.text("shops.discount." + discount.getNamePlain().toLowerCase() + ".")
+					.title(Message.MANAGER_GUI_DISCOUNT_SET_PERMISSION_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openDiscountMenu(p, discount, fromPage), 1L))
+					.onComplete((p, s) -> {
+						discount.setPermission(s);
+						openDiscountMenu(player, discount, fromPage);
+						return AnvilGUI.Response.close();
+					}).open(player);
 		});
 		//Open Tags menu
 		chestMenu.setItemAndClickHandler(0, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
@@ -401,12 +445,23 @@ public class ShopManagementMenu {
 				clickContext -> new TagsEditorMenu(
 						discount, Message.MANAGER_GUI_TAGS_TITLE.getTranslation(Template.of("name", discount.getName())),
 						Message.MANAGER_GUI_TAGS_NEW_TAG_TITLE, Message.MANAGER_GUI_TAGS_NEW_TAG_NAME, Message.MANAGER_GUI_TAGS_NEW_TAG_LORE,
-						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openDiscountMenu(player, discount, page)).openInventory(player));
+						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openDiscountMenu(player, discount, fromPage)).openInventory(player));
 
-		//TODO setstart
-		//TODO setduration
-		//TODO setrepeatingduration
-		//TODO setpercent
+		chestMenu.setItemAndClickHandler(0, 5, ItemStackUtils.createItemStack(Material.CLOCK, Message.MANAGER_GUI_DISCOUNT_SET_START_NAME,
+				Message.MANAGER_GUI_DISCOUNT_SET_START_LORE), clickContext -> {
+			//TODO setstart clock
+
+		});
+		chestMenu.setItemAndClickHandler(0, 6, ItemStackUtils.createItemStack(Material.COMPASS, Message.MANAGER_GUI_DISCOUNT_SET_DURATION_NAME,
+				Message.MANAGER_GUI_DISCOUNT_SET_DURATION_LORE), clickContext -> {
+			//TODO setduration compass
+
+		});
+		chestMenu.setItemAndClickHandler(0, 7, ItemStackUtils.createItemStack(Material.EMERALD, Message.MANAGER_GUI_DISCOUNT_SET_PERCENT_NAME,
+				Message.MANAGER_GUI_DISCOUNT_SET_PERCENT_LORE), clickContext -> {
+			//TODO setpercent emerald
+
+		});
 
 		chestMenu.openInventory(player);
 	}

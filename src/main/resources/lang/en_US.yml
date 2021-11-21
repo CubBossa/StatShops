@@ -154,6 +154,17 @@ manager:
       set_rows:
         name: "<white>Menu Size: <rows> Rows"
         lore: "<gray>» <rows> Rows"
+      limits:
+        title: "Manage limits for this shop"
+        info:
+          name: "<gold>Info"
+          lore: "<gray>» <yellow>left-click: <gray>add this shops UUID-tag to the clicked limit\n<gray>» <yellow>right-click: <gray>remove this shops UUID-tag from the clicked limit"
+      discounts:
+        title: "Manage discounts for this shop"
+        info:
+          name: "<gold>Info"
+          lore: "<gray>» <yellow>left-click: <gray>add this shops UUID-tag to the clicked discoutn\n<gray>» <yellow>right-click: <gray>remove this shops UUID-tag from the clicked discount"
+
     shop_editor:
       template:
         name: "<white>Apply Templates to this Page"

@@ -40,7 +40,6 @@ public class ShopPlugin extends JavaPlugin {
 
 	//TODO logs für debug policy
 	//TODO database implementierung
-	//TODO einzelnes leerzeichen in lore wird angezeigt
 
 	public static final String CONDITION_ITEM_IN_HAND = "item_in_hand";
 	public static final String CONDITION_ITEM_HAS_META = "item_has_meta";

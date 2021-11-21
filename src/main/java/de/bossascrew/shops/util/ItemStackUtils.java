@@ -16,6 +16,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -153,13 +154,16 @@ public class ItemStackUtils {
 		ItemStack itemStack = new ItemStack(material);
 		ItemMeta meta = itemStack.getItemMeta();
 		if (meta == null) {
-			return itemStack;
+			meta = Bukkit.getItemFactory().getItemMeta(material);
+			if (meta == null) {
+				ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "Could not generate ItemMeta for ItemStack with displayname \"" + displayName + "\"");
+				return itemStack;
+			}
 		}
 		meta.setDisplayName(displayName);
-		if (lore != null && !lore.isEmpty() && (lore.size() > 1 || !lore.get(0).equals("") || !lore.get(0).equals(" "))) {
+		if (lore != null && !lore.isEmpty() && (lore.size() > 1 || !lore.get(0).isEmpty() || !lore.get(0).isBlank())) {
 			meta.setLore(lore);
-		} else {
-			meta.setLore(null);
+			System.out.println("setting lore : \"" + lore.get(0) + "\"");
 		}
 		meta.addItemFlags(ItemFlag.values());
 		itemStack.setItemMeta(meta);

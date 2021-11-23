@@ -9,6 +9,8 @@ import de.bossascrew.shops.data.Config;
 import de.bossascrew.shops.data.Database;
 import de.bossascrew.shops.data.TestDatabase;
 import de.bossascrew.shops.handler.*;
+import de.bossascrew.shops.hook.CitizensHook;
+import de.bossascrew.shops.hook.VaultHook;
 import de.bossascrew.shops.listener.PlayerListener;
 import de.bossascrew.shops.util.ItemFlags;
 import de.bossascrew.shops.util.LoggingPolicy;
@@ -16,7 +18,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -26,7 +27,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.material.Colorable;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,9 +37,6 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 public class ShopPlugin extends JavaPlugin {
-
-	//TODO logs für debug policy
-	//TODO database implementierung
 
 	public static final String CONDITION_ITEM_IN_HAND = "item_in_hand";
 	public static final String CONDITION_ITEM_HAS_META = "item_has_meta";
@@ -57,8 +54,6 @@ public class ShopPlugin extends JavaPlugin {
 	private BukkitAudiences bukkitAudiences;
 	@Getter
 	private MiniMessage miniMessage;
-	@Getter
-	private static Economy economy = null;
 
 	@Getter
 	private Config shopsConfig;
@@ -80,6 +75,12 @@ public class ShopPlugin extends JavaPlugin {
 	@Getter
 	private boolean loading = true;
 
+	@Getter
+	private VaultHook vaultHook = null;
+	@Getter
+	private CitizensHook citizensHook = null;
+
+
 	public ShopPlugin() {
 		instance = this;
 	}
@@ -95,10 +96,22 @@ public class ShopPlugin extends JavaPlugin {
 		this.shopsConfig = new Config("config.yml");
 
 		//Initialize Vault
-		if (!setupEconomy()) {
-			log(LoggingPolicy.ERROR, "Disabled due to no Vault/Economy dependency found!");
-			getServer().getPluginManager().disablePlugin(this);
-			return;
+		if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+			vaultHook = new VaultHook(this);
+			if (vaultHook.setupEconomy()) {
+				vaultHook = null;
+			}
+			if (isVaultInstalled()) {
+				log(LoggingPolicy.DEBUG, "Vault found and successfully hooked.");
+			} else {
+				log(LoggingPolicy.DEBUG, "Vault found but could not enable economy.");
+			}
+		}
+
+		//Initialize Citizens
+		if (Bukkit.getPluginManager().getPlugin("Citizens") != null) {
+			citizensHook = new CitizensHook(this);
+			log(LoggingPolicy.DEBUG, "Citizens found and successfully hooked");
 		}
 
 		//Load translations
@@ -158,6 +171,14 @@ public class ShopPlugin extends JavaPlugin {
 		}
 	}
 
+	public boolean isVaultInstalled() {
+		return vaultHook != null;
+	}
+
+	public boolean isCitizensInstalled() {
+		return citizensHook != null;
+	}
+
 	public void runAsync(Runnable runnable) {
 		Bukkit.getScheduler().runTaskAsynchronously(this, runnable);
 	}
@@ -180,18 +201,6 @@ public class ShopPlugin extends JavaPlugin {
 			throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
 		}
 		return this.bukkitAudiences;
-	}
-
-	private boolean setupEconomy() {
-		if (getServer().getPluginManager().getPlugin("Vault") == null) {
-			return false;
-		}
-		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-		if (rsp == null) {
-			return false;
-		}
-		economy = rsp.getProvider();
-		return economy != null;
 	}
 
 	/**

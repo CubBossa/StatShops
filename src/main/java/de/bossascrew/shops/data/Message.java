@@ -40,6 +40,10 @@ public enum Message {
 	GENERAL_WEBINTERFACE_LINK("general.webinterface.link"),
 	GENERAL_WEBINTERFACE_ERROR("general.webinterface.error"),
 
+	CITIZENS_ASSIGNED("citizens.assign.success"),
+	CITIZENS_CONFIRM_OVERRIDE("citizens.assign.confirm"),
+	CITIZENS_CLICK_TO_ASSIGN("citizens.assign.info"),
+
 	SHOP_NO_PERMISSION("shop.no_permission"),
 	SHOP_NOT_ENABLED("shop.not_enabled"),
 
@@ -92,6 +96,10 @@ public enum Message {
 	MANAGER_GUI_SHOP_SET_LIMITS_LORE("manager.gui.shop.set_limits.lore"),
 	MANAGER_GUI_SHOP_SET_DISCOUNTS_NAME("manager.gui.shop.set_discounts.name"),
 	MANAGER_GUI_SHOP_SET_DISCOUNTS_LORE("manager.gui.shop.set_discounts.lore"),
+	MANAGER_GUI_SHOP_SET_NPC_NAME("manager.gui.shop.set_citizens.name",
+			"The name of the item in the shop menu, that allows you to assign this shop to an citizens npc."),
+	MANAGER_GUI_SHOP_SET_NPC_LORE("manager.gui.shop.set_citizens.lore",
+			"The lore of the item in the shop menu, that allows you to assign this shop to an citizens npc."),
 	MANAGER_GUI_SHOP_SET_ENABLED_NAME("manager.gui.shop.set_enabled.name"),
 	MANAGER_GUI_SHOP_SET_ENABLED_LORE("manager.gui.shop.set_enabled.lore"),
 	MANAGER_GUI_SHOP_SET_REMEMBER_PAGE_NAME("manager.gui.shop.set_remember_page.name"),

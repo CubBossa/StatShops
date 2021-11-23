@@ -161,6 +161,17 @@ public class ShopManagementMenu {
 						Message.MANAGER_GUI_SHOP_SET_DISCOUNTS_NAME, Message.MANAGER_GUI_SHOP_SET_DISCOUNTS_LORE),
 				clickContext -> openShopDiscountsMenu(player, shop, fromPage, 0));
 
+		//Assign Shop to NPC
+		if (ShopPlugin.getInstance().isCitizensInstalled()) {
+
+			chestMenu.setItemAndClickHandler(0, 8, ItemStackUtils.createItemStack(Material.PLAYER_HEAD,
+					Message.MANAGER_GUI_SHOP_SET_NPC_NAME, Message.MANAGER_GUI_SHOP_SET_NPC_LORE), clickContext -> {
+				ShopPlugin.getInstance().getCitizensHook().addAssigningPlayer(player, shop);
+				player.closeInventory();
+				Customer.wrap(player).sendMessage(Message.CITIZENS_CLICK_TO_ASSIGN);
+			});
+		}
+
 		chestMenu.setItemAndClickHandler(1, 1, ItemStackUtils.createItemStack(Material.SMITHING_TABLE,
 				Message.MANAGER_GUI_SHOP_SET_CONTENT_NAME, Message.MANAGER_GUI_SHOP_SET_CONTENT_LORE), clickContext -> {
 			if (shop instanceof ChestMenuShop chestMenuShop) {

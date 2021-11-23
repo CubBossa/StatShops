@@ -1,12 +1,12 @@
-name: "ShopSystem"
+name: "StatShop"
 authors: [ "Leo", "Jannis" ]
 main: de.bossascrew.shops.ShopPlugin
 version: 0.1
 api-version: 1.17
 
 depend:
-  - Vault
   - NBTAPI
 
 softdepend:
+  - Vault
   - Citizens

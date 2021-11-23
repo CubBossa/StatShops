@@ -35,6 +35,10 @@ repositories {
         name = 'minecraft-repo'
         url = 'https://libraries.minecraft.net/'
     }
+    maven {
+        name = 'everything'
+        url = 'https://repo.citizensnpcs.co/'
+    }
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -50,7 +54,6 @@ configurations {
 
 dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0'
-    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     shadow 'com.squareup.okhttp3:okhttp:4.9.2'
     shadow 'org.json:json:20210307'
@@ -70,6 +73,7 @@ dependencies {
     shadow "net.wesjd:anvilgui:1.5.3-SNAPSHOT"
     compileOnly 'com.mojang:authlib:1.5.21'
     compileOnly 'de.tr7zw:item-nbt-api-plugin:2.6.0'
+    compileOnly 'net.citizensnpcs:citizensapi:2.0.26-SNAPSHOT'
 }
 
 shadowJar{

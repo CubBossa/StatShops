@@ -37,6 +37,12 @@ general:
       name: "<gold>Info"
       lore: "<gray>» <yellow>left-click: <gray>edit element\n<gray>» <yellow>middle-click: <gray>duplicate element\n<gray>» <yellow>right-click: <gray>delete element"
 
+citizens:
+  assign:
+    success: "<prefix>Shop was successfully assigned to NPC. Use <click:suggest_command:npc trait remove statshop><hover:show_text:\"Click to execute\"><white><italic>/trait remove statshop</italic></white></hover></click> to remove trait."
+    confirm: "<prefix>This NPC already has a shop trait. Click again to override."
+    info: "<prefix>Click a Citizens NPC to bind this shop to it."
+
 #shop translations that will be visible by users
 shop:
   no_permission: "<red>You don't have permission for this shop."
@@ -124,6 +130,9 @@ manager:
       set_discounts:
         name: "<white>Apply Discounts"
         lore: "<gray>Here you can apply \n<gray>a discount to the whole shop at once. \n<gray>This can be also archieved \n<gray>by using tags. With this \n<gray>menu wanted to provide a more \n<gray>userfriendly interface."
+      set_citizens:
+        name: "<white>Citizens NPC Binding"
+        lore: "<gray>This Shop is bound to"
       set_content:
         name: "<white>Setup Shop Entries"
         lore: "<gray>Opens the editor for the actual\n<gray>shop pages. Put all the items you\n<gray>want to trade in your lower\n<gray>inventory to have them available\n<gray>in the editor."

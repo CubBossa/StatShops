@@ -7,6 +7,7 @@ import de.bossascrew.shops.shop.ShopInteractionResult;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.shop.Taggable;
 import de.bossascrew.shops.util.Duplicable;
+import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,7 @@ public interface ShopEntry extends Taggable, Duplicable<ShopEntry>, DatabaseObje
 
 	ItemStack getDisplayItem();
 
-	String getDisplayPrice();
+	Component getDisplayPrice();
 
 	String getInfoLoreFormat();
 

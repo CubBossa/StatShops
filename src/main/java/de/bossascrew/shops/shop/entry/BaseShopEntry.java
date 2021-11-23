@@ -7,6 +7,7 @@ import de.bossascrew.shops.shop.ShopInteractionResult;
 import de.bossascrew.shops.shop.ShopMode;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,21 +25,20 @@ public class BaseShopEntry implements ShopEntry {
 	private final UUID uuid;
 	private Shop shop;
 	private ItemStack displayItem;
-	private EntryElement pay;
-	private EntryElement gain;
-	@Nullable
-	private String permission;
+	private @Nullable PayElement pay;
+	private @Nullable GainElement gain;
+	private @Nullable String permission;
 	private String infoLoreFormat;
 	private final List<String> tags;
 
 	private int slot;
 	private ShopMode shopMode;
 
-	public BaseShopEntry(UUID uuid, Shop shop, ItemStack displayItem, EntryElement pay, EntryElement gain, int slot, ShopMode shopMode) {
+	public BaseShopEntry(UUID uuid, Shop shop, ItemStack displayItem, PayElement pay, GainElement gain, int slot, ShopMode shopMode) {
 		this(uuid, shop, displayItem, pay, gain, null, slot, shopMode);
 	}
 
-	public BaseShopEntry(UUID uuid, Shop shop, ItemStack displayItem, EntryElement pay, EntryElement gain, @Nullable String permission, int slot, ShopMode shopMode) {
+	public BaseShopEntry(UUID uuid, Shop shop, ItemStack displayItem, @Nullable PayElement pay, @Nullable GainElement gain, @Nullable String permission, int slot, ShopMode shopMode) {
 		this.uuid = uuid;
 		this.shop = shop;
 		this.displayItem = displayItem;
@@ -57,8 +57,8 @@ public class BaseShopEntry implements ShopEntry {
 	}
 
 	@Override
-	public String getDisplayPrice() {
-		return pay.getAmountDisplay();
+	public Component getDisplayPrice() {
+		return pay == null ? Component.empty() : pay.getPriceDisplay();
 	}
 
 	public boolean hasPermission(Customer customer) {
@@ -69,7 +69,17 @@ public class BaseShopEntry implements ShopEntry {
 		if (!hasPermission(customer)) {
 			return ShopInteractionResult.FAIL_NO_PERMISSION;
 		}
-		return pay.act(customer).compare(gain.act(customer));
+		if (pay == null) {
+			if (gain == null) {
+				return ShopInteractionResult.SUCCESS;
+			}
+			return gain.act(customer);
+		} else {
+			if (gain == null) {
+				return pay.act(customer);
+			}
+			return pay.act(customer).compare(gain.act(customer));
+		}
 	}
 
 	public List<String> getTags() {
@@ -100,7 +110,6 @@ public class BaseShopEntry implements ShopEntry {
 
 	@Override
 	public ShopEntry duplicate() {
-		return new BaseShopEntry(UUID.randomUUID(), shop, displayItem.clone(),
-				pay == null ? null : pay.duplicate(), gain == null ? null : gain.duplicate(), slot, shopMode);
+		return new BaseShopEntry(UUID.randomUUID(), shop, displayItem.clone(), pay, gain, slot, shopMode);
 	}
 }

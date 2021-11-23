@@ -163,7 +163,6 @@ public class ItemStackUtils {
 		meta.setDisplayName(displayName);
 		if (lore != null && !lore.isEmpty() && (lore.size() > 1 || !lore.get(0).isEmpty() || !lore.get(0).isBlank())) {
 			meta.setLore(lore);
-			System.out.println("setting lore : \"" + lore.get(0) + "\"");
 		}
 		meta.addItemFlags(ItemFlag.values());
 		itemStack.setItemMeta(meta);

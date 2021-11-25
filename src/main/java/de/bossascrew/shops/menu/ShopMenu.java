@@ -6,6 +6,7 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.handler.InventoryHandler;
+import de.bossascrew.shops.handler.LimitsHandler;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.ChestMenuShop;
@@ -14,6 +15,7 @@ import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
 import de.bossascrew.shops.util.LoggingPolicy;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -25,13 +27,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class ShopMenu extends ChestMenu {
 
 	private final ChestMenuShop shop;
-	private final ContextConsumer<BackContext> customBackHandler;
+	private @Nullable ContextConsumer<BackContext> customBackHandler;
 
-	public ShopMenu(ChestMenuShop shop, ContextConsumer<BackContext> backHandler) {
+	public ShopMenu(ChestMenuShop shop) {
+		this(shop, null);
+	}
+
+	public ShopMenu(ChestMenuShop shop, @Nullable ContextConsumer<BackContext> backHandler) {
 		super(shop.getName(), shop.getRows(), 0, null, closeContext -> Customer.wrap(closeContext.getPlayer()).setActiveShop(null));
 		this.shop = shop;
 		this.customBackHandler = backHandler;
@@ -106,6 +113,8 @@ public class ShopMenu extends ChestMenu {
 			}
 		}
 
+		fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
+
 		Map<Integer, ShopEntry> entries = shop.getModeEntryMap().getOrDefault(shopMode, new TreeMap<>());
 		int pageSlots = shop.getRows() * RowedOpenableMenu.ROW_SIZE;
 
@@ -121,6 +130,7 @@ public class ShopMenu extends ChestMenu {
 
 			//Subscribe to limits and discounts so changes can be displayed live
 			DiscountHandler.getInstance().subscribeToDisplayUpdates(this, entry);
+			//TODO subscribe to limits
 
 			updateEntry(entry);
 		}
@@ -147,9 +157,23 @@ public class ShopMenu extends ChestMenu {
 
 		List<Component> additionalLore = new ArrayList<>();
 
+		Component price = entry.getDisplayPrice();
+		if (price != null) {
+			//Price lore
+			additionalLore.add(price);
 
-		//TODO price and limit lore
-		DiscountHandler.getInstance().addDiscountsLore(entry, additionalLore);
+			//Lore for discount
+			DiscountHandler.getInstance().addDiscountsLore(entry, additionalLore);
+
+			//TODO Limits
+			LimitsHandler.getInstance().getLimits();
+		}
+
+		//Addidional Lore from Entry
+		if (entry.getInfoLoreFormat() != null) {
+			MiniMessage mm = ShopPlugin.getInstance().getMiniMessage();
+			additionalLore.addAll(Arrays.stream(entry.getInfoLoreFormat().split("\n")).map(mm::parse).collect(Collectors.toList()));
+		}
 
 		ItemStackUtils.addLore(itemStack, additionalLore);
 

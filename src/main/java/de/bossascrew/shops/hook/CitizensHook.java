@@ -16,7 +16,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class CitizensHook implements Listener {

@@ -1,5 +1,6 @@
 package de.bossascrew.shops.data;
 
+import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import org.bukkit.Location;
@@ -8,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 public interface Database {
@@ -52,12 +54,12 @@ public interface Database {
 
 	void deleteTemplate(EntryTemplate template);
 
+	TreeMap<LocalDateTime, Transaction> getTransactionLog(Customer customer); //TODO filter
+
+	void logTransaction(Transaction transaction);
+
 	Map<Location, UUID> loadShopBlockMapping();
 
 	void mapShopToBlock(Shop shop, Location location);
-
-	Map<Integer, UUID> loadShopCitizensMapping();
-
-	void mapShopToCitizens(Shop shop, int citizensId);
 
 }

@@ -41,7 +41,7 @@ citizens:
   assign:
     success: "<prefix>Shop was successfully assigned to NPC. Use <click:suggest_command:npc trait remove statshop><hover:show_text:\"Click to execute\"><white><italic>/trait remove statshop</italic></white></hover></click> to remove trait."
     confirm: "<prefix>This NPC already has a shop trait. Click again to override."
-    info: "<prefix>Click a Citizens NPC to bind this shop to it."
+    info: "<prefix>Click a Citizens NPC to bind this shop to it. Use <yellow>left-click</yellow> to cancel."
 
 #shop translations that will be visible by users
 shop:

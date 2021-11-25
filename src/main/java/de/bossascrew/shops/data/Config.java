@@ -7,6 +7,8 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.ClickType;
 
+import java.time.Duration;
+
 @Getter
 @Setter
 public class Config {
@@ -19,11 +21,12 @@ public class Config {
 	public static final String CONF_KEY_BUY = "defaults.keybinding.buy";
 
 
+	private boolean logTransactions = true;
+	private Duration transactionLogExpire = null;
+
+
 	private String language = "en_US";
 	private LoggingPolicy loggingPolicy = LoggingPolicy.INFO;
-
-
-	private ClickType keyBindDelete = ClickType.RIGHT;
 
 	private Material shopBuyIconMaterial = Material.DIAMOND;
 	private Material shopSellIconMaterial = Material.GOLD_INGOT;

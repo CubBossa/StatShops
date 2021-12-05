@@ -20,7 +20,7 @@ import org.bukkit.event.inventory.ClickType;
 @Getter
 public class ListManagerMenu<L extends ListMenuElement> extends PagedChestMenu {
 
-	private final ListMenuElementHolder<L> elementHolder;
+	private final ListManagementMenuElementHolder<L> elementHolder;
 	@Setter
 	private ContextConsumer<TargetContext<ClickType, L>> leftClickHandler = null;
 	@Setter
@@ -32,7 +32,7 @@ public class ListManagerMenu<L extends ListMenuElement> extends PagedChestMenu {
 	private final Message confirmDeleteTitle;
 	private final Message confirmNewTitle;
 
-	public ListManagerMenu(int rowCount, ListMenuElementHolder<L> elementHolder, boolean requireDeleteConfirmation,
+	public ListManagerMenu(int rowCount, ListManagementMenuElementHolder<L> elementHolder, boolean requireDeleteConfirmation,
 						   Message title, Message alreadyEdited, Message newItemName, Message newItemLore, Message confirmDeleteTitle, Message confirmNewTitle,
 						   ContextConsumer<BackContext> backHandler) {
 		super(title.getTranslation(), rowCount, null, null, backHandler);

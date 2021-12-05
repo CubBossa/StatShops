@@ -1,7 +1,7 @@
 package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.ShopPlugin;
-import de.bossascrew.shops.menu.ListMenuElementHolder;
+import de.bossascrew.shops.menu.ListManagementMenuElementHolder;
 import de.bossascrew.shops.shop.EntryTemplate;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopMode;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class TemplateHandler implements
 		WebAccessable<EntryTemplate>,
-		ListMenuElementHolder<EntryTemplate> {
+		ListManagementMenuElementHolder<EntryTemplate> {
 
 	@Getter
 	private static TemplateHandler instance;

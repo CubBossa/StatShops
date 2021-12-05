@@ -2,7 +2,7 @@ package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
-import de.bossascrew.shops.menu.ListMenuElementHolder;
+import de.bossascrew.shops.menu.ListManagementMenuElementHolder;
 import de.bossascrew.shops.shop.Limit;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.web.WebAccessable;
@@ -14,7 +14,7 @@ import java.util.*;
 @Getter
 public class LimitsHandler implements
 		WebAccessable<Limit>,
-		ListMenuElementHolder<Limit> {
+		ListManagementMenuElementHolder<Limit> {
 
 	@Getter
 	private static LimitsHandler instance;

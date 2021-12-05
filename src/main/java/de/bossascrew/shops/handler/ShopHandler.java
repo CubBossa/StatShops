@@ -3,7 +3,7 @@ package de.bossascrew.shops.handler;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Database;
 import de.bossascrew.shops.data.Message;
-import de.bossascrew.shops.menu.ListMenuElementHolder;
+import de.bossascrew.shops.menu.ListManagementMenuElementHolder;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.util.ItemStackUtils;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class ShopHandler implements
 		WebAccessable<Shop>,
-		ListMenuElementHolder<Shop> {
+		ListManagementMenuElementHolder<Shop> {
 
 	@Getter
 	private static ShopHandler instance;

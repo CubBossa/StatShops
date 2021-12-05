@@ -1,6 +1,5 @@
 package de.bossascrew.shops.data;
 
-import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.BaseEntry;
@@ -15,7 +14,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
 
 public class TestDatabase implements Database {
@@ -56,7 +54,7 @@ public class TestDatabase implements Database {
 
 	@Override
 	public ShopEntry createEntry(UUID uuid, Shop shop, ItemStack displayItem, ShopMode shopMode, int slot) {
-		return new BaseEntry(uuid, shop, displayItem, null, null, slot, shopMode);
+		return new BaseEntry(uuid, shop, displayItem, null, slot, shopMode);
 	}
 
 	@Override
@@ -133,7 +131,7 @@ public class TestDatabase implements Database {
 		for (int i = 0; i < 9; i++) {
 			int finalI = i;
 			template.put(rows -> (rows - 1) * 9 + finalI, new BaseEntry(UUID.randomUUID(), null, ItemStackUtils.createItemStack(Material.DIAMOND, "lol", ""),
-					null, null, i, ShopHandler.getInstance().getShopModes().get(0)));
+					null, i, ShopHandler.getInstance().getShopModes().get(0)));
 		}
 		return Map.of(template.getUuid(), template);
 	}
@@ -145,16 +143,6 @@ public class TestDatabase implements Database {
 
 	@Override
 	public void deleteTemplate(EntryTemplate template) {
-
-	}
-
-	@Override
-	public TreeMap<LocalDateTime, Transaction> getTransactionLog(Customer customer) {
-		return null;
-	}
-
-	@Override
-	public void logTransaction(Transaction transaction) {
 
 	}
 

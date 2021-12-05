@@ -6,6 +6,7 @@ import de.bossascrew.shops.shop.Currency;
 import de.bossascrew.shops.shop.ShopInteractionResult;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,6 +22,11 @@ public class TradeBaseModule<T> implements TradeModule<T> {
 		this.currency = currency;
 		this.priceAmount = priceAmount;
 		this.priceObject = priceObject;
+	}
+
+	@Override
+	public Component getPriceDisplay() {
+		return currency.format(priceAmount, priceObject);
 	}
 
 	@Override

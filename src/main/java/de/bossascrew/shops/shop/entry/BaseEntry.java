@@ -52,6 +52,16 @@ public class BaseEntry implements ShopEntry {
 		return permission == null || customer.getPlayer().hasPermission(permission);
 	}
 
+	@Override
+	public <T> T getData(Class<T> clazz, String key) {
+		return null;
+	}
+
+	@Override
+	public <T> T storeData(Class<T> clazz, String key, T value) {
+		return null;
+	}
+
 	public ShopInteractionResult interact(Customer customer) {
 		if (module == null) {
 			return ShopInteractionResult.STATIC;

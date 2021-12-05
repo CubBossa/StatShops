@@ -2,6 +2,7 @@ package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.menu.ListMenuElement;
+import de.bossascrew.shops.menu.ListManagementMenuElementHolder;
 import de.bossascrew.shops.menu.ListMenuElementHolder;
 import de.bossascrew.shops.shop.entry.EntryModule;
 import de.bossascrew.shops.shop.entry.PageBaseModule;
@@ -73,30 +74,6 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	@Override
 	public List<EntryModuleProvider> getValues() {
 		return entryModules.values().stream().toList();
-	}
-
-	/**
-	 * Not required, interface only used to display as List, not to edit
-	 */
-	@Override
-	public EntryModuleProvider createNew(String input) {
-		return null;
-	}
-
-	/**
-	 * Not required, interface only used to display as List, not to edit
-	 */
-	@Override
-	public EntryModuleProvider createDuplicate(EntryModuleProvider element) {
-		return null;
-	}
-
-	/**
-	 * Not required, interface only used to display as List, not to edit
-	 */
-	@Override
-	public boolean delete(EntryModuleProvider element) {
-		return false;
 	}
 
 	public static class EntryModuleProvider implements ListMenuElement {

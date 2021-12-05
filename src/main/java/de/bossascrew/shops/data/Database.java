@@ -54,10 +54,6 @@ public interface Database {
 
 	void deleteTemplate(EntryTemplate template);
 
-	TreeMap<LocalDateTime, Transaction> getTransactionLog(Customer customer); //TODO filter
-
-	void logTransaction(Transaction transaction);
-
 	Map<Location, UUID> loadShopBlockMapping();
 
 	void mapShopToBlock(Shop shop, Location location);

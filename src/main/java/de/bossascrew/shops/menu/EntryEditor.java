@@ -77,7 +77,7 @@ public class EntryEditor extends ChestMenu {
 				openInventory(clickContext.getPlayer());
 			});
 			listMenu.setClickHandler(cc -> {
-				//TODO itemType setzen;
+				entry.setModule(cc.getTarget().getModule(entry));
 			});
 			listMenu.openInventory(clickContext.getPlayer());
 		});

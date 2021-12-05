@@ -321,7 +321,7 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 		if (!entry.hasPermission(customer)) {
 			return ShopInteractionResult.FAIL_NO_PERMISSION;
 		}
-		return entry.buy(customer);
+		return entry.interact(customer);
 	}
 
 	public void setRows(int rows) {

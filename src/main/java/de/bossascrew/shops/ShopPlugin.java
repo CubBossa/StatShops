@@ -65,6 +65,8 @@ public class ShopPlugin extends JavaPlugin {
 	@Getter
 	private LogDatabase logDatabase;
 	@Getter
+	private EntryModuleHandler entryModuleHandler;
+	@Getter
 	private ShopHandler shopHandler;
 	@Getter
 	private DiscountHandler discountHandler;
@@ -126,6 +128,11 @@ public class ShopPlugin extends JavaPlugin {
 
 		//Setup Database
 		this.database = new TestDatabase(); //TODO
+		this.logDatabase = (LogDatabase) this.database;
+
+		//Enable Entry Modules
+		this.entryModuleHandler = new EntryModuleHandler();
+		this.entryModuleHandler.registerDefaults();
 
 		//Setup ShopHandler and load shops and entries
 		this.shopHandler = new ShopHandler();
@@ -168,9 +175,7 @@ public class ShopPlugin extends JavaPlugin {
 	@Override
 	public void onDisable() {
 
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			InventoryHandler.getInstance().handleInventoryClose(player);
-		}
+		InventoryHandler.getInstance().closeAllMenus();
 
 		if (this.bukkitAudiences != null) {
 			this.bukkitAudiences.close();

@@ -83,11 +83,6 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 				//TODO clone clicked stack in hand
 			}
 		});
-		setDefaultClickHandler(ClickType.RIGHT, clickContext -> {
-			shop.deleteEntry(shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
-			clickContext.setItemStack(DefaultSpecialItem.EMPTY_LIGHT.createSpecialItem());
-			refresh(clickContext.getSlot());
-		});
 		fillBottom();
 		setBackSlotBottom(8);
 		setBackHandlerAction(backHandler);

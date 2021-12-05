@@ -5,6 +5,7 @@ import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.EntryModuleHandler;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
+import de.bossascrew.shops.shop.entry.EntryModule;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
 import net.kyori.adventure.text.minimessage.Template;
@@ -14,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,16 +23,18 @@ import java.util.function.Consumer;
 
 public class EntryEditor extends ChestMenu {
 
-	ShopEntry entry;
+	private final ShopEntry entry;
+	private final ContextConsumer<BackContext> backHandler;
 
 	public EntryEditor(ShopEntry entry, ContextConsumer<BackContext> backHandler) {
 		super(Message.MANAGER_GUI_SHOP_ENTRY, 3);
 		this.entry = entry;
-		setBackHandlerAction(backHandler);
+		this.backHandler = backHandler;
 	}
 
 	private void prepareMenu() {
-		fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
+		fillMenu(null, DefaultSpecialItem.EMPTY_LIGHT);
+		setBackHandlerAction(backHandler);
 		//Set deco lore
 		setItemAndClickHandler(0, 0, ItemStackUtils.createItemStack(entry.getDisplayItem().getType(),
 				Message.MANAGER_GUI_ENTRY_SET_LORE_NAME, Message.MANAGER_GUI_ENTRY_SET_LORE_LORE), clickContext -> {
@@ -66,21 +70,36 @@ public class EntryEditor extends ChestMenu {
 					menu.openInventory(player);
 				});
 
-		//handle items
-		//TODO einmal type
-		//TODO alle dataslots für das item
+		setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(entry.getModule() == null ? new ItemStack(Material.BLACK_STAINED_GLASS) :
+						entry.getModule().getDisplayItem(), Message.MANAGER_GUI_ENTRY_SET_FUNCTION_NAME.getTranslation(Template.of("name", entry.getModule() == null ?
+						Message.MANAGER_GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName())),
+				Message.MANAGER_GUI_ENTRY_SET_FUNCTION_LORE.getTranslations(Template.of("function", entry.getModule() == null ?
+						Message.MANAGER_GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName()))), clickContext -> {
 
-		setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(Material.REPEATER, Message.MANAGER_GUI_ENTRY_SET_FUNCTION_NAME,
-				Message.MANAGER_GUI_ENTRY_SET_FUNCTION_LORE), clickContext -> {
-			//TODO message
-			ListMenu<EntryModuleHandler.EntryModuleProvider> listMenu = new ListMenu<>(3, EntryModuleHandler.getInstance(), null, backContext -> {
-				openInventory(clickContext.getPlayer());
-			});
+			ListMenu<EntryModuleHandler.EntryModuleProvider> listMenu = new ListMenu<>(3, EntryModuleHandler.getInstance(),
+					Message.MANAGER_GUI_ENTRY_SET_FUNCTION_TITLE, backContext -> openInventory(clickContext.getPlayer()));
+
 			listMenu.setClickHandler(cc -> {
 				entry.setModule(cc.getTarget().getModule(entry));
+				openInventory(cc.getPlayer());
 			});
 			listMenu.openInventory(clickContext.getPlayer());
 		});
+
+		if (entry.getModule() != null) {
+			for (EntryModule.DataSlot<?> dataSlot : entry.getModule().getDataSlots()) {
+				Object data = dataSlot.getData();
+				if (dataSlot.getType() == ItemStack.class) {
+
+				} else if (dataSlot.getType() == String.class) {
+
+				} else if (dataSlot.getType() == Integer.class) {
+
+				}
+			}
+		}
+
+		//TODO alle dataslots für das Modul
 	}
 
 	@Override

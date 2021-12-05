@@ -211,6 +211,25 @@ manager:
       set_tags:
         name: "<white>Open Tag Menu"
         lore: "<gray>Discounts and Limits can be \n<gray>applied to all Shops and Shopentries \n<gray>that have certain tags.\n\n<gray>Use the tags menu to configure\n<gray>tags for this entry."
+      set_function:
+        title: "Choose an entry function"
+        # Valid placeholders: <name>
+        name: "<name>"
+        # Valid placeholders: <function>
+        lore: "<gray>Click to choose a function\n<gray>for this Shop Entry.\n\n<gray>Current: <function>"
+      defaults:
+        static:
+          name: "<white>Static Item"
+          lore: "<gray>Simply does nothing."
+        next_page:
+          name: "<white>Next Page"
+          lore: "<gray>Turns n pages ahead."
+        prev_page:
+          name: "<white>Previous Page"
+          lore: "<gray>Turns n pages back."
+        exact_page:
+          name: "<white>Exact Page"
+          lore: "<gray>Opens an exact page."
 
     limits:
       title: "Create and manage shop limits"

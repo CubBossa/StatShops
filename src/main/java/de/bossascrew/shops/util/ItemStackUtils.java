@@ -182,12 +182,16 @@ public class ItemStackUtils {
 	}
 
 	public static ItemStack createItemStack(ItemStack itemStack, Message name, Message lore) {
+		return createItemStack(itemStack, name.getTranslation(), lore.getTranslations());
+	}
+
+	public static ItemStack createItemStack(ItemStack itemStack, Component name, List<Component> lore) {
 		ItemMeta meta = itemStack.getItemMeta();
 		if (meta == null) {
 			meta = Bukkit.getItemFactory().getItemMeta(itemStack.getType());
 		}
-		meta.setDisplayName(name.getLegacyTranslation());
-		meta.setLore(lore.getLegacyTranslations());
+		meta.setDisplayName(ComponentUtils.toLegacy(name));
+		meta.setLore(lore.stream().map(ComponentUtils::toLegacy).collect(Collectors.toList()));
 		itemStack.setItemMeta(meta);
 		return itemStack;
 	}

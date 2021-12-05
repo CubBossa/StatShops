@@ -29,7 +29,7 @@ public class ShopHandler implements
 
 	/**
 	 * Cyclic data structure. shopMode.next() gives the next element and allows to iterate. If you need all ShopModes you can call getShopModes()
-	 */
+	 */ //TODO bah
 	private ShopMode headShopMode = null;
 	private ShopMode tailShopMode = null;
 

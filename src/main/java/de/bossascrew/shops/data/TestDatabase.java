@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class TestDatabase implements Database {
+public class TestDatabase implements Database, LogDatabase {
 
 	@Override
 	public Shop createShop(String nameFormat, UUID uuid) {
@@ -153,6 +153,11 @@ public class TestDatabase implements Database {
 
 	@Override
 	public void mapShopToBlock(Shop shop, Location location) {
+
+	}
+
+	@Override
+	public void logToDatabase(LogEntry entry) {
 
 	}
 }

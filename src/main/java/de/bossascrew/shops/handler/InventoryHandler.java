@@ -4,10 +4,12 @@ import com.google.common.collect.Maps;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.menu.OpenableMenu;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 
+import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.util.UUID;
 
@@ -57,6 +59,18 @@ public class InventoryHandler {
 
 		if (invMenu != null) {
 			invMenu.closeInventory(player);
+		}
+	}
+
+	public void closeAllMenus() {
+		for(OpenableMenu menu : openOpenableMenus.values()) {
+			for(UUID uuid : menu.getOpenInventories().keySet()) {
+				Player player = Bukkit.getPlayer(uuid);
+				if(player == null) {
+					continue;
+				}
+				player.closeInventory();
+			}
 		}
 	}
 }

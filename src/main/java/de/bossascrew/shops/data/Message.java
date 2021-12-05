@@ -203,8 +203,22 @@ public enum Message {
 	MANAGER_GUI_ENTRY_SET_PERMISSION_LORE("manager.gui.entry.set_permission.lore"),
 	MANAGER_GUI_ENTRY_SET_TAGS_NAME("manager.gui.entry.set_tags.name"),
 	MANAGER_GUI_ENTRY_SET_TAGS_LORE("manager.gui.entry.set_tags.lore"),
-	MANAGER_GUI_ENTRY_SET_FUNCTION_NAME("manager.gui.entry.set_function.name"), //TODO in yml
-	MANAGER_GUI_ENTRY_SET_FUNCTION_LORE("manager.gui.entry.set_function.lore"),
+	MANAGER_GUI_ENTRY_SET_FUNCTION_TITLE("manager.gui.entry.set_function.title"),
+	MANAGER_GUI_ENTRY_SET_FUNCTION_NAME("manager.gui.entry.set_function.name",
+			new Pair<>("name", "<white>Static")),
+	MANAGER_GUI_ENTRY_SET_FUNCTION_LORE("manager.gui.entry.set_function.lore",
+			new Pair<>("function", "<white>Static")),
+
+	MANAGER_GUI_ENTRY_FUNCTION_STATIC_NAME("manager.gui.entry.defaults.static.name"),
+	MANAGER_GUI_ENTRY_FUNCTION_STATIC_LORE("manager.gui.entry.defaults.static.lore"),
+	MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_NAME("manager.gui.entry.defaults.prev_page.name"),
+	MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_LORE("manager.gui.entry.defaults.prev_page.lore"),
+	MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME("manager.gui.entry.defaults.next_page.name"),
+	MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE("manager.gui.entry.defaults.next_page.lore"),
+	MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME("manager.gui.entry.defaults.exact_page.name"),
+	MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE("manager.gui.entry.defaults.exact_page.lore"),
+	MANAGER_GUI_ENTRY_FUNCTION_TRADE_NAME("manager.gui.entry.defaults.trade.name"),
+	MANAGER_GUI_ENTRY_FUNCTION_TRADE_LORE("manager.gui.entry.defaults.trade.lore"),
 
 	;
 

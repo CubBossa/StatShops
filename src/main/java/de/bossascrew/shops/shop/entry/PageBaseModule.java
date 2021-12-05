@@ -2,25 +2,38 @@ package de.bossascrew.shops.shop.entry;
 
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.data.LogEntry;
+import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.menu.RowedOpenableMenu;
 import de.bossascrew.shops.shop.ShopInteractionResult;
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PageBaseModule implements PageModule {
 
+	@Getter
+	private final ItemStack displayItem;
+	@Getter
+	private final Component displayName;
+	@Getter
+	private final List<Component> displayLore;
 	private final ShopEntry shopEntry;
 	private final BiConsumer<Customer, Integer> openPageHandler;
 	private Function<Integer, Integer> newPageProvider = integer -> integer;
 	private String data = "";
 
-	public PageBaseModule(ShopEntry shopEntry, BiConsumer<Customer, Integer> openPageHandler) {
+	public PageBaseModule(Message name, Message lore, ShopEntry shopEntry, BiConsumer<Customer, Integer> openPageHandler) {
 		this.shopEntry = shopEntry;
 		this.openPageHandler = openPageHandler;
+		this.displayName = name.getTranslation();
+		this.displayLore = lore.getTranslations();
+		displayItem = new ItemStack(Material.BOOK);
 	}
 
 	/**
@@ -43,7 +56,12 @@ public class PageBaseModule implements PageModule {
 
 	@Override
 	public ItemStack getDisplayItem() {
-		return null;
+		return new ItemStack(Material.BOOK);
+	}
+
+	@Override
+	public DataSlot<?>[] getDataSlots() {
+		return new DataSlot[0];
 	}
 
 	@Override

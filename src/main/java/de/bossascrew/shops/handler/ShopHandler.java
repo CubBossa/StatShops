@@ -1,16 +1,11 @@
 package de.bossascrew.shops.handler;
 
-import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Database;
 import de.bossascrew.shops.data.Message;
-import de.bossascrew.shops.menu.DefaultSpecialItem;
 import de.bossascrew.shops.menu.ListMenuElementHolder;
 import de.bossascrew.shops.shop.Shop;
-import de.bossascrew.shops.shop.ShopInteractionResult;
 import de.bossascrew.shops.shop.ShopMode;
-import de.bossascrew.shops.shop.entry.GainElement;
-import de.bossascrew.shops.shop.entry.ShopEntryType;
 import de.bossascrew.shops.util.ItemStackUtils;
 import de.bossascrew.shops.util.LoggingPolicy;
 import de.bossascrew.shops.web.WebAccessable;
@@ -32,9 +27,6 @@ public class ShopHandler implements
 	@Getter
 	private final Map<UUID, Shop> shopMap;
 
-	@Getter
-	private final List<ShopEntryType> shopEntryTypes;
-
 	/**
 	 * Cyclic data structure. shopMode.next() gives the next element and allows to iterate. If you need all ShopModes you can call getShopModes()
 	 */
@@ -45,7 +37,6 @@ public class ShopHandler implements
 		instance = this;
 
 		this.shopMap = new HashMap<>();
-		this.shopEntryTypes = new ArrayList<>();
 	}
 
 	public void loadShopsFromDatabase(Database database) {
@@ -156,29 +147,6 @@ public class ShopHandler implements
 				return ItemStackUtils.createItemStack(ShopPlugin.getInstance().getShopsConfig().getShopTradeIconMaterial(), Message.SHOP_MODE_TRADE_NAME, Message.SHOP_MODE_TRADE_LORE);
 			}
 		});
-	}
-
-	public void registerShopEntryType(ShopEntryType type) {
-		shopEntryTypes.add(type);
-	}
-
-	public void registerDefaultShopEntryTypes() {
-		// Open next page
-		registerShopEntryType(new ShopEntryType(s -> DefaultSpecialItem.ERROR.createSpecialItem(),
-				entry -> true, null, new GainElement() {
-			public boolean canAct(Customer customer) {
-				return true;
-			}
-
-			public ShopInteractionResult act(Customer customer) {
-				//TODO open at page
-				return ShopInteractionResult.SUCCESS;
-			}
-
-			public boolean demandsLogging() {
-				return false;
-			}
-		}));
 	}
 
 	@Override

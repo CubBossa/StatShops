@@ -12,6 +12,7 @@ import net.kyori.adventure.text.minimessage.Template;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public enum Message {
 
@@ -202,7 +203,8 @@ public enum Message {
 	MANAGER_GUI_ENTRY_SET_PERMISSION_LORE("manager.gui.entry.set_permission.lore"),
 	MANAGER_GUI_ENTRY_SET_TAGS_NAME("manager.gui.entry.set_tags.name"),
 	MANAGER_GUI_ENTRY_SET_TAGS_LORE("manager.gui.entry.set_tags.lore"),
-
+	MANAGER_GUI_ENTRY_SET_FUNCTION_NAME("manager.gui.entry.set_function.name"), //TODO in yml
+	MANAGER_GUI_ENTRY_SET_FUNCTION_LORE("manager.gui.entry.set_function.lore"),
 
 	;
 
@@ -236,7 +238,7 @@ public enum Message {
 		String[] toFormat = TranslationHandler.getInstance().getMessage(key).split("\n");
 		List<Component> result = new ArrayList<>();
 		MiniMessage miniMessage = ShopPlugin.getInstance().getMiniMessage();
-		for(String string : toFormat) {
+		for (String string : toFormat) {
 			result.add(miniMessage.parse(string, templates));
 		}
 		return result;
@@ -244,5 +246,9 @@ public enum Message {
 
 	public String getLegacyTranslation(Template... templates) {
 		return ComponentUtils.toLegacy(getTranslation(templates));
+	}
+
+	public List<String> getLegacyTranslations(Template... templates) {
+		return getTranslations(templates).stream().map(ComponentUtils::toLegacy).collect(Collectors.toList());
 	}
 }

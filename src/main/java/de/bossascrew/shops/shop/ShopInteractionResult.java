@@ -3,6 +3,7 @@ package de.bossascrew.shops.shop;
 import lombok.Getter;
 
 public enum ShopInteractionResult {
+	STATIC(11),
 	FAIL_SHOP_DISABLED(10),
 	FAIL_VAULT_UNKNOWN(10),
 	FAIL_NO_ENTRY(8),

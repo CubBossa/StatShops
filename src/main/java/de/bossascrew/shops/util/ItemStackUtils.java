@@ -11,6 +11,7 @@ import de.bossascrew.shops.shop.EntryTemplate;
 import de.bossascrew.shops.shop.Limit;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import de.bossascrew.shops.shop.entry.TradeModule;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -108,9 +109,11 @@ public class ItemStackUtils {
 	}
 
 	public List<Component> addLorePrice(ShopEntry shopEntry, List<Component> existingLore) {
-		existingLore.addAll(Message.SHOP_ITEM_LORE_PRICE.getTranslations(
-				Template.of("price", shopEntry.getDisplayPrice())
-		));
+		if (shopEntry.getModule() instanceof TradeModule tm) {
+			existingLore.addAll(Message.SHOP_ITEM_LORE_PRICE.getTranslations(
+					Template.of("price", tm.getPriceDisplay())
+			));
+		}
 		return existingLore;
 	}
 
@@ -176,6 +179,17 @@ public class ItemStackUtils {
 
 	public ItemStack createItemStack(Material material, Message name, Message lore) {
 		return createItemStack(material, name.getTranslation(), lore.getTranslations());
+	}
+
+	public static ItemStack createItemStack(ItemStack itemStack, Message name, Message lore) {
+		ItemMeta meta = itemStack.getItemMeta();
+		if (meta == null) {
+			meta = Bukkit.getItemFactory().getItemMeta(itemStack.getType());
+		}
+		meta.setDisplayName(name.getLegacyTranslation());
+		meta.setLore(lore.getLegacyTranslations());
+		itemStack.setItemMeta(meta);
+		return itemStack;
 	}
 
 	public ItemStack createCustomHead(String url) {

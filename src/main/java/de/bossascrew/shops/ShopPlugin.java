@@ -7,6 +7,7 @@ import de.bossascrew.shops.commands.ItemEditorCommand;
 import de.bossascrew.shops.commands.ShopCommand;
 import de.bossascrew.shops.data.Config;
 import de.bossascrew.shops.data.Database;
+import de.bossascrew.shops.data.LogDatabase;
 import de.bossascrew.shops.data.TestDatabase;
 import de.bossascrew.shops.handler.*;
 import de.bossascrew.shops.hook.CitizensHook;
@@ -62,6 +63,8 @@ public class ShopPlugin extends JavaPlugin {
 	@Getter
 	private Database database;
 	@Getter
+	private LogDatabase logDatabase;
+	@Getter
 	private ShopHandler shopHandler;
 	@Getter
 	private DiscountHandler discountHandler;
@@ -71,6 +74,8 @@ public class ShopPlugin extends JavaPlugin {
 	private CustomerHandler customerHandler;
 	@Getter
 	private TemplateHandler templateHandler;
+	@Getter
+	private CurrencyHandler currencyHandler;
 
 	@Getter
 	private boolean loading = true;
@@ -94,6 +99,8 @@ public class ShopPlugin extends JavaPlugin {
 
 		//Initialize and load Config
 		this.shopsConfig = new Config("config.yml");
+
+		this.currencyHandler = new CurrencyHandler();
 
 		//Initialize Vault
 		if (Bukkit.getPluginManager().getPlugin("Vault") != null) {

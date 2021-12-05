@@ -7,7 +7,6 @@ import de.bossascrew.shops.shop.ShopInteractionResult;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.shop.Taggable;
 import de.bossascrew.shops.util.Duplicable;
-import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,8 +30,6 @@ public interface ShopEntry extends Taggable, Duplicable<ShopEntry>, DatabaseObje
 
 	ItemStack getDisplayItem();
 
-	Component getDisplayPrice();
-
 	String getInfoLoreFormat();
 
 	void setInfoLoreFormat(String lore);
@@ -43,5 +40,13 @@ public interface ShopEntry extends Taggable, Duplicable<ShopEntry>, DatabaseObje
 
 	boolean hasPermission(Customer customer);
 
-	ShopInteractionResult buy(Customer customer);
+	<T> T getData(Class<T> clazz, String key);
+
+	<T> T storeData(Class<T> clazz, String key, T value);
+
+	@Nullable EntryModule getModule();
+
+	void setModule(EntryModule module);
+
+	ShopInteractionResult interact(Customer customer);
 }

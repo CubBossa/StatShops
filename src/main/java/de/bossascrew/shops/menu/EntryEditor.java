@@ -2,6 +2,7 @@ package de.bossascrew.shops.menu;
 
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
+import de.bossascrew.shops.handler.EntryModuleHandler;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
@@ -9,6 +10,7 @@ import de.bossascrew.shops.util.ItemStackUtils;
 import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -65,8 +67,20 @@ public class EntryEditor extends ChestMenu {
 				});
 
 		//handle items
+		//TODO einmal type
+		//TODO alle dataslots für das item
 
-
+		setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(Material.REPEATER, Message.MANAGER_GUI_ENTRY_SET_FUNCTION_NAME,
+				Message.MANAGER_GUI_ENTRY_SET_FUNCTION_LORE), clickContext -> {
+			//TODO message
+			ListMenu<EntryModuleHandler.EntryModuleProvider> listMenu = new ListMenu<>(3, EntryModuleHandler.getInstance(), null, backContext -> {
+				openInventory(clickContext.getPlayer());
+			});
+			listMenu.setClickHandler(cc -> {
+				//TODO itemType setzen;
+			});
+			listMenu.openInventory(clickContext.getPlayer());
+		});
 	}
 
 	@Override

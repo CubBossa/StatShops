@@ -201,7 +201,7 @@ manager:
       title: ""
       set_lore:
         name: "<white>Set Info Lore"
-        lore: "<gray>Click to change the \n<gray>description of the entry.\n\n<gray>This is NOT similar to setting a\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format"
+        lore: "<gray>Click to change the \n<gray>description of the entry.\n\n<gray>This is NOT similar to setting a\n<gray>lore for your item beforehand.\n<gray>This lore will not be on the\n<gray>purchased Item.\n\n<gray>To <rainbow>format</rainbow> your name \n<gray>use the kyori minimessage format"
       set_permission:
         # The title of the anvil gui
         title: "Change entry permission"

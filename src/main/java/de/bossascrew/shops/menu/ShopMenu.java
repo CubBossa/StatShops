@@ -12,6 +12,7 @@ import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.ChestMenuShop;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import de.bossascrew.shops.shop.entry.TradeModule;
 import de.bossascrew.shops.util.ItemStackUtils;
 import de.bossascrew.shops.util.LoggingPolicy;
 import net.kyori.adventure.text.Component;
@@ -154,11 +155,11 @@ public class ShopMenu extends ChestMenu {
 	public void setEntry(ShopEntry entry) {
 
 		ItemStack itemStack = entry.getDisplayItem().clone();
-
 		List<Component> additionalLore = new ArrayList<>();
 
-		Component price = entry.getDisplayPrice();
-		if (price != null) {
+		if (entry.getModule() instanceof TradeModule tradeEntry) {
+			Component price = tradeEntry.getCurrency().format(tradeEntry.getPriceAmount(), tradeEntry.getPriceObject());
+
 			//Price lore
 			additionalLore.add(price);
 
@@ -178,7 +179,7 @@ public class ShopMenu extends ChestMenu {
 		ItemStackUtils.addLore(itemStack, additionalLore);
 
 		int slot = entry.getSlot() % LARGEST_INV_SIZE;
-		setItem(slot, itemStack);
+		setItemAndClickHandler(slot, itemStack, clickContext -> entry.interact(Customer.wrap(clickContext.getPlayer())));
 	}
 
 	public void updateEntry(ShopEntry entry) {

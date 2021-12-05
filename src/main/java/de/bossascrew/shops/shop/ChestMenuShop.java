@@ -376,7 +376,7 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 			newEntry.setSlot(shopSlot);
 			newEntry.setShop(this);
 			newEntry.saveToDatabase();
-			addEntry(shopMode, shopSlot, entry);
+			addEntry(shopMode, shopSlot, newEntry);
 		}
 	}
 

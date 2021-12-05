@@ -13,6 +13,7 @@ import de.bossascrew.shops.handler.*;
 import de.bossascrew.shops.hook.CitizensHook;
 import de.bossascrew.shops.hook.VaultHook;
 import de.bossascrew.shops.listener.PlayerListener;
+import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.util.ItemFlags;
 import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.Getter;
@@ -43,6 +44,7 @@ public class ShopPlugin extends JavaPlugin {
 	public static final String CONDITION_ITEM_HAS_META = "item_has_meta";
 	public static final String CONDITION_ITEM_SPAWNABLE = "item_spawnable";
 	public static final String CONDITION_ITEM_COLORABLE = "item_colorable";
+	public static final String COMPLETION_SHOPS = "@shops";
 	public static final String COMPLETION_ENCHANTMENTS = "@enchantments";
 	public static final String COMPLETION_ENCHANTMENTS_CONTAINED = "@enchantments_on_item";
 	public static final String COMPLETION_ITEM_FLAGS = "@commandflags";
@@ -238,6 +240,12 @@ public class ShopPlugin extends JavaPlugin {
 	}
 
 	public void registerCompletions() {
+		commandManager.getCommandCompletions().registerCompletion(COMPLETION_SHOPS, context -> {
+			return ShopHandler.getInstance().getShopMap().values().stream()
+					.map(Shop::getNamePlain)
+					.map(s -> s.replaceAll(" ", "_")).
+					collect(Collectors.toList());
+		});
 		commandManager.getCommandCompletions().registerCompletion(COMPLETION_ENCHANTMENTS, context -> {
 			return Arrays.stream(Enchantment.values()).map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.toList());
 		});
@@ -266,6 +274,18 @@ public class ShopPlugin extends JavaPlugin {
 	}
 
 	public void registerContexts() {
+		commandManager.getCommandContexts().registerContext(Shop.class, context -> {
+			String search = context.popFirstArg();
+			Shop shop = ShopHandler.getInstance().getShopMap().values().stream()
+					.filter(s -> s.getNamePlain().replaceAll(" ", "_").equalsIgnoreCase(search)).findFirst().orElse(null);
+			if (shop != null) {
+				return shop;
+			}
+			if (context.isOptional()) {
+				return null;
+			}
+			throw new InvalidCommandArgument("Es existiert kein Shop \"" + search + "\"");
+		});
 		commandManager.getCommandContexts().registerContext(ItemFlags.class, context -> {
 			if (context.getFirstArg().equalsIgnoreCase("*")) {
 				return new ItemFlags(ItemFlag.values());

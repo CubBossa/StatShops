@@ -45,8 +45,6 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 	private final ShopEditor shopEditor;
 	private final ContextConsumer<BackContext> backHandler;
 
-	private boolean itemsMovable = true;
-
 	public ShopEditorPageMenu(ChestMenuShop shop, ShopMode shopMode, int shopPage, ContextConsumer<BackContext> backHandler, ShopEditor shopEditor) {
 		super(Message.SHOP_GUI_TITLE.getTranslation(
 				Template.of("name", shop.getName()),
@@ -58,6 +56,8 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 		this.shopPage = shopPage;
 		this.shopEditor = shopEditor;
 		this.backHandler = backHandler;
+		//Save all moved items before closing menu
+		this.closeHandler = closeContext -> handleFreeze();
 	}
 
 	private void prepareMenu() {
@@ -105,70 +105,9 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 				Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE), clickContext -> {
 
 			if (shopEditor.isFreezeItems()) {
-				//Handle unfreeze
-
-				for (int slot : getSlots()) {
-					// Only process items in upper inventory
-					if (slot >= INDEX_DIFFERENCE) {
-						continue;
-					}
-					// Only process not empty stacks
-					ItemStack stack = getItemStack(slot);
-					if (stack == null || stack.getType() == Material.AIR) {
-						continue;
-					}
-					// Get entry from this slot
-					ShopEntry entry = shop.getEntry(shopMode, slot + LARGEST_INV_SIZE * shopPage);
-					if (entry == null) {
-						ShopPlugin.getInstance().log(LoggingPolicy.WARN, "Item was in menu but no entry was found.");
-						continue;
-					}
-					// Set uuid tag from entry
-					NBTItem nbtItem = new NBTItem(stack);
-					nbtItem.setUUID(UUID_TAG_KEY, entry.getUUID());
-
-					//Put item in unfrozen inventory
-					setItem(slot, nbtItem.getItem());
-					refresh(slot);
-				}
+				handleUnfreeze();
 			} else {
-				//Handle freeze
-
-				List<ShopEntry> containedEntries = shop.getEntries(shopMode, shopPage);
-
-				for (int slot : getSlots()) {
-					// Only process items in upper inventory
-					if (slot >= INDEX_DIFFERENCE) {
-						continue;
-					}
-					int shopSlot = shopPage * LARGEST_INV_SIZE + slot;
-					// Only process not empty stacks
-					ItemStack stack = getItemStack(slot);
-					if (stack == null || stack.getType() == Material.AIR) {
-						continue;
-					}
-					NBTItem nbtItem = new NBTItem(stack);
-					UUID uuid = null;
-					if (nbtItem.hasKey(UUID_TAG_KEY)) {
-						uuid = nbtItem.getUUID(UUID_TAG_KEY);
-					}
-					if (uuid == null) {
-						shop.createEntry(stack, shopMode, shopSlot);
-					} else {
-						UUID finalUuid = uuid;
-						ShopEntry entry = containedEntries.stream().filter(e -> e.getUUID().equals(finalUuid)).findFirst().orElse(null);
-						if (entry == null) {
-							ShopEntry unusedEntry = shop.getUnusedEntry(uuid);
-							if (unusedEntry != null) {
-								shop.addEntry(shopMode, shopSlot, unusedEntry);
-							}
-						} else {
-							shop.moveEntry(entry, shopMode, shopSlot);
-							containedEntries.remove(entry);
-						}
-					}
-				}
-				containedEntries.forEach(shop::setEntryUnused);
+				handleFreeze();
 			}
 
 			shopEditor.setFreezeItems(!shopEditor.isFreezeItems());
@@ -196,6 +135,71 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 				openTemplatesListMenu(clickContext.getPlayer());
 			}
 		});
+	}
+
+	private void handleUnfreeze() {
+		for (int slot : getSlots()) {
+			// Only process items in upper inventory
+			if (slot >= INDEX_DIFFERENCE) {
+				continue;
+			}
+			// Only process not empty stacks
+			ItemStack stack = getItemStack(slot);
+			if (stack == null || stack.getType() == Material.AIR) {
+				continue;
+			}
+			// Get entry from this slot
+			ShopEntry entry = shop.getEntry(shopMode, slot + LARGEST_INV_SIZE * shopPage);
+			if (entry == null) {
+				ShopPlugin.getInstance().log(LoggingPolicy.WARN, "Item was in menu but no entry was found.");
+				continue;
+			}
+			// Set uuid tag from entry
+			NBTItem nbtItem = new NBTItem(stack);
+			nbtItem.setUUID(UUID_TAG_KEY, entry.getUUID());
+
+			//Put item in unfrozen inventory
+			setItem(slot, nbtItem.getItem());
+			refresh(slot);
+		}
+	}
+
+	private void handleFreeze() {
+		List<ShopEntry> containedEntries = shop.getEntries(shopMode, shopPage);
+
+		for (int slot : getSlots()) {
+			// Only process items in upper inventory
+			if (slot >= INDEX_DIFFERENCE) {
+				continue;
+			}
+			int shopSlot = shopPage * LARGEST_INV_SIZE + slot;
+			// Only process not empty stacks
+			ItemStack stack = getItemStack(slot);
+			if (stack == null || stack.getType() == Material.AIR) {
+				continue;
+			}
+			NBTItem nbtItem = new NBTItem(stack);
+			UUID uuid = null;
+			if (nbtItem.hasKey(UUID_TAG_KEY)) {
+				uuid = nbtItem.getUUID(UUID_TAG_KEY);
+			}
+			if (uuid == null) {
+				shop.createEntry(stack, shopMode, shopSlot);
+			} else {
+				UUID finalUuid = uuid;
+				ShopEntry entry = containedEntries.stream().filter(e -> e.getUUID().equals(finalUuid)).findFirst().orElse(null);
+				if (entry == null) {
+					ShopEntry unusedEntry = shop.getUnusedEntry(uuid);
+					if (unusedEntry != null) {
+						shop.addEntry(shopMode, shopSlot, unusedEntry);
+					}
+				} else {
+					shop.moveEntry(entry, shopMode, shopSlot);
+					containedEntries.remove(entry);
+				}
+			}
+		}
+		containedEntries.forEach(shop::setEntryUnused);
 	}
 
 	@Override

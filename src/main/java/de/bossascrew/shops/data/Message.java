@@ -97,6 +97,8 @@ public enum Message {
 	MANAGER_GUI_SHOP_SET_LIMITS_LORE("manager.gui.shop.set_limits.lore"),
 	MANAGER_GUI_SHOP_SET_DISCOUNTS_NAME("manager.gui.shop.set_discounts.name"),
 	MANAGER_GUI_SHOP_SET_DISCOUNTS_LORE("manager.gui.shop.set_discounts.lore"),
+	MANAGER_GUI_SHOP_SET_TEMPLATE_NAME("manager.gui.shop.set_template.name"),
+	MANAGER_GUI_SHOP_SET_TEMPLATE_LORE("manager.gui.shop.set_template.lore"),
 	MANAGER_GUI_SHOP_SET_NPC_NAME("manager.gui.shop.set_citizens.name",
 			"The name of the item in the shop menu, that allows you to assign this shop to an citizens npc."),
 	MANAGER_GUI_SHOP_SET_NPC_LORE("manager.gui.shop.set_citizens.lore",
@@ -123,6 +125,9 @@ public enum Message {
 	MANAGER_GUI_SHOP_DISCOUNTS_TITLE("manager.gui.shop.discounts.title"),
 	MANAGER_GUI_SHOP_DISCOUNTS_INFO_NAME("manager.gui.shop.discounts.info.name"),
 	MANAGER_GUI_SHOP_DISCOUNTS_INFO_LORE("manager.gui.shop.discounts.info.lore"),
+	MANAGER_GUI_SHOP_TEMPLATE_TITLE("manager.gui.shop.template.title"),
+	MANAGER_GUI_SHOP_TEMPLATE_INFO_NAME("manager.gui.shop.template.info.name"),
+	MANAGER_GUI_SHOP_TEMPLATE_INFO_LORE("manager.gui.shop.template.info.lore"),
 
 	MANAGER_GUI_TAGS_TITLE("manager.gui.tags.title"),
 	MANAGER_GUI_TAGS_NEW_TAG_TITLE("manager.gui.tags.new_tag.title"),

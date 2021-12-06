@@ -3,10 +3,7 @@ package de.bossascrew.shops.menu;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
-import de.bossascrew.shops.handler.DiscountHandler;
-import de.bossascrew.shops.handler.LimitsHandler;
-import de.bossascrew.shops.handler.ShopHandler;
-import de.bossascrew.shops.handler.TranslationHandler;
+import de.bossascrew.shops.handler.*;
 import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.util.ItemStackUtils;
 import de.bossascrew.shops.util.TagUtils;
@@ -160,6 +157,12 @@ public class ShopManagementMenu {
 		chestMenu.setItemAndClickHandler(0, 6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
 						Message.MANAGER_GUI_SHOP_SET_DISCOUNTS_NAME, Message.MANAGER_GUI_SHOP_SET_DISCOUNTS_LORE),
 				clickContext -> openShopDiscountsMenu(player, shop, fromPage, 0));
+
+		//Open Templates menu
+		chestMenu.setItemAndClickHandler(0, 7, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TEMPLATE,
+						Message.MANAGER_GUI_SHOP_SET_TEMPLATE_NAME.getTranslation(), Message.MANAGER_GUI_SHOP_SET_TEMPLATE_LORE.getTranslations(Template.of("template",
+								shop.getDefaultTemplate() == null ? Component.text("none") : shop.getDefaultTemplate().getName()))),
+				clickContext -> openDefaultTemplateMenu(player, shop, fromPage, 0));
 
 		//Assign Shop to NPC
 		if (ShopPlugin.getInstance().isCitizensInstalled()) {
@@ -345,6 +348,23 @@ public class ShopManagementMenu {
 			} else if (targetContext.getAction().isLeftClick()) {
 				discount.addTag(shop.getUUID().toString());
 			}
+		});
+		listMenu.openInventory(player, page);
+	}
+
+	public void openDefaultTemplateMenu(Player player, Shop shop, int fromPage, int page) {
+		ListMenu<EntryTemplate> listMenu = new ListMenu<>(3, TemplateHandler.getInstance(), Message.MANAGER_GUI_SHOP_TEMPLATE_TITLE, backContext -> openShopMenu(player, shop, fromPage));
+		listMenu.setNavigationEntry(4, ItemStackUtils.createItemStack(Material.PAPER, Message.MANAGER_GUI_SHOP_TEMPLATE_INFO_NAME, Message.MANAGER_GUI_SHOP_TEMPLATE_INFO_LORE), clickContext -> {
+		});
+		listMenu.setGlowPredicate(template -> shop.getDefaultTemplate() != null && template.equals(shop.getDefaultTemplate()));
+		listMenu.setClickHandler(targetContext -> {
+			EntryTemplate template = targetContext.getTarget();
+			if (shop.getDefaultTemplate() != null && template.equals(shop.getDefaultTemplate())) {
+				shop.setDefaultTemplate(null);
+			} else {
+				shop.setDefaultTemplate(template);
+			}
+			openDefaultTemplateMenu(player, shop, fromPage, listMenu.getCurrentPage());
 		});
 		listMenu.openInventory(player, page);
 	}

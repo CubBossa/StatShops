@@ -129,6 +129,12 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	 */
 	List<Customer> getActiveCustomers();
 
+	void applyTemplate(EntryTemplate template, ShopMode shopMode, int shopPage);
+
+	@Nullable EntryTemplate getDefaultTemplate();
+
+	void setDefaultTemplate(@Nullable EntryTemplate defaultTemplate);
+
 	/**
 	 * @param customer the customer to open this shop for.
 	 * @return true if the shop was opened successfully, false if errors occured

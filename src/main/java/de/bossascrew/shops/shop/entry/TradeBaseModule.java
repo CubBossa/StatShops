@@ -67,6 +67,7 @@ public class TradeBaseModule<T> implements TradeModule<T> {
 
 	@Override
 	public void loadData() {
+
 	}
 
 	@Override

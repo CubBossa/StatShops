@@ -41,6 +41,7 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 	@JsonIgnore
 	private Material displayMaterial;
 	private @Nullable String permission = null;
+	private @Nullable EntryTemplate defaultTemplate = null;
 
 	private int rows = 3;
 	@JsonIgnore
@@ -367,6 +368,7 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 		return getTags().contains(tag);
 	}
 
+	@Override
 	public void applyTemplate(EntryTemplate template, ShopMode shopMode, int shopPage) {
 		for (Map.Entry<Function<Integer, Integer>, ShopEntry> mapEntry : template.entrySet()) {
 			ShopEntry entry = mapEntry.getValue();

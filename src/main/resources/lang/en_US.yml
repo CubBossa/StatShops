@@ -126,10 +126,14 @@ manager:
         lore: "<gray>Discounts and Limits can be \n<gray>applied to all Shops and Shopentries \n<gray>that have certain tags.\n\n<gray>Use the tags menu to configure\n<gray>tags for this shop."
       set_limits:
         name: "<white>Apply Limits"
-        lore: "<gray>Here you can apply \n<gray>a limit to the whole shop at once. \n<gray>This can be also archieved \n<gray>by using tags. With this \n<gray>menu wanted to provide a more \n<gray>userfriendly interface."
+        lore: "<gray>Here you can apply\n<gray>a limit to the whole shop at once. \n<gray>This can be also archieved \n<gray>by using tags. With this \n<gray>menu wanted to provide a more \n<gray>userfriendly interface."
       set_discounts:
         name: "<white>Apply Discounts"
-        lore: "<gray>Here you can apply \n<gray>a discount to the whole shop at once. \n<gray>This can be also archieved \n<gray>by using tags. With this \n<gray>menu wanted to provide a more \n<gray>userfriendly interface."
+        lore: "<gray>Here you can apply\n<gray>a discount to the whole shop at once. \n<gray>This can be also archieved \n<gray>by using tags. With this \n<gray>menu wanted to provide a more \n<gray>userfriendly interface."
+      set_template:
+        name: "<white>Apply Default Template"
+        # Valid placeholders: <template>
+        lore: "\n<gray>Current: <red><template>\n\n<gray>Here you can set\n<gray>a default template.\n<gray>It will automatically be applied\n<gray>to each new shop page.\n\n<gray>It does not change any\n<gray> existing pages."
       set_citizens:
         name: "<white>Citizens NPC Binding"
         lore: "<gray>This Shop is bound to"
@@ -172,7 +176,12 @@ manager:
         title: "Manage discounts for this shop"
         info:
           name: "<gold>Info"
-          lore: "<gray>» <yellow>left-click: <gray>add this shops UUID-tag to the clicked discoutn\n<gray>» <yellow>right-click: <gray>remove this shops UUID-tag from the clicked discount"
+          lore: "<gray>» <yellow>left-click: <gray>add this shops UUID-tag to the clicked discount\n<gray>» <yellow>right-click: <gray>remove this shops UUID-tag from the clicked discount"
+      template:
+        title: "Set the default template"
+        info:
+          name: "<gold>Info"
+          lore: "<gray>» <yellow>left-click: <gray>Sets the default Template\n<gray>or resets if already set."
 
     shop_editor:
       template:

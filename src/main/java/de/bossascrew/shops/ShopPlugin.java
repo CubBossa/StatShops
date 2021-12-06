@@ -302,7 +302,7 @@ public class ShopPlugin extends JavaPlugin {
 			return flags;
 		});
 		commandManager.getCommandContexts().registerContext(Enchantment.class, context -> {
-			String input = context.getFirstArg();
+			String input = context.popFirstArg();
 			Enchantment e = Enchantment.getByKey(NamespacedKey.minecraft(input));
 			if (e == null) {
 				throw new InvalidCommandArgument("There is no enchantment with the name \"" + input + "\".");

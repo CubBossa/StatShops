@@ -1,10 +1,12 @@
 package de.bossascrew.shops.data;
 
+import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.BaseEntry;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +19,16 @@ import java.util.Map;
 import java.util.UUID;
 
 public class TestDatabase implements Database, LogDatabase {
+
+	@Override
+	public Customer loadCustomer(UUID uuid) {
+		return new Customer(Bukkit.getPlayer(uuid), new HashMap<>(), new HashMap<>());
+	}
+
+	@Override
+	public void saveCustomer(Customer customer) {
+
+	}
 
 	@Override
 	public Shop createShop(String nameFormat, UUID uuid) {

@@ -24,5 +24,7 @@ public interface TradeModule<T> extends EntryModule {
 
 	void setPrice(double amount, T object);
 
+	boolean canGiveArticle(Customer customer);
+
 	void giveArticle(Customer customer);
 }

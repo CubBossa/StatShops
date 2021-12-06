@@ -3,16 +3,21 @@ package de.bossascrew.shops.data;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
 
 public interface Database {
+
+	Customer loadCustomer(UUID uuid);
+
+	void saveCustomer(Customer customer);
 
 	Shop createShop(String nameFormat, UUID uuid);
 

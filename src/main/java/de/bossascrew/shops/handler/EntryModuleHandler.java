@@ -1,19 +1,16 @@
 package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.data.Message;
+import de.bossascrew.shops.hook.VaultHook;
 import de.bossascrew.shops.menu.ListMenuElement;
 import de.bossascrew.shops.menu.ListMenuElementHolder;
-import de.bossascrew.shops.shop.entry.EntryModule;
-import de.bossascrew.shops.shop.entry.PageBaseModule;
-import de.bossascrew.shops.shop.entry.PageModule;
-import de.bossascrew.shops.shop.entry.ShopEntry;
+import de.bossascrew.shops.shop.entry.*;
 import de.bossascrew.shops.util.ItemStackUtils;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +39,15 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 		pageModule.setNewPageRelative(-1 * page);
 		return pageModule;
 	}
+
+	public static TradeModule<ItemStack> tradeItem() {
+		return new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 1, new ItemStack(Material.EMERALD));
+	}
+
+	public static TradeModule<Void> tradeMoney() {
+		return new TradeBaseModule<>(VaultHook.CURRENCY_VAULT, 10, null);
+	}
+
 	//TODO andere defaults
 
 	@Getter

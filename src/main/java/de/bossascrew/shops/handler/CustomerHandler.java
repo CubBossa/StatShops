@@ -1,6 +1,7 @@
 package de.bossascrew.shops.handler;
 
 import de.bossascrew.shops.Customer;
+import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -19,10 +20,10 @@ public class CustomerHandler implements WebAccessable<Customer> {
 		customerMap = new HashMap<>();
 	}
 
-	public Customer getCustomer(Player player) { //TODO stattdessen datenbank kram
+	public Customer getCustomer(Player player) {
 		Customer customer =  customerMap.get(player.getUniqueId());
 		if(customer == null) {
-			customer = new Customer(player, new HashMap<>(), new HashMap<>());
+			customer = ShopPlugin.getInstance().getDatabase().loadCustomer(player.getUniqueId());
 			customerMap.put(player.getUniqueId(), customer);
 		}
 		return customer;

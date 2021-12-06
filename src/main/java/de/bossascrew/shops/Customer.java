@@ -1,5 +1,6 @@
 package de.bossascrew.shops;
 
+import de.bossascrew.shops.data.DatabaseObject;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.CustomerHandler;
 import de.bossascrew.shops.shop.Shop;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public class Customer {
+public class Customer implements DatabaseObject {
 
 	@Getter
 	private final UUID uuid;
@@ -61,10 +62,15 @@ public class Customer {
 	}
 
 	public void sendMessage(Message message) {
-		sendMessage(message.getTranslation()); //TODO translation
+		sendMessage(message.getTranslation());
 	}
 
 	public void sendMessage(Component component) {
 		audience.sendMessage(component);
+	}
+
+	@Override
+	public void saveToDatabase() {
+		ShopPlugin.getInstance().getDatabase().saveCustomer(this);
 	}
 }

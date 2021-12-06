@@ -8,8 +8,13 @@ import de.bossascrew.shops.shop.ShopInteractionResult;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.MerchantInventory;
+import org.bukkit.inventory.MerchantRecipe;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -46,6 +51,11 @@ public class TradeBaseModule<T> implements TradeModule<T> {
 	}
 
 	@Override
+	public boolean canGiveArticle(Customer customer) {
+		return false;
+	}
+
+	@Override
 	public void giveArticle(Customer customer) {
 
 	}
@@ -57,7 +67,6 @@ public class TradeBaseModule<T> implements TradeModule<T> {
 
 	@Override
 	public void loadData() {
-
 	}
 
 	@Override
@@ -72,6 +81,14 @@ public class TradeBaseModule<T> implements TradeModule<T> {
 
 	@Override
 	public ShopInteractionResult perform(Customer customer) {
-		return null; //TODO
+		if (!canGiveArticle(customer)) {
+			return ShopInteractionResult.FAIL_CANT_REWARD;
+		}
+		if (!currency.hasAmount(customer, priceAmount, priceObject)) {
+			return ShopInteractionResult.FAIL_CANT_AFFORD;
+		}
+		currency.removeAmount(customer, priceAmount, priceObject);
+		giveArticle(customer);
+		return ShopInteractionResult.SUCCESS;
 	}
 }

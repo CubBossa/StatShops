@@ -12,6 +12,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @CommandAlias("itemeditor|ieditor|ie")
 @Conditions(ShopPlugin.CONDITION_ITEM_IN_HAND + "|" + ShopPlugin.CONDITION_ITEM_HAS_META)
@@ -63,13 +67,18 @@ public class ItemEditorCommand extends BaseCommand {
 	}
 
 	@Subcommand("lore")
-	public void onLoreList(Player player) {
-
+	public void onLoreList(Player player, String lore) {
+		ItemStack itemStack = player.getInventory().getItemInMainHand();
+		ItemMeta meta = itemStack.getItemMeta();
+		meta.setLore(Arrays.stream(lore.split("\n")).map(ComponentUtils::toLegacyFromMiniMessage).collect(Collectors.toList()));
+		itemStack.setItemMeta(meta);
+		playSuccessSound(player);
 	}
 
 	@Subcommand("enchantments add")
-	@CommandCompletion(ShopPlugin.COMPLETION_ENCHANTMENTS)
-	public void onEnchant(Player player, Enchantment enchantment, Integer level) {
+	@Syntax("<enchantment> [<level>]")
+	@CommandCompletion(ShopPlugin.COMPLETION_ENCHANTMENTS + " 1|2|3|4|5|10")
+	public void onEnchant(Player player, Enchantment enchantment, @Nullable Integer level) {
 		ItemStack itemStack = player.getInventory().getItemInMainHand();
 		ItemMeta meta = itemStack.getItemMeta();
 		meta.addEnchant(enchantment, level, true);

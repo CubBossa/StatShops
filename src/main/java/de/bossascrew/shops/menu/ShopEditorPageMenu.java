@@ -56,7 +56,7 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 		this.shopPage = shopPage;
 		this.shopEditor = shopEditor;
 		this.backHandler = backHandler;
-		//Save all moved items before closing menu
+		//Save all changes items before closing menu
 		this.closeHandler = closeContext -> handleFreeze();
 	}
 

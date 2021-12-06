@@ -3,6 +3,7 @@ package de.bossascrew.shops.listener;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.handler.CustomerHandler;
 import de.bossascrew.shops.handler.InventoryHandler;
+import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,7 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.inventory.TradeSelectEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -44,8 +45,13 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler
+	public void onTrade(TradeSelectEvent event) {
+		InventoryHandler.getInstance().handleTradeSelect(event);
+	}
+
+	@EventHandler
 	public void onInventoryDrag(InventoryDragEvent event) {
-		if(shopPlugin.isLoading()) {
+		if (shopPlugin.isLoading()) {
 			return;
 		}
 		if (event.getWhoClicked() instanceof Player player) {

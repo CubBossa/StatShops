@@ -7,15 +7,16 @@ import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.Taggable;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.util.Pair;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
-import org.bukkit.inventory.Inventory;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DiscountHandler implements
 		WebAccessable<Discount>,
@@ -27,7 +28,7 @@ public class DiscountHandler implements
 	private final Map<UUID, Discount> discountMap;
 	private final Map<String, List<Discount>> tagMap;
 
-	private final Hashtable<Discount, Map<ShopMenu, ShopEntry>> subscribers;
+	private final Map<Discount, List<Pair<ShopMenu, ShopEntry>>> subscribers;
 
 	public DiscountHandler() {
 		instance = this;
@@ -41,7 +42,7 @@ public class DiscountHandler implements
 				tagMap.put(tag, discounts);
 			}
 		}
-		subscribers = new Hashtable<>();
+		subscribers = new HashMap<>();
 	}
 
 	public List<Discount> getDiscounts() {
@@ -56,38 +57,45 @@ public class DiscountHandler implements
 			discounts.add(discount);
 			tagMap.put(tag, discounts);
 		}
-		//TODO natürlich quatsch, nur wenn der discount startet während er erstellt wird, wird er aber nicht
-		handleDiscountStart(discount);
 		return discount;
 	}
 
 	public boolean deleteDiscount(Discount discount) {
 		ShopPlugin.getInstance().getDatabase().deleteDiscount(discount);
-		return discountMap.remove(discount.getUuid()) != null; //TODO update all shops
+		updateAllSubscribers(discount);
+		return discountMap.remove(discount.getUuid()) != null;
 	}
 
-	public void handleDiscountStart(Discount discount) {
-		for (Map.Entry<ShopMenu, ShopEntry> subscriber : subscribers.getOrDefault(discount, new HashMap<>()).entrySet()) {
-			//Update all subscribed shop menus that are currently open (so the player sees the new price without discount)
-			subscriber.getKey().updateEntry(subscriber.getValue());
-		}
+	private void handleDiscountStart(Discount discount) {
+		updateAllSubscribers(discount);
 	}
 
-	public void handleDiscountExpire(Discount discount) {
-		for (Map.Entry<ShopMenu, ShopEntry> subscriber : subscribers.getOrDefault(discount, new HashMap<>()).entrySet()) {
-			//Update all subscribed shop menus that are currently open (so the player sees the new price without discount)
-			subscriber.getKey().updateEntry(subscriber.getValue());
-		}
+	private void handleDiscountExpire(Discount discount) {
+		updateAllSubscribers(discount);
 	}
 
-	public void handleShopClose(Inventory inventory) {
-		//TODO aus allen subscribern rausnehmen
+	private void handleDiscountTagsUpdate(Discount discount) {
+		updateAllSubscribers(discount);
 	}
 
-	public void subscribeToDisplayUpdates(ShopMenu view, ShopEntry shopEntry) {
+	public void subscribeToDisplayUpdates(ShopMenu menu, ShopEntry shopEntry) {
 		List<Discount> discounts = getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
 		for (Discount discount : discounts) {
-			//TODO subscriben
+			List<Pair<ShopMenu, ShopEntry>> innerSubscribers = subscribers.getOrDefault(discount, new ArrayList<>());
+			innerSubscribers.add(new Pair<>(menu, shopEntry));
+			subscribers.put(discount, innerSubscribers);
+		}
+	}
+
+	public void unsubscribeToDisplayUpdates(ShopMenu menu) {
+		for (Map.Entry<Discount, List<Pair<ShopMenu, ShopEntry>>> pairs : subscribers.entrySet()) {
+			subscribers.put(pairs.getKey(), pairs.getValue().stream().filter(p -> !p.getLeft().equals(menu)).collect(Collectors.toList()));
+		}
+	}
+
+	private void updateAllSubscribers(Discount discount) {
+		for (Pair<ShopMenu, ShopEntry> pair : subscribers.getOrDefault(discount, new ArrayList<>())) {
+			pair.getLeft().updateEntry(pair.getRight());
 		}
 	}
 

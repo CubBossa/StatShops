@@ -6,10 +6,10 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.menu.VillagerMenu;
 import de.bossascrew.shops.menu.VillagerShopEditor;
+import de.bossascrew.shops.menu.VillagerShopMenu;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
-import de.bossascrew.shops.shop.entry.TradeModule;
 import de.bossascrew.shops.util.ComponentUtils;
 import de.bossascrew.shops.util.ItemStackUtils;
 import lombok.Getter;
@@ -18,7 +18,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MerchantRecipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,25 +132,7 @@ public class VillagerShop implements Shop {
 
 	@Override
 	public boolean open(Customer customer, @Nullable ContextConsumer<BackContext> backHandler) {
-		VillagerMenu villagerMenu = new VillagerMenu(name, null);
-		for (Map.Entry<Integer, ShopEntry> entry : slotEntryMap.entrySet()) {
-
-			ShopEntry e = entry.getValue();
-			//TODO sehr experimentell
-			if (e.getModule() != null && e.getModule() instanceof TradeModule tm) {
-				Currency<ItemStack> currency = tm.getCurrency();
-				ItemStack price = (ItemStack) tm.getPriceObject();
-				price.setAmount(Integer.min((int) tm.getPriceAmount(), 64));
-
-				MerchantRecipe recipe = new MerchantRecipe(tm.getArticle(), Integer.MAX_VALUE); //TODO limits einpflegen
-				recipe.addIngredient(price);
-				double discount = DiscountHandler.getInstance().combineDiscounts(e, e.getShop());
-				recipe.setPriceMultiplier((float) discount);
-
-				villagerMenu.setMerchantOffer(entry.getKey(), recipe);
-			}
-		}
-		return villagerMenu.openInventory(customer.getPlayer()) != null;
+		return new VillagerShopMenu(this).openInventory(customer.getPlayer()) != null;
 	}
 
 	public boolean close(Customer customer) {

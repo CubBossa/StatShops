@@ -16,7 +16,7 @@ public class VillagerShopEditor extends ChestMenu {
 	private final VillagerShop shop;
 
 	public VillagerShopEditor(VillagerShop shop, ContextConsumer<BackContext> backHandler) {
-		super(/*TODO*/ (Message) null, 3);
+		super(Message.VILLAGER_SHOP_TITLE, 3);
 		this.shop = shop;
 		this.setBackHandlerAction(backHandler);
 	}

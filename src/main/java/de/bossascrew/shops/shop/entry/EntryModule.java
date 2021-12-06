@@ -25,7 +25,7 @@ public interface EntryModule {
 
 	ShopInteractionResult perform(Customer customer);
 
-	@Nullable LogEntry createLogEntry();
+	@Nullable LogEntry createLogEntry(Customer customer, ShopInteractionResult result);
 
 	@RequiredArgsConstructor
 	@Getter

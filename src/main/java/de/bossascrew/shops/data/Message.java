@@ -64,6 +64,8 @@ public enum Message {
 	SHOP_MODE_TRADE_NAME("shop.modes.trade.name"),
 	SHOP_MODE_TRADE_LORE("shop.modes.trade.lore"),
 
+	VILLAGER_SHOP_TITLE("villager_shop.gui.title"),
+
 	MANAGER_GUI_MAIN_TITLE("manager.gui.main.title"),
 	MANAGER_GUI_MAIN_SHOPS_NAME("manager.gui.main.shops.name"),
 	MANAGER_GUI_MAIN_SHOPS_LORE("manager.gui.main.shops.lore"),

@@ -84,7 +84,7 @@ public class PageBaseModule implements PageModule {
 	}
 
 	@Override
-	public @Nullable LogEntry createLogEntry() {
+	public @Nullable LogEntry createLogEntry(Customer customer, ShopInteractionResult result) {
 		return null;
 	}
 

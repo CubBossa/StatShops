@@ -5,6 +5,8 @@ import de.bossascrew.shops.handler.InventoryHandler;
 import de.bossascrew.shops.menu.contexts.ClickContext;
 import de.bossascrew.shops.menu.contexts.CloseContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
+import de.bossascrew.shops.menu.contexts.TargetContext;
+import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ComponentUtils;
 import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.Getter;
@@ -38,13 +40,21 @@ public class VillagerMenu extends OpenableMenu {
 		this.offers = new TreeMap<>();
 	}
 
-	public void setTradeHandler(ContextConsumer<ClickContext> tradeHandler) {
-		setClickHandler(2, tradeHandler);
+	public void setTradeHandler(ContextConsumer<TargetContext<ClickType, Integer>> tradeHandler) {
+		setClickHandler(2, clickContext -> tradeHandler.accept(new TargetContext<>(clickContext.getPlayer(), clickContext.getItemStack(),
+				clickContext.getSlot(), clickContext.getAction(), inventory == null ? 0 : ((MerchantInventory) inventory).getSelectedRecipeIndex())));
 	}
 
 	public void setMerchantOffer(int slot, ItemStack costs, ItemStack article) {
 		MerchantRecipe recipe = new MerchantRecipe(article, Integer.MAX_VALUE);
 		recipe.addIngredient(costs);
+		setMerchantOffer(slot, recipe);
+	}
+
+	public void setMerchantOffer(int slot, ItemStack costA, ItemStack costB, ItemStack article) {
+		MerchantRecipe recipe = new MerchantRecipe(article, Integer.MAX_VALUE);
+		recipe.addIngredient(costA);
+		recipe.addIngredient(costB);
 		setMerchantOffer(slot, recipe);
 	}
 

@@ -116,7 +116,7 @@ public abstract class OpenableMenu extends InventoryMenu<ClickType, ClickContext
 		}
 		if (anyEvent instanceof InventoryDragEvent event) {
 			if (event.getInventory().equals(inventory)) {
-				event.setCancelled(true);
+				//event.setCancelled(true);
 				return false;
 			}
 		}
@@ -124,7 +124,7 @@ public abstract class OpenableMenu extends InventoryMenu<ClickType, ClickContext
 			ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "OpenableMenu mit falschem Event aufgerufen: " + anyEvent.getClass().getName());
 			return false;
 		}
-		return handleAction(player, anyEvent);
+		return handleAction(player, (InventoryClickEvent) anyEvent);
 	}
 
 	public boolean handleAction(Player player, InventoryClickEvent event) {

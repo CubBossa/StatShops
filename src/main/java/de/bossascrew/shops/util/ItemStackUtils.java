@@ -5,7 +5,10 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
+import de.bossascrew.shops.handler.DiscountHandler;
+import de.bossascrew.shops.handler.LimitsHandler;
 import de.bossascrew.shops.menu.DefaultSpecialItem;
+import de.bossascrew.shops.menu.OpenableMenu;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.EntryTemplate;
 import de.bossascrew.shops.shop.Limit;
@@ -30,10 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -137,6 +137,33 @@ public class ItemStackUtils {
 				Template.of("globallimit", globalLimit.getTransactionLimit() + "")
 		));
 		return existingLore;
+	}
+
+	public ItemStack createEntryItemStack(ShopEntry entry) {
+		ItemStack itemStack = entry.getDisplayItem().clone();
+		List<Component> additionalLore = new ArrayList<>();
+
+		if (entry.getModule() instanceof TradeModule tradeEntry && tradeEntry.getCurrency() != null) {
+			Component price = tradeEntry.getCurrency().format(tradeEntry.getPriceAmount(), tradeEntry.getPriceObject());
+
+			//Price lore
+			additionalLore.add(price);
+
+			//Lore for discount
+			DiscountHandler.getInstance().addDiscountsLore(entry, additionalLore);
+
+			//TODO Limits
+			LimitsHandler.getInstance().getLimits();
+		}
+
+		//Addidional Lore from Entry
+		if (entry.getInfoLoreFormat() != null) {
+			MiniMessage mm = ShopPlugin.getInstance().getMiniMessage();
+			additionalLore.addAll(Arrays.stream(entry.getInfoLoreFormat().split("\n")).map(mm::parse).collect(Collectors.toList()));
+		}
+
+		ItemStackUtils.addLore(itemStack, additionalLore);
+		return itemStack;
 	}
 
 	public ItemStack prepareEditorEntryItemStack(ShopEntry entry) {

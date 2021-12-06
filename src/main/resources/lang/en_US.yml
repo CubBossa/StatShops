@@ -71,6 +71,10 @@ shop:
     trade:
       name: "<green>Trade"
       lore: "<gray>In this mode you \n<gray>can trade your items with\n<gray>other items from the shop."
+villager_shop:
+  gui:
+    # Valid placeholders: <name>
+    title: "<name>"
 
 manager:
   gui:

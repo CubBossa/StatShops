@@ -56,6 +56,11 @@ public class ShopCommand extends BaseCommand {
 		villagerMenu.setMerchantOffer(0, new ItemStack(Material.DIAMOND), new ItemStack(Material.EMERALD));
 		villagerMenu.setMerchantOffer(1, new ItemStack(Material.EMERALD), new ItemStack(Material.REDSTONE));
 		villagerMenu.setMerchantOffer(2, new ItemStack(Material.SAND, 32), new ItemStack(Material.EMERALD));
+		for (int i = 0; i < 65; i++) {
+			villagerMenu.setMerchantOffer(i, new ItemStack(Material.SAND, i), new ItemStack(Material.EMERALD, i));
+		}
+
+
 		villagerMenu.setTradeHandler(clickContext -> ShopPlugin.getInstance().log(LoggingPolicy.INFO, clickContext.getSlot() + ""));
 		villagerMenu.setTradeSelectHandler(clickContext -> {
 			ShopPlugin.getInstance().log(LoggingPolicy.INFO, "Huii selected: " + clickContext.getSlot());

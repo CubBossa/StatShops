@@ -7,7 +7,7 @@ import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.menu.RowedOpenableMenu;
 import de.bossascrew.shops.menu.ChestShopEditor;
-import de.bossascrew.shops.menu.ShopMenu;
+import de.bossascrew.shops.menu.ChestShopMenu;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
@@ -67,7 +67,7 @@ public class ChestMenuShop implements PaginatedModedShop {
 	@JsonIgnore
 	private final List<Customer> activeCustomers;
 
-	private final Map<Customer, ShopMenu> menuMap;
+	private final Map<Customer, ChestShopMenu> menuMap;
 
 	private final List<String> tags;
 
@@ -300,7 +300,7 @@ public class ChestMenuShop implements PaginatedModedShop {
 			customer.sendMessage(Message.SHOP_NO_PERMISSION);
 			return false;
 		}
-		ShopMenu menu = new ShopMenu(this, backHandler);
+		ChestShopMenu menu = new ChestShopMenu(this, backHandler);
 		menu.openInventory(customer);
 		menuMap.put(customer, menu);
 
@@ -311,7 +311,7 @@ public class ChestMenuShop implements PaginatedModedShop {
 	}
 
 	public boolean close(Customer customer) {
-		ShopMenu menu = menuMap.get(customer);
+		ChestShopMenu menu = menuMap.get(customer);
 		if (menu != null) {
 			if (customer.getPlayer().getOpenInventory().getTopInventory().equals(menu.getInventory())) {
 				customer.getPlayer().closeInventory();

@@ -1,11 +1,13 @@
 package de.bossascrew.shops.shop.entry;
 
 import de.bossascrew.shops.Customer;
+import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.LogEntry;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.shop.Currency;
 import de.bossascrew.shops.shop.ShopInteractionResult;
 import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -79,7 +81,9 @@ public class TradeBaseModule<T> implements TradeModule<T> {
 	}
 
 	@Override
-	public @Nullable LogEntry createLogEntry() {
+	public @Nullable LogEntry createLogEntry(Customer customer, ShopInteractionResult result) {
+		//TODO debug
+		ShopPlugin.getInstance().log(LoggingPolicy.INFO, customer.getPlayer().getDisplayName() + " interacts: " + "blablabla");
 		return new LogEntry();
 	}
 

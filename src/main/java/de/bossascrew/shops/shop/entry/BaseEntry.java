@@ -70,7 +70,7 @@ public class BaseEntry implements ShopEntry {
 			return ShopInteractionResult.FAIL_NO_PERMISSION;
 		}
 		ShopInteractionResult result = module.perform(customer);
-		ShopPlugin.getInstance().getLogDatabase().logToDatabase(module.createLogEntry());
+		ShopPlugin.getInstance().getLogDatabase().logToDatabase(module.createLogEntry(customer, result));
 		return result;
 	}
 

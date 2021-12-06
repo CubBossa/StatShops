@@ -31,6 +31,8 @@ public interface PaginatedShop extends Shop {
 
 	void setDefaultShopPage(int page);
 
+	void applyTemplate(EntryTemplate template, int shopPage);
+
 	/**
 	 * @param customer the customer to open this shop for.
 	 * @param page     the page to open this shop at.

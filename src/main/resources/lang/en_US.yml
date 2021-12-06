@@ -107,7 +107,7 @@ manager:
       entry:
         # Valid placeholders: <name>
         name: "<green><name>"
-        # Valid placeholders: <name>, <permission>, <pages>
+        # Valid placeholders: <name>, <permission>
         lore: "<gray>Perm: <white><permission>"
     shop:
       set_name:

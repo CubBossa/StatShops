@@ -1,10 +1,12 @@
 package de.bossascrew.shops.data;
 
 import de.bossascrew.shops.Customer;
+import de.bossascrew.shops.handler.CurrencyHandler;
 import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.shop.entry.BaseEntry;
 import de.bossascrew.shops.shop.entry.ShopEntry;
+import de.bossascrew.shops.shop.entry.TradeBaseModule;
 import de.bossascrew.shops.util.ItemStackUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,7 +34,7 @@ public class TestDatabase implements Database, LogDatabase {
 
 	@Override
 	public Shop createShop(String nameFormat, UUID uuid) {
-		Shop shop = new ChestMenuShop(nameFormat, uuid);
+		ChestMenuShop shop = new ChestMenuShop(nameFormat, uuid);
 		shop.setDefaultShopMode(ShopHandler.getInstance().getShopModes().get(0));
 		return shop;
 	}
@@ -49,8 +51,15 @@ public class TestDatabase implements Database, LogDatabase {
 			s1.addTag("tag" + i);
 		}
 		Shop s2 = createShop("<white>Boring Shop", UUID.randomUUID());
+
+		Shop s3 = new VillagerShop("<dark_purple>Villager Shop", UUID.randomUUID());
+		ShopEntry entry = createEntry(UUID.randomUUID(), s3, new ItemStack(Material.MINECART), ShopHandler.getInstance().getShopModes().get(0), 0);
+		entry.setModule(new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 3, new ItemStack(Material.EMERALD), new ItemStack(Material.MINECART)));
+		s3.newEntry(0, entry);
+
 		map.put(s1.getUUID(), s1);
 		map.put(s2.getUUID(), s2);
+		map.put(s3.getUUID(), s3);
 		return map;
 	}
 

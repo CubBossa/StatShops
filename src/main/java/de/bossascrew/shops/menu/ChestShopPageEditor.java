@@ -34,7 +34,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ShopEditorPageMenu extends BottomTopChestMenu {
+public class ChestShopPageEditor extends BottomTopChestMenu {
 
 	public static final String UUID_TAG_KEY = "shops-entry-uuid";
 
@@ -42,10 +42,10 @@ public class ShopEditorPageMenu extends BottomTopChestMenu {
 	private final ShopMode shopMode;
 	private final int shopPage;
 
-	private final ShopEditor shopEditor;
+	private final ChestShopEditor shopEditor;
 	private final ContextConsumer<BackContext> backHandler;
 
-	public ShopEditorPageMenu(ChestMenuShop shop, ShopMode shopMode, int shopPage, ContextConsumer<BackContext> backHandler, ShopEditor shopEditor) {
+	public ChestShopPageEditor(ChestMenuShop shop, ShopMode shopMode, int shopPage, ContextConsumer<BackContext> backHandler, ChestShopEditor shopEditor) {
 		super(Message.SHOP_GUI_TITLE.getTranslation(
 				Template.of("name", shop.getName()),
 				Template.of("page", "" + (shopPage + 1)),

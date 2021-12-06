@@ -234,8 +234,7 @@ public class ItemStackUtils {
 						Template.of("name", shop.getName())),
 				Message.MANAGER_GUI_SHOPS_LORE.getTranslations(
 						Template.of("permission", shop.getPermission() == null ? "X" : shop.getPermission()),
-						Template.of("name", shop.getName()),
-						Template.of("pages", "" + shop.getPageCount())));
+						Template.of("name", shop.getName())));
 	}
 
 	public ItemStack createDiscountItemStack(Discount discount) {

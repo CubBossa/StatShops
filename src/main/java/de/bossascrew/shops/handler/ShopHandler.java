@@ -4,6 +4,8 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Database;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.menu.ListManagementMenuElementHolder;
+import de.bossascrew.shops.shop.ModedShop;
+import de.bossascrew.shops.shop.PaginatedModedShop;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopMode;
 import de.bossascrew.shops.util.ItemStackUtils;
@@ -57,7 +59,9 @@ public class ShopHandler implements
 		if (shop == null) {
 			return null;
 		}
-		shop.setDefaultShopMode(headShopMode);
+		if (shop instanceof ModedShop ms) {
+			ms.setDefaultShopMode(headShopMode);
+		}
 		addShop(shop);
 		return shop;
 	}
@@ -175,9 +179,11 @@ public class ShopHandler implements
 		shop.setDisplayMaterial(element.getDisplayMaterial());
 		shop.setPermission(element.getPermission());
 		shop.setEnabled(element.isEnabled());
-		shop.setDefaultShopMode(element.getDefaultShopMode());
-		shop.setPageRemembered(element.isPageRemembered());
-		shop.setModeRemembered(element.isModeRemembered());
+		if (element instanceof PaginatedModedShop ps) { //TODO natürlich sollte das eignetlich jeder shop typ liefern
+			ps.setDefaultShopMode(ps.getDefaultShopMode());
+			ps.setPageRemembered(ps.isPageRemembered());
+			ps.setModeRemembered(ps.isModeRemembered());
+		}
 		for (String tag : element.getTags()) {
 			shop.addTag(tag);
 		}

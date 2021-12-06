@@ -5,16 +5,12 @@ import de.bossascrew.shops.data.LogEntry;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.shop.Currency;
 import de.bossascrew.shops.shop.ShopInteractionResult;
+import de.bossascrew.shops.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.inventory.MerchantInventory;
-import org.bukkit.inventory.MerchantRecipe;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -29,11 +25,13 @@ public class TradeBaseModule<T> implements TradeModule<T> {
 	private Currency<T> currency;
 	private double priceAmount;
 	private T priceObject;
+	private ItemStack article;
 
-	public TradeBaseModule(Currency<T> currency, double priceAmount, T priceObject) {
+	public TradeBaseModule(Currency<T> currency, double priceAmount, T priceObject, ItemStack article) {
 		this.currency = currency;
 		this.priceAmount = priceAmount;
 		this.priceObject = priceObject;
+		this.article = article;
 		displayItem = new ItemStack(Material.EMERALD);
 		displayName = Message.MANAGER_GUI_ENTRY_FUNCTION_TRADE_NAME.getTranslation();
 		displayLore = Message.MANAGER_GUI_ENTRY_FUNCTION_TRADE_LORE.getTranslations();
@@ -51,13 +49,18 @@ public class TradeBaseModule<T> implements TradeModule<T> {
 	}
 
 	@Override
+	public ItemStack getArticle() {
+		return article;
+	}
+
+	@Override
 	public boolean canGiveArticle(Customer customer) {
-		return false;
+		return true;
 	}
 
 	@Override
 	public void giveArticle(Customer customer) {
-
+		ItemStackUtils.giveOrDrop(customer.getPlayer(), article);
 	}
 
 	@Override

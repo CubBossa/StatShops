@@ -4,6 +4,8 @@ import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.hook.VaultHook;
 import de.bossascrew.shops.menu.ListMenuElement;
 import de.bossascrew.shops.menu.ListMenuElementHolder;
+import de.bossascrew.shops.shop.PaginatedModedShop;
+import de.bossascrew.shops.shop.PaginatedShop;
 import de.bossascrew.shops.shop.entry.*;
 import de.bossascrew.shops.util.ItemStackUtils;
 import lombok.Getter;
@@ -21,31 +23,43 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 	public static PageModule openExactPage(ShopEntry shopEntry, int page) {
 		PageBaseModule pageModule = new PageBaseModule(Message.MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry, (customer, integer) -> shopEntry.getShop().open(customer, integer));
+				Message.MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry, (customer, integer) -> {
+			if(shopEntry.getShop() instanceof PaginatedShop ps) {
+				ps.open(customer, integer);
+			}
+		});
 		pageModule.setNewPage(page);
 		return pageModule;
 	}
 
 	public static PageModule openNextPage(ShopEntry shopEntry, int page) {
 		PageBaseModule pageModule = new PageBaseModule(Message.MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry, (customer, integer) -> shopEntry.getShop().open(customer, integer));
+				Message.MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry, (customer, integer) -> {
+			if(shopEntry.getShop() instanceof PaginatedShop ps) {
+				ps.open(customer, integer);
+			}
+		});
 		pageModule.setNewPageRelative(page);
 		return pageModule;
 	}
 
 	public static PageModule openPrevPage(ShopEntry shopEntry, int page) {
 		PageBaseModule pageModule = new PageBaseModule(Message.MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry, (customer, integer) -> shopEntry.getShop().open(customer, integer));
+				Message.MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry, (customer, integer) -> {
+			if(shopEntry.getShop() instanceof PaginatedShop ps) {
+				ps.open(customer, integer);
+			}
+		});
 		pageModule.setNewPageRelative(-1 * page);
 		return pageModule;
 	}
 
-	public static TradeModule<ItemStack> tradeItem() {
-		return new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 1, new ItemStack(Material.EMERALD));
+	public static TradeModule<ItemStack> tradeItem(ItemStack article) {
+		return new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 1, new ItemStack(Material.EMERALD), article);
 	}
 
-	public static TradeModule<Void> tradeMoney() {
-		return new TradeBaseModule<>(VaultHook.CURRENCY_VAULT, 10, null);
+	public static TradeModule<Void> tradeMoney(ItemStack article) {
+		return new TradeBaseModule<>(VaultHook.CURRENCY_VAULT, 10, null, article);
 	}
 
 	//TODO andere defaults

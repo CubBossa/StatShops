@@ -6,6 +6,7 @@ import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.menu.ShopManagementMenu;
 import de.bossascrew.shops.menu.VillagerMenu;
+import de.bossascrew.shops.shop.PaginatedShop;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.util.LoggingPolicy;
 import net.kyori.adventure.text.Component;
@@ -27,7 +28,11 @@ public class ShopCommand extends BaseCommand {
 		if (page == null) {
 			shop.open(Customer.wrap(player));
 		} else {
-			shop.open(Customer.wrap(player), page);
+			if (shop instanceof PaginatedShop ps) {
+				ps.open(Customer.wrap(player), page);
+			} else {
+				shop.open(Customer.wrap(player));
+			}
 		}
 	}
 
@@ -37,7 +42,11 @@ public class ShopCommand extends BaseCommand {
 		if (page == null) {
 			shop.open(Customer.wrap(other));
 		} else {
-			shop.open(Customer.wrap(other), page);
+			if (shop instanceof PaginatedShop ps) {
+				ps.open(Customer.wrap(player), page);
+			} else {
+				shop.open(Customer.wrap(player));
+			}
 		}
 	}
 

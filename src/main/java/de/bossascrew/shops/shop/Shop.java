@@ -56,63 +56,15 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 
 	void setPermission(@Nullable String permission);
 
-	/**
-	 * @return The amount of pages of this shop. It may be calculated from the highest slot index.
-	 */
-	int getPageCount();
-
-	ShopEntry getEntry(ShopMode mode, int slot);
+	void newEntry(int slot, ShopEntry entry);
 
 	ShopEntry getEntry(UUID uuid);
 
 	ShopEntry getUnusedEntry(UUID uuid);
 
-	List<ShopEntry> getEntries(ShopMode shopMode, int shopPage);
-
-	ShopEntry createEntry(ItemStack displayItem, ShopMode shopMode, int slot);
-
-	boolean moveEntry(ShopEntry entry, ShopMode shopMode, int slot);
-
-	boolean deleteEntry(ShopMode shopMode, int slot);
-
 	boolean deleteEntry(ShopEntry entry);
 
 	boolean setEntryUnused(ShopEntry entry);
-
-	/**
-	 * @return true, if customers open the shop at the same page they have closed it
-	 */
-	boolean isPageRemembered();
-
-	/**
-	 * @param rememberPage If set to true, customers open this shop at the page they have closed it
-	 */
-	void setPageRemembered(boolean rememberPage);
-
-	/**
-	 * @return The page to open the shop at for a certain customer
-	 */
-	int getPreferredOpenPage(Customer customer);
-
-	/**
-	 * @return true, if customers open the shop at the same shop mode they have closed it
-	 */
-	boolean isModeRemembered();
-
-	/**
-	 * @param rememberMode If set to true, customers open this shop at the shop mode they have closed it
-	 */
-	void setModeRemembered(boolean rememberMode);
-
-	ShopMode getDefaultShopMode();
-
-	void setDefaultShopMode(ShopMode shopMode);
-
-	int getDefaultShopPage();
-
-	void setDefaultShopPage(int page);
-
-	ShopMode getPreferredShopMode(Customer customer);
 
 	/**
 	 * @return true if the shop is currently enabled. Customers cannot use disabled shops
@@ -129,7 +81,7 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	 */
 	List<Customer> getActiveCustomers();
 
-	void applyTemplate(EntryTemplate template, ShopMode shopMode, int shopPage);
+	void applyTemplate(EntryTemplate template);
 
 	@Nullable EntryTemplate getDefaultTemplate();
 
@@ -144,34 +96,6 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	boolean open(Customer customer, ContextConsumer<BackContext> backHandler);
 
 	/**
-	 * @param customer the customer to open this shop for.
-	 * @param page     the page to open this shop at.
-	 * @return true if the shop was opened successfully, false if errors occured
-	 */
-	boolean open(Customer customer, int page);
-
-	boolean open(Customer customer, int page, ContextConsumer<BackContext> backHandler);
-
-	/**
-	 * @param customer the customer to open this shop for.
-	 * @param shopMode the mode to open this shop at.
-	 * @return true if the shop was opened successfully, false if errors occured
-	 */
-	boolean open(Customer customer, ShopMode shopMode);
-
-	boolean open(Customer customer, ShopMode shopMode, ContextConsumer<BackContext> backHandler);
-
-	/**
-	 * @param customer the customer to open this shop for.
-	 * @param page     the page to open this shop at.
-	 * @param shopMode the mode to open this shop at.
-	 * @return true if the shop was opened successfully, false if errors occured
-	 */
-	boolean open(Customer customer, int page, ShopMode shopMode);
-
-	boolean open(Customer customer, int page, ShopMode shopMode, ContextConsumer<BackContext> backHandler);
-
-	/**
 	 * @param customer the customer to close this shop if he currently uses it.
 	 * @return true, if the shop was successfully closed. false, if the customer was not using this shop.
 	 */
@@ -181,4 +105,6 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	 * closes the shop for all active customers, for example when setting enabled to false.
 	 */
 	void closeAll();
+
+	void openEditorMenu(Player player, ContextConsumer<BackContext> backHandler);
 }

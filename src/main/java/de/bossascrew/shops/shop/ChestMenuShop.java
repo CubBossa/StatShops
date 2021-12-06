@@ -6,6 +6,7 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.ShopHandler;
 import de.bossascrew.shops.menu.RowedOpenableMenu;
+import de.bossascrew.shops.menu.ChestShopEditor;
 import de.bossascrew.shops.menu.ShopMenu;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
+public class ChestMenuShop implements PaginatedModedShop {
 
 	private final UUID uuid;
 	private String nameFormat;
@@ -45,7 +46,7 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 
 	private int rows = 3;
 	@JsonIgnore
-	private boolean enabled = true; //TODO raus damit
+	private boolean enabled = true; //TODO raus damit?
 
 	private boolean isPageRemembered = false;
 	private boolean isModeRemembered = false;
@@ -200,6 +201,11 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 	}
 
 	@Override
+	public void applyTemplate(EntryTemplate template) {
+
+	}
+
+	@Override
 	public void setPageRemembered(boolean rememberPage) {
 		this.isPageRemembered = rememberPage;
 	}
@@ -233,6 +239,11 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 		this.defaultPage = page;
 	}
 
+	@Override
+	public void applyTemplate(EntryTemplate template, int shopPage) {
+
+	}
+
 	public @Nullable
 	ShopMode getPreferredShopMode(Customer customer) {
 		ShopMode mode = isModeRemembered ? customer.getShopMode(this, defaultShopMode) : defaultShopMode;
@@ -241,6 +252,11 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 			return ShopHandler.getInstance().getShopModes().get(0);
 		}
 		return mode;
+	}
+
+	@Override
+	public void applyTemplate(EntryTemplate template, ShopMode shopMode) {
+		//TODO
 	}
 
 	public boolean open(Customer customer) {
@@ -311,6 +327,11 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 		}
 	}
 
+	@Override
+	public void openEditorMenu(Player player, ContextConsumer<BackContext> backHandler) {
+		new ChestShopEditor(this, backHandler).openInventory(player, getDefaultShopMode(), getDefaultShopPage());
+	}
+
 	public ShopInteractionResult interact(Customer customer, ShopMode shopMode, int slot) {
 		if (!enabled) {
 			return ShopInteractionResult.FAIL_SHOP_DISABLED;
@@ -340,6 +361,11 @@ public class ChestMenuShop implements EntryBasedShop, PaginatedShop {
 
 	public void setPermission(String permission) {
 		this.permission = permission != null ? permission.equalsIgnoreCase("null") ? null : permission : null;
+	}
+
+	@Override
+	public void newEntry(int slot, ShopEntry entry) {
+		//TODO
 	}
 
 	@Override

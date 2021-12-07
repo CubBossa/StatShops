@@ -42,19 +42,26 @@ public class TestDatabase implements Database, LogDatabase {
 	@Override
 	public Map<UUID, Shop> loadShops() {
 		Map<UUID, Shop> map = new HashMap<>();
-		Shop s1 = createShop("<rainbow>ExampleShop</rainbow>", UUID.randomUUID());
+		ChestMenuShop s1 = (ChestMenuShop) createShop("<rainbow>ExampleShop</rainbow>", UUID.randomUUID());
 		s1.addTag("swords");
 		s1.addTag("rainbow");
 		s1.addTag("i am a tag");
-		s1.addTag("ululu");
+		s1.addTag("test");
 		for (int i = 0; i < 14; i++) {
 			s1.addTag("tag" + i);
 		}
+
+		ShopEntry entry1 = createEntry(UUID.randomUUID(), s1, new ItemStack(Material.MINECART), ShopHandler.getInstance().getShopModes().get(0), 0);
+		entry1.setModule(new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 3, new ItemStack(Material.EMERALD), new ItemStack(Material.MINECART)));
+		entry1.addTag("test");
+		s1.addEntry(ShopHandler.getInstance().getShopModes().get(0), 0, entry1);
+
 		Shop s2 = createShop("<white>Boring Shop", UUID.randomUUID());
 
 		Shop s3 = new VillagerShop("<dark_purple>Villager Shop", UUID.randomUUID());
 		ShopEntry entry = createEntry(UUID.randomUUID(), s3, new ItemStack(Material.MINECART), ShopHandler.getInstance().getShopModes().get(0), 0);
 		entry.setModule(new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 3, new ItemStack(Material.EMERALD), new ItemStack(Material.MINECART)));
+		entry.addTag("test");
 		s3.newEntry(0, entry);
 
 		map.put(s1.getUUID(), s1);

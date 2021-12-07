@@ -6,6 +6,7 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.handler.InventoryHandler;
+import de.bossascrew.shops.handler.LimitsHandler;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.ChestMenuShop;
@@ -127,7 +128,7 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
 			//Subscribe to limits and discounts so changes can be displayed live
 			DiscountHandler.getInstance().subscribeToDisplayUpdates(this, entry);
-			//TODO subscribe to limits
+			LimitsHandler.getInstance().subscribeToDisplayUpdates(this, entry);
 
 			updateEntry(entry);
 		}

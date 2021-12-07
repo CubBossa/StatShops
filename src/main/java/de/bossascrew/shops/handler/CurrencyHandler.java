@@ -15,7 +15,7 @@ public class CurrencyHandler {
 	@Getter
 	private static CurrencyHandler instance;
 
-	public static final Currency<ItemStack> CURRENCY_ITEM = new Currency<>("<amount>x <currency>", (integer, itemStack) -> {
+	public static final Currency<ItemStack> CURRENCY_ITEM = new Currency<>("<yellow><amount>x <gold><currency>", (integer, itemStack) -> {
 		return Component.translatable("item.minecraft." + itemStack.getType().toString().toLowerCase());
 	}) {
 		@Override

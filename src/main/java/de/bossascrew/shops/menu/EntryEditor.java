@@ -8,6 +8,8 @@ import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.entry.EntryModule;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ItemStackUtils;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -19,12 +21,17 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 public class EntryEditor extends ChestMenu {
 
 	private final ShopEntry entry;
 	private final ContextConsumer<BackContext> backHandler;
+	@Getter
+	@Setter
+	@Nullable private Collection<Class<?>> allowedModuleTypes = null;
 
 	public EntryEditor(ShopEntry entry, ContextConsumer<BackContext> backHandler) {
 		super(Message.MANAGER_GUI_SHOP_ENTRY, 3);
@@ -78,6 +85,8 @@ public class EntryEditor extends ChestMenu {
 
 			ListMenu<EntryModuleHandler.EntryModuleProvider> listMenu = new ListMenu<>(3, EntryModuleHandler.getInstance(),
 					Message.MANAGER_GUI_ENTRY_SET_FUNCTION_TITLE, backContext -> openInventory(clickContext.getPlayer()));
+
+			listMenu.setDisplayPredicate(provider -> allowedModuleTypes == null || allowedModuleTypes.stream().anyMatch(aClass -> aClass.isInstance(provider)));
 
 			listMenu.setClickHandler(cc -> {
 				entry.setModule(cc.getTarget().getModule(entry));

@@ -89,12 +89,16 @@ public class Discount implements
 		if (hasTag(tag)) {
 			return false;
 		}
-		return tags.add(tag);
+		tags.add(tag);
+		DiscountHandler.getInstance().handleDiscountTagsUpdate(this);
+		return true;
 	}
 
 	@Override
 	public boolean removeTag(String tag) {
-		return tags.remove(tag);
+		boolean ret = tags.remove(tag);
+		DiscountHandler.getInstance().handleDiscountTagsUpdate(this);
+		return ret;
 	}
 
 	@Override

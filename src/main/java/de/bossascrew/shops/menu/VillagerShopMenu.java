@@ -3,6 +3,7 @@ package de.bossascrew.shops.menu;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.handler.DiscountHandler;
+import de.bossascrew.shops.handler.LimitsHandler;
 import de.bossascrew.shops.shop.ShopInteractionResult;
 import de.bossascrew.shops.shop.VillagerShop;
 import de.bossascrew.shops.shop.entry.ShopEntry;
@@ -26,7 +27,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 	private final static ClickType[] IGNORED = {ClickType.UNKNOWN, ClickType.WINDOW_BORDER_LEFT, ClickType.WINDOW_BORDER_RIGHT};
 
 	private final VillagerShop villagerShop;
-	private final Map<ShopEntry, MerchantRecipe> recipeMap;
+	private final Map<ShopEntry, Integer> recipeMap;
 	private final Map<Integer, ShopEntry> entryMap;
 
 	public VillagerShopMenu(VillagerShop villagerShop) {
@@ -46,7 +47,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 		});
 	}
 
-	private void prepareInventory() {
+	private void prepareInventory(Player player) {
 		int i = 0;
 		for (Map.Entry<Integer, ShopEntry> entry : villagerShop.getSlotEntryMap().entrySet()) {
 
@@ -54,14 +55,18 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 			//Only works with Currency<ItemStack> for now
 			if (e.getModule() != null && e.getModule() instanceof TradeModule tm) {
 
+
 				ItemStack price = (ItemStack) tm.getPriceObject();
 				price.setAmount(Integer.min((int) tm.getPriceAmount(), 64));
 
-				MerchantRecipe recipe = new MerchantRecipe(tm.getArticle(), Integer.MAX_VALUE);
-				recipeMap.put(e, recipe);
+				MerchantRecipe recipe = new MerchantRecipe(tm.getArticle(), e.getPermission() != null && player.hasPermission(e.getPermission()) ? Integer.MAX_VALUE : 0);
+				recipeMap.put(e, i);
 				entryMap.put(i++, e);
 				recipe.addIngredient(price);
 				updateEntry(e);
+
+				DiscountHandler.getInstance().subscribeToDisplayUpdates(this, e);
+				LimitsHandler.getInstance().subscribeToDisplayUpdates(this, e);
 
 				setMerchantOffer(entry.getKey(), recipe);
 			}
@@ -70,7 +75,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 
 	@Override
 	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer) {
-		prepareInventory();
+		prepareInventory(player);
 		return super.openInventorySync(player, inventoryPreparer);
 	}
 
@@ -82,14 +87,17 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 
 	@Override
 	public void updateEntry(ShopEntry entry) {
-		MerchantRecipe recipe = recipeMap.get(entry);
-		if (recipe != null) {
-			//Limits
-			recipe.setMaxUses(Integer.MAX_VALUE); //TODO limits
-
-			//Discounts
-			double discount = DiscountHandler.getInstance().combineDiscounts(entry, entry.getShop());
-			recipe.setPriceMultiplier((float) discount);
+		int index = recipeMap.get(entry);
+		if (super.getMerchant() == null) {
+			return;
 		}
+		MerchantRecipe recipe = super.getMerchant().getRecipe(index);
+		//Limits
+		recipe.setUses(0); //TODO limits
+		recipe.setMaxUses(Integer.min(recipe.getMaxUses(), Integer.MAX_VALUE)); //TODO limits
+
+		//Discounts
+		double discount = DiscountHandler.getInstance().combineDiscounts(entry, entry.getShop());
+		recipe.setPriceMultiplier((float) discount);
 	}
 }

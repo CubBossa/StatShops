@@ -27,6 +27,8 @@ import java.util.function.Consumer;
 
 public class VillagerMenu extends OpenableMenu {
 
+	@Getter
+	private @Nullable Merchant merchant = null;
 	private final Map<Integer, MerchantRecipe> offers;
 
 	@Setter
@@ -79,7 +81,7 @@ public class VillagerMenu extends OpenableMenu {
 
 	@Override
 	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer) {
-		Merchant merchant = Bukkit.createMerchant(ComponentUtils.toLegacy(title));
+		merchant = Bukkit.createMerchant(ComponentUtils.toLegacy(title));
 		merchant.setRecipes(offers.values().stream().toList());
 
 		InventoryView view = player.openMerchant(merchant, true);

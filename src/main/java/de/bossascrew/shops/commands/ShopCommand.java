@@ -4,15 +4,17 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.menu.ShopManagementMenu;
-import de.bossascrew.shops.menu.VillagerMenu;
+import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.PaginatedShop;
 import de.bossascrew.shops.shop.Shop;
-import de.bossascrew.shops.util.LoggingPolicy;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @CommandAlias("statshops|shops")
 public class ShopCommand extends BaseCommand {
@@ -52,19 +54,12 @@ public class ShopCommand extends BaseCommand {
 
 	@Subcommand("test")
 	public void onTest(Player player) {
-		VillagerMenu villagerMenu = new VillagerMenu(Component.text("lol"), null);
-		villagerMenu.setMerchantOffer(0, new ItemStack(Material.DIAMOND), new ItemStack(Material.EMERALD));
-		villagerMenu.setMerchantOffer(1, new ItemStack(Material.EMERALD), new ItemStack(Material.REDSTONE));
-		villagerMenu.setMerchantOffer(2, new ItemStack(Material.SAND, 32), new ItemStack(Material.EMERALD));
-		for (int i = 0; i < 65; i++) {
-			villagerMenu.setMerchantOffer(i, new ItemStack(Material.SAND, i), new ItemStack(Material.EMERALD, i));
-		}
 
-
-		villagerMenu.setTradeHandler(clickContext -> ShopPlugin.getInstance().log(LoggingPolicy.INFO, clickContext.getSlot() + ""));
-		villagerMenu.setTradeSelectHandler(clickContext -> {
-			ShopPlugin.getInstance().log(LoggingPolicy.INFO, "Huii selected: " + clickContext.getSlot());
-		});
-		villagerMenu.openInventory(player);
+		Discount discount = DiscountHandler.getInstance().createDiscount("<rainbow>Test Discount", LocalDateTime.now(), Duration.of(10, ChronoUnit.SECONDS), 0.5, "test");
+		discount.addTag("test");
+		Bukkit.getScheduler().runTaskTimer(ShopPlugin.getInstance(), () -> {
+			discount.setStartTime(LocalDateTime.now());
+			DiscountHandler.getInstance().updateAllSubscribers(discount);
+		}, 0L, 20 * 20);
 	}
 }

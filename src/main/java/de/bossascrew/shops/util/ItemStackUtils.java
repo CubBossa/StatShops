@@ -152,8 +152,8 @@ public class ItemStackUtils {
 			//Lore for discount
 			DiscountHandler.getInstance().addDiscountsLore(entry, additionalLore);
 
-			//TODO Limits
-			LimitsHandler.getInstance().getLimits();
+			//Lore for limit
+			LimitsHandler.getInstance().addLimitsLore(entry, additionalLore);
 		}
 
 		//Addidional Lore from Entry
@@ -161,7 +161,6 @@ public class ItemStackUtils {
 			MiniMessage mm = ShopPlugin.getInstance().getMiniMessage();
 			additionalLore.addAll(Arrays.stream(entry.getInfoLoreFormat().split("\n")).map(mm::parse).collect(Collectors.toList()));
 		}
-
 		ItemStackUtils.addLore(itemStack, additionalLore);
 		return itemStack;
 	}

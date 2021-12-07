@@ -11,6 +11,7 @@ import de.bossascrew.shops.util.Pair;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -57,24 +58,32 @@ public class DiscountHandler implements
 			discounts.add(discount);
 			tagMap.put(tag, discounts);
 		}
+		//Refresh all open inventories that are
+		if (start.isBefore(LocalDateTime.now())) {
+			handleDiscountStart(discount);
+		} else {
+			Bukkit.getScheduler().runTaskLaterAsynchronously(ShopPlugin.getInstance(), () -> {
+				handleDiscountStart(discount);
+			}, LocalDateTime.now().until(start, ChronoUnit.MILLIS) / 50);
+		}
 		return discount;
 	}
 
 	public boolean deleteDiscount(Discount discount) {
 		ShopPlugin.getInstance().getDatabase().deleteDiscount(discount);
-		updateAllSubscribers(discount);
+		handleDiscountExpire(discount);
 		return discountMap.remove(discount.getUuid()) != null;
 	}
 
-	private void handleDiscountStart(Discount discount) {
+	public void handleDiscountStart(Discount discount) {
 		updateAllSubscribers(discount);
 	}
 
-	private void handleDiscountExpire(Discount discount) {
+	public void handleDiscountExpire(Discount discount) {
 		updateAllSubscribers(discount);
 	}
 
-	private void handleDiscountTagsUpdate(Discount discount) {
+	public void handleDiscountTagsUpdate(Discount discount) {
 		updateAllSubscribers(discount);
 	}
 
@@ -88,12 +97,10 @@ public class DiscountHandler implements
 	}
 
 	public void unsubscribeToDisplayUpdates(ShopMenu menu) {
-		for (Map.Entry<Discount, List<Pair<ShopMenu, ShopEntry>>> pairs : subscribers.entrySet()) {
-			subscribers.put(pairs.getKey(), pairs.getValue().stream().filter(p -> !p.getLeft().equals(menu)).collect(Collectors.toList()));
-		}
+		subscribers.replaceAll((k, v) -> v.stream().filter(p -> !p.getLeft().equals(menu)).collect(Collectors.toList()));
 	}
 
-	private void updateAllSubscribers(Discount discount) {
+	public void updateAllSubscribers(Discount discount) {
 		for (Pair<ShopMenu, ShopEntry> pair : subscribers.getOrDefault(discount, new ArrayList<>())) {
 			pair.getLeft().updateEntry(pair.getRight());
 		}
@@ -101,6 +108,7 @@ public class DiscountHandler implements
 
 	public void addDiscountsLore(ShopEntry shopEntry, List<Component> lore) {
 		List<Discount> discounts = getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
+		System.out.println("Discounts found: " + discounts.size());
 		ItemStackUtils.addLoreDiscount(lore, discounts);
 	}
 

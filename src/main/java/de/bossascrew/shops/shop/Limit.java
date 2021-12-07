@@ -54,8 +54,6 @@ public class Limit implements
 
 	@JsonIgnore
 	private Player editor;
-	@JsonIgnore
-	private final Cache<@NotNull UUID, @NotNull Transaction> transactionCache;
 
 	public Limit(String nameFormat, Duration recover, Predicate<Customer> appliesToCustomer, int limit, String... tags) {
 		this.uuid = UUID.randomUUID();
@@ -64,9 +62,6 @@ public class Limit implements
 		this.appliesToCustomer = appliesToCustomer;
 		this.transactionLimit = limit;
 		this.tags = Lists.newArrayList(tags);
-		this.transactionCache = Caffeine.newBuilder()
-				.expireAfterWrite(recover.getSeconds(), TimeUnit.SECONDS) //TODO vllt in TransactionsHandler
-				.build();
 	}
 
 	public void setNameFormat(String nameFormat) {

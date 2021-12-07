@@ -55,11 +55,6 @@ public class PageBaseModule implements PageModule {
 	}
 
 	@Override
-	public ItemStack getDisplayItem() {
-		return new ItemStack(Material.BOOK);
-	}
-
-	@Override
 	public DataSlot<?>[] getDataSlots() {
 		return new DataSlot[0];
 	}

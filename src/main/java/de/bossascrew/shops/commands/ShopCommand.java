@@ -10,6 +10,7 @@ import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.PaginatedShop;
 import de.bossascrew.shops.shop.Shop;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
@@ -53,13 +54,13 @@ public class ShopCommand extends BaseCommand {
 	}
 
 	@Subcommand("test")
-	public void onTest(Player player) {
+	public void onTest(CommandSender player) {
 
-		Discount discount = DiscountHandler.getInstance().createDiscount("<rainbow>Test Discount", LocalDateTime.now(), Duration.of(10, ChronoUnit.SECONDS), 0.5, "test");
+		Discount discount = DiscountHandler.getInstance().createDiscount("<rainbow>Test Discount", LocalDateTime.now(), Duration.of(3, ChronoUnit.SECONDS), 0.5, "test");
 		discount.addTag("test");
 		Bukkit.getScheduler().runTaskTimer(ShopPlugin.getInstance(), () -> {
 			discount.setStartTime(LocalDateTime.now());
-			DiscountHandler.getInstance().updateAllSubscribers(discount);
-		}, 0L, 20 * 20);
+			DiscountHandler.getInstance().handleDiscountStart(discount);
+		}, 120L, 6 * 20);
 	}
 }

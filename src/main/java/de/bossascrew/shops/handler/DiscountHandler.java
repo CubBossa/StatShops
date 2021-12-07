@@ -77,6 +77,9 @@ public class DiscountHandler implements
 
 	public void handleDiscountStart(Discount discount) {
 		updateAllSubscribers(discount);
+		Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> {
+			handleDiscountExpire(discount);
+		}, discount.getDurationSeconds() * 20 + 1);
 	}
 
 	public void handleDiscountExpire(Discount discount) {
@@ -100,7 +103,7 @@ public class DiscountHandler implements
 		subscribers.replaceAll((k, v) -> v.stream().filter(p -> !p.getLeft().equals(menu)).collect(Collectors.toList()));
 	}
 
-	public void updateAllSubscribers(Discount discount) {
+	private void updateAllSubscribers(Discount discount) {
 		for (Pair<ShopMenu, ShopEntry> pair : subscribers.getOrDefault(discount, new ArrayList<>())) {
 			pair.getLeft().updateEntry(pair.getRight());
 		}
@@ -108,7 +111,6 @@ public class DiscountHandler implements
 
 	public void addDiscountsLore(ShopEntry shopEntry, List<Component> lore) {
 		List<Discount> discounts = getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
-		System.out.println("Discounts found: " + discounts.size());
 		ItemStackUtils.addLoreDiscount(lore, discounts);
 	}
 
@@ -122,7 +124,7 @@ public class DiscountHandler implements
 	}
 
 	public List<Discount> getDiscountsWithMatchingTags(Taggable... taggables) {
-		List<Discount> discounts = new ArrayList<>();
+		Collection<Discount> discounts = new LinkedHashSet<>();
 		for (Taggable taggable : taggables) {
 			for (String tag : taggable.getTags()) {
 				if (tagMap.containsKey(tag)) {
@@ -130,7 +132,11 @@ public class DiscountHandler implements
 				}
 			}
 		}
-		return discounts;
+		discounts = discounts.stream()
+				.filter(discount -> discount.getStartTime().isBefore(LocalDateTime.now()) && discount.getRemaining() > 0)
+				.collect(Collectors.toList());
+
+		return new ArrayList<>(discounts);
 	}
 
 	@Override

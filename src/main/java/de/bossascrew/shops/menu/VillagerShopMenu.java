@@ -59,7 +59,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 				ItemStack price = (ItemStack) tm.getPriceObject();
 				price.setAmount(Integer.min((int) tm.getPriceAmount(), 64));
 
-				MerchantRecipe recipe = new MerchantRecipe(tm.getArticle(), e.getPermission() != null && player.hasPermission(e.getPermission()) ? Integer.MAX_VALUE : 0);
+				MerchantRecipe recipe = new MerchantRecipe(tm.getArticle(), e.getPermission() == null || player.hasPermission(e.getPermission()) ? Integer.MAX_VALUE : 0);
 				recipeMap.put(e, i);
 				entryMap.put(i++, e);
 				recipe.addIngredient(price);
@@ -99,5 +99,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 		//Discounts
 		double discount = DiscountHandler.getInstance().combineDiscounts(entry, entry.getShop());
 		recipe.setPriceMultiplier((float) discount);
+
+		super.getMerchant().setRecipe(index, recipe);
 	}
 }

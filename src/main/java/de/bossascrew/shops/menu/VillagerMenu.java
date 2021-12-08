@@ -6,7 +6,6 @@ import de.bossascrew.shops.menu.contexts.ClickContext;
 import de.bossascrew.shops.menu.contexts.CloseContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.menu.contexts.TargetContext;
-import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.util.ComponentUtils;
 import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.Getter;
@@ -21,6 +20,7 @@ import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
@@ -43,8 +43,15 @@ public class VillagerMenu extends OpenableMenu {
 	}
 
 	public void setTradeHandler(ContextConsumer<TargetContext<ClickType, Integer>> tradeHandler) {
-		setClickHandler(2, clickContext -> tradeHandler.accept(new TargetContext<>(clickContext.getPlayer(), clickContext.getItemStack(),
-				clickContext.getSlot(), clickContext.getAction(), inventory == null ? 0 : ((MerchantInventory) inventory).getSelectedRecipeIndex())));
+		setClickHandler(2, clickContext -> {
+			if (inventory != null) {
+				ItemStack clicked = inventory.getItem(2);
+				if (clicked != null && clicked.getType() != Material.AIR) {
+					tradeHandler.accept(new TargetContext<>(clickContext.getPlayer(), clickContext.getItemStack(), clickContext.getSlot(),
+							clickContext.getAction(), ((MerchantInventory) inventory).getSelectedRecipeIndex()));
+				}
+			}
+		});
 	}
 
 	public void setMerchantOffer(int slot, ItemStack costs, ItemStack article) {
@@ -82,12 +89,13 @@ public class VillagerMenu extends OpenableMenu {
 	@Override
 	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer) {
 		merchant = Bukkit.createMerchant(ComponentUtils.toLegacy(title));
-		merchant.setRecipes(offers.values().stream().toList());
+		merchant.setRecipes(new ArrayList<>(offers.values()));
 
 		InventoryView view = player.openMerchant(merchant, true);
 		if (view == null) {
 			return null;
 		}
+		System.out.println("Open new Merchant inventory");
 		inventory = view.getTopInventory();
 
 		for (int slot : slots) {

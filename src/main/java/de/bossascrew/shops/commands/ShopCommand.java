@@ -9,7 +9,9 @@ import de.bossascrew.shops.menu.ShopManagementMenu;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.PaginatedShop;
 import de.bossascrew.shops.shop.Shop;
+import de.bossascrew.shops.util.TagUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -53,14 +55,27 @@ public class ShopCommand extends BaseCommand {
 		}
 	}
 
+	@Subcommand("test-mat")
+	public void onTestMaterialTag(CommandSender player, String material) {
+		System.out.println(material);
+		Material m = Material.getMaterial(material);
+		TagUtils.getTags(m);
+	}
+
 	@Subcommand("test")
 	public void onTest(CommandSender player) {
 
 		Discount discount = DiscountHandler.getInstance().createDiscount("<rainbow>Test Discount", LocalDateTime.now(), Duration.of(3, ChronoUnit.SECONDS), 0.5, "test");
 		discount.addTag("test");
 		Bukkit.getScheduler().runTaskTimer(ShopPlugin.getInstance(), () -> {
-			discount.setStartTime(LocalDateTime.now());
-			DiscountHandler.getInstance().handleDiscountStart(discount);
+			try {
+				discount.setStartTime(LocalDateTime.now());
+				DiscountHandler.getInstance().handleDiscountStart(discount);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+
 		}, 120L, 6 * 20);
 	}
+
 }

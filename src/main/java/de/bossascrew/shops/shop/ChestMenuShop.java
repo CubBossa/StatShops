@@ -372,6 +372,7 @@ public class ChestMenuShop implements PaginatedModedShop {
 	public List<String> getTags() {
 		List<String> list = new ArrayList<>(tags);
 		list.add(uuid.toString());
+		list.add(ShopPlugin.TAG_GLOBAL);
 		list.sort(String::compareTo);
 		return list;
 	}

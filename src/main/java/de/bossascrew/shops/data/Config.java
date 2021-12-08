@@ -1,50 +1,55 @@
 package de.bossascrew.shops.data;
 
+import de.bossascrew.shops.data.config.AnnotationConfig;
+import de.bossascrew.shops.data.config.ConfigEntry;
+import de.bossascrew.shops.data.config.ConfigFile;
 import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.inventory.ClickType;
 
-import java.time.Duration;
+import java.io.File;
 
 @Getter
 @Setter
-public class Config {
+@ConfigFile(header = """
+		##########################
+		#       Statshops        #
+		# by CubBossa & JannisGo #
+		##########################
+		  
+		""")
+public class Config extends AnnotationConfig {
+
+	@ConfigEntry(name = "general.language", comment = "Set the default language.")
+	public String language = "en_US";
+	/*@ConfigEntry(name = "general.logging_policy", comment = """
+			Sets the minimum logging policy.
+			- 'DEBUG' logs many information
+			- 'INFO' logs default information
+			- 'WARN' only shows warnings
+			- 'ERROR' only shows errors""")*/
+	public LoggingPolicy loggingPolicy = LoggingPolicy.INFO;
+
+	@ConfigEntry(name = "shops.buy_icon", comment = "Set the display material for the 'buy' mode.")
+	public Material shopBuyIconMaterial = Material.DIAMOND;
+	@ConfigEntry(name = "shops.sell_icon", comment = "Set the display material for the 'sell' mode.")
+	public Material shopSellIconMaterial = Material.GOLD_INGOT;
+	@ConfigEntry(name = "shops.trade_icon", comment = "Set the display material for the 'trade' mode.")
+	public Material shopTradeIconMaterial = Material.EMERALD;
+
+	@ConfigEntry(name = "gui.confirm_general_deletion", comment = "Sets if you have to confirm the deletion of shops/discounts/limits.")
+	public boolean confirmDeletion = false;
+	@ConfigEntry(name = "gui.confirm_tag_deletion", comment = "Sets if you have to confirm the deletion of tags.")
+	public boolean confirmTagDeletion = false;
 
 
-	YamlConfiguration cfg;
+	public Config(String path) {
+		super(path);
 
-	public static final String CONF_LANGUAGE = "language";
-	public static final String CONF_LOGGING = "logging";
-	public static final String CONF_KEY_BUY = "defaults.keybinding.buy";
-
-
-	private boolean logTransactions = true;
-	private Duration transactionLogExpire = null;
-
-
-	private String language = "en_US";
-	private LoggingPolicy loggingPolicy = LoggingPolicy.INFO;
-
-	private Material shopBuyIconMaterial = Material.DIAMOND;
-	private Material shopSellIconMaterial = Material.GOLD_INGOT;
-	private Material shopTradeIconMaterial = Material.EMERALD;
-
-	private boolean confirmTagDeletion = false;
-
-	public Config(String fileName) {
-
+		File file = new File(path);
+		if (!file.exists()) {
+			saveConfig();
+		}
 	}
-
-	public void reloadLanguage() {
-
-	}
-
-
-
-
-
-
 }

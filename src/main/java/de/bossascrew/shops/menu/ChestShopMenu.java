@@ -125,12 +125,11 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 				ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "Entry is null but contained in map at slot " + i);
 				continue;
 			}
+			updateEntry(entry);
 
 			//Subscribe to limits and discounts so changes can be displayed live
 			DiscountHandler.getInstance().subscribeToDisplayUpdates(this, entry);
 			LimitsHandler.getInstance().subscribeToDisplayUpdates(this, entry);
-
-			updateEntry(entry);
 		}
 
 		InventoryView view = player.openInventory(inventory);

@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 
 public class ShopPlugin extends JavaPlugin {
 
+	public static final String TAG_GLOBAL = "global";
 	public static final String CONDITION_ITEM_IN_HAND = "item_in_hand";
 	public static final String CONDITION_ITEM_HAS_META = "item_has_meta";
 	public static final String CONDITION_ITEM_SPAWNABLE = "item_spawnable";
@@ -102,7 +103,8 @@ public class ShopPlugin extends JavaPlugin {
 		this.miniMessage = MiniMessage.get();
 
 		//Initialize and load Config
-		this.shopsConfig = new Config("config.yml");
+		this.shopsConfig = new Config(super.getDataFolder().getPath() + "\\config.yml");
+		this.shopsConfig.loadConfig();
 
 		this.currencyHandler = new CurrencyHandler();
 
@@ -228,13 +230,13 @@ public class ShopPlugin extends JavaPlugin {
 	}
 
 	public void log(LoggingPolicy policy, String message) {
-		if (shopsConfig.getLoggingPolicy().getPriotiry() <= policy.getPriotiry()) {
+		if (shopsConfig == null || shopsConfig.getLoggingPolicy().getPriotiry() <= policy.getPriotiry()) {
 			getLogger().log(policy.getLevel(), message);
 		}
 	}
 
 	public void log(LoggingPolicy policy, String message, Throwable exception) {
-		if (shopsConfig.getLoggingPolicy().getPriotiry() <= policy.getPriotiry()) {
+		if (shopsConfig == null || shopsConfig.getLoggingPolicy().getPriotiry() <= policy.getPriotiry()) {
 			getLogger().log(policy.getLevel(), message, exception);
 		}
 	}

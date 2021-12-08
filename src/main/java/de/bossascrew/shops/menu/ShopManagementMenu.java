@@ -39,7 +39,6 @@ public class ShopManagementMenu {
 						ShopPlugin.getInstance().getShopsConfig().getLanguage() + ".yml"))), clickContext -> {
 			if (clickContext.getAction().equals(ClickType.RIGHT)) {
 				long ms = System.currentTimeMillis();
-				ShopPlugin.getInstance().getShopsConfig().reloadLanguage();
 				TranslationHandler.getInstance().loadLanguage(ShopPlugin.getInstance().getShopsConfig().getLanguage()).thenAcceptAsync(success -> {
 					if (success) {
 						openBaseMenu(player);

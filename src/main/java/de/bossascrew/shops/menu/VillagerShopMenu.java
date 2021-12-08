@@ -8,6 +8,7 @@ import de.bossascrew.shops.shop.ShopInteractionResult;
 import de.bossascrew.shops.shop.VillagerShop;
 import de.bossascrew.shops.shop.entry.ShopEntry;
 import de.bossascrew.shops.shop.entry.TradeModule;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
@@ -63,7 +65,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 				recipeMap.put(e, i);
 				entryMap.put(i++, e);
 				recipe.addIngredient(price);
-				updateEntry(e);
+				placeEntry(e);
 
 				DiscountHandler.getInstance().subscribeToDisplayUpdates(this, e);
 				LimitsHandler.getInstance().subscribeToDisplayUpdates(this, e);
@@ -85,8 +87,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 		return super.closeInventory(player);
 	}
 
-	@Override
-	public void updateEntry(ShopEntry entry) {
+	public void placeEntry(ShopEntry entry) {
 		int index = recipeMap.get(entry);
 		if (super.getMerchant() == null) {
 			return;
@@ -99,7 +100,20 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 		//Discounts
 		double discount = DiscountHandler.getInstance().combineDiscounts(entry, entry.getShop());
 		recipe.setPriceMultiplier((float) discount);
+		//TODO debug
+		recipe.setMaxUses(discount < 1 ? 0 : 1);
 
-		super.getMerchant().setRecipe(index, recipe);
+		setMerchantOffer(entry.getSlot(), recipe);
+	}
+
+	@Override
+	public void updateEntry(ShopEntry entry) {
+		placeEntry(entry);
+		for (UUID uuid : openInventories.keySet()) {
+			Player player = Bukkit.getPlayer(uuid);
+			if (player != null) {
+				openInventorySync(player, null);
+			}
+		}
 	}
 }

@@ -29,7 +29,7 @@ public class DiscountHandler implements
 	private final Map<UUID, Discount> discountMap;
 	private final Map<String, List<Discount>> tagMap;
 
-	private final Map<Discount, List<Pair<ShopMenu, ShopEntry>>> subscribers;
+	private final Map<String, List<Pair<ShopMenu, ShopEntry>>> subscribers;
 
 	public DiscountHandler() {
 		instance = this;
@@ -91,11 +91,12 @@ public class DiscountHandler implements
 	}
 
 	public void subscribeToDisplayUpdates(ShopMenu menu, ShopEntry shopEntry) {
-		List<Discount> discounts = getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
-		for (Discount discount : discounts) {
-			List<Pair<ShopMenu, ShopEntry>> innerSubscribers = subscribers.getOrDefault(discount, new ArrayList<>());
+		List<String> tags = shopEntry.getTags();
+		tags.addAll(shopEntry.getShop().getTags());
+		for (String tag : tags) {
+			List<Pair<ShopMenu, ShopEntry>> innerSubscribers = subscribers.getOrDefault(tag, new ArrayList<>());
 			innerSubscribers.add(new Pair<>(menu, shopEntry));
-			subscribers.put(discount, innerSubscribers);
+			subscribers.put(tag, innerSubscribers);
 		}
 	}
 
@@ -104,7 +105,11 @@ public class DiscountHandler implements
 	}
 
 	private void updateAllSubscribers(Discount discount) {
-		for (Pair<ShopMenu, ShopEntry> pair : subscribers.getOrDefault(discount, new ArrayList<>())) {
+		List<Pair<ShopMenu, ShopEntry>> toIterate = new ArrayList<>();
+		for (String tag : discount.getTags()) {
+			toIterate.addAll(subscribers.getOrDefault(tag, new ArrayList<>()));
+		}
+		for (Pair<ShopMenu, ShopEntry> pair : toIterate) {
 			pair.getLeft().updateEntry(pair.getRight());
 		}
 	}

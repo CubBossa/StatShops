@@ -2,6 +2,8 @@ package de.bossascrew.shops.util;
 
 import de.bossascrew.shops.shop.Taggable;
 import lombok.experimental.UtilityClass;
+import org.bukkit.Material;
+import org.bukkit.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,5 +28,10 @@ public class TagUtils {
 			}
 		}
 		return false;
+	}
+
+	public List<String> getTags(Material material) {
+		List<String> tags = new ArrayList<>();
+		return tags;
 	}
 }

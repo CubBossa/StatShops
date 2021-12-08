@@ -2,8 +2,8 @@ package de.bossascrew.shops.util;
 
 import de.bossascrew.shops.shop.Taggable;
 import lombok.experimental.UtilityClass;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +32,11 @@ public class TagUtils {
 
 	public List<String> getTags(Material material) {
 		List<String> tags = new ArrayList<>();
+		Bukkit.getTags("blocks", Material.class).forEach(materialTag -> {
+			if (materialTag.isTagged(material)) {
+				tags.add(materialTag.getKey().getKey());
+			}
+		});
 		return tags;
 	}
 }

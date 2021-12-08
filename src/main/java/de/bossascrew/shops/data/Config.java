@@ -37,6 +37,12 @@ public class Config extends AnnotationConfig {
 	public Material shopSellIconMaterial = Material.GOLD_INGOT;
 	@ConfigEntry(name = "shops.trade_icon", comment = "Set the display material for the 'trade' mode.")
 	public Material shopTradeIconMaterial = Material.EMERALD;
+	@ConfigEntry(name = "shops.auto_tagging", comment = """
+			Auto-tagging will automatically fetch the material tags (red_wool -> wool)
+			from the sold/bought item and adds them as tags to this entry.
+			This allows you to easily apply a discount to all wools without even setting tags.
+			Using PaperMC as server software will add some more tags.""")
+	public boolean autoTagging = false;
 
 	@ConfigEntry(name = "gui.confirm_general_deletion", comment = "Sets if you have to confirm the deletion of shops/discounts/limits.")
 	public boolean confirmDeletion = false;

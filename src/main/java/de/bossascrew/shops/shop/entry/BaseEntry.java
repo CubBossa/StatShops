@@ -5,6 +5,7 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopInteractionResult;
 import de.bossascrew.shops.shop.ShopMode;
+import de.bossascrew.shops.util.TagUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
@@ -77,6 +78,10 @@ public class BaseEntry implements ShopEntry {
 	public List<String> getTags() {
 		List<String> tags = new ArrayList<>(this.tags);
 		tags.add(uuid.toString());
+		//If auto-tagging is enabled, add all material tags to the entry
+		if (ShopPlugin.getInstance().getShopsConfig().isAutoTagging() && module != null && module instanceof TradeModule tm) {
+			tags.addAll(TagUtils.getTags(tm.getArticle().getType()));
+		}
 		return tags;
 	}
 

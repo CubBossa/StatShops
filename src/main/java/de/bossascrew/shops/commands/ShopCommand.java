@@ -57,9 +57,8 @@ public class ShopCommand extends BaseCommand {
 
 	@Subcommand("test-mat")
 	public void onTestMaterialTag(CommandSender player, String material) {
-		System.out.println(material);
 		Material m = Material.getMaterial(material);
-		TagUtils.getTags(m);
+		TagUtils.getTags(m).forEach(System.out::println);
 	}
 
 	@Subcommand("test")

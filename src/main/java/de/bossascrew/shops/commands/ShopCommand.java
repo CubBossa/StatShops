@@ -6,6 +6,7 @@ import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.DiscountHandler;
+import de.bossascrew.shops.handler.InventoryHandler;
 import de.bossascrew.shops.handler.TranslationHandler;
 import de.bossascrew.shops.menu.ShopManagementMenu;
 import de.bossascrew.shops.shop.Discount;
@@ -32,6 +33,8 @@ public class ShopCommand extends BaseCommand {
 	@Subcommand("reload config")
 	public void reloadConfig(CommandSender sender) {
 		long ms = System.currentTimeMillis();
+		InventoryHandler.getInstance().closeAllMenus();
+
 		CompletableFuture.supplyAsync(() -> ShopPlugin.getInstance().getShopsConfig().loadConfig()).thenAcceptAsync(success -> {
 			if (success) {
 				ShopPlugin.getInstance().sendMessage(sender, Message.GENERAL_CONFIG_RELOADED_IN_MS.getKey(),

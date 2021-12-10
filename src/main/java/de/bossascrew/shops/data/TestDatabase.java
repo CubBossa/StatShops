@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -161,7 +162,9 @@ public class TestDatabase implements Database, LogDatabase {
 			template.put(rows -> (rows - 1) * 9 + finalI, new BaseEntry(UUID.randomUUID(), null, ItemStackUtils.createItemStack(Material.DIAMOND, "lol", ""),
 					null, i, ShopHandler.getInstance().getShopModes().get(0)));
 		}
-		return Map.of(template.getUuid(), template);
+		Map<UUID, EntryTemplate> map = new LinkedHashMap<>();
+		map.put(template.getUuid(), template);
+		return map;
 	}
 
 	@Override

@@ -156,6 +156,7 @@ public class ShopPlugin extends JavaPlugin {
 
 		//Setup and load shop templates
 		this.templateHandler = new TemplateHandler();
+		this.templateHandler.registerDefaults();
 
 		//Setup inventory handler to process menus
 		new InventoryHandler(this);

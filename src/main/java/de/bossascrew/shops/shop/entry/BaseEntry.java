@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * A shop entry to be used for all itembased shops (not for chat shops or hologram shops e.g.)
@@ -43,6 +44,13 @@ public class BaseEntry implements ShopEntry {
 
 		this.slot = slot;
 		this.shopMode = shopMode;
+	}
+
+	public void setModule(@Nullable EntryModule module) {
+		this.module = module;
+		if (this.module != null) {
+			this.module.setShopEntry(this);
+		}
 	}
 
 	@Override
@@ -84,6 +92,7 @@ public class BaseEntry implements ShopEntry {
 			Config config = ShopPlugin.getInstance().getShopsConfig();
 			tags.addAll(TagUtils.getTags(tm.getArticle().getType(), config.isAutoTaggingMaterials(), config.isAutoTaggingGroups()));
 		}
+		tags.addAll(shop.getTags().stream().map(s -> "(shop) " + s).collect(Collectors.toList()));
 		return tags;
 	}
 
@@ -109,6 +118,11 @@ public class BaseEntry implements ShopEntry {
 
 	@Override
 	public ShopEntry duplicate() {
-		return new BaseEntry(UUID.randomUUID(), shop, displayItem.clone(), permission, slot, shopMode);
+		BaseEntry entry = new BaseEntry(UUID.randomUUID(), shop, displayItem.clone(), permission, slot, shopMode);
+		if (module != null) {
+			EntryModule m = module.duplicate();
+			entry.setModule(m);
+		}
+		return entry;
 	}
 }

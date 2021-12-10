@@ -29,10 +29,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ChestShopPageEditor extends BottomTopChestMenu {
 
@@ -56,8 +54,13 @@ public class ChestShopPageEditor extends BottomTopChestMenu {
 		this.shopPage = shopPage;
 		this.shopEditor = shopEditor;
 		this.backHandler = backHandler;
-		//Save all changes items before closing menu
-		this.closeHandler = closeContext -> handleFreeze();
+		//Save all changed items before closing menu
+		this.closeHandler = closeContext -> {
+			if (!shopEditor.isFreezeItems()) {
+				shopEditor.setFreezeItems(true);
+				handleFreeze();
+			}
+		};
 	}
 
 	private void prepareMenu() {
@@ -66,8 +69,13 @@ public class ChestShopPageEditor extends BottomTopChestMenu {
 			if (entry == null) {
 				continue;
 			}
-			setItem(i - shopPage * RowedOpenableMenu.LARGEST_INV_SIZE, ItemStackUtils.prepareEditorEntryItemStack(entry));
+			ItemStack stack = ItemStackUtils.prepareEditorEntryItemStack(entry);
+			NBTItem item = new NBTItem(stack);
+			item.setUUID(UUID_TAG_KEY, entry.getUUID());
+			stack = item.getItem();
+			setItem(i - shopPage * RowedOpenableMenu.LARGEST_INV_SIZE, stack);
 		}
+
 		setDefaultClickHandler(ClickType.LEFT, clickContext -> {
 			ShopEntry clickedEntry = shop.getEntry(shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
 			clickContext.setCancelled(shopEditor.isFreezeItems());
@@ -220,17 +228,15 @@ public class ChestShopPageEditor extends BottomTopChestMenu {
 		menu.fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
 		menu.fillBottom();
 		int dif = shopPage * INDEX_DIFFERENCE;
-		for (int i = 0; i < shop.getRows() + ROW_SIZE; i++) {
+		for (int i = 0; i < shop.getRows() * ROW_SIZE; i++) {
 			ShopEntry entry = shop.getEntry(shopMode, i + dif);
 			if (entry == null) {
 				continue;
 			}
 			menu.setItem(i, entry.getDisplayItem());
 		}
-		for (Map.Entry<Function<Integer, Integer>, ShopEntry> mapEntry : template.entrySet()) {
-			int slot = mapEntry.getKey().apply(getRowCount());
-			ShopEntry entry = mapEntry.getValue();
-			menu.setItem(slot, entry.getDisplayItem());
+		for (ShopEntry entry : template.getEntries(shop.getRows()).values()) {
+			menu.setItem(entry.getSlot(), entry.getDisplayItem());
 		}
 		menu.setItemAndClickHandlerBottom(ROW_SIZE + 2, DefaultSpecialItem.ACCEPT, clickContext -> {
 			shop.applyTemplate(template, shopMode, shopPage);

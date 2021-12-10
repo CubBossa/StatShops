@@ -5,14 +5,15 @@ import de.bossascrew.shops.data.LogEntry;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.menu.RowedOpenableMenu;
 import de.bossascrew.shops.shop.ShopInteractionResult;
+import de.bossascrew.shops.util.Consumer3;
 import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class PageBaseModule implements PageModule {
@@ -23,16 +24,22 @@ public class PageBaseModule implements PageModule {
 	private final Component displayName;
 	@Getter
 	private final List<Component> displayLore;
-	private final ShopEntry shopEntry;
-	private final BiConsumer<Customer, Integer> openPageHandler;
+	@Getter
+	@Setter
+	private ShopEntry shopEntry;
+	private final Consumer3<Customer, ShopEntry, Integer> openPageHandler;
 	private Function<Integer, Integer> newPageProvider = integer -> integer;
 	private String data = "";
 
-	public PageBaseModule(Message name, Message lore, ShopEntry shopEntry, BiConsumer<Customer, Integer> openPageHandler) {
+	public PageBaseModule(Message name, Message lore, ShopEntry shopEntry, Consumer3<Customer, ShopEntry, Integer> openPageHandler) {
+		this(name.getTranslation(), lore.getTranslations(), shopEntry, openPageHandler);
+	}
+
+	public PageBaseModule(Component name, List<Component> lore, ShopEntry shopEntry, Consumer3<Customer, ShopEntry, Integer> openPageHandler) {
 		this.shopEntry = shopEntry;
 		this.openPageHandler = openPageHandler;
-		this.displayName = name.getTranslation();
-		this.displayLore = lore.getTranslations();
+		this.displayName = name;
+		this.displayLore = lore;
 		displayItem = new ItemStack(Material.BOOK);
 	}
 
@@ -85,11 +92,17 @@ public class PageBaseModule implements PageModule {
 
 	@Override
 	public ShopInteractionResult perform(Customer customer) {
+		openPage(customer);
 		return ShopInteractionResult.SUCCESS;
 	}
 
 	@Override
 	public void openPage(Customer customer) {
-		this.openPageHandler.accept(customer, this.newPageProvider.apply(shopEntry.getSlot() % RowedOpenableMenu.LARGEST_INV_SIZE));
+		this.openPageHandler.accept(customer, shopEntry, this.newPageProvider.apply(shopEntry.getSlot() % RowedOpenableMenu.LARGEST_INV_SIZE));
+	}
+
+	@Override
+	public EntryModule duplicate() {
+		return new PageBaseModule(displayName, displayLore, shopEntry, openPageHandler);
 	}
 }

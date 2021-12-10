@@ -21,6 +21,7 @@ import java.util.List;
 @Setter
 public class TradeBaseModule<T> implements TradeModule<T> {
 
+	private ShopEntry shopEntry;
 	private final ItemStack displayItem;
 	private final Component displayName;
 	private final List<Component> displayLore;
@@ -98,5 +99,10 @@ public class TradeBaseModule<T> implements TradeModule<T> {
 		currency.removeAmount(customer, priceAmount, priceObject);
 		giveArticle(customer);
 		return ShopInteractionResult.SUCCESS;
+	}
+
+	@Override
+	public EntryModule duplicate() {
+		return null;
 	}
 }

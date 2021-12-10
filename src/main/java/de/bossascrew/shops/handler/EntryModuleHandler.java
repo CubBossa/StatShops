@@ -4,7 +4,6 @@ import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.hook.VaultHook;
 import de.bossascrew.shops.menu.ListMenuElement;
 import de.bossascrew.shops.menu.ListMenuElementHolder;
-import de.bossascrew.shops.shop.PaginatedModedShop;
 import de.bossascrew.shops.shop.PaginatedShop;
 import de.bossascrew.shops.shop.entry.*;
 import de.bossascrew.shops.util.ItemStackUtils;
@@ -23,8 +22,8 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 	public static PageModule openExactPage(ShopEntry shopEntry, int page) {
 		PageBaseModule pageModule = new PageBaseModule(Message.MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry, (customer, integer) -> {
-			if(shopEntry.getShop() instanceof PaginatedShop ps) {
+				Message.MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry, (customer, se, integer) -> {
+			if (se.getShop() instanceof PaginatedShop ps) {
 				ps.open(customer, integer);
 			}
 		});
@@ -34,9 +33,11 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 	public static PageModule openNextPage(ShopEntry shopEntry, int page) {
 		PageBaseModule pageModule = new PageBaseModule(Message.MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry, (customer, integer) -> {
-			if(shopEntry.getShop() instanceof PaginatedShop ps) {
-				ps.open(customer, integer);
+				Message.MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry, (customer, se, integer) -> {
+			System.out.println(se);
+			System.out.println(se.getShop());
+			if (se.getShop() instanceof PaginatedShop ps) {
+				ps.open(customer, integer + page);
 			}
 		});
 		pageModule.setNewPageRelative(page);
@@ -45,9 +46,9 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 	public static PageModule openPrevPage(ShopEntry shopEntry, int page) {
 		PageBaseModule pageModule = new PageBaseModule(Message.MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry, (customer, integer) -> {
-			if(shopEntry.getShop() instanceof PaginatedShop ps) {
-				ps.open(customer, integer);
+				Message.MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry, (customer, se, integer) -> {
+			if (se.getShop() instanceof PaginatedShop ps) {
+				ps.open(customer, integer - page);
 			}
 		});
 		pageModule.setNewPageRelative(-1 * page);

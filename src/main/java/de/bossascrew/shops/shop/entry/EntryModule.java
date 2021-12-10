@@ -4,6 +4,7 @@ import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.data.LogEntry;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.shop.ShopInteractionResult;
+import de.bossascrew.shops.util.Duplicable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,7 +12,11 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface EntryModule {
+public interface EntryModule extends Duplicable<EntryModule> {
+
+	ShopEntry getShopEntry();
+
+	void setShopEntry(ShopEntry entry);
 
 	Component getDisplayName();
 

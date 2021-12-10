@@ -5,9 +5,9 @@ import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.ShopHandler;
-import de.bossascrew.shops.menu.RowedOpenableMenu;
 import de.bossascrew.shops.menu.ChestShopEditor;
 import de.bossascrew.shops.menu.ChestShopMenu;
+import de.bossascrew.shops.menu.RowedOpenableMenu;
 import de.bossascrew.shops.menu.contexts.BackContext;
 import de.bossascrew.shops.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.shop.entry.ShopEntry;
@@ -24,12 +24,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class ChestMenuShop implements PaginatedModedShop {
+public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedShop {
 
 	private final UUID uuid;
 	private String nameFormat;
@@ -397,13 +396,14 @@ public class ChestMenuShop implements PaginatedModedShop {
 
 	@Override
 	public void applyTemplate(EntryTemplate template, ShopMode shopMode, int shopPage) {
-		for (Map.Entry<Function<Integer, Integer>, ShopEntry> mapEntry : template.entrySet()) {
-			ShopEntry entry = mapEntry.getValue();
-			int shopSlot = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + mapEntry.getKey().apply(rows);
+		for (ShopEntry entry : template.getEntries(rows).values()) {
+			int shopSlot = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + entry.getSlot();
 			ShopEntry newEntry = entry.duplicate();
 			newEntry.setShopMode(shopMode);
 			newEntry.setSlot(shopSlot);
 			newEntry.setShop(this);
+			System.out.println(newEntry);
+			System.out.println(newEntry.getShop());
 			newEntry.saveToDatabase();
 			addEntry(shopMode, shopSlot, newEntry);
 		}

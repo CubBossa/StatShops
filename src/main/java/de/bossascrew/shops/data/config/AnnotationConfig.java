@@ -62,6 +62,7 @@ public class AnnotationConfig {
 		this.path = path;
 
 		YamlConfiguration config = new YamlConfiguration();
+		String version = config.getString("version");
 
 		Class<? extends AnnotationConfig> cls = getClass();
 

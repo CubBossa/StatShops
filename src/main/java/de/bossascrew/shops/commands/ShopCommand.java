@@ -4,21 +4,22 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.handler.TranslationHandler;
 import de.bossascrew.shops.menu.ShopManagementMenu;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.PaginatedShop;
 import de.bossascrew.shops.shop.Shop;
-import de.bossascrew.shops.util.TagUtils;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.CompletableFuture;
 
 @CommandAlias("statshops|shops")
 public class ShopCommand extends BaseCommand {
@@ -30,12 +31,28 @@ public class ShopCommand extends BaseCommand {
 
 	@Subcommand("reload config")
 	public void reloadConfig(CommandSender sender) {
-		ShopPlugin.getInstance().getShopsConfig().loadConfig();
+		long ms = System.currentTimeMillis();
+		CompletableFuture.supplyAsync(() -> ShopPlugin.getInstance().getShopsConfig().loadConfig()).thenAcceptAsync(success -> {
+			if (success) {
+				ShopPlugin.getInstance().sendMessage(sender, Message.GENERAL_CONFIG_RELOADED_IN_MS.getKey(),
+						Message.GENERAL_CONFIG_RELOADED_IN_MS.getTranslation(Template.of("ms", System.currentTimeMillis() - ms + "")), 0);
+				return;
+			}
+			ShopPlugin.getInstance().sendMessage(sender, Message.GENERAL_CONFIG_RELOAD_ERROR);
+		});
 	}
 
 	@Subcommand("reload language")
 	public void reloadTranslations(CommandSender sender) {
-		TranslationHandler.getInstance().loadLanguage(ShopPlugin.getInstance().getShopsConfig().getLanguage());
+		long ms = System.currentTimeMillis();
+		TranslationHandler.getInstance().loadLanguage(ShopPlugin.getInstance().getShopsConfig().getLanguage()).thenAcceptAsync(success -> {
+			if (success) {
+				ShopPlugin.getInstance().sendMessage(sender, Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getKey(),
+						Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getTranslation(Template.of("ms", System.currentTimeMillis() - ms + "")), 0);
+				return;
+			}
+			ShopPlugin.getInstance().sendMessage(sender, Message.GENERAL_LANGUAGE_RELOAD_ERROR);
+		});
 	}
 
 	@Subcommand("open")
@@ -64,12 +81,6 @@ public class ShopCommand extends BaseCommand {
 				shop.open(Customer.wrap(player));
 			}
 		}
-	}
-
-	@Subcommand("test-mat")
-	public void onTestMaterialTag(CommandSender player, String material) {
-		Material m = Material.getMaterial(material);
-		TagUtils.getTags(m).forEach(System.out::println);
 	}
 
 	@Subcommand("test")

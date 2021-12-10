@@ -33,22 +33,26 @@ public class TagUtils {
 		return false;
 	}
 
-	public Collection<String> getTags(ItemStack itemStack) {
-		Collection<String> tags = getTags(itemStack.getType());
+	public Collection<String> getTags(ItemStack itemStack, boolean material, boolean groups) {
+		Collection<String> tags = getTags(itemStack.getType(), material, groups);
 		return tags;
 	}
 
-	public Collection<String> getTags(Material material) {
+	public Collection<String> getTags(Material material, boolean self, boolean groups) {
 		if (cache.containsKey(material)) {
 			return cache.get(material);
 		}
 		List<String> tags = new ArrayList<>();
-		Bukkit.getTags("blocks", Material.class).forEach(materialTag -> {
-			if (materialTag.isTagged(material)) {
-				tags.add(materialTag.getKey().getKey());
-			}
-		});
-		tags.add(material.toString().toLowerCase());
+		if(groups) {
+			Bukkit.getTags("blocks", Material.class).forEach(materialTag -> {
+				if (materialTag.isTagged(material)) {
+					tags.add(materialTag.getKey().getKey());
+				}
+			});
+		}
+		if(self) {
+			tags.add(material.toString().toLowerCase());
+		}
 		cache.put(material, tags);
 		return tags;
 	}

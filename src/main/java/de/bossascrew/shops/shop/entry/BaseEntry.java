@@ -2,6 +2,7 @@ package de.bossascrew.shops.shop.entry;
 
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
+import de.bossascrew.shops.data.Config;
 import de.bossascrew.shops.shop.Shop;
 import de.bossascrew.shops.shop.ShopInteractionResult;
 import de.bossascrew.shops.shop.ShopMode;
@@ -79,8 +80,9 @@ public class BaseEntry implements ShopEntry {
 		List<String> tags = new ArrayList<>(this.tags);
 		tags.add(uuid.toString());
 		//If auto-tagging is enabled, add all material tags to the entry
-		if (ShopPlugin.getInstance().getShopsConfig().isAutoTagging() && module != null && module instanceof TradeModule tm) {
-			tags.addAll(TagUtils.getTags(tm.getArticle().getType()));
+		if (module != null && module instanceof TradeModule tm) {
+			Config config = ShopPlugin.getInstance().getShopsConfig();
+			tags.addAll(TagUtils.getTags(tm.getArticle().getType(), config.isAutoTaggingMaterials(), config.isAutoTaggingGroups()));
 		}
 		return tags;
 	}

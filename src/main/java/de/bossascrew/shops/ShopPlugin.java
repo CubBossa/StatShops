@@ -5,10 +5,7 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
 import de.bossascrew.shops.commands.ItemEditorCommand;
 import de.bossascrew.shops.commands.ShopCommand;
-import de.bossascrew.shops.data.Config;
-import de.bossascrew.shops.data.Database;
-import de.bossascrew.shops.data.LogDatabase;
-import de.bossascrew.shops.data.TestDatabase;
+import de.bossascrew.shops.data.*;
 import de.bossascrew.shops.handler.*;
 import de.bossascrew.shops.hook.CitizensHook;
 import de.bossascrew.shops.hook.VaultHook;
@@ -18,11 +15,14 @@ import de.bossascrew.shops.util.ItemFlags;
 import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -90,6 +90,7 @@ public class ShopPlugin extends JavaPlugin {
 	@Getter
 	private CitizensHook citizensHook = null;
 
+	private Audience consoleAudience;
 
 	public ShopPlugin() {
 		instance = this;
@@ -101,6 +102,7 @@ public class ShopPlugin extends JavaPlugin {
 		//Initialize Kyori Adventure
 		this.bukkitAudiences = BukkitAudiences.create(this);
 		this.miniMessage = MiniMessage.get();
+		this.consoleAudience = bukkitAudiences.sender(Bukkit.getConsoleSender());
 
 		//Initialize and load Config
 		this.shopsConfig = new Config(super.getDataFolder().getPath() + "\\config.yml");
@@ -238,6 +240,26 @@ public class ShopPlugin extends JavaPlugin {
 	public void log(LoggingPolicy policy, String message, Throwable exception) {
 		if (shopsConfig == null || shopsConfig.getLoggingPolicy().getPriotiry() <= policy.getPriotiry()) {
 			getLogger().log(policy.getLevel(), message, exception);
+		}
+	}
+
+	public void sendMessage(CommandSender sender, Message message) {
+		sendMessage(sender, message.getTranslation());
+	}
+
+	public void sendMessage(CommandSender sender, Component message) {
+		sendMessage(sender, "", message, -1);
+	}
+
+	public void sendMessage(CommandSender sender, String key, Message message, int cooldown) {
+		sendMessage(sender, key, message.getTranslation(), cooldown);
+	}
+
+	public void sendMessage(CommandSender sender, String key, Component message, int cooldown) {
+		if (sender instanceof Player player) {
+			Customer.wrap(player).sendMessage(key, message, cooldown);
+		} else {
+			consoleAudience.sendMessage(message);
 		}
 	}
 

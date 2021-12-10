@@ -23,10 +23,13 @@ public class TranslationHandler implements WebAccessable<LoadedMessage> {
 
 	private String activeLanguage = "none";
 	private final Map<String, String> messageFormats;
+	private final Map<String, String> fallbackLanguage;
 
 	public TranslationHandler(String startlanguage) {
 		instance = this;
 		messageFormats = new HashMap<>();
+		loadLanguage("en_US");
+		fallbackLanguage = new HashMap<>(messageFormats);
 		loadLanguage(startlanguage);
 	}
 
@@ -58,6 +61,9 @@ public class TranslationHandler implements WebAccessable<LoadedMessage> {
 	}
 
 	public String getMessage(String key) {
+		if (ShopPlugin.getInstance().getShopsConfig().isLanguageUseFallback()) {
+			return messageFormats.getOrDefault(key, fallbackLanguage.getOrDefault(key, activeLanguage + "-missing:" + key));
+		}
 		return messageFormats.getOrDefault(key, activeLanguage + "-missing:" + key);
 	}
 

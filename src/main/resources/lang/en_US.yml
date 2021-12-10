@@ -7,6 +7,8 @@
 general:
   prefix: "<bold><gold>StatShops</gold> </bold><gray>» "
   no_permission: "<prefix><red>You don't have permission to do this."
+  config_reloaded: "<prefix><gray>Config file reloaded in <green><ms><dark_green>ms<gray>."
+  config_error: "<prefix><red>Could not reload the config file."
   language_reloaded: "<prefix><gray>Language file reloaded in <green><ms><dark_green>ms<gray>."
   language_error: "<prefix><red>Could not reload the language file."
   webinterface:

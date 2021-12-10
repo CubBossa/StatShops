@@ -13,7 +13,7 @@ public class CustomerHandler implements WebAccessable<Customer> {
 	@Getter
 	private static CustomerHandler instance;
 
-	Map<UUID, Customer> customerMap;
+	private final Map<UUID, Customer> customerMap;
 
 	public CustomerHandler() {
 		instance = this;
@@ -21,8 +21,8 @@ public class CustomerHandler implements WebAccessable<Customer> {
 	}
 
 	public Customer getCustomer(Player player) {
-		Customer customer =  customerMap.get(player.getUniqueId());
-		if(customer == null) {
+		Customer customer = customerMap.get(player.getUniqueId());
+		if (customer == null) {
 			customer = ShopPlugin.getInstance().getDatabase().loadCustomer(player.getUniqueId());
 			customerMap.put(player.getUniqueId(), customer);
 		}

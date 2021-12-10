@@ -16,6 +16,8 @@ public class Config extends AnnotationConfig {
 	//GENERAL
 	@ConfigEntry(path = "general.language")
 	public String language = "en-US";
+	@ConfigEntry(path = "general.use-fallback-language")
+	public boolean languageUseFallback = false;
 	//@ConfigEntry(path = "general.logging-policy")
 	public LoggingPolicy loggingPolicy = LoggingPolicy.INFO;
 	@ConfigEntry(path = "general.message-caching")
@@ -51,7 +53,7 @@ public class Config extends AnnotationConfig {
 
 		File file = new File(path);
 		if (!file.exists()) {
-			ShopPlugin.getInstance().saveResource(path, true);
+			ShopPlugin.getInstance().saveResource("config.yml", true);
 		}
 	}
 }

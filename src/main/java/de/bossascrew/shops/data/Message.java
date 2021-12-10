@@ -19,6 +19,8 @@ public enum Message {
 	PREFIX("general.prefix"),
 
 	GENERAL_NO_PERMISSION("general.no_permission"),
+	GENERAL_CONFIG_RELOADED_IN_MS("general.config_reloaded"),
+	GENERAL_CONFIG_RELOAD_ERROR("general.config_error"),
 	GENERAL_LANGUAGE_RELOADED_IN_MS("general.language_reloaded"),
 	GENERAL_LANGUAGE_RELOAD_ERROR("general.language_error"),
 	GENERAL_GUI_BACK_NAME("general.gui.back.name"),

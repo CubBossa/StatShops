@@ -16,11 +16,11 @@ public class AnnotationConfig {
 		this.path = path;
 	}
 
-	public void loadConfig() {
-		loadConfig(this.path);
+	public boolean loadConfig() {
+		return loadConfig(this.path);
 	}
 
-	public void loadConfig(String path) {
+	public boolean loadConfig(String path) {
 		ShopPlugin.getInstance().log(LoggingPolicy.INFO, "Loading config.yml with path: " + path);
 		if (path == null) {
 			path = "config.yml";
@@ -40,11 +40,13 @@ public class AnnotationConfig {
 
 				try {
 					f.set(this, config.get(target, f.get(this)));
-				} catch (IllegalArgumentException | IllegalAccessException ignored) {
-					ignored.printStackTrace();
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "Could not load file " + path, e);
+					return false;
 				}
 			}
 		}
+		return true;
 	}
 
 	public boolean saveConfig() {

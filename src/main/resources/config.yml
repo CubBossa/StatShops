@@ -7,28 +7,35 @@
 
 general:
 
-  #All messages are in the according file (en_GB.yml).
+  # All messages are in the according file (en_GB.yml).
   language: "en_US"
 
-  #Sets the minimum logging policy.
-  #	- 'DEBUG' logs many information
+  # If set to true, en_US messages will be sent for missing translations
+  # If set to false, missing translations will be displayed as:
+  #      "<language key>-missing:<message-key>"
+  #      "de_DE:missing:general.language_reloaded"
+  # This can be useful to determine what keys apply to what messages.
+  use-fallback-language: false
+
+  # Sets the minimum logging policy.
+  #	- 'DEBUG' logs many debug information
   #	- 'INFO' logs default information
-  #	- 'WARN' only shows warnings
-  #	- 'ERROR' only shows error
+  #	- 'WARN' only logs warnings
+  #	- 'ERROR' only logs errors, not suggested
   logging-policy: "INFO"
 
   # The plugin will send chat messages to a player only every given amount of milliseconds.
-  # Set this to -1 if you want to send every message.
+  # Set this to -1 if you want to send every message without cooldown.
   message-caching: 500
 
 guis:
 
-  #Sets if you want to confirm the deletion of shops/discounts/limits.
+  # Sets if you want to confirm the deletion of shops/discounts/limits.
   confirm-general-deletion: true
 
-  #You might be handling a lot of tags during shop setup. If you want to
-  #keep general deletion confirmation but want to delete tags easier you
-  #can turn this setting to false.
+  # You might be handling a lot of tags during shop setup. If you want to
+  # keep general deletion confirmation activated but want to delete tags easier you
+  # can turn this setting to false.
   confirm-tag-deletion: false
 
 
@@ -47,9 +54,9 @@ shops:
     buy-amount: "MOUSE_WHEEL_SHOP"
     sell-amount: "MOUSE_WHEEL_INV"
 
-  #The cooldown in milliseconds before the player interact with the shop again.
+  # The cooldown in milliseconds before the player can interact with the shop again.
   cooldown: 100
-  #If the player should be informed that he clicked to quickly.
+  # If the player should be informed that he clicked to quickly.
   cooldown-message: true
 
   # How many rows a chest-based shop will have by default. Once created, this value needs to be
@@ -57,8 +64,8 @@ shops:
   # Valid values are 1 - 6 (Vanilla Chest limits).
   shop-size: 3
 
-  #The default mode for a shop to open. Default possibilities are BUY, SELL and TRADE.
-  #You can add or modify shop modes by using the API
+  # The default mode for a shop to open. Default possibilities are BUY, SELL and TRADE.
+  # You can add or modify shop modes by using the API
   shop-mode: "BUY"
 
 

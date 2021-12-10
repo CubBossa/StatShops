@@ -22,6 +22,7 @@ import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -32,6 +33,10 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	private final ChestMenuShop shop;
 	private @Nullable ContextConsumer<BackContext> customBackHandler;
 
+	private final int cooldown;
+	private final boolean showCooldownMessage;
+	private final HashMap<Player, Long> interactionCooldown;
+
 	public ChestShopMenu(ChestMenuShop shop) {
 		this(shop, null);
 	}
@@ -40,6 +45,9 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 		super(shop.getName(), shop.getRows(), 0, null, closeContext -> Customer.wrap(closeContext.getPlayer()).setActiveShop(null));
 		this.shop = shop;
 		this.customBackHandler = backHandler;
+		this.interactionCooldown = new HashMap<>();
+		this.cooldown = ShopPlugin.getInstance().getShopsConfig().getCooldown();
+		this.showCooldownMessage = ShopPlugin.getInstance().getShopsConfig().isShowCooldownMessage();
 	}
 
 	@Override
@@ -157,8 +165,24 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	public void setEntry(ShopEntry entry) {
 
 		int slot = entry.getSlot() % LARGEST_INV_SIZE;
-		setItemAndClickHandler(slot, ItemStackUtils.createEntryItemStack(entry), clickContext ->
-				entry.interact(Customer.wrap(clickContext.getPlayer())));
+		setItemAndClickHandler(slot, ItemStackUtils.createEntryItemStack(entry), clickContext -> {
+			Player player = clickContext.getPlayer();
+			Customer customer = Customer.wrap(player);
+
+			long now = System.currentTimeMillis();
+			Long last = interactionCooldown.get(player);
+			if (last != null) {
+				long dif = now - last;
+				if (dif < cooldown) {
+					if (showCooldownMessage) {
+						customer.sendMessage(Message.SHOP_COOLDOWN);
+					}
+					return;
+				}
+			}
+			entry.interact(customer);
+			interactionCooldown.put(player, now);
+		});
 	}
 
 	public void updateEntry(ShopEntry entry) {

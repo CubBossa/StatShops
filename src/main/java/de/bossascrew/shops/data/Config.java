@@ -1,53 +1,49 @@
 package de.bossascrew.shops.data;
 
+import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.config.AnnotationConfig;
 import de.bossascrew.shops.data.config.ConfigEntry;
-import de.bossascrew.shops.data.config.ConfigFile;
 import de.bossascrew.shops.util.LoggingPolicy;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Material;
 
 import java.io.File;
 
 @Getter
 @Setter
-@ConfigFile(header = """
-		##########################
-		#       Statshops        #
-		# by CubBossa & JannisGo #
-		##########################
-		  
-		""")
 public class Config extends AnnotationConfig {
 
-	@ConfigEntry(name = "general.language", comment = "Set the default language.")
-	public String language = "en_US";
-	/*@ConfigEntry(name = "general.logging_policy", comment = """
-			Sets the minimum logging policy.
-			- 'DEBUG' logs many information
-			- 'INFO' logs default information
-			- 'WARN' only shows warnings
-			- 'ERROR' only shows errors""")*/
+	//GENERAL
+	@ConfigEntry(path = "general.language")
+	public String language = "en-US";
+	//@ConfigEntry(path = "general.logging-policy")
 	public LoggingPolicy loggingPolicy = LoggingPolicy.INFO;
+	@ConfigEntry(path = "general.message-caching")
+	public int messageCaching = 500;
 
-	@ConfigEntry(name = "shops.buy_icon", comment = "Set the display material for the 'buy' mode.")
-	public Material shopBuyIconMaterial = Material.DIAMOND;
-	@ConfigEntry(name = "shops.sell_icon", comment = "Set the display material for the 'sell' mode.")
-	public Material shopSellIconMaterial = Material.GOLD_INGOT;
-	@ConfigEntry(name = "shops.trade_icon", comment = "Set the display material for the 'trade' mode.")
-	public Material shopTradeIconMaterial = Material.EMERALD;
-	@ConfigEntry(name = "shops.auto_tagging", comment = """
-			Auto-tagging will automatically fetch the material tags (red_wool -> wool)
-			from the sold/bought item and adds them as tags to this entry.
-			This allows you to easily apply a discount to all wools without even setting tags.
-			Using PaperMC as server software will add some more tags.""")
-	public boolean autoTagging = false;
 
-	@ConfigEntry(name = "gui.confirm_general_deletion", comment = "Sets if you have to confirm the deletion of shops/discounts/limits.")
+	//GUIS
+	@ConfigEntry(path = "guis.confirm-general-deletion")
 	public boolean confirmDeletion = false;
-	@ConfigEntry(name = "gui.confirm_tag_deletion", comment = "Sets if you have to confirm the deletion of tags.")
+	@ConfigEntry(path = "gui.confirm-tag-deletion")
 	public boolean confirmTagDeletion = false;
+
+
+	//SHOPS
+	//TODO keybinding
+	@ConfigEntry(path = "shops.cooldown")
+	public int cooldown = 100;
+	@ConfigEntry(path = "shops.cooldown-message")
+	public boolean showCooldownMessage = true;
+	@ConfigEntry(path = "shops.shop-size")
+	public int defaultShopSize = 3;
+	//TODO Shopmode
+
+	//TAGS
+	@ConfigEntry(path = "tags.auto-tagging-materials")
+	public boolean autoTaggingMaterials = false;
+	@ConfigEntry(path = "tags.auto-tagging-groups")
+	public boolean autoTaggingGroups = false;
 
 
 	public Config(String path) {
@@ -55,7 +51,7 @@ public class Config extends AnnotationConfig {
 
 		File file = new File(path);
 		if (!file.exists()) {
-			saveConfig();
+			ShopPlugin.getInstance().saveResource(path, true);
 		}
 	}
 }

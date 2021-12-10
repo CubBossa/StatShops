@@ -47,6 +47,7 @@ citizens:
 shop:
   no_permission: "<red>You don't have permission for this shop."
   not_enabled: "<red>This shop is currently disabled."
+  cooldown: "<red>Please slow down."
   gui:
     # The title of a shop, possible placeholders are: <name>, <page>, <mode>, <pages>
     title: "<name> - Page <page>/<pages> - <mode>"

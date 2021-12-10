@@ -4,15 +4,13 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.Database;
 import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.menu.ListManagementMenuElementHolder;
-import de.bossascrew.shops.shop.ModedShop;
-import de.bossascrew.shops.shop.PaginatedModedShop;
-import de.bossascrew.shops.shop.Shop;
-import de.bossascrew.shops.shop.ShopMode;
+import de.bossascrew.shops.shop.*;
 import de.bossascrew.shops.util.ItemStackUtils;
 import de.bossascrew.shops.util.LoggingPolicy;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +59,9 @@ public class ShopHandler implements
 		}
 		if (shop instanceof ModedShop ms) {
 			ms.setDefaultShopMode(headShopMode);
+		}
+		if (shop instanceof ChestMenuShop chestMenuShop) {
+			chestMenuShop.setRows(ShopPlugin.getInstance().getShopsConfig().getDefaultShopSize());
 		}
 		addShop(shop);
 		return shop;
@@ -122,7 +123,7 @@ public class ShopHandler implements
 			}
 
 			public ItemStack getDisplayItem() {
-				return ItemStackUtils.createItemStack(ShopPlugin.getInstance().getShopsConfig().getShopBuyIconMaterial(), Message.SHOP_MODE_BUY_NAME, Message.SHOP_MODE_BUY_LORE);
+				return ItemStackUtils.createItemStack(Material.DIAMOND, Message.SHOP_MODE_BUY_NAME, Message.SHOP_MODE_BUY_LORE);
 			}
 		});
 		registerShopMode(new ShopMode() {
@@ -135,7 +136,7 @@ public class ShopHandler implements
 			}
 
 			public ItemStack getDisplayItem() {
-				return ItemStackUtils.createItemStack(ShopPlugin.getInstance().getShopsConfig().getShopSellIconMaterial(), Message.SHOP_MODE_SELL_NAME, Message.SHOP_MODE_SELL_LORE);
+				return ItemStackUtils.createItemStack(Material.GOLD_INGOT, Message.SHOP_MODE_SELL_NAME, Message.SHOP_MODE_SELL_LORE);
 			}
 		});
 		registerShopMode(new ShopMode() {
@@ -148,7 +149,7 @@ public class ShopHandler implements
 			}
 
 			public ItemStack getDisplayItem() {
-				return ItemStackUtils.createItemStack(ShopPlugin.getInstance().getShopsConfig().getShopTradeIconMaterial(), Message.SHOP_MODE_TRADE_NAME, Message.SHOP_MODE_TRADE_LORE);
+				return ItemStackUtils.createItemStack(Material.EMERALD, Message.SHOP_MODE_TRADE_NAME, Message.SHOP_MODE_TRADE_LORE);
 			}
 		});
 	}

@@ -47,6 +47,7 @@ public enum Message {
 
 	SHOP_NO_PERMISSION("shop.no_permission"),
 	SHOP_NOT_ENABLED("shop.not_enabled"),
+	SHOP_COOLDOWN("shop.cooldown"),
 
 	SHOP_GUI_TITLE("shop.gui.title",
 			"Defines the title of the shop menu",

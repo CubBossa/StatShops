@@ -4,13 +4,36 @@
 #                                                  #
 ####################################################
 
-#All messages are in the according file (en_GB.yml).
-language: "en_GB"
 
-#The logging policy. Available are DEBUG, INFO, WARN, ERROR
-logging: "INFO"
+general:
 
-defaults:
+  #All messages are in the according file (en_GB.yml).
+  language: "en_US"
+
+  #Sets the minimum logging policy.
+  #	- 'DEBUG' logs many information
+  #	- 'INFO' logs default information
+  #	- 'WARN' only shows warnings
+  #	- 'ERROR' only shows error
+  logging-policy: "INFO"
+
+  # The plugin will send chat messages to a player only every given amount of milliseconds.
+  # Set this to -1 if you want to send every message.
+  message-caching: 500
+
+guis:
+
+  #Sets if you want to confirm the deletion of shops/discounts/limits.
+  confirm-general-deletion: true
+
+  #You might be handling a lot of tags during shop setup. If you want to
+  #keep general deletion confirmation but want to delete tags easier you
+  #can turn this setting to false.
+  confirm-tag-deletion: false
+
+
+
+shops:
 
   #You can add multiple keys to one action by seperating them with a comma (RIGHT_CLICK,LEFT_CLICK).
   #All possible keybindings are:
@@ -25,26 +48,31 @@ defaults:
     sell-amount: "MOUSE_WHEEL_INV"
 
   #The cooldown in milliseconds before the player interact with the shop again.
-  #This helps to prevent racing conditions but if you want do disable it set it to -1
   cooldown: 100
+  #If the player should be informed that he clicked to quickly.
+  cooldown-message: true
 
-  #The limits that are used for every shop entry that has no explicit limit.
-  global-limit: -1
-  user-limit: -1
-
-  #How many rows a shop will have by default. Once created, this value needs to be adjusted for every Shop on its own
-  shop-size: 4
+  # How many rows a chest-based shop will have by default. Once created, this value needs to be
+  # adjusted for every shop on its own.
+  # Valid values are 1 - 6 (Vanilla Chest limits).
+  shop-size: 3
 
   #The default mode for a shop to open. Default possibilities are BUY, SELL and TRADE.
-  #You can create custom modes with our API
+  #You can add or modify shop modes by using the API
   shop-mode: "BUY"
 
-  #The slots of the next/previous buttons when creating a new shop by template
-  slots:
-    previous: 0
-    next: 1
-    back: 8
 
+tags:
+  # Material auto-tagging will always add the material of the sold item as
+  # tag to the shop entry. So you can apply a discount to all netherite_swords
+  # for example.
+  auto-tagging-materials: false
+
+  # Group auto-tagging will automatically fetch the material tags (red_wool -> wool,
+  # oak_stair -> stairs) from the sold/bought item and adds them as tags to this entry.
+  # This allows you to easily apply a discount to all wools without even setting tags.
+  # Using PaperMC as server software will add some more tags.
+  auto-tagging-groups: false
 
 database:
 

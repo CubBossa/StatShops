@@ -68,7 +68,7 @@ public class ListManagerMenu<L extends ListMenuElement> extends PagedChestMenu {
 						if (editable.getEditor() instanceof Player p) {
 							name = p.getName();
 						}
-						CustomerHandler.getInstance().getCustomer(clickContext.getPlayer()).sendMessage(alreadyEdited.getTranslation(
+						CustomerHandler.getInstance().getCustomer(clickContext.getPlayer()).sendMessage(alreadyEdited.getKey(), alreadyEdited.getTranslation(
 								Template.of("player", name)));
 						return;
 					}

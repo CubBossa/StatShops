@@ -13,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ public class Customer implements DatabaseObject {
 	private final Audience audience;
 	private final Map<Shop, Integer> rememberedShopPages;
 	private final Map<Shop, ShopMode> rememberedShopModes;
+	private final Map<String, Long> messageCache;
 
 	@Getter
 	@Setter
@@ -38,6 +40,7 @@ public class Customer implements DatabaseObject {
 		this.audience = ShopPlugin.getInstance().getBukkitAudiences().player(player);
 		this.rememberedShopModes = rememberedShopModes;
 		this.rememberedShopPages = rememberedShopPages;
+		this.messageCache = new HashMap<>();
 	}
 
 	public static Customer wrap(Player player) {
@@ -62,11 +65,26 @@ public class Customer implements DatabaseObject {
 	}
 
 	public void sendMessage(Message message) {
-		sendMessage(message.getTranslation());
+		sendMessage(message.getKey(), message.getTranslation(), ShopPlugin.getInstance().getShopsConfig().getMessageCaching());
 	}
 
-	public void sendMessage(Component component) {
+	public void sendMessage(String key, Component component) {
+		sendMessage(key, component, ShopPlugin.getInstance().getShopsConfig().getMessageCaching());
+	}
+
+	public void sendMessage(Message message, int cooldown) {
+		sendMessage(message.getKey(), message.getTranslation(), cooldown);
+	}
+
+	public void sendMessage(String key, Component component, int cooldown) {
+		if (cooldown > 0) {
+			Long cache = messageCache.get(key);
+			if (cache != null && System.currentTimeMillis() - cache < cooldown) {
+				return;
+			}
+		}
 		audience.sendMessage(component);
+		messageCache.put(key, System.currentTimeMillis());
 	}
 
 	@Override

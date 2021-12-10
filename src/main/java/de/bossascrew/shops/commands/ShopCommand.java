@@ -5,6 +5,7 @@ import co.aikar.commands.annotation.*;
 import de.bossascrew.shops.Customer;
 import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.handler.DiscountHandler;
+import de.bossascrew.shops.handler.TranslationHandler;
 import de.bossascrew.shops.menu.ShopManagementMenu;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.PaginatedShop;
@@ -25,6 +26,16 @@ public class ShopCommand extends BaseCommand {
 	@Default
 	public void onDefault(Player player) {
 		new ShopManagementMenu().openBaseMenu(player);
+	}
+
+	@Subcommand("reload config")
+	public void reloadConfig(CommandSender sender) {
+		ShopPlugin.getInstance().getShopsConfig().loadConfig();
+	}
+
+	@Subcommand("reload language")
+	public void reloadTranslations(CommandSender sender) {
+		TranslationHandler.getInstance().loadLanguage(ShopPlugin.getInstance().getShopsConfig().getLanguage());
 	}
 
 	@Subcommand("open")

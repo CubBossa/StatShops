@@ -4,12 +4,15 @@ import de.bossascrew.shops.shop.Taggable;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SpawnEggMeta;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @UtilityClass
 public class TagUtils {
+
+	private final Map<Material, Collection<String>> cache = new HashMap<>();
 
 	public List<String> getDoubleTags(Taggable a, Taggable b) {
 		List<String> tags = new ArrayList<>();
@@ -30,13 +33,23 @@ public class TagUtils {
 		return false;
 	}
 
-	public List<String> getTags(Material material) {
+	public Collection<String> getTags(ItemStack itemStack) {
+		Collection<String> tags = getTags(itemStack.getType());
+		return tags;
+	}
+
+	public Collection<String> getTags(Material material) {
+		if (cache.containsKey(material)) {
+			return cache.get(material);
+		}
 		List<String> tags = new ArrayList<>();
 		Bukkit.getTags("blocks", Material.class).forEach(materialTag -> {
 			if (materialTag.isTagged(material)) {
 				tags.add(materialTag.getKey().getKey());
 			}
 		});
+		tags.add(material.toString().toLowerCase());
+		cache.put(material, tags);
 		return tags;
 	}
 }

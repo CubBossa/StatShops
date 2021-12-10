@@ -42,7 +42,7 @@ public class ShopManagementMenu {
 				TranslationHandler.getInstance().loadLanguage(ShopPlugin.getInstance().getShopsConfig().getLanguage()).thenAcceptAsync(success -> {
 					if (success) {
 						openBaseMenu(player);
-						Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getTranslation(Template.of("ms", System.currentTimeMillis() - ms + "")));
+						Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getKey(), Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getTranslation(Template.of("ms", System.currentTimeMillis() - ms + "")));
 						return;
 					}
 					Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOAD_ERROR);
@@ -60,7 +60,7 @@ public class ShopManagementMenu {
 						customer.sendMessage(Message.GENERAL_WEBINTERFACE_ERROR); //TODO natürlich das language webinterface
 						return;
 					}
-					customer.sendMessage(Message.GENERAL_WEBINTERFACE_LINK.getTranslation(Template.of("link", "https://127.0.0.1:8080/" + paste.getId())));
+					customer.sendMessage(Message.GENERAL_WEBINTERFACE_LINK.getKey(), Message.GENERAL_WEBINTERFACE_LINK.getTranslation(Template.of("link", "https://127.0.0.1:8080/" + paste.getId())));
 				});
 			}
 		});
@@ -77,7 +77,7 @@ public class ShopManagementMenu {
 					customer.sendMessage(Message.GENERAL_WEBINTERFACE_ERROR);
 					return;
 				}
-				customer.sendMessage(Message.GENERAL_WEBINTERFACE_LINK.getTranslation(Template.of("link", "https://127.0.0.1:8080/" + paste.getId())));
+				customer.sendMessage(Message.GENERAL_WEBINTERFACE_LINK.getKey(), Message.GENERAL_WEBINTERFACE_LINK.getTranslation(Template.of("link", "https://127.0.0.1:8080/" + paste.getId())));
 			});
 
 		});

@@ -46,6 +46,10 @@ public class Config extends AnnotationConfig {
 	public boolean autoTaggingMaterials = false;
 	@ConfigEntry(path = "tags.auto-tagging-groups")
 	public boolean autoTaggingGroups = false;
+	@ConfigEntry(path = "tags.auto-tagging-enchants")
+	public boolean autoTaggingEnchantments = false;
+	@ConfigEntry(path = "tags.auto-tagging-potions")
+	public boolean autoTaggingPotions = false;
 
 
 	public Config(String path) {

@@ -70,6 +70,7 @@ shops:
 
 
 tags:
+
   # Material auto-tagging will always add the material of the sold item as
   # tag to the shop entry. So you can apply a discount to all netherite_swords
   # for example.
@@ -80,6 +81,12 @@ tags:
   # This allows you to easily apply a discount to all wools without even setting tags.
   # Using PaperMC as server software will add some more tags.
   auto-tagging-groups: false
+
+  # Enchant auto-tagging will add all enchantments as tag (without level)
+  auto-tagging-enchants: false
+
+  # Potion auto-tagging will add all potion-effects as tag (without strength/duration)
+  auto-tagging-potions: false
 
 database:
 

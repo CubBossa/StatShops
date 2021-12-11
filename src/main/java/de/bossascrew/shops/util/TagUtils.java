@@ -5,9 +5,11 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SpawnEggMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class TagUtils {
@@ -33,8 +35,22 @@ public class TagUtils {
 		return false;
 	}
 
-	public Collection<String> getTags(ItemStack itemStack, boolean material, boolean groups) {
+	public Collection<String> getTags(ItemStack itemStack, boolean material, boolean groups, boolean enchantments, boolean potions) {
 		Collection<String> tags = getTags(itemStack.getType(), material, groups);
+
+		if (enchantments) {
+			if (itemStack.getItemMeta() instanceof EnchantmentStorageMeta meta) {
+				tags.addAll(meta.getEnchants().keySet().stream().map(e -> e.getKey().getKey()).collect(Collectors.toList()));
+			}
+			tags.addAll(itemStack.getEnchantments().keySet().stream().map(e -> e.getKey().getKey()).collect(Collectors.toList()));
+		}
+		if (potions) {
+			if (itemStack.getItemMeta() instanceof PotionMeta meta) {
+				if (meta.hasCustomEffects()) {
+					tags.addAll(meta.getCustomEffects().stream().map(effect -> effect.getType().getName().toLowerCase()).collect(Collectors.toList()));
+				}
+			}
+		}
 		return tags;
 	}
 

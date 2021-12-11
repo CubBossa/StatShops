@@ -11,7 +11,12 @@ import de.bossascrew.shops.util.ItemStackUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -46,16 +51,26 @@ public class TestDatabase implements Database, LogDatabase {
 		ChestMenuShop s1 = (ChestMenuShop) createShop("<rainbow>ExampleShop</rainbow>", UUID.randomUUID());
 		s1.addTag("swords");
 		s1.addTag("rainbow");
-		s1.addTag("i am a tag");
-		s1.addTag("test");
-		for (int i = 0; i < 14; i++) {
-			s1.addTag("tag" + i);
-		}
 
 		ShopEntry entry1 = createEntry(UUID.randomUUID(), s1, new ItemStack(Material.MINECART), ShopHandler.getInstance().getShopModes().get(0), 0);
-		entry1.setModule(new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 3, new ItemStack(Material.EMERALD), new ItemStack(Material.MINECART)));
+		ItemStack article = new ItemStack(Material.MINECART);
+		ItemMeta meta = article.getItemMeta();
+		meta.addEnchant(Enchantment.ARROW_INFINITE, 2, true);
+		article.setItemMeta(meta);
+
+		entry1.setModule(new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 3, new ItemStack(Material.EMERALD), article));
 		entry1.addTag("test");
 		s1.addEntry(ShopHandler.getInstance().getShopModes().get(0), 0, entry1);
+
+		ShopEntry entry2 = createEntry(UUID.randomUUID(), s1, new ItemStack(Material.POTION), ShopHandler.getInstance().getShopModes().get(0), 1);
+		ItemStack article2 = new ItemStack(Material.POTION);
+		PotionMeta pmeta = (PotionMeta) article2.getItemMeta();
+		pmeta.setBasePotionData(new PotionData(PotionType.SPEED));
+		article2.setItemMeta(pmeta);
+
+		entry2.setModule(new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 3, new ItemStack(Material.EMERALD), article2));
+		entry2.addTag("test");
+		s1.addEntry(ShopHandler.getInstance().getShopModes().get(0), 1, entry2);
 
 		Shop s2 = createShop("<white>Boring Shop", UUID.randomUUID());
 

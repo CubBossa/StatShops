@@ -85,14 +85,18 @@ public class BaseEntry implements ShopEntry {
 	}
 
 	public List<String> getTags() {
-		List<String> tags = new ArrayList<>(this.tags);
+		List<String> tags = shop.getTags().stream().map(s -> "(shop) " + s).collect(Collectors.toList());
 		tags.add(uuid.toString());
+		tags.addAll(this.tags);
 		//If auto-tagging is enabled, add all material tags to the entry
 		if (module != null && module instanceof TradeModule tm) {
 			Config config = ShopPlugin.getInstance().getShopsConfig();
-			tags.addAll(TagUtils.getTags(tm.getArticle().getType(), config.isAutoTaggingMaterials(), config.isAutoTaggingGroups()));
+			tags.addAll(TagUtils.getTags(tm.getArticle(),
+					config.isAutoTaggingMaterials(),
+					config.isAutoTaggingGroups(),
+					config.isAutoTaggingEnchantments(),
+					config.isAutoTaggingPotions()));
 		}
-		tags.addAll(shop.getTags().stream().map(s -> "(shop) " + s).collect(Collectors.toList()));
 		return tags;
 	}
 

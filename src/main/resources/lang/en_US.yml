@@ -315,9 +315,25 @@ manager:
         name: "<white>Start Dates"
         lore: "<gray>You can set many different\n<gray>start dates for one discount.\n<gray>Every start date has to be\n<gray>at least the duration apart\n<gray>from the next and previous."
       set_duration:
-        title: "Set a duration (XyXwXdXhXmXs)"
+        title: "Set a duration"
         name: "<white>Set Duration"
-        lore: "<gray>Set the duration the discount\n<gray>will be active for.\n\n<red><bold>!</bold></red><gray> If your provided duration is too long\n<gray>and start dates would overlap\n<gray>the action will be cancelled!"
+        # Valid placeholders: <duration>
+        lore: "<gray>Current: <gold><duration>\n\n<gray>Set the duration the discount\n<gray>will be active for.\n\n<red><bold>!</bold></red><gray> If your provided duration is too long\n<gray>and start dates would overlap\n<gray>the action will be cancelled!"
+      set_percent:
+        title: "Set a percentage"
+        name: "<white>Set Percent"
+        # Valid placeholders: <percent>
+        lore: "<gray>Current: <gold><percent>\n\n<gray>Sets the percentage to multiply with the pirce.\n<gray>0.5 -> The item costs half as much."
+      start:
+        info:
+          name: "<gold>Info"
+          lore: "<gray>You can create multiple start dates\n<gray>for your discount. The discount will\n<gray>start at every start date for\n<gray>the given duration.\n\n<gray>If you want varying durations, you\n<gray>have to create multiple discounts.\n\n<gray>» <yellow>right-click: <gray>delete element"
+        new:
+          title: "Enter a start date"
+          name: "<green>New Start Date"
+          lore: "<gray>Click to add a\n<gray>start date."
+        # Valid placeholders: <date>
+        confirm_delete: "Delete start-date <date>?"
 
     templates:
       title: "Manage shop templates"

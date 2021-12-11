@@ -33,7 +33,7 @@ public interface Database {
 
 	void deleteEntry(ShopEntry shopEntry);
 
-	Discount createDiscount(String nameFormat, LinkedList<LocalDateTime> start, Duration duration, double percent, String... tags);
+	Discount createDiscount(String nameFormat, SortedSet<LocalDateTime> start, Duration duration, double percent, String... tags);
 
 	Map<UUID, Discount> loadDiscounts();
 

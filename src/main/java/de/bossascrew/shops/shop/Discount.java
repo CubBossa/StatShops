@@ -6,10 +6,7 @@ import de.bossascrew.shops.ShopPlugin;
 import de.bossascrew.shops.data.DatabaseObject;
 import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.menu.ListMenuElement;
-import de.bossascrew.shops.util.ComponentUtils;
-import de.bossascrew.shops.util.Duplicable;
-import de.bossascrew.shops.util.Editable;
-import de.bossascrew.shops.util.ItemStackUtils;
+import de.bossascrew.shops.util.*;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -22,9 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -43,7 +38,7 @@ public class Discount implements
 	@JsonIgnore
 	private String namePlain;
 	@JsonIgnore
-	private final LinkedList<LocalDateTime> startTimes;
+	private final SortedSet<LocalDateTime> startTimes;
 	@JsonIgnore
 	private Duration duration;
 	private double percent;
@@ -54,11 +49,11 @@ public class Discount implements
 	private @Nullable Player editor = null;
 
 	public Discount(UUID uuid, String nameFormat, LocalDateTime startTime, Duration duration, double percent, String permission, String... tags) {
-		this(uuid, nameFormat, new LinkedList<>(), duration, percent, permission, tags);
+		this(uuid, nameFormat, new TreeSet<>(), duration, percent, permission, tags);
 		addStartTime(startTime);
 	}
 
-	public Discount(UUID uuid, String nameFormat, LinkedList<LocalDateTime> startTimes, Duration duration, double percent, String permission, String... tags) {
+	public Discount(UUID uuid, String nameFormat, SortedSet<LocalDateTime> startTimes, Duration duration, double percent, String permission, String... tags) {
 		this.uuid = uuid;
 		setNameFormat(nameFormat);
 		this.startTimes = startTimes;
@@ -68,8 +63,24 @@ public class Discount implements
 		this.tags = Lists.newArrayList(tags);
 	}
 
+	/**
+	 * Checks if new duration has intersections with given start dates.
+	 */
 	public void setDuration(Duration duration) {
-		//TODO sichergehen, dass keine start dates nun zu nah aneinander sind
+		Iterator<LocalDateTime> iterator = startTimes.iterator();
+		if (iterator.hasNext()) {
+			LocalDateTime a;
+			LocalDateTime b = iterator.next();
+			while (iterator.hasNext()) {
+				a = b;
+				b = iterator.next();
+
+				if (a.until(b, ChronoUnit.SECONDS) > duration.getSeconds()) {
+					ShopPlugin.getInstance().log(LoggingPolicy.ERROR, "Cannot set duration, intersecting start dates: " + a + ", " + b);
+					return;
+				}
+			}
+		}
 		this.duration = duration;
 	}
 
@@ -81,24 +92,15 @@ public class Discount implements
 	}
 
 	public boolean addStartTime(LocalDateTime startTime) {
-		if (startTimes.add(startTime)) {
-			// Insert date, get date before and after. Check if startdate would be within the duration distance from another start date.
-			// If so, remove from list again and return false
-
-			int index = startTimes.indexOf(startTime);
-			LocalDateTime before = index == 0 ? null : startTimes.get(index - 1);
-			LocalDateTime after = index == startTimes.size() - 1 ? null : startTimes.get(index + 1);
-			if (before != null && before.until(startTime, ChronoUnit.SECONDS) > getDurationSeconds()) {
-				startTimes.remove(startTime);
+		Iterator<LocalDateTime> iterator = startTimes.iterator();
+		int duration = (int) getDurationSeconds();
+		while (iterator.hasNext()) {
+			LocalDateTime actual = iterator.next();
+			if (Math.abs(startTime.until(actual, ChronoUnit.SECONDS)) < duration) {
 				return false;
 			}
-			if (after != null && startTime.until(after, ChronoUnit.SECONDS) > getDurationSeconds()) {
-				startTimes.remove(startTime);
-				return false;
-			}
-			return true;
 		}
-		return false;
+		return startTimes.add(startTime);
 	}
 
 	/**

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @UtilityClass
 public class ComponentUtils {
@@ -23,7 +24,10 @@ public class ComponentUtils {
 
 	private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.builder().build();
 
-	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy, hh:mm");
+	public static final String DURATION_FORMAT = new DurationParser(true).format(0);
+
+	public static final String DATE_TIME_FORMAT = "dd.MM.yy, HH:mm";
+	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
 	public Component fromLegacy(String legacy) {
 		return LEGACY_SERIALIZER.deserialize(legacy);
@@ -42,7 +46,11 @@ public class ComponentUtils {
 	}
 
 	public String formatDuration(Duration duration) {
-		return new DurationParser().parse(duration);
+		return new DurationParser().format(duration);
+	}
+
+	public Duration parseDuration(String input) {
+		return new DurationParser().parse(input);
 	}
 
 	public String formatLocalDateTime(@Nullable LocalDateTime localDateTime) {
@@ -50,6 +58,15 @@ public class ComponentUtils {
 			return "-";
 		}
 		return localDateTime.format(DATE_TIME_FORMATTER);
+	}
+
+	public @Nullable LocalDateTime parseLocalDateTime(String string) {
+		try {
+			return LocalDateTime.parse(string, DATE_TIME_FORMATTER);
+		} catch (DateTimeParseException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

@@ -20,11 +20,7 @@ public class DurationParser {
 	};
 
 	private final boolean displayEmptyUnits;
-	private final @Nullable List<ChronoUnit> displayedUnits;
-
-	public DurationParser() {
-		this(false);
-	}
+	private final List<ChronoUnit> displayedUnits;
 
 	public DurationParser(ChronoUnit... displayedUnits) {
 		this(false, displayedUnits);
@@ -35,14 +31,14 @@ public class DurationParser {
 		this.displayedUnits = new ArrayList<>(List.of(displayedUnits));
 	}
 
-	public String parse(Duration duration) {
-		return parse(duration.toMillis());
+	public String format(Duration duration) {
+		return format(duration.toMillis());
 	}
 
-	public String parse(long millis) {
+	public String format(long millis) {
 		StringBuilder result = new StringBuilder();
 		for (DurationUnit unit : units) {
-			if (displayedUnits != null && !displayedUnits.contains(unit.unit)) {
+			if (!displayedUnits.isEmpty() && !displayedUnits.contains(unit.unit)) {
 				continue;
 			}
 			int counter = 0;
@@ -61,6 +57,32 @@ public class DurationParser {
 			}
 		}
 		return result.toString();
+	}
+
+	public Duration parse(String input) {
+		input = input.toLowerCase().replace(" ", "");
+		Duration duration = Duration.ZERO;
+		for (DurationUnit durationUnit : units) {
+
+			int index = input.indexOf(durationUnit.plural.toLowerCase().replace(" ", ""));
+			if (index == -1) {
+				index = input.indexOf(durationUnit.singular.toLowerCase().replace(" ", ""));
+			}
+			if (index == -1) {
+				continue;
+			}
+			int endIndex = index--;
+			while (index >= 0 && Character.isDigit(input.charAt(index))) {
+				index--;
+			}
+			index++;
+			try {
+				int result = Integer.parseInt(input.substring(index, endIndex));
+				duration = duration.plus(result * durationUnit.milliseconds, ChronoUnit.MILLIS);
+			} catch (NumberFormatException ignored) {
+			}
+		}
+		return duration;
 	}
 
 	@AllArgsConstructor

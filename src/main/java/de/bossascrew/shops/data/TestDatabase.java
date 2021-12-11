@@ -114,7 +114,7 @@ public class TestDatabase implements Database, LogDatabase {
 	}
 
 	@Override
-	public Discount createDiscount(String nameFormat, LinkedList<LocalDateTime> start, Duration duration, double percent, String... tags) {
+	public Discount createDiscount(String nameFormat, SortedSet<LocalDateTime> start, Duration duration, double percent, String... tags) {
 		return new Discount(UUID.randomUUID(), nameFormat, start, duration, percent, null, tags);
 	}
 

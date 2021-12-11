@@ -51,12 +51,12 @@ public class DiscountHandler implements
 	}
 
 	public Discount createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags) {
-		LinkedList<LocalDateTime> startTimes = new LinkedList<>();
+		TreeSet<LocalDateTime> startTimes = new TreeSet<>();
 		startTimes.add(start);
 		return createDiscount(nameFormat, startTimes, duration, percent, tags);
 	}
 
-	public Discount createDiscount(String nameFormat, LinkedList<LocalDateTime> start, Duration duration, double percent, String... tags) {
+	public Discount createDiscount(String nameFormat, SortedSet<LocalDateTime> start, Duration duration, double percent, String... tags) {
 		Discount discount = ShopPlugin.getInstance().getDatabase().createDiscount(nameFormat, start, duration, percent, tags);
 		discountMap.put(discount.getUuid(), discount);
 		for (String tag : tags) {

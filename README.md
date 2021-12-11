@@ -22,6 +22,7 @@
 - Works with villager based shops and chest based shops
 - Add multiple discounts and sum up the discount percentage
 - Plan discounts like Christmas offers way before they start
+- Add multiple start times per discount to activate it e.g. once every month/weekend
 
 ### Limits
 

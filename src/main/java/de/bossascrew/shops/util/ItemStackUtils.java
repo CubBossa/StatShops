@@ -58,6 +58,8 @@ public class ItemStackUtils {
 	public static Material MATERIAL_TEMPLATE = Material.MUSIC_DISC_CHIRP;
 
 	public static Material MATERIAL_TAGS = Material.NAME_TAG;
+	public static Material MATERIAL_DATES = Material.CLOCK;
+	public static Material MATERIAL_DURATIONS = Material.COMPASS;
 	public static Material MATERIAL_PERMISSIONS = Material.STRUCTURE_VOID;
 
 	public LegacyComponentSerializer SERIALIZER = LegacyComponentSerializer.builder()
@@ -122,8 +124,8 @@ public class ItemStackUtils {
 					Template.of("percent", discount.getPercent() + ""),
 					Template.of("name", discount.getName()),
 					Template.of("start-date", ComponentUtils.formatLocalDateTime(discount.getNextStart())),
-					Template.of("duration", DURATION_PARSER.parse(discount.getDuration())),
-					Template.of("remaining", DURATION_PARSER.parse(discount.getRemaining()))
+					Template.of("duration", DURATION_PARSER.format(discount.getDuration())),
+					Template.of("remaining", DURATION_PARSER.format(discount.getRemaining()))
 			));
 		}
 		return existingLore;
@@ -274,9 +276,9 @@ public class ItemStackUtils {
 						Template.of("uuid", discount.getUuid().toString()),
 						Template.of("permission", discount.getPermission() == null ? "X" : discount.getPermission()),
 						Template.of("name", discount.getName()),
-						Template.of("remaining", DURATION_PARSER.parse(discount.getRemaining())),
+						Template.of("remaining", DURATION_PARSER.format(discount.getRemaining())),
 						Template.of("start-date", ComponentUtils.formatLocalDateTime(discount.getNextStart())),
-						Template.of("duration", DURATION_PARSER.parse(discount.getDuration()))));
+						Template.of("duration", DURATION_PARSER.format(discount.getDuration()))));
 	}
 
 	public ItemStack createLimitsItemStack(Limit limit) {
@@ -290,7 +292,7 @@ public class ItemStackUtils {
 						Template.of("limit", "" + limit.getTransactionLimit()),
 						Template.of("combine-transactions", "" + limit.isSummTagMemberLimits()),
 						Template.of("uuid", limit.getUuid().toString()),
-						Template.of("recover", DURATION_PARSER.parse(limit.getRecover()))));
+						Template.of("recover", DURATION_PARSER.format(limit.getRecover()))));
 	}
 
 	public ItemStack createTemplatesItemStack(EntryTemplate template) {

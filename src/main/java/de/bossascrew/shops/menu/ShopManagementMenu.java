@@ -482,64 +482,101 @@ public class ShopManagementMenu {
 						Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
 						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openDiscountMenu(player, discount, fromPage)).openInventory(player));
 
-		chestMenu.setItemAndClickHandler(0, 5, ItemStackUtils.createItemStack(Material.CLOCK, Message.GUI_DISCOUNT_SET_START_NAME,
-				Message.GUI_DISCOUNT_SET_START_LORE), clickContext -> {
+		chestMenu.setItemAndClickHandler(0, 5, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DATES, Message.GUI_DISCOUNT_SET_START_NAME,
+				Message.GUI_DISCOUNT_SET_START_LORE), clickContext -> openDiscountStartMenu(clickContext.getPlayer(), discount, fromPage, 0));
 
-			PagedChestMenu menu = new PagedChestMenu(Message.GUI_DISCOUNT_SET_START_TITLE.getTranslation(), 3, null, null, backContext -> {
-				openDiscountMenu(player, discount, fromPage);
-			});
+		Template dur = Template.of("duration", ComponentUtils.formatDuration(discount.getDuration()));
+		chestMenu.setItemAndClickHandler(0, 6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DURATIONS, Message.GUI_DISCOUNT_SET_DURATION_NAME.getTranslation(dur),
+				Message.GUI_DISCOUNT_SET_DURATION_LORE.getTranslations(dur)), clickContext -> {
 
-			menu.setNavigationEntry(4, ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_DISCOUNT_START_INFO_NAME,
-					Message.GUI_DISCOUNT_START_INFO_LORE), cc -> {
-			});
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.plugin(ShopPlugin.getInstance())
+					.text(ComponentUtils.DURATION_FORMAT)
+					.title(Message.GUI_DISCOUNT_SET_DURATION_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> {
+						chestMenu.refresh(6);
+						chestMenu.openInventory(player);
+					}, 1L))
+					.onComplete((p, s) -> {
+						discount.setDuration(ComponentUtils.parseDuration(s));
+						return AnvilGUI.Response.close();
+					}).open(player);
+		});
 
-			menu.setNavigationEntry(7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_START_NEW_NAME,
-					Message.GUI_DISCOUNT_START_NEW_LORE), cc -> {
+		Template percent = Template.of("percent", discount.getFormattedPercent(true));
+		chestMenu.setItemAndClickHandler(0, 7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_SET_PERCENT_NAME.getTranslation(percent),
+				Message.GUI_DISCOUNT_SET_PERCENT_LORE.getTranslations(percent)), clickContext -> {
 
-				player.closeInventory();
-				new AnvilGUI.Builder()
-						.plugin(ShopPlugin.getInstance())
-						.text("dd.MM.yy, hh:mm")
-						.title(Message.GUI_DISCOUNT_START_NEW_TITLE.getLegacyTranslation())
-						.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> menu.openInventory(player, menu.getCurrentPage()), 1L))
-						.onComplete((p, s) -> {
-							//TODO localdate parsen und einfügen.
-							return AnvilGUI.Response.close();
-						}).open(player);
-			});
-			for (LocalDateTime date : discount.getStartTimes()) {
-				Component dateComp = Component.text(ComponentUtils.formatLocalDateTime(date), NamedTextColor.WHITE);
-				menu.addMenuEntry(ItemStackUtils.createItemStack(Material.NAME_TAG, dateComp, new ArrayList<>()), cc -> {
-					if (cc.getAction().isRightClick()) {
-						if (ShopPlugin.getInstance().getShopsConfig().isConfirmDeletion()) {
-							ConfirmMenu confirmMenu = new ConfirmMenu(Message.GUI_DISCOUNT_START_DELETE_CONFIRM.getTranslation(Template.of("date", dateComp)));
-							confirmMenu.setDenyHandler(c -> menu.openInventory(player, menu.getCurrentPage()));
-							confirmMenu.setCloseHandler(c -> menu.openInventory(player, menu.getCurrentPage()));
-							confirmMenu.setAcceptHandler(c -> {
-								discount.removeStartTime(date);
-								menu.openInventory(c.getPlayer(), menu.getCurrentPage());
-							});
-							confirmMenu.openInventory(cc.getPlayer());
-						} else {
-							discount.removeStartTime(date);
-							menu.openInventory(cc.getPlayer(), menu.getCurrentPage());
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.plugin(ShopPlugin.getInstance())
+					.text(ComponentUtils.DURATION_FORMAT)
+					.title(Message.GUI_DISCOUNT_SET_DURATION_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> {
+						chestMenu.refresh(7);
+						chestMenu.openInventory(player);
+					}, 1L))
+					.onComplete((p, s) -> {
+						double d = 0;
+						try {
+							d = Double.parseDouble(s);
+						} catch (NumberFormatException e) {
 						}
-					}
-				});
-				menu.openInventory(player);
-			}
-		});
-		chestMenu.setItemAndClickHandler(0, 6, ItemStackUtils.createItemStack(Material.COMPASS, Message.GUI_DISCOUNT_SET_DURATION_NAME,
-				Message.GUI_DISCOUNT_SET_DURATION_LORE), clickContext -> {
-			//TODO setduration compass
-
-		});
-		chestMenu.setItemAndClickHandler(0, 7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_SET_PERCENT_NAME,
-				Message.GUI_DISCOUNT_SET_PERCENT_LORE), clickContext -> {
-			//TODO setpercent emerald
-
+						discount.setPercent(Math.abs(d));
+						return AnvilGUI.Response.close();
+					}).open(player);
 		});
 
 		chestMenu.openInventory(player);
+	}
+
+	public void openDiscountStartMenu(Player player, Discount discount, int fromPage, int page) {
+		PagedChestMenu menu = new PagedChestMenu(Message.GUI_DISCOUNT_SET_START_TITLE.getTranslation(), 3, null, null, backContext -> {
+			openDiscountMenu(player, discount, fromPage);
+		});
+
+		menu.setNavigationEntry(4, ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_DISCOUNT_START_INFO_NAME,
+				Message.GUI_DISCOUNT_START_INFO_LORE), cc -> {
+		});
+
+		menu.setNavigationEntry(7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_START_NEW_NAME,
+				Message.GUI_DISCOUNT_START_NEW_LORE), cc -> {
+
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.plugin(ShopPlugin.getInstance())
+					.text(ComponentUtils.DATE_TIME_FORMAT)
+					.title(Message.GUI_DISCOUNT_START_NEW_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openDiscountStartMenu(player, discount, fromPage, menu.getCurrentPage()), 1L))
+					.onComplete((p, s) -> {
+						LocalDateTime date = ComponentUtils.parseLocalDateTime(s);
+						if (date != null) {
+							discount.addStartTime(date);
+						}
+						return AnvilGUI.Response.close();
+					}).open(player);
+		});
+		for (LocalDateTime date : discount.getStartTimes()) {
+			Component dateComp = Component.text(ComponentUtils.formatLocalDateTime(date), NamedTextColor.WHITE);
+			menu.addMenuEntry(ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DATES, dateComp, new ArrayList<>()), cc -> {
+				if (cc.getAction().isRightClick()) {
+					if (ShopPlugin.getInstance().getShopsConfig().isConfirmDeletion()) {
+						ConfirmMenu confirmMenu = new ConfirmMenu(Message.GUI_DISCOUNT_START_DELETE_CONFIRM.getTranslation(Template.of("date", dateComp)));
+						confirmMenu.setDenyHandler(c -> menu.openInventory(player, menu.getCurrentPage()));
+						confirmMenu.setCloseHandler(c -> menu.openInventory(player, menu.getCurrentPage()));
+						confirmMenu.setAcceptHandler(c -> {
+							discount.removeStartTime(date);
+							openDiscountStartMenu(player, discount, fromPage, menu.getCurrentPage());
+						});
+						confirmMenu.openInventory(cc.getPlayer());
+					} else {
+						discount.removeStartTime(date);
+						openDiscountStartMenu(player, discount, fromPage, menu.getCurrentPage());
+					}
+				}
+			});
+			menu.openInventory(player, page);
+		}
 	}
 }

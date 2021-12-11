@@ -36,8 +36,8 @@ public class TradeBaseModule<T> implements TradeModule<T> {
 		this.priceObject = priceObject;
 		this.article = article;
 		displayItem = new ItemStack(Material.EMERALD);
-		displayName = Message.MANAGER_GUI_ENTRY_FUNCTION_TRADE_NAME.getTranslation();
-		displayLore = Message.MANAGER_GUI_ENTRY_FUNCTION_TRADE_LORE.getTranslations();
+		displayName = Message.GUI_ENTRY_FUNCTION_TRADE_NAME.getTranslation();
+		displayLore = Message.GUI_ENTRY_FUNCTION_TRADE_LORE.getTranslations();
 	}
 
 	@Override

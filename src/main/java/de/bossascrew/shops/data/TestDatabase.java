@@ -21,10 +21,7 @@ import org.bukkit.potion.PotionType;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class TestDatabase implements Database, LogDatabase {
 
@@ -117,7 +114,7 @@ public class TestDatabase implements Database, LogDatabase {
 	}
 
 	@Override
-	public Discount createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags) {
+	public Discount createDiscount(String nameFormat, LinkedList<LocalDateTime> start, Duration duration, double percent, String... tags) {
 		return new Discount(UUID.randomUUID(), nameFormat, start, duration, percent, null, tags);
 	}
 

@@ -34,7 +34,7 @@ public class EntryEditor extends ChestMenu {
 	@Nullable private Collection<Class<?>> allowedModuleTypes = null;
 
 	public EntryEditor(ShopEntry entry, ContextConsumer<BackContext> backHandler) {
-		super(Message.MANAGER_GUI_SHOP_ENTRY, 3);
+		super(Message.GUI_SHOP_ENTRY, 3);
 		this.entry = entry;
 		this.backHandler = backHandler;
 	}
@@ -44,12 +44,12 @@ public class EntryEditor extends ChestMenu {
 		setBackHandlerAction(backHandler);
 		//Set deco lore
 		setItemAndClickHandler(0, 0, ItemStackUtils.createItemStack(entry.getDisplayItem().getType(),
-				Message.MANAGER_GUI_ENTRY_SET_LORE_NAME, Message.MANAGER_GUI_ENTRY_SET_LORE_LORE), clickContext -> {
+				Message.GUI_ENTRY_SET_LORE_NAME, Message.GUI_ENTRY_SET_LORE_LORE), clickContext -> {
 
 		});
 		//Set permissions
 		setItemAndClickHandler(1, 0, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
-				Message.MANAGER_GUI_ENTRY_SET_PERMISSION_NAME.getTranslation(), Message.MANAGER_GUI_ENTRY_SET_PERMISSION_LORE.getTranslations(
+				Message.GUI_ENTRY_SET_PERMISSION_NAME.getTranslation(), Message.GUI_ENTRY_SET_PERMISSION_LORE.getTranslations(
 						Template.of("permission", entry.getPermission() == null ? "X" : entry.getPermission())
 				)), clickContext -> {
 			Player player = clickContext.getPlayer();
@@ -57,7 +57,7 @@ public class EntryEditor extends ChestMenu {
 			new AnvilGUI.Builder()
 					.plugin(ShopPlugin.getInstance())
 					.text("shops.item.")
-					.title(Message.MANAGER_GUI_ENTRY_SET_PERMISSION_TITLE.getLegacyTranslation())
+					.title(Message.GUI_ENTRY_SET_PERMISSION_TITLE.getLegacyTranslation())
 					.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openInventory(p), 1L))
 					.onComplete((p, s) -> {
 						entry.setPermission(s);
@@ -68,23 +68,23 @@ public class EntryEditor extends ChestMenu {
 		});
 		//Set tags
 		setItemAndClickHandler(2, 0, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
-						Message.MANAGER_GUI_ENTRY_SET_TAGS_NAME, Message.MANAGER_GUI_LIMIT_SET_TAGS_LORE),
+						Message.GUI_ENTRY_SET_TAGS_NAME, Message.GUI_LIMIT_SET_TAGS_LORE),
 				clickContext -> {
 					Player player = clickContext.getPlayer();
-					TagsEditorMenu menu = new TagsEditorMenu(entry, Message.MANAGER_GUI_TAGS_TITLE.getTranslation(),
-							Message.MANAGER_GUI_TAGS_NEW_TAG_TITLE, Message.MANAGER_GUI_TAGS_NEW_TAG_NAME, Message.MANAGER_GUI_TAGS_NEW_TAG_LORE,
+					TagsEditorMenu menu = new TagsEditorMenu(entry, Message.GUI_TAGS_TITLE.getTranslation(),
+							Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
 							Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openInventory(player));
 					menu.openInventory(player);
 				});
 
 		setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(entry.getModule() == null ? new ItemStack(Material.BLACK_STAINED_GLASS) :
-						entry.getModule().getDisplayItem(), Message.MANAGER_GUI_ENTRY_SET_FUNCTION_NAME.getTranslation(Template.of("name", entry.getModule() == null ?
-						Message.MANAGER_GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName())),
-				Message.MANAGER_GUI_ENTRY_SET_FUNCTION_LORE.getTranslations(Template.of("function", entry.getModule() == null ?
-						Message.MANAGER_GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName()))), clickContext -> {
+						entry.getModule().getDisplayItem(), Message.GUI_ENTRY_SET_FUNCTION_NAME.getTranslation(Template.of("name", entry.getModule() == null ?
+						Message.GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName())),
+				Message.GUI_ENTRY_SET_FUNCTION_LORE.getTranslations(Template.of("function", entry.getModule() == null ?
+						Message.GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName()))), clickContext -> {
 
 			ListMenu<EntryModuleHandler.EntryModuleProvider> listMenu = new ListMenu<>(3, EntryModuleHandler.getInstance(),
-					Message.MANAGER_GUI_ENTRY_SET_FUNCTION_TITLE, backContext -> openInventory(clickContext.getPlayer()));
+					Message.GUI_ENTRY_SET_FUNCTION_TITLE, backContext -> openInventory(clickContext.getPlayer()));
 
 			listMenu.setDisplayPredicate(provider -> allowedModuleTypes == null || allowedModuleTypes.stream().anyMatch(aClass -> aClass.isInstance(provider)));
 

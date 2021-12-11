@@ -22,40 +22,52 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.CompletableFuture;
 
-@CommandAlias("statshops|shops")
+@CommandAlias("statshops|shops|shop")
 public class ShopCommand extends BaseCommand {
 
 	@Default
 	public void onDefault(Player player) {
+		if (ShopPlugin.busy()) {
+			Customer.wrap(player).sendMessage(Message.GENERAL_PLUGIN_LOADING);
+			return;
+		}
 		new ShopManagementMenu().openBaseMenu(player);
 	}
 
 	@Subcommand("reload config")
 	public void reloadConfig(CommandSender sender) {
+		if (ShopPlugin.busy()) {
+			ShopPlugin.getInstance().sendMessage(sender, Message.GENERAL_PLUGIN_LOADING);
+			return;
+		}
 		long ms = System.currentTimeMillis();
 		InventoryHandler.getInstance().closeAllMenus();
 
-		CompletableFuture.supplyAsync(() -> ShopPlugin.getInstance().getShopsConfig().loadConfig()).thenAcceptAsync(success -> {
+		ShopPlugin.setBusyFor(CompletableFuture.supplyAsync(() -> ShopPlugin.getInstance().getShopsConfig().loadConfig()).thenAcceptAsync(success -> {
 			if (success) {
 				ShopPlugin.getInstance().sendMessage(sender, Message.GENERAL_CONFIG_RELOADED_IN_MS.getKey(),
 						Message.GENERAL_CONFIG_RELOADED_IN_MS.getTranslation(Template.of("ms", System.currentTimeMillis() - ms + "")), 0);
 				return;
 			}
 			ShopPlugin.getInstance().sendMessage(sender, Message.GENERAL_CONFIG_RELOAD_ERROR);
-		});
+		}));
 	}
 
 	@Subcommand("reload language")
 	public void reloadTranslations(CommandSender sender) {
+		if (ShopPlugin.busy()) {
+			ShopPlugin.getInstance().sendMessage(sender, Message.GENERAL_PLUGIN_LOADING);
+			return;
+		}
 		long ms = System.currentTimeMillis();
-		TranslationHandler.getInstance().loadLanguage(ShopPlugin.getInstance().getShopsConfig().getLanguage()).thenAcceptAsync(success -> {
+		ShopPlugin.setBusyFor(TranslationHandler.getInstance().loadLanguage(ShopPlugin.getInstance().getShopsConfig().getLanguage()).thenAcceptAsync(success -> {
 			if (success) {
 				ShopPlugin.getInstance().sendMessage(sender, Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getKey(),
 						Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getTranslation(Template.of("ms", System.currentTimeMillis() - ms + "")), 0);
 				return;
 			}
 			ShopPlugin.getInstance().sendMessage(sender, Message.GENERAL_LANGUAGE_RELOAD_ERROR);
-		});
+		}));
 	}
 
 	@Subcommand("open")
@@ -93,12 +105,11 @@ public class ShopCommand extends BaseCommand {
 		discount.addTag("test");
 		Bukkit.getScheduler().runTaskTimer(ShopPlugin.getInstance(), () -> {
 			try {
-				discount.setStartTime(LocalDateTime.now());
+				discount.addStartTime(LocalDateTime.now());
 				DiscountHandler.getInstance().handleDiscountStart(discount);
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
-
 		}, 120L, 6 * 20);
 	}
 

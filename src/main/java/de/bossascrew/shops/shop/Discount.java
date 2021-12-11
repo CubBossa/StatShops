@@ -21,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +43,7 @@ public class Discount implements
 	@JsonIgnore
 	private String namePlain;
 	@JsonIgnore
-	private LocalDateTime startTime;
+	private final LinkedList<LocalDateTime> startTimes;
 	@JsonIgnore
 	private Duration duration;
 	private double percent;
@@ -54,20 +54,98 @@ public class Discount implements
 	private @Nullable Player editor = null;
 
 	public Discount(UUID uuid, String nameFormat, LocalDateTime startTime, Duration duration, double percent, String permission, String... tags) {
+		this(uuid, nameFormat, new LinkedList<>(), duration, percent, permission, tags);
+		addStartTime(startTime);
+	}
+
+	public Discount(UUID uuid, String nameFormat, LinkedList<LocalDateTime> startTimes, Duration duration, double percent, String permission, String... tags) {
 		this.uuid = uuid;
 		setNameFormat(nameFormat);
-		this.startTime = startTime;
+		this.startTimes = startTimes;
 		this.duration = duration;
 		this.percent = percent;
 		this.permission = permission;
 		this.tags = Lists.newArrayList(tags);
 	}
 
+	public void setDuration(Duration duration) {
+		//TODO sichergehen, dass keine start dates nun zu nah aneinander sind
+		this.duration = duration;
+	}
+
+	public boolean removeStartTime(LocalDateTime startTime) {
+		if (startTimes.size() <= 1) {
+			return false;
+		}
+		return startTimes.remove(startTime);
+	}
+
+	public boolean addStartTime(LocalDateTime startTime) {
+		if (startTimes.add(startTime)) {
+			// Insert date, get date before and after. Check if startdate would be within the duration distance from another start date.
+			// If so, remove from list again and return false
+
+			int index = startTimes.indexOf(startTime);
+			LocalDateTime before = index == 0 ? null : startTimes.get(index - 1);
+			LocalDateTime after = index == startTimes.size() - 1 ? null : startTimes.get(index + 1);
+			if (before != null && before.until(startTime, ChronoUnit.SECONDS) > getDurationSeconds()) {
+				startTimes.remove(startTime);
+				return false;
+			}
+			if (after != null && startTime.until(after, ChronoUnit.SECONDS) > getDurationSeconds()) {
+				startTimes.remove(startTime);
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return The next start time to pass
+	 */
+	public @Nullable LocalDateTime getNextStart() {
+		LocalDateTime now = LocalDateTime.now();
+		for (LocalDateTime startTime : startTimes) {
+			if (startTime.isBefore(now)) {
+				continue;
+			}
+			return startTime;
+		}
+		return null;
+	}
+
+	/**
+	 * @return The last start time that has passed
+	 */
+	public LocalDateTime getLastStart() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime searched = null;
+		for (LocalDateTime startTime : startTimes) {
+			if (startTime.isAfter(now)) {
+				// list is sorted by date
+				return searched;
+			}
+			// only set value because we may find a later start date.
+			searched = startTime;
+		}
+		return null;
+	}
+
 	/**
 	 * @return The remaining time in seconds
 	 */
 	public long getRemaining() {
-		return LocalDateTime.now().until(startTime.plus(duration), ChronoUnit.SECONDS);
+		LocalDateTime lastStart = getLastStart();
+		if (lastStart == null) {
+			return 0;
+		}
+		return LocalDateTime.now().until(lastStart.plus(duration), ChronoUnit.SECONDS);
+	}
+
+	public boolean isCurrentlyActive() {
+		long remaining = getRemaining();
+		return remaining > 0 && remaining < getDurationSeconds();
 	}
 
 	public void setNameFormat(String nameFormat) {
@@ -125,10 +203,6 @@ public class Discount implements
 	@Override
 	public Discount duplicate() {
 		return DiscountHandler.getInstance().createDuplicate(this);
-	}
-
-	public long getUnixStartTime(){
-		return startTime.atZone(ZoneId.systemDefault()).toEpochSecond();
 	}
 
 	public long getDurationSeconds(){

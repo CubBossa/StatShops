@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -44,7 +45,10 @@ public class ComponentUtils {
 		return new DurationParser().parse(duration);
 	}
 
-	public String formatLocalDateTime(LocalDateTime localDateTime) {
+	public String formatLocalDateTime(@Nullable LocalDateTime localDateTime) {
+		if (localDateTime == null) {
+			return "-";
+		}
 		return localDateTime.format(DATE_TIME_FORMATTER);
 	}
 

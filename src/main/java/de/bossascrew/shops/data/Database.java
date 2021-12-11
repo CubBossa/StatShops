@@ -9,10 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public interface Database {
 
@@ -36,7 +33,7 @@ public interface Database {
 
 	void deleteEntry(ShopEntry shopEntry);
 
-	Discount createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags);
+	Discount createDiscount(String nameFormat, LinkedList<LocalDateTime> start, Duration duration, double percent, String... tags);
 
 	Map<UUID, Discount> loadDiscounts();
 

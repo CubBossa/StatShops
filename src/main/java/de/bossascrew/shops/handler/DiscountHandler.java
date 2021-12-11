@@ -51,6 +51,12 @@ public class DiscountHandler implements
 	}
 
 	public Discount createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags) {
+		LinkedList<LocalDateTime> startTimes = new LinkedList<>();
+		startTimes.add(start);
+		return createDiscount(nameFormat, startTimes, duration, percent, tags);
+	}
+
+	public Discount createDiscount(String nameFormat, LinkedList<LocalDateTime> start, Duration duration, double percent, String... tags) {
 		Discount discount = ShopPlugin.getInstance().getDatabase().createDiscount(nameFormat, start, duration, percent, tags);
 		discountMap.put(discount.getUuid(), discount);
 		for (String tag : tags) {
@@ -59,12 +65,17 @@ public class DiscountHandler implements
 			tagMap.put(tag, discounts);
 		}
 		//Refresh all open inventories that are
-		if (start.isBefore(LocalDateTime.now())) {
+		if (discount.isCurrentlyActive()) {
 			handleDiscountStart(discount);
 		} else {
-			Bukkit.getScheduler().runTaskLaterAsynchronously(ShopPlugin.getInstance(), () -> {
-				handleDiscountStart(discount);
-			}, LocalDateTime.now().until(start, ChronoUnit.MILLIS) / 50);
+			LocalDateTime nextStart = discount.getNextStart();
+			if (nextStart != null) {
+				//If nextStart is actually null (which it should not be) we have to create start a scheduler later on
+
+				Bukkit.getScheduler().runTaskLaterAsynchronously(ShopPlugin.getInstance(), () -> {
+					handleDiscountStart(discount);
+				}, LocalDateTime.now().until(nextStart, ChronoUnit.MILLIS) / 50);
+			}
 		}
 		return discount;
 	}
@@ -137,10 +148,7 @@ public class DiscountHandler implements
 				}
 			}
 		}
-		discounts = discounts.stream()
-				.filter(discount -> discount.getStartTime().isBefore(LocalDateTime.now()) && discount.getRemaining() > 0)
-				.collect(Collectors.toList());
-
+		discounts = discounts.stream().filter(Discount::isCurrentlyActive).collect(Collectors.toList());
 		return new ArrayList<>(discounts);
 	}
 
@@ -166,7 +174,7 @@ public class DiscountHandler implements
 
 	@Override
 	public Discount createDuplicate(Discount element) {
-		Discount discount = createDiscount(element.getNameFormat(), element.getStartTime(), element.getDuration(), element.getPercent());
+		Discount discount = createDiscount(element.getNameFormat(), element.getStartTimes(), element.getDuration(), element.getPercent());
 		for (String tag : element.getTags()) {
 			discount.addTag(tag);
 		}

@@ -109,8 +109,8 @@ public class ChestShopPageEditor extends BottomTopChestMenu {
 				shopEditor.openInventory(clickContext.getPlayer(), shopMode.getNext(), shopPage);
 			}
 		});
-		setItemAndClickHandlerBottom(0, 4, getButton(!shopEditor.isFreezeItems(), Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
-				Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE), clickContext -> {
+		setItemAndClickHandlerBottom(0, 4, getButton(!shopEditor.isFreezeItems(), Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
+				Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE), clickContext -> {
 
 			if (shopEditor.isFreezeItems()) {
 				handleUnfreeze();
@@ -119,18 +119,18 @@ public class ChestShopPageEditor extends BottomTopChestMenu {
 			}
 
 			shopEditor.setFreezeItems(!shopEditor.isFreezeItems());
-			setItemBottom(0, 4, getButton(!shopEditor.isFreezeItems(), Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
-					Message.MANAGER_GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE));
+			setItemBottom(0, 4, getButton(!shopEditor.isFreezeItems(), Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
+					Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE));
 			refresh(clickContext.getPlayer(), 4 + INDEX_DIFFERENCE + ROW_SIZE);
 		});
 		setItemAndClickHandlerBottom(0, 7, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TEMPLATE,
-				Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME, Message.MANAGER_GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE), clickContext -> {
+				Message.GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME, Message.GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE), clickContext -> {
 			if (clickContext.getAction().isRightClick()) {
 				clickContext.getPlayer().closeInventory();
 				new AnvilGUI.Builder()
 						.plugin(ShopPlugin.getInstance())
 						.text("name")
-						.title(Message.MANAGER_GUI_TEMPLATES_NEW.getLegacyTranslation())
+						.title(Message.GUI_TEMPLATES_NEW.getLegacyTranslation())
 						.onClose(p -> Bukkit.getScheduler().runTaskLater(ShopPlugin.getInstance(), () -> openInventory(p), 1L))
 						.onComplete((p, s) -> {
 							if (TemplateHandler.getInstance().createNew(s, shop, shopMode, shopPage) == null) {
@@ -218,13 +218,13 @@ public class ChestShopPageEditor extends BottomTopChestMenu {
 
 	public void openTemplatesListMenu(Player player) {
 		ListMenu<EntryTemplate> menu = new ListMenu<>(3, TemplateHandler.getInstance(),
-				Message.MANAGER_GUI_TEMPLATES_CHOOSE, backHandler -> openInventory(player));
+				Message.GUI_TEMPLATES_CHOOSE, backHandler -> openInventory(player));
 		menu.setClickHandler(clickContext -> openTemplateApplyMenu(player, clickContext.getTarget()));
 		menu.openInventory(player);
 	}
 
 	public void openTemplateApplyMenu(Player player, EntryTemplate template) {
-		BottomTopChestMenu menu = new BottomTopChestMenu(Message.MANAGER_GUI_TEMPLATES_APPLY.getTranslation(Template.of("name", template.getName())), shop.getRows(), 1);
+		BottomTopChestMenu menu = new BottomTopChestMenu(Message.GUI_TEMPLATES_APPLY.getTranslation(Template.of("name", template.getName())), shop.getRows(), 1);
 		menu.fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
 		menu.fillBottom();
 		int dif = shopPage * INDEX_DIFFERENCE;
@@ -256,12 +256,12 @@ public class ChestShopPageEditor extends BottomTopChestMenu {
 		ItemStack modeItem = shopMode.getDisplayItem();
 		List<Component> lore = new ArrayList<>();
 		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
-		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getPrevious().getDisplayName().color(NamedTextColor.GRAY))));
-		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getDisplayName())));
-		lore.add(Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getNext().getDisplayName().color(NamedTextColor.GRAY))));
+		lore.add(Message.GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getPrevious().getDisplayName().color(NamedTextColor.GRAY))));
+		lore.add(Message.GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getDisplayName())));
+		lore.add(Message.GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getNext().getDisplayName().color(NamedTextColor.GRAY))));
 		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
 		return ItemStackUtils.createItemStack(modeItem.getType(),
-				Message.MANAGER_GUI_SHOP_SET_DEFAULT_MODE_NAME.getTranslation(Template.of("name", modeItem.getItemMeta().getDisplayName())),
+				Message.GUI_SHOP_SET_DEFAULT_MODE_NAME.getTranslation(Template.of("name", modeItem.getItemMeta().getDisplayName())),
 				lore);
 	}
 }

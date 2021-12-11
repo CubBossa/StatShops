@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class ShopPlugin extends JavaPlugin {
@@ -82,8 +83,7 @@ public class ShopPlugin extends JavaPlugin {
 	@Getter
 	private CurrencyHandler currencyHandler;
 
-	@Getter
-	private boolean loading = true;
+	private static boolean loading = true;
 
 	@Getter
 	private VaultHook vaultHook = null;
@@ -176,7 +176,20 @@ public class ShopPlugin extends JavaPlugin {
 		registerCompletions();
 
 		//allow Transactions
-		this.loading = false;
+		loading = false;
+	}
+
+	public static boolean busy() {
+		return loading;
+	}
+
+	public static void setBusy(boolean busy) {
+		loading = busy;
+	}
+
+	public static void setBusyFor(CompletableFuture<?> future) {
+		loading = true;
+		future.thenAcceptAsync(o -> loading = false);
 	}
 
 	@Override

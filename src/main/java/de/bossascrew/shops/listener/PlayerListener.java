@@ -22,7 +22,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		if (ShopPlugin.getInstance().isLoading()) {
+		if (ShopPlugin.busy()) {
 			event.getPlayer().kickPlayer("Server is still starting");
 			return;
 		}
@@ -36,7 +36,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		if (shopPlugin.isLoading()) {
+		if (ShopPlugin.busy()) {
 			return;
 		}
 		if (event.getWhoClicked() instanceof Player player) {
@@ -51,7 +51,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onInventoryDrag(InventoryDragEvent event) {
-		if (shopPlugin.isLoading()) {
+		if (ShopPlugin.busy()) {
 			return;
 		}
 		if (event.getWhoClicked() instanceof Player player) {
@@ -61,7 +61,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent event) {
-		if(shopPlugin.isLoading()) {
+		if(ShopPlugin.busy()) {
 			return;
 		}
 		if (event.getPlayer() instanceof Player player) {

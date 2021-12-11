@@ -21,8 +21,8 @@ import java.util.function.Function;
 public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHandler.EntryModuleProvider> {
 
 	public static PageModule openExactPage(ShopEntry shopEntry, int page) {
-		PageBaseModule pageModule = new PageBaseModule(Message.MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry, (customer, se, integer) -> {
+		PageBaseModule pageModule = new PageBaseModule(Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
+				Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry, (customer, se, integer) -> {
 			if (se.getShop() instanceof PaginatedShop ps) {
 				ps.open(customer, integer);
 			}
@@ -32,8 +32,8 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	}
 
 	public static PageModule openNextPage(ShopEntry shopEntry, int page) {
-		PageBaseModule pageModule = new PageBaseModule(Message.MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry, (customer, se, integer) -> {
+		PageBaseModule pageModule = new PageBaseModule(Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
+				Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry, (customer, se, integer) -> {
 			System.out.println(se);
 			System.out.println(se.getShop());
 			if (se.getShop() instanceof PaginatedShop ps) {
@@ -45,8 +45,8 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	}
 
 	public static PageModule openPrevPage(ShopEntry shopEntry, int page) {
-		PageBaseModule pageModule = new PageBaseModule(Message.MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry, (customer, se, integer) -> {
+		PageBaseModule pageModule = new PageBaseModule(Message.GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
+				Message.GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry, (customer, se, integer) -> {
 			if (se.getShop() instanceof PaginatedShop ps) {
 				ps.open(customer, integer - page);
 			}
@@ -89,14 +89,14 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	}
 
 	public void registerDefaults() {
-		registerEntryModule("static", new ItemStack(Material.BLACK_STAINED_GLASS), Message.MANAGER_GUI_ENTRY_FUNCTION_STATIC_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_STATIC_LORE, shopEntry -> null);
-		registerEntryModule("exact_page", new ItemStack(Material.BOOK), Message.MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry -> openExactPage(shopEntry, 1));
-		registerEntryModule("next_page", new ItemStack(Material.BOOK), Message.MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry -> openExactPage(shopEntry, 1));
-		registerEntryModule("prev_page", new ItemStack(Material.BOOK), Message.MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
-				Message.MANAGER_GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry -> openExactPage(shopEntry, 1));
+		registerEntryModule("static", new ItemStack(Material.BLACK_STAINED_GLASS), Message.GUI_ENTRY_FUNCTION_STATIC_NAME,
+				Message.GUI_ENTRY_FUNCTION_STATIC_LORE, shopEntry -> null);
+		registerEntryModule("exact_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
+				Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry -> openExactPage(shopEntry, 1));
+		registerEntryModule("next_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
+				Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry -> openExactPage(shopEntry, 1));
+		registerEntryModule("prev_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
+				Message.GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry -> openExactPage(shopEntry, 1));
 	}
 
 	@Override

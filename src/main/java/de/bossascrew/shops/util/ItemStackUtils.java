@@ -8,7 +8,6 @@ import de.bossascrew.shops.data.Message;
 import de.bossascrew.shops.handler.DiscountHandler;
 import de.bossascrew.shops.handler.LimitsHandler;
 import de.bossascrew.shops.menu.DefaultSpecialItem;
-import de.bossascrew.shops.menu.OpenableMenu;
 import de.bossascrew.shops.shop.Discount;
 import de.bossascrew.shops.shop.EntryTemplate;
 import de.bossascrew.shops.shop.Limit;
@@ -122,7 +121,7 @@ public class ItemStackUtils {
 			existingLore.addAll(Message.SHOP_ITEM_LORE_DISCOUNT.getTranslations(
 					Template.of("percent", discount.getPercent() + ""),
 					Template.of("name", discount.getName()),
-					Template.of("start-date", ComponentUtils.formatLocalDateTime(discount.getStartTime())),
+					Template.of("start-date", ComponentUtils.formatLocalDateTime(discount.getNextStart())),
 					Template.of("duration", DURATION_PARSER.parse(discount.getDuration())),
 					Template.of("remaining", DURATION_PARSER.parse(discount.getRemaining()))
 			));
@@ -256,9 +255,9 @@ public class ItemStackUtils {
 			return DefaultSpecialItem.ERROR.createSpecialItem();
 		}
 		return createItemStack(shop.getDisplayMaterial() == null ? MATERIAL_SHOP : shop.getDisplayMaterial(),
-				Message.MANAGER_GUI_SHOPS_NAME.getTranslation(
+				Message.GUI_SHOPS_NAME.getTranslation(
 						Template.of("name", shop.getName())),
-				Message.MANAGER_GUI_SHOPS_LORE.getTranslations(
+				Message.GUI_SHOPS_LORE.getTranslations(
 						Template.of("permission", shop.getPermission() == null ? "X" : shop.getPermission()),
 						Template.of("name", shop.getName())));
 	}
@@ -268,15 +267,15 @@ public class ItemStackUtils {
 			return DefaultSpecialItem.ERROR.createSpecialItem();
 		}
 		return createItemStack(MATERIAL_DISCOUNT,
-				Message.MANAGER_GUI_DISCOUNTS_ENTRY_NAME.getTranslation(
+				Message.GUI_DISCOUNTS_ENTRY_NAME.getTranslation(
 						Template.of("name", discount.getName())),
-				Message.MANAGER_GUI_DISCOUNTS_ENTRY_LORE.getTranslations(
+				Message.GUI_DISCOUNTS_ENTRY_LORE.getTranslations(
 						Template.of("percent", discount.getFormattedPercent(true)),
 						Template.of("uuid", discount.getUuid().toString()),
 						Template.of("permission", discount.getPermission() == null ? "X" : discount.getPermission()),
 						Template.of("name", discount.getName()),
 						Template.of("remaining", DURATION_PARSER.parse(discount.getRemaining())),
-						Template.of("start-date", ComponentUtils.formatLocalDateTime(discount.getStartTime())),
+						Template.of("start-date", ComponentUtils.formatLocalDateTime(discount.getNextStart())),
 						Template.of("duration", DURATION_PARSER.parse(discount.getDuration()))));
 	}
 
@@ -285,9 +284,9 @@ public class ItemStackUtils {
 			return DefaultSpecialItem.ERROR.createSpecialItem();
 		}
 		return createItemStack(MATERIAL_LIMIT,
-				Message.MANAGER_GUI_LIMITS_ENTRY_NAME.getTranslation(
+				Message.GUI_LIMITS_ENTRY_NAME.getTranslation(
 						Template.of("name", limit.getName())),
-				Message.MANAGER_GUI_LIMITS_ENTRY_LORE.getTranslations(
+				Message.GUI_LIMITS_ENTRY_LORE.getTranslations(
 						Template.of("limit", "" + limit.getTransactionLimit()),
 						Template.of("combine-transactions", "" + limit.isSummTagMemberLimits()),
 						Template.of("uuid", limit.getUuid().toString()),
@@ -299,9 +298,9 @@ public class ItemStackUtils {
 			return DefaultSpecialItem.ERROR.createSpecialItem();
 		}
 		return createItemStack(MATERIAL_TEMPLATE,
-				Message.MANAGER_GUI_TEMPLATES_ENTRY_NAME.getTranslation(
+				Message.GUI_TEMPLATES_ENTRY_NAME.getTranslation(
 						Template.of("template", template.getName())),
-				Message.MANAGER_GUI_TEMPLATES_ENTRY_LORE.getTranslations(
+				Message.GUI_TEMPLATES_ENTRY_LORE.getTranslations(
 						Template.of("template", template.getName()),
 						Template.of("uuid", "" + template.getUuid()),
 						Template.of("size", "" + template.size())));

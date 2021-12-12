@@ -1,6 +1,6 @@
 name: "StatShop"
 authors: [ "Leo", "Jannis" ]
-main: de.bossascrew.shops.ShopPlugin
+main: de.bossascrew.shops.statshops.StatShops
 version: 0.1
 api-version: 1.17
 

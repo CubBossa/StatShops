@@ -88,6 +88,9 @@ tags:
   # Potion auto-tagging will add all potion-effects as tag (without strength/duration)
   auto-tagging-potions: false
 
+  # Attribute auto-tagging will add all attributes as tag. (speed/damage modifiers etc.)
+  auto-tagging-attributes: false
+
 database:
 
 

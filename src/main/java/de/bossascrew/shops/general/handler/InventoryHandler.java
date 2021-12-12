@@ -1,9 +1,9 @@
 package de.bossascrew.shops.general.handler;
 
 import com.google.common.collect.Maps;
-import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.general.menu.OpenableMenu;
 import de.bossascrew.shops.general.menu.VillagerMenu;
+import de.bossascrew.shops.statshops.StatShops;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -75,7 +75,13 @@ public class InventoryHandler {
 		}
 	}
 
-	public void closeAllMenus() {
+	/**
+	 * @param simulateEvent when stopping the server (onDisable), there will be called no InventoryCloseEvent. Menus therefore will not
+	 *                      call their close method with close handler automatically. Setting simulateEvent to true will call
+	 *                      the close method manually. If set to false, the close method will only be called if an event
+	 *                      is called. Setting it to true when a close event is called will lead to two calls of the menu close method.
+	 */
+	public void closeAllMenus(boolean simulateEvent) {
 		for (OpenableMenu menu : openOpenableMenus.values()) {
 			for (UUID uuid : menu.getOpenInventories().keySet()) {
 				Player player = Bukkit.getPlayer(uuid);
@@ -83,6 +89,9 @@ public class InventoryHandler {
 					continue;
 				}
 				player.closeInventory();
+				if (simulateEvent) {
+					handleInventoryClose(player);
+				}
 			}
 		}
 	}

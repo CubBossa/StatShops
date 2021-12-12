@@ -122,16 +122,16 @@ public class StatShops extends JavaPlugin {
 				vaultHook = null;
 			}
 			if (isVaultInstalled()) {
-				log(LoggingPolicy.DEBUG, "Vault found and successfully hooked.");
+				log(LoggingPolicy.INFO, "Vault found and successfully hooked.");
 			} else {
-				log(LoggingPolicy.DEBUG, "Vault found but could not enable economy.");
+				log(LoggingPolicy.WARN, "Vault found but could not enable economy.");
 			}
 		}
 
 		// Initialize Citizens
 		if (Bukkit.getPluginManager().getPlugin("Citizens") != null) {
 			citizensHook = new CitizensHook(this);
-			log(LoggingPolicy.DEBUG, "Citizens found and successfully hooked");
+			log(LoggingPolicy.INFO, "Citizens found and successfully hooked");
 		}
 
 		// Load translations
@@ -202,7 +202,7 @@ public class StatShops extends JavaPlugin {
 	@Override
 	public void onDisable() {
 
-		InventoryHandler.getInstance().closeAllMenus();
+		InventoryHandler.getInstance().closeAllMenus(true);
 
 		if (this.bukkitAudiences != null) {
 			this.bukkitAudiences.close();

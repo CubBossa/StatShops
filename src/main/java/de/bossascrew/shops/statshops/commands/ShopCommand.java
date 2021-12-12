@@ -3,15 +3,15 @@ package de.bossascrew.shops.statshops.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.PaginatedShop;
+import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.general.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
-import de.bossascrew.shops.general.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import de.bossascrew.shops.statshops.menu.ShopManagementMenu;
 import de.bossascrew.shops.statshops.shop.Discount;
-import de.bossascrew.shops.general.PaginatedShop;
-import de.bossascrew.shops.general.Shop;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -41,7 +41,7 @@ public class ShopCommand extends BaseCommand {
 			return;
 		}
 		long ms = System.currentTimeMillis();
-		InventoryHandler.getInstance().closeAllMenus();
+		InventoryHandler.getInstance().closeAllMenus(false);
 
 		StatShops.setBusyFor(CompletableFuture.supplyAsync(() -> StatShops.getInstance().getShopsConfig().loadConfig()).thenAcceptAsync(success -> {
 			if (success) {

@@ -28,6 +28,12 @@ general:
   # Set this to -1 if you want to send every message without cooldown.
   message-caching: 500
 
+  # TODO does not work yet and might never be working
+  base-commands:
+    - "shop"
+    - "shops"
+    - "statshop"
+
 guis:
 
   # Sets if you want to confirm the deletion of shops/discounts/limits.
@@ -68,6 +74,21 @@ shops:
   # You can add or modify shop modes by using the API
   shop-mode: "BUY"
 
+  # You can define a default template that will automatically be the default template for each new shop.
+  # Every shop can have an individual default template, this template will only apply to *new* shops.
+  # To set a default template you have to mess with their UUIDs (it's the only thing that is individual for each template).
+  # The preset templates that come with the plugin itself are formatted like so:
+  # "000000000-0000-0000-00000-000000000000<index>". Of course, if the index has more than one digit you have to remove the
+  # according leading zeros.
+
+  # Simple gray baseline:                    00000000-0000-0000-0000-000000000001
+  # Gray baseline + previous page:           00000000-0000-0000-0000-000000000002
+  # Gray baseline + next page:               00000000-0000-0000-0000-000000000003
+  # Gray baseline + previous & next page:    00000000-0000-0000-0000-000000000004
+
+  # To apply a self-made template you have to copy their UUID from your database or from the lore of the template display item for example.
+  default-template: "00000000-0000-0000-0000-000000000004"
+
 
 tags:
 
@@ -88,7 +109,7 @@ tags:
   # Potion auto-tagging will add all potion-effects as tag (without strength/duration)
   auto-tagging-potions: false
 
-  # Attribute auto-tagging will add all attributes as tag. (speed/damage modifiers etc.)
+  # Attribute auto-tagging will add all attributes as tag. (speed/damage/... modifiers)
   auto-tagging-attributes: false
 
 database:

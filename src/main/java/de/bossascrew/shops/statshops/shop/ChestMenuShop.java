@@ -1,23 +1,19 @@
 package de.bossascrew.shops.statshops.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.general.ModedShop;
-import de.bossascrew.shops.general.PaginatedModedShop;
-import de.bossascrew.shops.general.PaginatedShop;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.statshops.handler.ShopHandler;
-import de.bossascrew.shops.statshops.menu.ChestShopEditor;
-import de.bossascrew.shops.statshops.menu.ChestShopMenu;
+import de.bossascrew.shops.general.*;
+import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.LoggingPolicy;
+import de.bossascrew.shops.general.util.TextUtils;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.handler.ShopHandler;
+import de.bossascrew.shops.statshops.menu.ChestShopEditor;
+import de.bossascrew.shops.statshops.menu.ChestShopMenu;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -290,7 +286,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 	}
 
 	public boolean open(Customer customer, int page, ShopMode mode) {
-		return open(customer, getPreferredOpenPage(customer), mode, null);
+		return open(customer, page, mode, null);
 	}
 
 	@Override
@@ -304,7 +300,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 			return false;
 		}
 		ChestShopMenu menu = new ChestShopMenu(this, backHandler);
-		menu.openInventory(customer);
+		menu.openInventorySync(customer.getPlayer(), null, shopMode, page);
 		menuMap.put(customer, menu);
 
 		customer.setActiveShop(this);

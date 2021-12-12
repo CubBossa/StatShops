@@ -7,6 +7,7 @@ import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.Config;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.ShopMode;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
@@ -22,6 +23,11 @@ import java.util.UUID;
 public class TemplateHandler implements
 		WebAccessable<EntryTemplate>,
 		ListManagementMenuElementHolder<EntryTemplate> {
+
+	public static final UUID UUID_BOTTOM = UUID.fromString("00000000-0000-0000-0000-000000000001");
+	public static final UUID UUID_BOTTOM_PREV = UUID.fromString("00000000-0000-0000-0000-000000000002");
+	public static final UUID UUID_BOTTOM_NEXT = UUID.fromString("00000000-0000-0000-0000-000000000003");
+	public static final UUID UUID_BOTTOM_PREV_NEXT = UUID.fromString("00000000-0000-0000-0000-000000000004");
 
 	@Getter
 	private static TemplateHandler instance;
@@ -86,48 +92,43 @@ public class TemplateHandler implements
 		//TODO
 	}
 
+	public EntryTemplate loadDefaultTemplateFromConfig(Config config) {
+		try {
+			UUID uuid = UUID.fromString(config.getDefaultTemplate());
+			defaultTemplate = templateMap.get(uuid);
+			return defaultTemplate;
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
 	public void registerDefaults() {
 
-		//Only gray empty bottom line
-		EntryTemplate bottomLine = new EntryTemplate(UUID.randomUUID(), "<white>Bottom Line");
+		registerTemplate(createGrayBaseLineEntry(UUID_BOTTOM, "<white>Bottom Line", false, false));
+		registerTemplate(createGrayBaseLineEntry(UUID_BOTTOM_NEXT, "<white>Bottom Line - Next Page Only", true, false));
+		registerTemplate(createGrayBaseLineEntry(UUID_BOTTOM_PREV, "<white>Bottom Line - Previous Page Only", false, true));
+		registerTemplate(createGrayBaseLineEntry(UUID_BOTTOM_PREV_NEXT, "<white>Bottom Line - Paginated", true, true));
+	}
+
+	private EntryTemplate createGrayBaseLineEntry(UUID uuid, String nameFormat, boolean nextPage, boolean prevPage) {
+		EntryTemplate bottomLine = new EntryTemplate(uuid, nameFormat);
 		for (int i = 0; i < 9; i++) {
 			int _i = i;
 			bottomLine.put(row -> (row - 1) * 9 + _i, new BaseEntry(UUID.randomUUID(), null,
 					DefaultSpecialItem.EMPTY_DARK.createSpecialItem(), null, i, null));
 		}
-		registerTemplate(bottomLine);
-
-		//Only empty gray and next page button
-		EntryTemplate nextPage = bottomLine.duplicate();
-		nextPage.setNameFormat("<white>Bottom Line - Next Page Only");
-		BaseEntry entryNext = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.NEXT_PAGE.createSpecialItem(), null,
-				1, null);
-		entryNext.setModule(EntryModuleHandler.openNextPage(entryNext, 1));
-		nextPage.put(row -> (row - 1) * 9 + 1, entryNext);
-		registerTemplate(nextPage);
-
-		//Only empty gray and prev page button
-		EntryTemplate prevPage = bottomLine.duplicate();
-		prevPage.setNameFormat("<white>Bottom Line - Previous Page Only");
-		BaseEntry entryPrev = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.PREV_PAGE.createSpecialItem(), null,
-				0, null);
-		entryPrev.setModule(EntryModuleHandler.openNextPage(entryPrev, 1));
-		prevPage.put(row -> (row - 1) * 9, entryPrev);
-		registerTemplate(prevPage);
-
-		//Only empty gray and prev page button
-		EntryTemplate paginated = bottomLine.duplicate();
-		paginated.setNameFormat("<white>Bottom Line - Paginated");
-		BaseEntry entryPrev1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.PREV_PAGE.createSpecialItem(), null,
-				0, null);
-		entryPrev.setModule(EntryModuleHandler.openNextPage(entryPrev1, 1));
-		BaseEntry entryNext1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.NEXT_PAGE.createSpecialItem(), null,
-				1, null);
-		entryPrev.setModule(EntryModuleHandler.openNextPage(entryNext1, 1));
-		paginated.put(row -> (row - 1) * 9, entryPrev1);
-		paginated.put(row -> (row - 1) * 9 + 1, entryNext1);
-		registerTemplate(paginated);
-		defaultTemplate = paginated;
+		if(prevPage) {
+			BaseEntry entryPrev1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.PREV_PAGE.createSpecialItem(), null,
+					0, null);
+			entryPrev1.setModule(EntryModuleHandler.openPrevPage(entryPrev1, 1));
+			bottomLine.put(row -> (row - 1) * 9, entryPrev1);
+		}
+		if(nextPage) {
+			BaseEntry entryNext1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.NEXT_PAGE.createSpecialItem(), null,
+					1, null);
+			entryNext1.setModule(EntryModuleHandler.openNextPage(entryNext1, 1));
+			bottomLine.put(row -> (row - 1) * 9 + 1, entryNext1);
+		}
+		return bottomLine;
 	}
 }

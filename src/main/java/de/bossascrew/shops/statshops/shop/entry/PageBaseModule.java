@@ -1,14 +1,14 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.statshops.data.LogEntry;
-import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.PageModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
-import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
 import de.bossascrew.shops.general.util.Consumer3;
+import de.bossascrew.shops.statshops.data.LogEntry;
+import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -31,7 +31,7 @@ public class PageBaseModule implements PageModule {
 	@Setter
 	private ShopEntry shopEntry;
 	private final Consumer3<Customer, ShopEntry, Integer> openPageHandler;
-	private Function<Integer, Integer> newPageProvider = integer -> integer;
+	private Function<Integer, Integer> newPageProvider = null;
 	private String data = "";
 
 	public PageBaseModule(Message name, Message lore, ShopEntry shopEntry, Consumer3<Customer, ShopEntry, Integer> openPageHandler) {
@@ -61,6 +61,7 @@ public class PageBaseModule implements PageModule {
 	 */
 	public void setNewPageRelative(int pageCount) {
 		this.newPageProvider = integer -> integer + pageCount;
+		System.out.println(newPageProvider);
 		this.data = pageCount < 0 ? "page" + pageCount : "page+" + pageCount;
 	}
 
@@ -101,11 +102,13 @@ public class PageBaseModule implements PageModule {
 
 	@Override
 	public void openPage(Customer customer) {
-		this.openPageHandler.accept(customer, shopEntry, this.newPageProvider.apply(shopEntry.getSlot() % RowedOpenableMenu.LARGEST_INV_SIZE));
+		this.openPageHandler.accept(customer, shopEntry, this.newPageProvider.apply(shopEntry.getSlot() / RowedOpenableMenu.LARGEST_INV_SIZE));
 	}
 
 	@Override
 	public EntryModule duplicate() {
-		return new PageBaseModule(displayName, displayLore, shopEntry, openPageHandler);
+		PageBaseModule module = new PageBaseModule(displayName, displayLore, shopEntry, openPageHandler);
+		module.newPageProvider = newPageProvider;
+		return module;
 	}
 }

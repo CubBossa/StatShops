@@ -1,13 +1,14 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.Config;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.entry.EntryModule;
+import de.bossascrew.shops.general.entry.PageModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.util.TagUtils;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.Config;
 import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
 import de.bossascrew.shops.statshops.shop.ShopMode;
 import lombok.Getter;
@@ -18,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * A shop entry to be used for all itembased shops (not for chat shops or hologram shops e.g.)
@@ -88,7 +88,8 @@ public class BaseEntry implements ShopEntry {
 	}
 
 	public List<String> getTags() {
-		List<String> tags = shop.getTags().stream().map(s -> "(shop) " + s).collect(Collectors.toList());
+		// Don't add shop tags as they will always be processed twice in TagUtils
+		List<String> tags = new ArrayList<>();
 		tags.add(uuid.toString());
 		tags.addAll(this.tags);
 		//If auto-tagging is enabled, add all material tags to the entry

@@ -1,16 +1,17 @@
 package de.bossascrew.shops.general.handler;
 
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.general.PaginatedShop;
 import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.PageModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
-import de.bossascrew.shops.statshops.hook.VaultHook;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.menu.ListMenuElementHolder;
-import de.bossascrew.shops.general.PaginatedShop;
-import de.bossascrew.shops.statshops.shop.entry.*;
 import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.hook.VaultHook;
+import de.bossascrew.shops.statshops.shop.entry.PageBaseModule;
+import de.bossascrew.shops.statshops.shop.entry.TradeBaseModule;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -29,7 +30,9 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 				Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry, (customer, se, integer) -> {
 			if (se.getShop() instanceof PaginatedShop ps) {
 				ps.open(customer, integer);
+				return;
 			}
+			se.getShop().open(customer);
 		});
 		pageModule.setNewPage(page);
 		return pageModule;
@@ -39,8 +42,10 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 		PageBaseModule pageModule = new PageBaseModule(Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
 				Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry, (customer, se, integer) -> {
 			if (se.getShop() instanceof PaginatedShop ps) {
-				ps.open(customer, integer + page);
+				ps.open(customer, integer);
+				return;
 			}
+			se.getShop().open(customer);
 		});
 		pageModule.setNewPageRelative(page);
 		return pageModule;
@@ -50,8 +55,10 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 		PageBaseModule pageModule = new PageBaseModule(Message.GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
 				Message.GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry, (customer, se, integer) -> {
 			if (se.getShop() instanceof PaginatedShop ps) {
-				ps.open(customer, integer - page);
+				ps.open(customer, integer);
+				return;
 			}
+			se.getShop().open(customer);
 		});
 		pageModule.setNewPageRelative(-1 * page);
 		return pageModule;

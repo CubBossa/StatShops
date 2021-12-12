@@ -1,13 +1,15 @@
 package de.bossascrew.shops.statshops.data;
 
-import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.general.config.AnnotationConfig;
 import de.bossascrew.shops.general.config.ConfigEntry;
 import de.bossascrew.shops.general.util.LoggingPolicy;
+import de.bossascrew.shops.statshops.StatShops;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,6 +24,8 @@ public class Config extends AnnotationConfig {
 	public LoggingPolicy loggingPolicy = LoggingPolicy.INFO;
 	@ConfigEntry(path = "general.message-caching")
 	public int messageCaching = 500;
+	@ConfigEntry(path = "general.base-command")
+	public List<String> baseCommands = new ArrayList<>();
 
 
 	//GUIS
@@ -40,6 +44,9 @@ public class Config extends AnnotationConfig {
 	@ConfigEntry(path = "shops.shop-size")
 	public int defaultShopSize = 3;
 	//TODO Shopmode
+
+	@ConfigEntry(path = "shops.default-template")
+	public String defaultTemplate = "000000000-0000-0000-00000-0000000000001";
 
 	//TAGS
 	@ConfigEntry(path = "tags.auto-tagging-materials")

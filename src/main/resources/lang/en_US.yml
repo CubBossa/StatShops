@@ -338,8 +338,11 @@ manager:
     templates:
       title: "Manage shop templates"
       choose_title: "Choose a template"
+      # Valid placeholders: <name>
       apply_title: "Apply template <name>?"
       new_title: "Save as template?"
       entry:
+        # Valid placeholders: <template>
         name: "<template>"
+        # Valid placeholders: <size>
         lore: "<gray>Size: <size>"

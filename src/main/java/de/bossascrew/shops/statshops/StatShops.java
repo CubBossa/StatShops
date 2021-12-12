@@ -4,10 +4,13 @@ import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.handler.CurrencyHandler;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.handler.InventoryHandler;
 import de.bossascrew.shops.general.handler.TemplateHandler;
+import de.bossascrew.shops.general.util.ItemFlags;
+import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.itemeditor.ItemEditorCommand;
 import de.bossascrew.shops.statshops.commands.ShopCommand;
 import de.bossascrew.shops.statshops.data.*;
@@ -15,9 +18,6 @@ import de.bossascrew.shops.statshops.handler.*;
 import de.bossascrew.shops.statshops.hook.CitizensHook;
 import de.bossascrew.shops.statshops.hook.VaultHook;
 import de.bossascrew.shops.statshops.listener.PlayerListener;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.util.ItemFlags;
-import de.bossascrew.shops.general.util.LoggingPolicy;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.audience.Audience;
@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class StatShops extends JavaPlugin {
@@ -109,11 +110,11 @@ public class StatShops extends JavaPlugin {
 		this.miniMessage = MiniMessage.get();
 		this.consoleAudience = bukkitAudiences.sender(Bukkit.getConsoleSender());
 
+		this.currencyHandler = new CurrencyHandler();
+
 		// Initialize and load Config
 		this.shopsConfig = new Config(super.getDataFolder().getPath() + "\\config.yml");
 		this.shopsConfig.loadConfig();
-
-		this.currencyHandler = new CurrencyHandler();
 
 		// Initialize Vault
 		if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
@@ -172,6 +173,7 @@ public class StatShops extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
 
 		// All Commands
+
 		commandManager = new BukkitCommandManager(this);
 		commandManager.addSupportedLanguage(Locale.ENGLISH);
 		registerContexts();
@@ -184,6 +186,18 @@ public class StatShops extends JavaPlugin {
 
 		// Allow Transactions
 		loading = false;
+	}
+
+	private String createBaseCommandAliases() {
+		if (StatShops.getInstance() != null) {
+			if (StatShops.getInstance().getShopsConfig() != null) {
+				//only accept valid commands without special characters
+				return "statshops|" + StatShops.getInstance().getShopsConfig().getBaseCommands().stream()
+						.filter(s -> Pattern.matches("^[a-zA-Z]*$", s))
+						.collect(Collectors.joining("|"));
+			}
+		}
+		return "statshops";
 	}
 
 	public static boolean busy() {

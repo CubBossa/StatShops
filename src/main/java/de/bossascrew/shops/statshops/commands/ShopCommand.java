@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.CompletableFuture;
 
-@CommandAlias("statshops|shops|shop")
+@CommandAlias("statshop|statshops|shop|shops")
 public class ShopCommand extends BaseCommand {
 
 	@Default

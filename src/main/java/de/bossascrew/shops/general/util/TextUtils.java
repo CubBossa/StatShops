@@ -2,9 +2,13 @@ package de.bossascrew.shops.general.util;
 
 import de.bossascrew.shops.statshops.StatShops;
 import lombok.experimental.UtilityClass;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -69,4 +73,13 @@ public class TextUtils {
 		}
 	}
 
+	public Component toComponent(ItemStack itemStack) {
+		return toTranslatable(itemStack.getType()).append(Component.text("*"))
+				.hoverEvent(HoverEvent.showItem(HoverEvent.ShowItem
+						.of(Key.key(itemStack.getType().getKey().toString()), 1)));
+	}
+
+	public Component toTranslatable(Material material) {
+		return Component.translatable("item.minecraft." + String.valueOf(material).toLowerCase());
+	}
 }

@@ -24,6 +24,7 @@ import java.util.function.BiFunction;
 public abstract class Currency<T> {
 
 	private final String format;
+	private final boolean castToInt;
 	private final BiFunction<Double, T, Component> currencyFormatter;
 
 	/**
@@ -32,7 +33,18 @@ public abstract class Currency<T> {
 	 *                          the translatable component of the material. It accepts the amount to allow singular and plural currencies (1 Dollar, 2 Dollars)
 	 */
 	public Currency(String format, BiFunction<Double, T, Component> currencyFormatter) {
+		this(format, false, currencyFormatter);
+	}
+
+	/**
+	 * @param format            the way to display the currency in minimessage format. Valid placeholders are "amount" and "currency"
+	 * @param castToInt         if the price should be cast to integer values.
+	 * @param currencyFormatter It provides the component for the currency. If the currency is itemstack, for example, the function could return
+	 *                          the translatable component of the material. It accepts the amount to allow singular and plural currencies (1 Dollar, 2 Dollars)
+	 */
+	public Currency(String format, boolean castToInt, BiFunction<Double, T, Component> currencyFormatter) {
 		this.format = format;
+		this.castToInt = castToInt;
 		this.currencyFormatter = currencyFormatter;
 	}
 
@@ -49,8 +61,12 @@ public abstract class Currency<T> {
 	 */
 	public Component format(double amount, @Nullable T object) {
 		return StatShops.getInstance().getMiniMessage().parse(format,
-				Template.of("amount", "" + amount),
+				Template.of("amount", (castToInt ? "" + ((int) amount) : "" + amount)),
 				Template.of("currency", currencyFormatter.apply(amount, object)));
+	}
+
+	public Component getCurrencyComponent(double amount, T object) {
+		return currencyFormatter.apply(amount, object);
 	}
 
 	public boolean hasAmount(Customer customer, double amount, T object) {

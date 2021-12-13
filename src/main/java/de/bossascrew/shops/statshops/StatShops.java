@@ -7,7 +7,6 @@ import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.handler.CurrencyHandler;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
-import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.general.handler.TemplateHandler;
 import de.bossascrew.shops.general.util.ItemFlags;
 import de.bossascrew.shops.general.util.LoggingPolicy;
@@ -24,6 +23,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -154,9 +154,10 @@ public class StatShops extends JavaPlugin {
 		// Setup and load shop templates
 		this.templateHandler = new TemplateHandler();
 		this.templateHandler.registerDefaults();
+		this.templateHandler.loadDefaultTemplateFromConfig(shopsConfig);
 
 		// Load after templates to load default templates properly
-		this.shopHandler.loadShopsFromDatabase(this.database);
+		this.shopHandler.loadShopsFromDatabase(database);
 
 		// Setup and load Discounts
 		this.discountHandler = new DiscountHandler();
@@ -391,5 +392,22 @@ public class StatShops extends JavaPlugin {
 				throw new ConditionFailedException("The item in your main hand needs to be a breakable object.");
 			}
 		});
+	}
+
+	public Component getTransactionFeedback(double amount, Component tradeObjectComponent, boolean prompt) {
+		return getTransactionFeedback(amount, tradeObjectComponent, prompt, true);
+	}
+
+	public Component getTransactionFeedback(double amount, Component tradeObjectComponent, boolean prompt, boolean toInt) {
+		Template[] templates = {
+				Template.of("indicator", amount >= 0 ? Message.SHOP_TRADE_FEEDBACK_GAIN.getTranslation() : Message.SHOP_TRADE_FEEDBACK_PAY.getTranslation()),
+				Template.of("amount", (toInt ? "" + ((int) Math.abs(amount)) : "" + Math.abs(amount))),
+				Template.of("subject", tradeObjectComponent)
+		};
+		if (prompt) {
+			return Message.SHOP_TRADE_FEEDBACK_PROMPT_FORMAT.getTranslation(templates);
+		} else {
+			return Message.SHOP_TRADE_FEEDBACK_CUMUL_FORMAT.getTranslation(templates);
+		}
 	}
 }

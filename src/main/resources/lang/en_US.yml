@@ -16,6 +16,7 @@ general:
   language_error: "<prefix><red>Could not reload the language file."
   # Valid placeholders: <player>
   editable_edited: "<prefix><red>This object is currently edited by <editor>"
+
   webinterface:
     loading: "<prefix>Generating session..."
     # Valid placeholders: <link>
@@ -55,6 +56,22 @@ shop:
   no_permission: "<red>You don't have permission for this shop."
   not_enabled: "<red>This shop is currently disabled."
   cooldown: "<red>Please slow down."
+
+  # Valid placeholders:
+  #   <indicator>:    "<green>+" if object received, "<red>-" if object paid (general.trade_feedback_indicator_gain/pay)
+  #   <amount>:       The traded amount
+  #   <subject>:      Trade object, might be translation component for item or item component or currency name.
+  prompt_feedback: "<prefix><indicator><white><amount>x<white> <gray><subject>"
+
+  # Valid placeholders:
+  #   <indicator>:    "<green>+" if object received, "<red>-" if object paid (general.trade_feedback_indicator_gain/pay)
+  #   <amount>:       The traded amount
+  #   <subject>:      Trade object, might be translation component for item or item component or currency name.
+  cumulative_feedback: "  <indicator><white><amount>x<white> <gray><subject>"
+  cumulative_title: "<white><underlined>Shopping balance"
+  trade_feedback_indicator_gain: "<green>+</green>"
+  trade_feedback_indicator_pay: "<red>-</red>"
+
   gui:
     # The title of a shop, possible placeholders are: <name>, <page>, <mode>, <pages>
     title: "<name> - Page <page>/<pages> - <mode>"

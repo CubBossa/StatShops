@@ -1,8 +1,8 @@
 package de.bossascrew.shops.general.handler;
 
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.statshops.shop.Currency;
 import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.shop.Currency;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
@@ -15,13 +15,16 @@ public class CurrencyHandler {
 	@Getter
 	private static CurrencyHandler instance;
 
-	public static final Currency<ItemStack> CURRENCY_ITEM = new Currency<>("<yellow><amount>x <gold><currency>", (integer, itemStack) -> {
+	public static final Currency<ItemStack> CURRENCY_ITEM = new Currency<>("<yellow><amount>x <gold><currency>", true, (integer, itemStack) -> {
 		return Component.translatable("item.minecraft." + itemStack.getType().toString().toLowerCase());
 	}) {
 		@Override
 		public double getAmount(Customer customer, ItemStack object) {
 			int count = 0;
 			for (ItemStack i : customer.getPlayer().getInventory()) {
+				if (i == null) {
+					continue;
+				}
 				if (i.isSimilar(object)) {
 					count += i.getAmount();
 				}

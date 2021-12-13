@@ -83,6 +83,13 @@ shops:
   # To apply a self-made template you have to copy their UUID from your database or from the lore of the template display item for example.
   default-template: "00000000-0000-0000-0000-000000000004"
 
+  # Defines the message feedback for trading in a shop.
+  # NONE:           There will be no message feedback if people successfully trade items
+  # CUMULATIVE:     All costs and gains will be cached until the shop closes and then sent in a bundled message.
+  # PROMPT:         There will be a chat message for every successful trade interaction.
+  trade-message-feedback: CUMULATIVE
+
+
 
 tags:
 

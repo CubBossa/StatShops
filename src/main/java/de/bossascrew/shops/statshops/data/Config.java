@@ -3,13 +3,12 @@ package de.bossascrew.shops.statshops.data;
 import de.bossascrew.shops.general.config.AnnotationConfig;
 import de.bossascrew.shops.general.config.ConfigEntry;
 import de.bossascrew.shops.general.util.LoggingPolicy;
+import de.bossascrew.shops.general.util.TradeMessageType;
 import de.bossascrew.shops.statshops.StatShops;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -44,6 +43,9 @@ public class Config extends AnnotationConfig {
 
 	@ConfigEntry(path = "shops.default-template")
 	public String defaultTemplate = "000000000-0000-0000-00000-0000000000001";
+
+	@ConfigEntry(path = "shops.trade-message-feedback")
+	public TradeMessageType tradeMessageFeedback   = TradeMessageType.CUMULATIVE;
 
 	//TAGS
 	@ConfigEntry(path = "tags.auto-tagging-materials")

@@ -1,9 +1,9 @@
 package de.bossascrew.shops.statshops.data;
 
+import de.bossascrew.shops.general.util.Pair;
+import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
-import de.bossascrew.shops.general.util.TextUtils;
-import de.bossascrew.shops.general.util.Pair;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -68,6 +68,11 @@ public enum Message {
 	SHOP_MODE_SELL_LORE("shop.modes.sell.lore"),
 	SHOP_MODE_TRADE_NAME("shop.modes.trade.name"),
 	SHOP_MODE_TRADE_LORE("shop.modes.trade.lore"),
+	SHOP_TRADE_FEEDBACK_PROMPT_FORMAT("shop.prompt_feedback"),
+	SHOP_TRADE_FEEDBACK_CUMUL_FORMAT("shop.cumulative_feedback"),
+	SHOP_TRADE_FEEDBACK_CUMUL_TITLE("shop.cumulative_title"),
+	SHOP_TRADE_FEEDBACK_PAY("shop.trade_feedback_indicator_pay"),
+	SHOP_TRADE_FEEDBACK_GAIN("shop.trade_feedback_indicator_gain"),
 
 	VILLAGER_SHOP_TITLE("villager_shop.gui.title"),
 

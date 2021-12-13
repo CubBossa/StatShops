@@ -63,6 +63,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 
 	@JsonIgnore
 	private final List<Customer> activeCustomers;
+	private final HashMap<Customer, Map<Component, Double>> tradeCache;
 
 	private final Map<Customer, ChestShopMenu> menuMap;
 
@@ -82,6 +83,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 		this.activeCustomers = new ArrayList<>();
 		this.menuMap = new HashMap<>();
 		this.tags = new ArrayList<>();
+		this.tradeCache = new HashMap<>();
 	}
 
 	public void setNameFormat(String nameFormat) {
@@ -297,12 +299,22 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 			customer.sendMessage(Message.SHOP_NO_PERMISSION);
 			return false;
 		}
+		// Check if new menu or next/prev page button
+		// If new menu, clear trade cache
+		ChestShopMenu openMenu = menuMap.get(customer);
+		if (openMenu == null) {
+			this.tradeCache.put(customer, new HashMap<>());
+		}
+
 		ChestShopMenu menu = new ChestShopMenu(this, backHandler);
 		menu.openInventorySync(customer.getPlayer(), null, shopMode, page);
 		menuMap.put(customer, menu);
 
+		if (customer.getActiveShop() == null || !customer.getActiveShop().equals(this)) {
+			activeCustomers.add(customer);
+			tradeCache.put(customer, new HashMap<>());
+		}
 		customer.setActiveShop(this);
-		activeCustomers.add(customer);
 
 		return true;
 	}

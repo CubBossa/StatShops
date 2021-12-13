@@ -1,18 +1,21 @@
 package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.handler.TemplateHandler;
-import de.bossascrew.shops.general.menu.*;
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.general.ModedShop;
 import de.bossascrew.shops.general.PaginatedShop;
 import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.statshops.handler.*;
-import de.bossascrew.shops.statshops.shop.*;
-import de.bossascrew.shops.general.util.TextUtils;
+import de.bossascrew.shops.general.handler.TemplateHandler;
+import de.bossascrew.shops.general.menu.*;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TagUtils;
+import de.bossascrew.shops.general.util.TextUtils;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.handler.DiscountHandler;
+import de.bossascrew.shops.statshops.handler.LimitsHandler;
+import de.bossascrew.shops.statshops.handler.ShopHandler;
+import de.bossascrew.shops.statshops.handler.TranslationHandler;
+import de.bossascrew.shops.statshops.shop.*;
 import de.bossascrew.shops.web.WebSessionUtils;
 import de.bossascrew.shops.web.pasting.Paste;
 import net.kyori.adventure.text.Component;
@@ -274,22 +277,7 @@ public class ShopManagementMenu {
 
 	private ItemStack getRowsItem(int row) {
 		List<Component> lore = new ArrayList<>();
-		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
-		int prev = row - 1 % 6;
-		if (prev <= 0) {
-			prev += 6;
-		}
-		int next = row + 1 % 6;
-		if (next <= 0) {
-			next += 6;
-		}
-		if (row == 0) {
-			row = 6;
-		}
-		lore.add(Message.GUI_SHOP_SET_ROWS_LORE.getTranslation(Template.of("rows", "" + prev)));
 		lore.add(Message.GUI_SHOP_SET_ROWS_LORE.getTranslation(Template.of("rows", "" + row)));
-		lore.add(Message.GUI_SHOP_SET_ROWS_LORE.getTranslation(Template.of("rows", "" + next)));
-		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
 
 		return ItemStackUtils.createItemStack(new ItemStack(Material.RAIL, row), Message.GUI_SHOP_SET_ROWS_NAME.getTranslation(
 				Template.of("rows", "" + row)), lore);
@@ -311,13 +299,9 @@ public class ShopManagementMenu {
 	private ItemStack getDefaultPageItem(PaginatedShop shop, int page) {
 		int pageCount = shop.getPageCount();
 		List<Component> lore = new ArrayList<>();
-		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
-		lore.add(Message.GUI_SHOP_SET_DEFAULT_PAGE_LORE.getTranslation(Template.of("page", "" + ((page - 1) % pageCount))));
-		lore.add(Message.GUI_SHOP_SET_DEFAULT_PAGE_LORE.getTranslation(Template.of("page", "" + page)));
-		lore.add(Message.GUI_SHOP_SET_DEFAULT_PAGE_LORE.getTranslation(Template.of("page", "" + ((page + 1) % pageCount))));
-		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
-		return ItemStackUtils.createItemStack(Material.BOOK,
-				Message.GUI_SHOP_SET_DEFAULT_PAGE_NAME.getTranslation(Template.of("page", "" + page)), lore);
+		lore.add(Message.GUI_SHOP_SET_DEFAULT_PAGE_LORE.getTranslation(Template.of("page", "" + (page + 1)), Template.of("pages", "" + pageCount)));
+		return ItemStackUtils.createItemStack(new ItemStack(Material.BOOK, Integer.max(page, 1)),
+				Message.GUI_SHOP_SET_DEFAULT_PAGE_NAME.getTranslation(Template.of("page", "" + (page + 1)), Template.of("pages", "" + pageCount)), lore);
 	}
 
 	private ItemStack getButton(boolean val, Message name, Message lore) {

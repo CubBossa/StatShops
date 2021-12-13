@@ -3,18 +3,21 @@ package de.bossascrew.shops.itemeditor;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.annotation.*;
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.general.util.ItemFlags;
+import de.bossascrew.shops.general.util.TextUtils;
+import de.bossascrew.shops.statshops.StatShops;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @CommandAlias("itemeditor|ieditor|ie")
@@ -36,7 +39,6 @@ public class ItemEditorCommand extends BaseCommand {
 
 	@Subcommand("webeditor")
 	public void onWebEditor(Player player) {
-
 	}
 
 	@Subcommand("displayname")
@@ -66,11 +68,30 @@ public class ItemEditorCommand extends BaseCommand {
 		playSuccessSound(player);
 	}
 
-	@Subcommand("lore")
+	@Subcommand("lore add")
 	public void onLoreList(Player player, String lore) {
 		ItemStack itemStack = player.getInventory().getItemInMainHand();
 		ItemMeta meta = itemStack.getItemMeta();
-		meta.setLore(Arrays.stream(lore.split("\n")).map(TextUtils::toLegacyFromMiniMessage).collect(Collectors.toList()));
+		List<String> loreList = meta.getLore();
+		if (loreList == null) {
+			loreList = new ArrayList<>();
+		}
+		loreList.addAll(lore.lines()
+				.map(TextUtils::toLegacyFromMiniMessage)
+				.collect(Collectors.toList()));
+		meta.setLore(loreList);
+		itemStack.setItemMeta(meta);
+		playSuccessSound(player);
+	}
+
+	@Subcommand("lore set")
+	public void onLoreListSet(Player player, String lore) {
+		ItemStack itemStack = player.getInventory().getItemInMainHand();
+		ItemMeta meta = itemStack.getItemMeta();
+		List<String> loreList = Arrays.stream(lore.split(".*\n.*"))
+				.map(TextUtils::toLegacyFromMiniMessage)
+				.collect(Collectors.toList());
+		meta.setLore(loreList);
 		itemStack.setItemMeta(meta);
 		playSuccessSound(player);
 	}
@@ -124,19 +145,30 @@ public class ItemEditorCommand extends BaseCommand {
 	}
 
 	@Subcommand("damage")
-	@Conditions("damagable")
-	public void onDamage(Player player) {
-
+	@Conditions(StatShops.CONDITION_ITEM_DAMAGABLE)
+	@CommandCompletion("0")
+	public void onDamage(Player player, int damage) {
+		ItemStack itemStack = player.getInventory().getItemInMainHand();
+		if (itemStack.getItemMeta() instanceof Damageable meta) {
+			meta.setDamage(damage);
+			itemStack.setItemMeta(meta);
+			playSuccessSound(player);
+		}
 	}
 
 	@Subcommand("unbreakable")
-	@Conditions("damagable")
+	@Conditions(StatShops.CONDITION_ITEM_DAMAGABLE)
 	public void onUnbreakable(Player player) {
-
+		ItemStack itemStack = player.getInventory().getItemInMainHand();
+		if (itemStack.getItemMeta() instanceof Damageable meta) {
+			meta.setUnbreakable(!meta.isUnbreakable());
+			itemStack.setItemMeta(meta);
+			playSuccessSound(player);
+		}
 	}
 
 	@Subcommand("color")
-	@Conditions("colorable")
+	@Conditions(StatShops.CONDITION_ITEM_COLORABLE)
 	public void onColor(Player player) {
 		// Leather armor, potion, maps
 
@@ -145,7 +177,7 @@ public class ItemEditorCommand extends BaseCommand {
 	// Spawners and spawn eggs
 	// Cannot handle whole entity creation, so use webinterface for that
 	@Subcommand("entity-type")
-	@Conditions("spawnable")
+	@Conditions(StatShops.CONDITION_ITEM_SPAWNABLE)
 	public void onSpawnerEntity(Player player) {
 
 	}

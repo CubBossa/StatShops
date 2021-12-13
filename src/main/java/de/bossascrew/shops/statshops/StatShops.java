@@ -32,6 +32,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.material.Colorable;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -52,6 +53,7 @@ public class StatShops extends JavaPlugin {
 	public static final String CONDITION_ITEM_HAS_META = "item_has_meta";
 	public static final String CONDITION_ITEM_SPAWNABLE = "item_spawnable";
 	public static final String CONDITION_ITEM_COLORABLE = "item_colorable";
+	public static final String CONDITION_ITEM_DAMAGABLE = "item_damagable";
 	public static final String COMPLETION_SHOPS = "@shops";
 	public static final String COMPLETION_ENCHANTMENTS = "@enchantments";
 	public static final String COMPLETION_ENCHANTMENTS_CONTAINED = "@enchantments_on_item";
@@ -394,6 +396,12 @@ public class StatShops extends JavaPlugin {
 			ItemStack stack = context.getIssuer().getPlayer().getInventory().getItemInMainHand();
 			if (!(stack.getItemMeta() instanceof Colorable)) {
 				throw new ConditionFailedException("The item in your main hand needs to be a colorable object.");
+			}
+		});
+		commandManager.getCommandConditions().addCondition(CONDITION_ITEM_DAMAGABLE, context -> {
+			ItemStack stack = context.getIssuer().getPlayer().getInventory().getItemInMainHand();
+			if (!(stack.getItemMeta() instanceof Damageable)) {
+				throw new ConditionFailedException("The item in your main hand needs to be a breakable object.");
 			}
 		});
 	}

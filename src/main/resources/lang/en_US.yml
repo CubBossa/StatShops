@@ -167,14 +167,14 @@ manager:
       set_default_mode:
         name: "<white>Default Mode: <name>"
         lore: "<gray>» <mode>"
-      # Valid placeholders: <page>
+      # Valid placeholders: <page>, <pages>
       set_default_page:
         name: "<white>Default Page: <page>"
-        lore: "<gray>» <page>"
+        lore: "<gray>Current: <gold><page>/<pages>\n<gray>» <yellow>left-click: <gray>Increase\n<gray>» <yellow>right-click: Decrease"
       # Valid placeholders: <rows>
       set_rows:
         name: "<white>Menu Size: <rows> Rows"
-        lore: "<gray>» <rows> Rows"
+        lore: "<gray>Current: <gold><rows>\n<gray>Templates that are already applied\n<gray>will not fit to the lowest row\n<gray>anymore!\n\n<gray>» <yellow>left-click: <gray>Increase\n<gray>» <yellow>right-click: Decrease"
       limits:
         title: "Manage limits for this shop"
         info:

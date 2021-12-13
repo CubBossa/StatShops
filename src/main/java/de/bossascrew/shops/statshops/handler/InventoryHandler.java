@@ -1,11 +1,14 @@
-package de.bossascrew.shops.general.handler;
+package de.bossascrew.shops.statshops.handler;
 
 import com.google.common.collect.Maps;
+import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.menu.EditorMenu;
 import de.bossascrew.shops.general.menu.OpenableMenu;
 import de.bossascrew.shops.general.menu.VillagerMenu;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.Message;
 import lombok.Getter;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -34,7 +37,15 @@ public class InventoryHandler {
 
 	public boolean canMenuOpen(Player player, OpenableMenu menu) {
 		if(menu instanceof EditorMenu editorMenu) {
-			return !editorMenu.isEditorSet() || editorMenu.getEditor().equals(player);
+
+			//TODO jedes plugin muss menü conditions registrieren
+			if (!editorMenu.isEditorSet() || editorMenu.getEditor().equals(player)) {
+				return true;
+			} else {
+				Customer.wrap(player).sendMessage(Message.GENERAL_EDITABLE_CURRENTLY_EDITED.getKey(),
+						Message.GENERAL_EDITABLE_CURRENTLY_EDITED.getTranslation(Template.of("editor", ((Player) editorMenu.getEditor()).getName())));
+				return false;
+			}
 		}
 		return true;
 	}

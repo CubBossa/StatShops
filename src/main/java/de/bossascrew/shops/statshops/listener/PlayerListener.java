@@ -2,7 +2,7 @@ package de.bossascrew.shops.statshops.listener;
 
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.handler.CustomerHandler;
-import de.bossascrew.shops.general.handler.InventoryHandler;
+import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

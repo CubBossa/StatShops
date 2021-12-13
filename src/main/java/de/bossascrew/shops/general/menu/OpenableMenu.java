@@ -1,7 +1,7 @@
 package de.bossascrew.shops.general.menu;
 
 import com.google.common.collect.Maps;
-import de.bossascrew.shops.general.handler.InventoryHandler;
+import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ClickContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;

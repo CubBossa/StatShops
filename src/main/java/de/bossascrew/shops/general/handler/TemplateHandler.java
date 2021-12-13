@@ -89,7 +89,6 @@ public class TemplateHandler implements
 
 	@Override
 	public void storeWebData(List<EntryTemplate> values) {
-		//TODO
 	}
 
 	public EntryTemplate loadDefaultTemplateFromConfig(Config config) {

@@ -7,7 +7,7 @@ import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.handler.CurrencyHandler;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
-import de.bossascrew.shops.general.handler.InventoryHandler;
+import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.general.handler.TemplateHandler;
 import de.bossascrew.shops.general.util.ItemFlags;
 import de.bossascrew.shops.general.util.LoggingPolicy;

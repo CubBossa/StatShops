@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.*;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.PaginatedShop;
 import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.handler.InventoryHandler;
+import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;

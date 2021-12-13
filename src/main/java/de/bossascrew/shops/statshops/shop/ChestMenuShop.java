@@ -44,8 +44,6 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 	private @Nullable EntryTemplate defaultTemplate = null;
 
 	private int rows = 3;
-	@JsonIgnore
-	private boolean enabled = true; //TODO raus damit?
 
 	private boolean isPageRemembered = false;
 	private boolean isModeRemembered = false;
@@ -291,7 +289,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 
 	@Override
 	public boolean open(Customer customer, int page, ShopMode shopMode, @Nullable ContextConsumer<BackContext> backHandler) {
-		if (!enabled) {
+		if (editor != null && !editor.getUniqueId().equals(customer.getUuid())) {
 			customer.sendMessage(Message.SHOP_NOT_ENABLED);
 			return false;
 		}
@@ -332,7 +330,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 	}
 
 	public ShopInteractionResult interact(Customer customer, ShopMode shopMode, int slot) {
-		if (!enabled) {
+		if (editor != null && !customer.getUuid().equals(editor.getUniqueId())) {
 			return ShopInteractionResult.FAIL_SHOP_DISABLED;
 		}
 		ShopEntry entry = getEntry(shopMode, slot);

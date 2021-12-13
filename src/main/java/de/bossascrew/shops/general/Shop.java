@@ -66,16 +66,6 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	boolean setEntryUnused(ShopEntry entry);
 
 	/**
-	 * @return true if the shop is currently enabled. Customers cannot use disabled shops
-	 */
-	boolean isEnabled();
-
-	/**
-	 * If set to false, all active customers will be kicked from the shop. Customers cannot use disabled shops.
-	 */
-	void setEnabled(boolean enabled);
-
-	/**
 	 * @return all customers that currently use this shop and have an open shop interface.
 	 */
 	List<Customer> getActiveCustomers();

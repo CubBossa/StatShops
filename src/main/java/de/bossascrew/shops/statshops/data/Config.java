@@ -24,9 +24,6 @@ public class Config extends AnnotationConfig {
 	public LoggingPolicy loggingPolicy = LoggingPolicy.INFO;
 	@ConfigEntry(path = "general.message-caching")
 	public int messageCaching = 500;
-	@ConfigEntry(path = "general.base-command")
-	public List<String> baseCommands = new ArrayList<>();
-
 
 	//GUIS
 	@ConfigEntry(path = "guis.confirm-general-deletion")

@@ -1,6 +1,7 @@
 package de.bossascrew.shops.general.handler;
 
 import com.google.common.collect.Maps;
+import de.bossascrew.shops.general.menu.EditorMenu;
 import de.bossascrew.shops.general.menu.OpenableMenu;
 import de.bossascrew.shops.general.menu.VillagerMenu;
 import de.bossascrew.shops.statshops.StatShops;
@@ -31,8 +32,18 @@ public class InventoryHandler {
 		instance = this;
 	}
 
+	public boolean canMenuOpen(Player player, OpenableMenu menu) {
+		if(menu instanceof EditorMenu editorMenu) {
+			return !editorMenu.isEditorSet() || editorMenu.getEditor().equals(player);
+		}
+		return true;
+	}
+
 	public void handleMenuOpen(Player player, OpenableMenu menu) {
 		handleInventoryClose(player);
+		if(menu instanceof EditorMenu editorMenu) {
+			editorMenu.setEditor(player);
+		}
 		this.openOpenableMenus.put(player.getUniqueId(), menu);
 	}
 
@@ -59,6 +70,9 @@ public class InventoryHandler {
 		OpenableMenu invMenu = openOpenableMenus.remove(playerId);
 
 		if (invMenu != null) {
+			if(invMenu instanceof EditorMenu editorMenu) {
+				editorMenu.setEditor(null);
+			}
 			invMenu.closeInventory(player);
 		}
 	}

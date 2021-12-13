@@ -2,7 +2,7 @@ package de.bossascrew.shops.statshops.handler;
 
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
-import de.bossascrew.shops.statshops.menu.ShopMenu;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.general.Taggable;
 import de.bossascrew.shops.general.entry.ShopEntry;

@@ -28,12 +28,6 @@ general:
   # Set this to -1 if you want to send every message without cooldown.
   message-caching: 500
 
-  # TODO does not work yet and might never be working
-  base-commands:
-    - "shop"
-    - "shops"
-    - "statshop"
-
 guis:
 
   # Sets if you want to confirm the deletion of shops/discounts/limits.

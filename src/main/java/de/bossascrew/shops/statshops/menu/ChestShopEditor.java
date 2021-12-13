@@ -1,11 +1,15 @@
 package de.bossascrew.shops.statshops.menu;
 
+import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.menu.EditorMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
+import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.ShopMode;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

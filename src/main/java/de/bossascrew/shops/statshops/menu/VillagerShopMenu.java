@@ -1,6 +1,7 @@
 package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.menu.VillagerMenu;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;

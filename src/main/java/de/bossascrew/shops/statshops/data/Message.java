@@ -43,6 +43,7 @@ public enum Message {
 	GENERAL_WEBINTERFACE_LOADING("general.webinterface.loading"),
 	GENERAL_WEBINTERFACE_LINK("general.webinterface.link"),
 	GENERAL_WEBINTERFACE_ERROR("general.webinterface.error"),
+	GENERAL_EDITABLE_CURRENTLY_EDITED("general.editable_edited"),
 
 	CITIZENS_ASSIGNED("citizens.assign.success"),
 	CITIZENS_CONFIRM_OVERRIDE("citizens.assign.confirm"),

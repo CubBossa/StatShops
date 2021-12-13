@@ -2,10 +2,7 @@ package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.TemplateHandler;
-import de.bossascrew.shops.general.menu.BottomTopChestMenu;
-import de.bossascrew.shops.general.menu.DefaultSpecialItem;
-import de.bossascrew.shops.general.menu.ListMenu;
-import de.bossascrew.shops.general.menu.RowedOpenableMenu;
+import de.bossascrew.shops.general.menu.*;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.util.ItemStackUtils;
@@ -36,7 +33,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class ChestShopPageEditor extends BottomTopChestMenu {
+public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMenu<Player> {
 
 	public static final String UUID_TAG_KEY = "shops-entry-uuid";
 	public static final String IGNORE_TAG_KEY = "shops-entry-ignore";
@@ -298,5 +295,24 @@ public class ChestShopPageEditor extends BottomTopChestMenu {
 		return ItemStackUtils.createItemStack(modeItem.getType(),
 				Message.GUI_SHOP_SET_DEFAULT_MODE_NAME.getTranslation(Template.of("name", modeItem.getItemMeta().getDisplayName())),
 				lore);
+	}
+
+	@Override
+	public boolean isEditorSet() {
+		return shop.getEditor() != null;
+	}
+
+	@Override
+	public boolean setEditor(Player editor) {
+		if (isEditorSet()) {
+			return false;
+		}
+		shop.setEditor(editor);
+		return true;
+	}
+
+	@Override
+	public Player getEditor() {
+		return shop.getEditor();
 	}
 }

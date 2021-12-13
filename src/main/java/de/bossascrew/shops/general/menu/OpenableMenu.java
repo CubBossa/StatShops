@@ -1,15 +1,13 @@
 package de.bossascrew.shops.general.menu;
 
 import com.google.common.collect.Maps;
-import de.bossascrew.shops.general.menu.DefaultSpecialItem;
-import de.bossascrew.shops.general.menu.InventoryMenu;
-import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.general.handler.InventoryHandler;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ClickContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.util.LoggingPolicy;
+import de.bossascrew.shops.statshops.StatShops;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -56,6 +54,9 @@ public abstract class OpenableMenu extends InventoryMenu<ClickType, ClickContext
 
 		if (inventory == null) {
 			throw new NullPointerException("Inventar für OpenableMenu nicht gesetzt. Nutze openInventorySync(Player, Inventory, Consumer<Inventory>) in Child-Klasse.");
+		}
+		if (!InventoryHandler.getInstance().canMenuOpen(player, this)) {
+			return null;
 		}
 
 		if (player.isSleeping()) {

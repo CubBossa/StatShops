@@ -183,7 +183,6 @@ public class ShopHandler implements
 		Shop shop = createShop(element.getNameFormat());
 		shop.setDisplayMaterial(element.getDisplayMaterial());
 		shop.setPermission(element.getPermission());
-		shop.setEnabled(element.isEnabled());
 		if (element instanceof PaginatedModedShop ps) { //TODO natürlich sollte das eignetlich jeder shop typ liefern
 			ps.setDefaultShopMode(ps.getDefaultShopMode());
 			ps.setPageRemembered(ps.isPageRemembered());

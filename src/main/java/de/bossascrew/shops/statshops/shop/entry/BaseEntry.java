@@ -3,7 +3,6 @@ package de.bossascrew.shops.statshops.shop.entry;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.entry.EntryModule;
-import de.bossascrew.shops.general.entry.PageModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.util.TagUtils;
@@ -13,6 +12,7 @@ import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
 import de.bossascrew.shops.statshops.shop.ShopMode;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,5 +133,15 @@ public class BaseEntry implements ShopEntry {
 			entry.setModule(m);
 		}
 		return entry;
+	}
+
+	@Override
+	public @Nullable Player getEditor() {
+		return shop.getEditor();
+	}
+
+	@Override
+	public void setEditor(@Nullable Player editor) {
+		shop.setEditor(editor);
 	}
 }

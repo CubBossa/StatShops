@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class StatShops extends JavaPlugin {
@@ -188,18 +187,6 @@ public class StatShops extends JavaPlugin {
 
 		// Allow Transactions
 		loading = false;
-	}
-
-	private String createBaseCommandAliases() {
-		if (StatShops.getInstance() != null) {
-			if (StatShops.getInstance().getShopsConfig() != null) {
-				//only accept valid commands without special characters
-				return "statshops|" + StatShops.getInstance().getShopsConfig().getBaseCommands().stream()
-						.filter(s -> Pattern.matches("^[a-zA-Z]*$", s))
-						.collect(Collectors.joining("|"));
-			}
-		}
-		return "statshops";
 	}
 
 	public static boolean busy() {

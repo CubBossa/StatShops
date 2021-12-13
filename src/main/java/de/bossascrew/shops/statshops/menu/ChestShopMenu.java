@@ -5,6 +5,7 @@ import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.menu.ChestMenu;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;

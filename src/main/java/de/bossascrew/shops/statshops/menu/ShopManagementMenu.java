@@ -107,7 +107,6 @@ public class ShopManagementMenu {
 
 		//deactivate shop so we can change stuff without worrying about players messing things up
 		//the shop will activate itself automatically when using the back button. Otherwise it needs to be reactivated manually
-		shop.setEnabled(false);
 		shop.setEditor(player);
 
 		ChestMenu chestMenu = new ChestMenu(shop.getName(), 3);
@@ -154,7 +153,7 @@ public class ShopManagementMenu {
 		//Open Tags menu
 		chestMenu.setItemAndClickHandler(0, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
 						Message.GUI_SHOP_SET_TAGS_NAME, Message.GUI_SHOP_SET_TAGS_LORE),
-				clickContext -> new TagsEditorMenu(
+				clickContext -> new TagsEditorMenu<>(
 						shop, Message.GUI_TAGS_TITLE.getTranslation(Template.of("name", shop.getName())),
 						Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
 						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openShopMenu(player, shop, fromPage)).openInventory(player));
@@ -251,25 +250,12 @@ public class ShopManagementMenu {
 			});
 		}
 
-		//Set shop enabled
-		ItemStack shopEnabled = getButton(shop.isEnabled(),
-				Message.GUI_SHOP_SET_ENABLED_NAME, Message.GUI_SHOP_SET_ENABLED_LORE);
-		chestMenu.setItemAndClickHandler(22, shopEnabled, clickContext -> {
-			shop.setEnabled(!shop.isEnabled());
-			chestMenu.setItem(22, getButton(shop.isEnabled(),
-					Message.GUI_SHOP_SET_ENABLED_NAME, Message.GUI_SHOP_SET_ENABLED_LORE));
-			chestMenu.refresh(22);
-		});
-
-
 		chestMenu.setBackSlot(26);
 		chestMenu.setBackHandlerAction(backContext -> {
-			shop.setEnabled(true);
 			shop.setEditor(null);
 			openShopsMenu(player, fromPage);
 		});
 		chestMenu.setCloseHandler(closeContext -> {
-			shop.setEnabled(true);
 			shop.setEditor(null);
 		});
 		chestMenu.openInventory(player);
@@ -408,7 +394,7 @@ public class ShopManagementMenu {
 		//Open Tags menu
 		chestMenu.setItemAndClickHandler(0, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
 						Message.GUI_LIMIT_SET_TAGS_NAME, Message.GUI_LIMIT_SET_TAGS_LORE),
-				clickContext -> new TagsEditorMenu(
+				clickContext -> new TagsEditorMenu<>(
 						limit, Message.GUI_TAGS_TITLE.getTranslation(Template.of("name", limit.getName())),
 						Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
 						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openLimitMenu(player, limit, fromPage)).openInventory(player));
@@ -465,7 +451,7 @@ public class ShopManagementMenu {
 		//Open Tags menu
 		chestMenu.setItemAndClickHandler(0, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
 						Message.GUI_DISCOUNT_SET_TAGS_NAME, Message.GUI_DISCOUNT_SET_TAGS_LORE),
-				clickContext -> new TagsEditorMenu(
+				clickContext -> new TagsEditorMenu<>(
 						discount, Message.GUI_TAGS_TITLE.getTranslation(Template.of("name", discount.getName())),
 						Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
 						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openDiscountMenu(player, discount, fromPage)).openInventory(player));

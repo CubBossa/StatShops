@@ -1,4 +1,4 @@
-package de.bossascrew.shops.statshops.menu;
+package de.bossascrew.shops.general.menu;
 
 import de.bossascrew.shops.general.entry.ShopEntry;
 

@@ -80,7 +80,11 @@ shop:
       lore:
         spacer: "----------------------"
         # Valid placeholders: <price>
-        price: "<price>"
+        buy_price: "<gray>Buy: <price>"
+        # Valid placeholders: <price>
+        sell_price: "<gray>Sell: <price>"
+        # Valid placeholders: <keybind>, <action>
+        keybinding: "<gray>» <yellow><keybind>: <gray><action>"
         # Valid placeholders: <name>, <percent>, <start-date>, <duration>, <remaining>
         discount: "<yellow><percent>% <name>"
         # Valid placeholders: <transactioncount>, <userlimit>, <globallimit>

@@ -10,6 +10,7 @@ import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
+import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
@@ -186,7 +187,7 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 					return;
 				}
 			}
-			ShopInteractionResult result = entry.interact(customer);
+			ShopInteractionResult result = entry.interact(customer, EntryInteractionType.fromClickType(clickContext.getAction()));
 			if (result == ShopInteractionResult.SUCCESS && entry.getModule() != null && entry.getModule() instanceof TradeModule tm) {
 				shop.getBalanceMessenger().handleTransaction(tm.getLastTransaction(customer));
 			}

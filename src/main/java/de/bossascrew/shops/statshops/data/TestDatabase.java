@@ -3,13 +3,12 @@ package de.bossascrew.shops.statshops.data;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.handler.CurrencyHandler;
+import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.handler.TemplateHandler;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.shop.*;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
-import de.bossascrew.shops.statshops.shop.entry.TradeBaseModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -58,7 +57,7 @@ public class TestDatabase implements Database, LogDatabase {
 		meta.addEnchant(Enchantment.ARROW_INFINITE, 2, true);
 		article.setItemMeta(meta);
 
-		entry1.setModule(new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 3, new ItemStack(Material.EMERALD), article));
+		entry1.setModule(EntryModuleHandler.tradeItemItem(article, new ItemStack(Material.EMERALD, 3)));
 		entry1.addTag("test");
 		s1.addEntry(ShopHandler.getInstance().getShopModes().get(0), 0, entry1);
 
@@ -68,7 +67,7 @@ public class TestDatabase implements Database, LogDatabase {
 		pmeta.setBasePotionData(new PotionData(PotionType.SPEED));
 		article2.setItemMeta(pmeta);
 
-		entry2.setModule(new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 3, new ItemStack(Material.EMERALD), article2));
+		entry2.setModule(EntryModuleHandler.tradeItemItem(article2, new ItemStack(Material.EMERALD, 2)));
 		entry2.addTag("test");
 		s1.addEntry(ShopHandler.getInstance().getShopModes().get(0), 1, entry2);
 
@@ -76,7 +75,7 @@ public class TestDatabase implements Database, LogDatabase {
 
 		Shop s3 = new VillagerShop("<dark_purple>Villager Shop", UUID.randomUUID());
 		ShopEntry entry = createEntry(UUID.randomUUID(), s3, new ItemStack(Material.MINECART), ShopHandler.getInstance().getShopModes().get(0), 0);
-		entry.setModule(new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 3, new ItemStack(Material.EMERALD), new ItemStack(Material.MINECART)));
+		entry.setModule(EntryModuleHandler.tradeItemItem(new ItemStack(Material.MINECART), new ItemStack(Material.EMERALD, 2)));
 		entry.addTag("test");
 		s3.newEntry(0, entry);
 

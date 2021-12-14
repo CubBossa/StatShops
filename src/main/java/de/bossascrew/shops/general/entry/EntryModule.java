@@ -1,10 +1,11 @@
 package de.bossascrew.shops.general.entry;
 
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.util.Duplicable;
+import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
-import de.bossascrew.shops.general.util.Duplicable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -28,7 +29,7 @@ public interface EntryModule extends Duplicable<EntryModule> {
 
 	void saveData();
 
-	ShopInteractionResult perform(Customer customer);
+	ShopInteractionResult perform(Customer customer, EntryInteractionType interactionType);
 
 	@Nullable LogEntry createLogEntry(Customer customer, ShopInteractionResult result);
 

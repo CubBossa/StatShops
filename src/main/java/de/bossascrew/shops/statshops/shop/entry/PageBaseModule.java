@@ -6,6 +6,7 @@ import de.bossascrew.shops.general.entry.PageModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.util.Consumer3;
+import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
@@ -96,7 +97,7 @@ public class PageBaseModule implements PageModule {
 	}
 
 	@Override
-	public ShopInteractionResult perform(Customer customer) {
+	public ShopInteractionResult perform(Customer customer, EntryInteractionType interactionType) {
 		openPage(customer);
 		return ShopInteractionResult.SUCCESS;
 	}

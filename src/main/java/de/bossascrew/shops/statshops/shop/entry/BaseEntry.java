@@ -5,6 +5,7 @@ import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
+import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.general.util.TagUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Config;
@@ -75,14 +76,14 @@ public class BaseEntry implements ShopEntry {
 		return null;
 	}
 
-	public ShopInteractionResult interact(Customer customer) {
+	public ShopInteractionResult interact(Customer customer, EntryInteractionType interactionType) {
 		if (module == null) {
 			return ShopInteractionResult.STATIC;
 		}
 		if (!hasPermission(customer)) {
 			return ShopInteractionResult.FAIL_NO_PERMISSION;
 		}
-		ShopInteractionResult result = module.perform(customer);
+		ShopInteractionResult result = module.perform(customer, interactionType);
 		StatShops.getInstance().getLogDatabase().logToDatabase(module.createLogEntry(customer, result));
 		return result;
 	}
@@ -95,12 +96,14 @@ public class BaseEntry implements ShopEntry {
 		//If auto-tagging is enabled, add all material tags to the entry
 		if (module != null && module instanceof TradeModule tm) {
 			Config config = StatShops.getInstance().getShopsConfig();
-			tags.addAll(TagUtils.getTags(tm.getArticle(),
-					config.isAutoTaggingMaterials(),
-					config.isAutoTaggingGroups(),
-					config.isAutoTaggingEnchantments(),
-					config.isAutoTaggingPotions(),
-					config.isAutoTaggingAttributes()));
+			if (tm.getGainPrice().getObject() instanceof ItemStack soldStack) {
+				tags.addAll(TagUtils.getTags(soldStack,
+						config.isAutoTaggingMaterials(),
+						config.isAutoTaggingGroups(),
+						config.isAutoTaggingEnchantments(),
+						config.isAutoTaggingPotions(),
+						config.isAutoTaggingAttributes()));
+			}
 		}
 		return tags;
 	}

@@ -65,12 +65,16 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 		return pageModule;
 	}
 
-	public static TradeModule<ItemStack> tradeItem(ItemStack article) {
-		return new TradeBaseModule<>(CurrencyHandler.CURRENCY_ITEM, 1, new ItemStack(Material.EMERALD), article);
+	public static TradeModule<ItemStack, ItemStack> tradeItemItem(ItemStack gain, ItemStack pay) {
+		return new TradeBaseModule<>(
+				new Price<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
+				new Price<>(CurrencyHandler.CURRENCY_ITEM, gain.getAmount(), gain));
 	}
 
-	public static TradeModule<Void> tradeMoney(ItemStack article) {
-		return new TradeBaseModule<>(VaultHook.CURRENCY_VAULT, 10, null, article);
+	public static TradeModule<ItemStack, Void> sellItemMoney(ItemStack article) {
+		return new TradeBaseModule<>(
+				new Price<>(CurrencyHandler.CURRENCY_ITEM, article.getAmount(), article),
+				new Price<>(VaultHook.CURRENCY_VAULT, 20, null));
 	}
 
 	public static Price<ItemStack> itemPrice(int amount, ItemStack stack) {

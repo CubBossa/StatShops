@@ -1,13 +1,14 @@
 package de.bossascrew.shops.general.entry;
 
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.util.Editable;
-import de.bossascrew.shops.statshops.data.DatabaseObject;
 import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
-import de.bossascrew.shops.statshops.shop.ShopMode;
 import de.bossascrew.shops.general.Taggable;
 import de.bossascrew.shops.general.util.Duplicable;
+import de.bossascrew.shops.general.util.Editable;
+import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.statshops.data.DatabaseObject;
+import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
+import de.bossascrew.shops.statshops.shop.ShopMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -50,5 +51,5 @@ public interface ShopEntry extends Taggable, Duplicable<ShopEntry>, DatabaseObje
 
 	void setModule(EntryModule module);
 
-	ShopInteractionResult interact(Customer customer);
+	ShopInteractionResult interact(Customer customer, EntryInteractionType interactionType);
 }

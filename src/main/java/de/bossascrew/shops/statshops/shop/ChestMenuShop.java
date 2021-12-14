@@ -6,6 +6,7 @@ import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
+import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.general.util.TextUtils;
@@ -372,7 +373,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 		new ChestShopEditor(this, backHandler).openInventory(player, getDefaultShopMode(), getDefaultShopPage());
 	}
 
-	public ShopInteractionResult interact(Customer customer, ShopMode shopMode, int slot) {
+	public ShopInteractionResult interact(Customer customer, ShopMode shopMode, int slot, EntryInteractionType interactionType) {
 		if (editor != null && !customer.getUuid().equals(editor.getUniqueId())) {
 			return ShopInteractionResult.FAIL_SHOP_DISABLED;
 		}
@@ -383,7 +384,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 		if (!entry.hasPermission(customer)) {
 			return ShopInteractionResult.FAIL_NO_PERMISSION;
 		}
-		return entry.interact(customer);
+		return entry.interact(customer, interactionType);
 	}
 
 	public void setRows(int rows) {

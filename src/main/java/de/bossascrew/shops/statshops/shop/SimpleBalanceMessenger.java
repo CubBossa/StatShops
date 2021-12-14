@@ -2,29 +2,26 @@ package de.bossascrew.shops.statshops.shop;
 
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.TransactionBalanceMessenger;
-import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
-import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.general.util.TradeMessageType;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 
 	@Getter
 	@Setter
 	private TradeMessageType tradeMessageType;
-	private final Map<UUID, Map<Component, Double>> tradeCache;
+	private final Map<UUID, List<Price<?>>> tradeCache;
 
 	public SimpleBalanceMessenger(TradeMessageType tradeMessageType) {
 		this.tradeMessageType = tradeMessageType;
@@ -38,29 +35,33 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 			return;
 		}
 
-		//TODO hier viel zeug nach currency und reward auslagern
 		Customer customer = transaction.getCustomer();
-		TradeModule<ItemStack> tm = (TradeModule<ItemStack>) transaction.getShopEntry().getModule();
+		TradeModule<?, ?> tm = (TradeModule<?, ?>) transaction.getShopEntry().getModule();
+		Price<?> gain = tm.getGainPrice().duplicate();
+		Price<?> pay = tm.getPayPrice().duplicate();
+		gain.setAmount(gain.getAmount() * (transaction.getInteractionType().isBuy() ? 1 : -1));
+		pay.setAmount(pay.getAmount() * (transaction.getInteractionType().isBuy() ? -1 : 1));
 
-		double priceAmount = tm.getPriceAmount() * -1;
-		int gainAmount = tm.getArticle().getAmount();
+		List<Price<?>> prices = tradeCache.getOrDefault(customer.getUuid(), new ArrayList<>());
+
+		Price<?> cachedGain = prices.stream().filter(price -> price.equals(gain)).findAny().orElse(null);
+		if (cachedGain == null) {
+			prices.add(gain);
+		} else {
+			cachedGain.setAmount(cachedGain.getAmount() + gain.getAmount());
+		}
+		Price<?> cachedPay = prices.stream().filter(price -> price.equals(pay)).findAny().orElse(null);
+		if (cachedPay == null) {
+			prices.add(pay);
+		} else {
+			cachedPay.setAmount(cachedPay.getAmount() + pay.getAmount());
+		}
 
 		TradeMessageType feedback = StatShops.getInstance().getShopsConfig().getTradeMessageFeedback();
-		Map<Component, Double> innerMap = tradeCache.getOrDefault(customer, new HashMap<>());
-
-		Component gainComponent = TextUtils.toComponent(tm.getArticle());
-		double setGain = innerMap.getOrDefault(gainComponent, 0.);
-
-		Component priceComponent = tm.getCurrency().getCurrencyComponent(2, tm.getPriceObject());
-		double setPrice = innerMap.getOrDefault(priceComponent, 0.);
-
-		innerMap.put(gainComponent, setGain + gainAmount);
-		innerMap.put(priceComponent, setPrice + priceAmount);
-
 		if (feedback.equals(TradeMessageType.PROMPT)) {
 			printCachedBalanceAndClear(customer, false);
 		}
-		tradeCache.put(customer.getUuid(), innerMap);
+		tradeCache.put(customer.getUuid(), prices);
 	}
 
 	@Override
@@ -78,17 +79,24 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 	}
 
 	private void printCachedBalanceAndClear(Customer customer) {
-		printCachedBalanceAndClear(customer, tradeCache.getOrDefault(customer.getUuid(), new HashMap<>()).size() > 0);
+		List<Price<?>> cache = tradeCache.get(customer.getUuid());
+		printCachedBalanceAndClear(customer, cache != null && cache.size() > 0 && cache.stream()
+				.anyMatch(price -> price.getAmount() != 0));
 	}
 
 	private void printCachedBalanceAndClear(Customer customer, boolean header) {
 		if (header) {
 			customer.sendMessage(Message.SHOP_TRADE_FEEDBACK_CUMUL_TITLE, 0);
 		}
-		for (Map.Entry<Component, Double> entry : tradeCache.getOrDefault(customer.getUuid(), new HashMap<>()).entrySet()) {
-			customer.sendMessage("", getTransactionFeedback(entry.getValue(), entry.getKey(), false), 0);
+		List<Price<?>> cache = tradeCache.get(customer.getUuid());
+		if (cache == null) {
+			return;
 		}
-		tradeCache.put(customer.getUuid(), new HashMap<>());
+		cache = cache.stream().sorted().collect(Collectors.toList());
+		for (Price<?> price : cache) {
+			customer.sendMessage("", getTransactionFeedback(price.getAmount(), price.getObjectComponent(), price.getCurrency().isCastToInt()), 0);
+		}
+		tradeCache.put(customer.getUuid(), new ArrayList<>());
 	}
 
 	private Component getTransactionFeedback(double amount, Component tradeObjectComponent, boolean toInt) { //TODO toint aus currency holen

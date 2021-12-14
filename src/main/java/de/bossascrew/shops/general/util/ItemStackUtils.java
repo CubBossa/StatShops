@@ -3,17 +3,17 @@ package de.bossascrew.shops.general.util;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.general.entry.TradeModule;
+import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
-import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.Limit;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.entry.TradeModule;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -109,15 +109,6 @@ public class ItemStackUtils {
 		itemStack.setItemMeta(meta);
 	}
 
-	public List<Component> addLorePrice(ShopEntry shopEntry, List<Component> existingLore) {
-		if (shopEntry.getModule() instanceof TradeModule tm) {
-			existingLore.addAll(Message.SHOP_ITEM_LORE_PRICE.getTranslations(
-					Template.of("price", tm.getPriceDisplay())
-			));
-		}
-		return existingLore;
-	}
-
 	public List<Component> addLoreDiscount(List<Component> existingLore, List<Discount> discounts) {
 		for (Discount discount : discounts) {
 			existingLore.addAll(Message.SHOP_ITEM_LORE_DISCOUNT.getTranslations(
@@ -144,11 +135,17 @@ public class ItemStackUtils {
 		ItemStack itemStack = entry.getDisplayItem().clone();
 		List<Component> additionalLore = new ArrayList<>();
 
-		if (entry.getModule() instanceof TradeModule tradeEntry && tradeEntry.getCurrency() != null) {
-			Component price = tradeEntry.getCurrency().format(tradeEntry.getPriceAmount(), tradeEntry.getPriceObject());
+		if (entry.getModule() instanceof TradeModule tradeEntry && tradeEntry.getPayPrice() != null && tradeEntry.getGainPrice() != null) {
+			Component price = tradeEntry.getPriceDisplay(); //TODO kauf und verkauf
 
 			//Price lore
-			additionalLore.add(price);
+			additionalLore.addAll(Message.SHOP_ITEM_LORE_BUY_PRICE.getTranslations(Template.of("<price>", tradeEntry.getPriceDisplay())));
+			additionalLore.addAll(Message.SHOP_ITEM_LORE_SELL_PRICE.getTranslations(Template.of("<price>", tradeEntry.getPriceDisplay())));
+
+			additionalLore.add(Component.empty());
+			additionalLore.addAll(Message.SHOP_ITEM_LORE_KEYBIND.getTranslations()); //TODO templates
+			additionalLore.add(Component.empty());
+
 
 			//Lore for discount
 			DiscountHandler.getInstance().addDiscountsLore(entry, additionalLore);

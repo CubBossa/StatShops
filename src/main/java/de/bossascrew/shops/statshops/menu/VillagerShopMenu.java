@@ -1,6 +1,8 @@
 package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.menu.VillagerMenu;
 import de.bossascrew.shops.statshops.StatShops;
@@ -8,8 +10,7 @@ import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
 import de.bossascrew.shops.statshops.shop.VillagerShop;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.entry.TradeModule;
+import de.bossascrew.shops.statshops.shop.currency.Price;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -57,13 +58,13 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 
 			ShopEntry e = entry.getValue();
 			//Only works with Currency<ItemStack> for now
-			if (e.getModule() != null && e.getModule() instanceof TradeModule tm) {
+			if (e.getModule() != null && e.getModule() instanceof TradeModule tm && tm.getPayPrice().getObject() instanceof ItemStack) {
 
+				Price<ItemStack> payPrice = tm.getPayPrice();
+				ItemStack price = payPrice.getObject();
+				price.setAmount(Integer.min((int) payPrice.getAmount(), 127));
 
-				ItemStack price = (ItemStack) tm.getPriceObject();
-				price.setAmount(Integer.min((int) tm.getPriceAmount(), 64));
-
-				MerchantRecipe recipe = new MerchantRecipe(tm.getArticle(), e.getPermission() == null || player.hasPermission(e.getPermission()) ? Integer.MAX_VALUE : 0);
+				MerchantRecipe recipe = new MerchantRecipe((ItemStack) tm.getGainPrice().getObject(), e.getPermission() == null || player.hasPermission(e.getPermission()) ? Integer.MAX_VALUE : 0);
 				recipeMap.put(e, i);
 				entryMap.put(i++, e);
 				recipe.addIngredient(price);

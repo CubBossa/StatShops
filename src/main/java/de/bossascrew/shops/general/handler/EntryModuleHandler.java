@@ -10,6 +10,7 @@ import de.bossascrew.shops.general.menu.ListMenuElementHolder;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.hook.VaultHook;
+import de.bossascrew.shops.statshops.shop.currency.Price;
 import de.bossascrew.shops.statshops.shop.entry.PageBaseModule;
 import de.bossascrew.shops.statshops.shop.entry.TradeBaseModule;
 import lombok.Getter;
@@ -70,6 +71,14 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 	public static TradeModule<Void> tradeMoney(ItemStack article) {
 		return new TradeBaseModule<>(VaultHook.CURRENCY_VAULT, 10, null, article);
+	}
+
+	public static Price<ItemStack> itemPrice(int amount, ItemStack stack) {
+		return new Price<>(CurrencyHandler.CURRENCY_ITEM, amount, stack);
+	}
+
+	public static Price<Void> moneyPrice(double amount) {
+		return new Price<>(VaultHook.CURRENCY_VAULT, amount, null);
 	}
 
 	//TODO andere defaults

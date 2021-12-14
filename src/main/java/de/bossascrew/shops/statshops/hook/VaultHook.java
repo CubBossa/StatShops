@@ -3,7 +3,7 @@ package de.bossascrew.shops.statshops.hook;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.general.handler.CurrencyHandler;
-import de.bossascrew.shops.statshops.shop.Currency;
+import de.bossascrew.shops.statshops.shop.currency.Currency;
 import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;

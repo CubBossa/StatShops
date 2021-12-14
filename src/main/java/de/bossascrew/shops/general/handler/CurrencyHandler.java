@@ -2,7 +2,7 @@ package de.bossascrew.shops.general.handler;
 
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.util.ItemStackUtils;
-import de.bossascrew.shops.statshops.shop.Currency;
+import de.bossascrew.shops.statshops.shop.currency.Currency;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
@@ -60,6 +60,7 @@ public class CurrencyHandler {
 					break;
 				}
 				customer.getPlayer().getInventory().setItem(entry.getKey(), null);
+				removed += a;
 			}
 			return true;
 		}

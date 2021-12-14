@@ -6,6 +6,7 @@ import co.aikar.commands.InvalidCommandArgument;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.handler.CurrencyHandler;
+import de.bossascrew.shops.general.handler.DynamicPricingHandler;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.handler.TemplateHandler;
 import de.bossascrew.shops.general.util.ItemFlags;
@@ -23,7 +24,6 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -89,6 +89,8 @@ public class StatShops extends JavaPlugin {
 	private TemplateHandler templateHandler;
 	@Getter
 	private CurrencyHandler currencyHandler;
+	@Getter
+	private DynamicPricingHandler dynamicPricingHandler;
 
 	private static boolean loading = true;
 
@@ -142,6 +144,9 @@ public class StatShops extends JavaPlugin {
 		// Setup Database
 		this.database = new TestDatabase(); //TODO
 		this.logDatabase = (LogDatabase) this.database;
+
+		// Register dynamic pricing
+		this.dynamicPricingHandler = new DynamicPricingHandler();
 
 		// Enable Entry Modules
 		this.entryModuleHandler = new EntryModuleHandler();
@@ -392,22 +397,5 @@ public class StatShops extends JavaPlugin {
 				throw new ConditionFailedException("The item in your main hand needs to be a breakable object.");
 			}
 		});
-	}
-
-	public Component getTransactionFeedback(double amount, Component tradeObjectComponent, boolean prompt) {
-		return getTransactionFeedback(amount, tradeObjectComponent, prompt, true);
-	}
-
-	public Component getTransactionFeedback(double amount, Component tradeObjectComponent, boolean prompt, boolean toInt) {
-		Template[] templates = {
-				Template.of("indicator", amount >= 0 ? Message.SHOP_TRADE_FEEDBACK_GAIN.getTranslation() : Message.SHOP_TRADE_FEEDBACK_PAY.getTranslation()),
-				Template.of("amount", (toInt ? "" + ((int) Math.abs(amount)) : "" + Math.abs(amount))),
-				Template.of("subject", tradeObjectComponent)
-		};
-		if (prompt) {
-			return Message.SHOP_TRADE_FEEDBACK_PROMPT_FORMAT.getTranslation(templates);
-		} else {
-			return Message.SHOP_TRADE_FEEDBACK_CUMUL_FORMAT.getTranslation(templates);
-		}
 	}
 }

@@ -8,6 +8,7 @@ import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.util.Consumer3;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
 import lombok.Getter;
 import lombok.Setter;
@@ -102,6 +103,9 @@ public class PageBaseModule implements PageModule {
 
 	@Override
 	public void openPage(Customer customer) {
+		if (shopEntry.getShop() instanceof ChestMenuShop cms) {
+			cms.announceTurnPage(customer); //TODO verallgmeeinern
+		}
 		this.openPageHandler.accept(customer, shopEntry, this.newPageProvider.apply(shopEntry.getSlot() / RowedOpenableMenu.LARGEST_INV_SIZE));
 	}
 

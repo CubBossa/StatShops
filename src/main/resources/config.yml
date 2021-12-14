@@ -84,12 +84,40 @@ shops:
   default-template: "00000000-0000-0000-0000-000000000004"
 
   # Defines the message feedback for trading in a shop.
-  # NONE:           There will be no message feedback if people successfully trade items
-  # CUMULATIVE:     All costs and gains will be cached until the shop closes and then sent in a bundled message.
-  # PROMPT:         There will be a chat message for every successful trade interaction.
-  trade-message-feedback: CUMULATIVE
+  # NONE:                There will be no message feedback if people successfully trade items
+  # PROMPT:              There will be a chat message for every successful trade interaction.
+  # CUMULATIVE_PAGE:     All costs and gains will be cached until the player will turn the shop page and then sent in a bundled message.
+  # CUMULATIVE_SHOP:     All costs and gains will be cached until the shop closes and then sent in a bundled message.
+  trade-message-feedback: CUMULATIVE_SHOP
 
+currencies:
 
+  # Dynamic pricing means, that the price of a trade module will be calculated and might be more than just a constant.
+  # You can activate dynamic pricing and use constants anyways, but if you're only using constant prices we recommend you to disable it.
+
+  # When activated, dynamic pricing allows you to use placeholders and equations.
+  # For example, you can load a price from a database or multiply prices with constants.
+  # Example: <db:diamond> * 1.5
+  # When you set this price, StatShops will automatically check if there is a default price loaded with the key "diamond".
+  # If so, it will replace the placeholder with the loaded price. Otherwise, it will simply load 10.0 as a fallback value
+  # and give you a warning in the console.
+  dynamic:
+
+    # Enable or disable dynamic pricing.
+    enabled: false
+
+    # If you use dynamic pricing based on the players transactions (e.g. less money the more they sell), you might want to
+    # update open shop menus live. If you use dynamic pricing only to load default pricing, you might not need live menu updates.
+    live_update: false
+
+    # Set this to true, if you want to use the default pricing of StatShops. (/StatShops/default_pricing.yml)
+    load_intern_defaults: true
+
+    # Set this to true, if you want to use the default pricing of Essentials. (/EssentialsX/worth.yml)
+    load_essentials_defaults: false
+
+    # To load more default pricings, you have to register a DefaultPricingDatabase via API.
+    # More information: TODO link
 
 tags:
 

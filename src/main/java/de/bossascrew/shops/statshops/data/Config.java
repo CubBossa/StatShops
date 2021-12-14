@@ -45,7 +45,18 @@ public class Config extends AnnotationConfig {
 	public String defaultTemplate = "000000000-0000-0000-00000-0000000000001";
 
 	@ConfigEntry(path = "shops.trade-message-feedback")
-	public TradeMessageType tradeMessageFeedback   = TradeMessageType.CUMULATIVE;
+	public TradeMessageType tradeMessageFeedback = TradeMessageType.CUMULATIVE_SHOP;
+
+	//CURRENCIES
+	@ConfigEntry(path = "currencies.dynamic.enabled")
+	public boolean dynamicPricingEnabled = false;
+	@ConfigEntry(path = "currencies.dynamic.live_update")
+	public boolean dynamicPricingLiveEnabled = false;
+	@ConfigEntry(path = "currencies.dynamic.load_intern_defaults")
+	public boolean dynamicPricingInternalData = true;
+	@ConfigEntry(path = "currencies.dynamic.load_essentials_defaults")
+	public boolean dynamicPricingEssentialsData = false;
+
 
 	//TAGS
 	@ConfigEntry(path = "tags.auto-tagging-materials")

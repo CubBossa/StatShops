@@ -42,6 +42,8 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 	private Material displayMaterial;
 	private @Nullable String permission = null;
 	private @Nullable EntryTemplate defaultTemplate = null;
+	private TransactionBalanceMessenger balanceMessenger;
+	private final List<UUID> pageTurningPlayers;
 
 	private int rows = 3;
 
@@ -63,7 +65,6 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 
 	@JsonIgnore
 	private final List<Customer> activeCustomers;
-	private final HashMap<Customer, Map<Component, Double>> tradeCache;
 
 	private final Map<Customer, ChestShopMenu> menuMap;
 
@@ -83,7 +84,8 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 		this.activeCustomers = new ArrayList<>();
 		this.menuMap = new HashMap<>();
 		this.tags = new ArrayList<>();
-		this.tradeCache = new HashMap<>();
+		this.balanceMessenger = new SimpleBalanceMessenger(StatShops.getInstance().getShopsConfig().getTradeMessageFeedback());
+		this.pageTurningPlayers = new ArrayList<>();
 	}
 
 	public void setNameFormat(String nameFormat) {
@@ -299,24 +301,53 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 			customer.sendMessage(Message.SHOP_NO_PERMISSION);
 			return false;
 		}
-		// Check if new menu or next/prev page button
-		// If new menu, clear trade cache
-		ChestShopMenu openMenu = menuMap.get(customer);
-		if (openMenu == null) {
-			this.tradeCache.put(customer, new HashMap<>());
+		if (pageTurningPlayers.contains(customer.getUuid())) {
+			pageTurningPlayers.remove(customer.getUuid());
+			if (!handleShopTurnPage(customer, page)) {
+				return false;
+			}
+		} else {
+			if (!handleShopOpen(customer)) {
+				return false;
+			}
 		}
 
 		ChestShopMenu menu = new ChestShopMenu(this, backHandler);
+		menu.setCloseHandler(closeContext -> {
+			if (!pageTurningPlayers.contains(customer.getUuid())) {
+				handleShopClose(customer);
+			}
+		});
 		menu.openInventorySync(customer.getPlayer(), null, shopMode, page);
 		menuMap.put(customer, menu);
 
 		if (customer.getActiveShop() == null || !customer.getActiveShop().equals(this)) {
 			activeCustomers.add(customer);
-			tradeCache.put(customer, new HashMap<>());
 		}
 		customer.setActiveShop(this);
 
 		return true;
+	}
+
+	private boolean handleShopOpen(Customer customer) {
+		//TODO call event
+		return true;
+	}
+
+	private boolean handleShopClose(Customer customer) {
+		//TODO call event
+		balanceMessenger.handleShopClose(customer.getPlayer());
+		return true;
+	}
+
+	private boolean handleShopTurnPage(Customer customer, int page) {
+		//TODO call event
+		balanceMessenger.handlePageClose(customer.getPlayer());
+		return true;
+	}
+
+	public void announceTurnPage(Customer customer) {
+		pageTurningPlayers.add(customer.getUuid());
 	}
 
 	public boolean close(Customer customer) {

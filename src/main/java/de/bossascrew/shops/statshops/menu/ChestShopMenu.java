@@ -12,8 +12,6 @@ import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.LoggingPolicy;
-import de.bossascrew.shops.general.util.TextUtils;
-import de.bossascrew.shops.general.util.TradeMessageType;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
@@ -22,7 +20,6 @@ import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
 import de.bossascrew.shops.statshops.shop.ShopMode;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -168,19 +165,10 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	@Override
 	public boolean closeInventory(Player player) {
 		DiscountHandler.getInstance().unsubscribeToDisplayUpdates(this);
-
-		//TODO trade chacher object pro Shop, hier nur trigger aufrufen
-		Customer customer = Customer.wrap(player);
-		if (shop.getTradeCache().getOrDefault(customer, new HashMap<>()).size() > 0) {
-			customer.sendMessage(Message.SHOP_TRADE_FEEDBACK_CUMUL_TITLE, 0);
-		}
-		for (Map.Entry<Component, Double> entry : shop.getTradeCache().getOrDefault(customer, new HashMap<>()).entrySet()) {
-			customer.sendMessage("", StatShops.getInstance().getTransactionFeedback(entry.getValue(), entry.getKey(), false), 0);
-		}
 		return super.closeInventory(player);
 	}
 
-	public <T> void setEntry(ShopEntry entry) {
+	public void setEntry(ShopEntry entry) {
 
 		int slot = entry.getSlot() % LARGEST_INV_SIZE;
 		setItemAndClickHandler(slot, ItemStackUtils.createEntryItemStack(entry), clickContext -> {
@@ -200,29 +188,7 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 			}
 			ShopInteractionResult result = entry.interact(customer);
 			if (result == ShopInteractionResult.SUCCESS && entry.getModule() != null && entry.getModule() instanceof TradeModule tm) {
-				//TODO ganz viel nach currency und reward auslagern
-
-				double priceAmount = tm.getPriceAmount() * -1;
-				int gainAmount = tm.getArticle().getAmount();
-
-				TradeMessageType feedback = StatShops.getInstance().getShopsConfig().getTradeMessageFeedback();
-				Map<Component, Double> innerMap = shop.getTradeCache().getOrDefault(customer, new HashMap<>());
-
-				Component gainComponent = TextUtils.toComponent(tm.getArticle());
-				double setGain = innerMap.getOrDefault(gainComponent, 0.);
-
-				Component priceComponent = tm.getCurrency().getCurrencyComponent(2, tm.getPriceObject());
-				double setPrice = innerMap.getOrDefault(priceComponent, 0.);
-
-				if (feedback.equals(TradeMessageType.CUMULATIVE)) {
-					innerMap.put(gainComponent, setGain + gainAmount);
-					innerMap.put(priceComponent, setPrice + priceAmount);
-
-				} else if (feedback.equals(TradeMessageType.PROMPT)) {
-					customer.sendMessage("", StatShops.getInstance().getTransactionFeedback(gainAmount, gainComponent, true), 0);
-					customer.sendMessage("", StatShops.getInstance().getTransactionFeedback(priceAmount, priceComponent, true), 0);
-				}
-				shop.getTradeCache().put(customer, innerMap);
+				shop.getBalanceMessenger().handleTransaction(tm.getLastTransaction(customer));
 			}
 			interactionCooldown.put(player, now);
 		});

@@ -3,6 +3,7 @@ package de.bossascrew.shops.general.util;
 public enum TradeMessageType {
 
 	NONE,
-	CUMULATIVE,
+	CUMULATIVE_PAGE,
+	CUMULATIVE_SHOP,
 	PROMPT
 }

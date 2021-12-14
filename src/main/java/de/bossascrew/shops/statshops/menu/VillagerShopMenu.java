@@ -58,9 +58,9 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 
 			ShopEntry e = entry.getValue();
 			//Only works with Currency<ItemStack> for now
-			if (e.getModule() != null && e.getModule() instanceof TradeModule tm && tm.getPayPrice().getObject() instanceof ItemStack) {
+			if (e.getModule() != null && e.getModule() instanceof TradeModule tm && tm.getPayPrice(true).getObject() instanceof ItemStack) {
 
-				Price<ItemStack> payPrice = tm.getPayPrice();
+				Price<ItemStack> payPrice = tm.getPayPrice(true);
 				ItemStack price = payPrice.getObject();
 				price.setAmount(Integer.min((int) payPrice.getAmount(), 127));
 

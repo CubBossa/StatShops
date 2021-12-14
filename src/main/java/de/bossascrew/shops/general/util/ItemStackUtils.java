@@ -135,12 +135,11 @@ public class ItemStackUtils {
 		ItemStack itemStack = entry.getDisplayItem().clone();
 		List<Component> additionalLore = new ArrayList<>();
 
-		if (entry.getModule() instanceof TradeModule tradeEntry && tradeEntry.getPayPrice() != null && tradeEntry.getGainPrice() != null) {
-			Component price = tradeEntry.getPriceDisplay(); //TODO kauf und verkauf
+		if (entry.getModule() instanceof TradeModule tradeEntry) {
 
 			//Price lore
-			additionalLore.addAll(Message.SHOP_ITEM_LORE_BUY_PRICE.getTranslations(Template.of("<price>", tradeEntry.getPriceDisplay())));
-			additionalLore.addAll(Message.SHOP_ITEM_LORE_SELL_PRICE.getTranslations(Template.of("<price>", tradeEntry.getPriceDisplay())));
+			additionalLore.addAll(Message.SHOP_ITEM_LORE_BUY_PRICE.getTranslations(Template.of("price", tradeEntry.getPriceDisplay(true))));
+			additionalLore.addAll(Message.SHOP_ITEM_LORE_SELL_PRICE.getTranslations(Template.of("price", tradeEntry.getPriceDisplay(false))));
 
 			additionalLore.add(Component.empty());
 			additionalLore.addAll(Message.SHOP_ITEM_LORE_KEYBIND.getTranslations()); //TODO templates

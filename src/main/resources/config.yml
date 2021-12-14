@@ -42,17 +42,17 @@ guis:
 
 shops:
 
-  #You can add multiple keys to one action by seperating them with a comma (RIGHT_CLICK,LEFT_CLICK).
-  #All possible keybindings are:
-  # RIGHT_CLICK_SHOP, LEFT_CLICK_SHOP, RIGHT_SHIFT_CLICK_SHOP, LEFT_SHIFT_CLICK_SHOP, MOUSE_WHEEL_SHOP, DOUBLE_CLICK_SHOP
-  # RIGHT_CLICK_INV, LEFT_CLICK_INV, RIGHT_SHIFT_CLICK_INV, LEFT_SHIFT_CLICK_INV, MOUSE_WHEEL_INV, DOUBLE_CLICK_INV
+  # Define the keybinding for shop interactions.
+  # Possible values can be found here: https://jd.bukkit.org/org/bukkit/event/inventory/ClickType.html
   keybinding:
-    buy: "RIGHT_CLICK_SHOP,LEFT_CLICK_SHOP"
-    sell: "RIGHT_CLICK_INV,LEFT_CLICK_INV"
-    buy-stack: "RIGHT_SHIFT_CLICK_SHOP,LEFT_SHIFT_CLICK_SHOP"
-    sell-stack: "RIGHT_SHIFT_CLICK_INV,LEFT_SHIFT_CLICK_INV"
-    buy-amount: "MOUSE_WHEEL_SHOP"
-    sell-amount: "MOUSE_WHEEL_INV"
+    buy:
+      - "LEFT"
+    sell:
+      - "RIGHT"
+    buy-stack:
+      - "SHIFT_LEFT"
+    sell-stack:
+      - "SHIFT_RIGHT"
 
   # The cooldown in milliseconds before the player can interact with the shop again.
   cooldown: 100

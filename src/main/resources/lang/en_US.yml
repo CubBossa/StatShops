@@ -17,6 +17,13 @@ general:
   # Valid placeholders: <player>
   editable_edited: "<prefix><red>This object is currently edited by <editor>"
 
+  clicktype:
+    right: "right-click"
+    left: "left-click"
+    shift_right: "shift right-click"
+    shift_left: "shift left-click"
+    middle: "mouse-wheel"
+
   webinterface:
     loading: "<prefix>Generating session..."
     # Valid placeholders: <link>
@@ -58,19 +65,23 @@ shop:
   cooldown: "<red>Please slow down."
 
   # Valid placeholders:
-  #   <indicator>:    "<green>+" if object received, "<red>-" if object paid (general.trade_feedback_indicator_gain/pay)
-  #   <amount>:       The traded amount
-  #   <subject>:      Trade object, might be translation component for item or item component or currency name.
-  prompt_feedback: "<prefix><indicator><white><amount>x<white> <gray><subject>"
+  #   <indicator>:       "<green>+" if object received, "<red>-" if object paid (general.trade_feedback_indicator_gain/pay)
+  #   <transaction>:     The transaction, already formatted by the currency
+  prompt_feedback: "<prefix><indicator><transaction>"
 
   # Valid placeholders:
-  #   <indicator>:    "<green>+" if object received, "<red>-" if object paid (general.trade_feedback_indicator_gain/pay)
-  #   <amount>:       The traded amount
-  #   <subject>:      Trade object, might be translation component for item or item component or currency name.
-  cumulative_feedback: "  <indicator><white><amount>x<white> <gray><subject>"
+  #   <indicator>:       "<green>+" if object received, "<red>-" if object paid (general.trade_feedback_indicator_gain/pay)
+  #   <transaction>:     The transaction, already formatted by the currency
+  cumulative_feedback: "<indicator><transaction>"
   cumulative_title: "<white><underlined>Shopping balance"
   trade_feedback_indicator_gain: "<green>+</green>"
   trade_feedback_indicator_pay: "<red>-</red>"
+
+  actions:
+    buy: "Buy"
+    sell: "Sell"
+    buy_stack: "Buy Stack"
+    sell_stack: "Sell Stack"
 
   gui:
     # The title of a shop, possible placeholders are: <name>, <page>, <mode>, <pages>

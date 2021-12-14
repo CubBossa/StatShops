@@ -31,16 +31,24 @@ public class TradeBaseModule<P, G> implements TradeModule<P, G> {
 	private final Component displayName;
 	private final List<Component> displayLore;
 
-	private boolean buyEnabled = true;
-	private boolean sellEnabled = true;
+	private boolean buyable = true;
+	private boolean sellable = true;
+	private boolean buyableStacked = true;
+	private boolean sellableStacked = true;
 
-	private Price<P> payPrice; //TODO einmal für sell einmal für buy
+	private Price<P> buyPayPrice;
+	private Price<P> sellPayPrice;
 	private Price<G> gainPrice;
 	private final Map<UUID, Transaction> lastTransactions;
 
 	public TradeBaseModule(Price<P> payPrice, Price<G> gainPrice) {
+		this(payPrice, payPrice, gainPrice);
+	}
 
-		this.payPrice = payPrice;
+	public TradeBaseModule(Price<P> buyPayPrice, Price<P> sellPayPrice, Price<G> gainPrice) {
+
+		this.buyPayPrice = buyPayPrice;
+		this.sellPayPrice = sellPayPrice;
 		this.gainPrice = gainPrice;
 		this.lastTransactions = new HashMap<>();
 
@@ -49,9 +57,16 @@ public class TradeBaseModule<P, G> implements TradeModule<P, G> {
 		displayLore = Message.GUI_ENTRY_FUNCTION_TRADE_LORE.getTranslations();
 	}
 
+	public Price<P> getPayPrice(boolean buy) {
+		return buy ? buyPayPrice : sellPayPrice;
+	}
+
 	@Override
-	public Component getPriceDisplay() {
-		return payPrice.getPriceComponent();
+	public Component getPriceDisplay(boolean buy) {
+		if (buy) {
+			return buyPayPrice.getPriceComponent();
+		}
+		return sellPayPrice.getPriceComponent();
 	}
 
 	@Override
@@ -83,8 +98,8 @@ public class TradeBaseModule<P, G> implements TradeModule<P, G> {
 
 	@Override
 	public ShopInteractionResult perform(Customer customer, EntryInteractionType interactionType) {
-		Price<?> pay = interactionType.isBuy() ? payPrice : gainPrice;
-		Price<?> gain = interactionType.isBuy() ? gainPrice : payPrice;
+		Price<?> pay = interactionType.isBuy() ? buyPayPrice : gainPrice;
+		Price<?> gain = interactionType.isBuy() ? gainPrice : sellPayPrice;
 
 		if (!gain.canGain(customer)) {
 			return ShopInteractionResult.FAIL_CANT_REWARD;
@@ -92,7 +107,8 @@ public class TradeBaseModule<P, G> implements TradeModule<P, G> {
 		ShopInteractionResult result = pay.pay(customer);
 		if (result.equals(ShopInteractionResult.SUCCESS)) {
 			gain.gain(customer);
-			Transaction transaction = new Transaction(customer, shopEntry, interactionType, payPrice, gainPrice, LocalDateTime.now(), new ArrayList<>()); //TODO discounts
+			Transaction transaction = new Transaction(customer, shopEntry, interactionType,
+					interactionType.isBuy() ? buyPayPrice : sellPayPrice, gainPrice, LocalDateTime.now(), new ArrayList<>()); //TODO discounts
 			lastTransactions.put(customer.getUuid(), transaction);
 		}
 		return result;

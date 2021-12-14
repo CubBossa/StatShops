@@ -49,6 +49,17 @@ public enum Message {
 	CITIZENS_CONFIRM_OVERRIDE("citizens.assign.confirm"),
 	CITIZENS_CLICK_TO_ASSIGN("citizens.assign.info"),
 
+	ACTION_BUY("shop.actions.buy"),
+	ACTION_SELL("shop.actions.sell"),
+	ACTION_BUY_STACK("shop.actions.buy_stack"),
+	ACTION_SELL_STACK("shop.actions.sell_stack"),
+
+	CLICK_TYPE_RIGHT("general.keybinding.clicktype.right"),
+	CLICK_TYPE_LEFT("general.keybinding.clicktype.left"),
+	CLICK_TYPE_SHIFT_RIGHT("general.keybinding.clicktype.shift_right"),
+	CLICK_TYPE_SHIFT_LEFT("general.keybinding.clicktype.shift_left"),
+	CLICK_TYPE_MIDDLE("general.keybinding.clicktype.middle"),
+
 	SHOP_NO_PERMISSION("shop.no_permission"),
 	SHOP_NOT_ENABLED("shop.not_enabled"),
 	SHOP_COOLDOWN("shop.cooldown"),

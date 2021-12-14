@@ -7,8 +7,11 @@ import de.bossascrew.shops.general.util.TradeMessageType;
 import de.bossascrew.shops.statshops.StatShops;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.event.inventory.ClickType;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -40,6 +43,15 @@ public class Config extends AnnotationConfig {
 	@ConfigEntry(path = "shops.shop-size")
 	public int defaultShopSize = 3;
 	//TODO Shopmode
+
+	@ConfigEntry(path = "shops.keybinding.buy")
+	public List<String> buyKeyBinding = List.of(ClickType.LEFT.toString());
+	@ConfigEntry(path = "shops.keybinding.sell")
+	public List<String> sellKeyBinding = List.of(ClickType.RIGHT.toString());
+	@ConfigEntry(path = "shops.keybinding.buy-stack")
+	public List<String> buyStackKeyBinding = List.of(ClickType.SHIFT_LEFT.toString());
+	@ConfigEntry(path = "shops.keybinding.sell-stack")
+	public List<String> sellStackKeyBinding = List.of(ClickType.SHIFT_RIGHT.toString());
 
 	@ConfigEntry(path = "shops.default-template")
 	public String defaultTemplate = "000000000-0000-0000-00000-0000000000001";

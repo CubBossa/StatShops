@@ -1,5 +1,7 @@
 package de.bossascrew.shops.general.util;
 
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.Config;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.inventory.ClickType;
@@ -8,23 +10,26 @@ import org.bukkit.event.inventory.ClickType;
 @RequiredArgsConstructor
 public enum EntryInteractionType {
 
-	BUY(true),
-	SELL(false),
-	BUY_STACK(true),
-	SELL_STACK(false);
+	BUY(true, false),
+	SELL(false, true),
+	BUY_STACK(true, false),
+	SELL_STACK(false, true),
+	UNKNOWN(false, false);
 
 	private final boolean buy;
-
-	public boolean isSell() {
-		return !buy;
-	}
+	private final boolean sell;
 
 	public static EntryInteractionType fromClickType(ClickType clickType) {
-		return switch (clickType) { //TODO config parsen
-			case RIGHT -> EntryInteractionType.SELL;
-			case SHIFT_LEFT -> BUY_STACK;
-			case SHIFT_RIGHT -> SELL_STACK;
-			default -> BUY;
-		};
+		Config sc = StatShops.getInstance().getShopsConfig();
+		if (sc.getBuyKeyBinding().contains(clickType.toString())) {
+			return BUY;
+		} else if (sc.getBuyStackKeyBinding().contains(clickType.toString())) {
+			return BUY_STACK;
+		} else if (sc.getSellKeyBinding().contains(clickType.toString())) {
+			return SELL;
+		} else if (sc.getSellStackKeyBinding().contains(clickType.toString())) {
+			return SELL_STACK;
+		}
+		return UNKNOWN;
 	}
 }

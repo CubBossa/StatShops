@@ -38,7 +38,7 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 		Customer customer = transaction.getCustomer();
 		TradeModule<?, ?> tm = (TradeModule<?, ?>) transaction.getShopEntry().getModule();
 		Price<?> gain = tm.getGainPrice().duplicate();
-		Price<?> pay = tm.getPayPrice().duplicate();
+		Price<?> pay = tm.getPayPrice(transaction.getInteractionType().isBuy()).duplicate();
 		gain.setAmount(gain.getAmount() * (transaction.getInteractionType().isBuy() ? 1 : -1));
 		pay.setAmount(pay.getAmount() * (transaction.getInteractionType().isBuy() ? -1 : 1));
 
@@ -67,43 +67,40 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 	@Override
 	public void handlePageClose(Player player) {
 		if (tradeMessageType.equals(TradeMessageType.CUMULATIVE_PAGE)) {
-			printCachedBalanceAndClear(Customer.wrap(player));
+			printCachedBalanceAndClear(Customer.wrap(player), true);
 		}
 	}
 
 	@Override
 	public void handleShopClose(Player player) {
 		if (tradeMessageType.equals(TradeMessageType.CUMULATIVE_SHOP)) {
-			printCachedBalanceAndClear(Customer.wrap(player));
+			printCachedBalanceAndClear(Customer.wrap(player), true);
 		}
-	}
-
-	private void printCachedBalanceAndClear(Customer customer) {
-		List<Price<?>> cache = tradeCache.get(customer.getUuid());
-		printCachedBalanceAndClear(customer, cache != null && cache.size() > 0 && cache.stream()
-				.anyMatch(price -> price.getAmount() != 0));
 	}
 
 	private void printCachedBalanceAndClear(Customer customer, boolean header) {
+		List<Price<?>> cache = tradeCache.get(customer.getUuid());
+		if (cache == null || cache.stream().noneMatch(price -> price.getAmount() != 0)) {
+			return;
+		}
 		if (header) {
 			customer.sendMessage(Message.SHOP_TRADE_FEEDBACK_CUMUL_TITLE, 0);
 		}
-		List<Price<?>> cache = tradeCache.get(customer.getUuid());
-		if (cache == null) {
-			return;
-		}
 		cache = cache.stream().sorted().collect(Collectors.toList());
 		for (Price<?> price : cache) {
-			customer.sendMessage("", getTransactionFeedback(price.getAmount(), price.getObjectComponent(), price.getCurrency().isCastToInt()), 0);
+			customer.sendMessage("", getTransactionFeedback(price), 0);
 		}
 		tradeCache.put(customer.getUuid(), new ArrayList<>());
 	}
 
-	private Component getTransactionFeedback(double amount, Component tradeObjectComponent, boolean toInt) { //TODO toint aus currency holen
+	private Component getTransactionFeedback(Price<?> price) {
+		double actualAmount = price.getAmount();
+		price = price.duplicate();
+		price.setAmount(Math.abs(price.getAmount()));
+
 		Template[] templates = {
-				Template.of("indicator", amount >= 0 ? Message.SHOP_TRADE_FEEDBACK_GAIN.getTranslation() : Message.SHOP_TRADE_FEEDBACK_PAY.getTranslation()),
-				Template.of("amount", (toInt ? "" + ((int) Math.abs(amount)) : "" + Math.abs(amount))),
-				Template.of("subject", tradeObjectComponent)
+				Template.of("indicator", actualAmount >= 0 ? Message.SHOP_TRADE_FEEDBACK_GAIN.getTranslation() : Message.SHOP_TRADE_FEEDBACK_PAY.getTranslation()),
+				Template.of("transaction", price.getPriceComponent()),
 		};
 		if (tradeMessageType.equals(TradeMessageType.PROMPT)) {
 			return Message.SHOP_TRADE_FEEDBACK_PROMPT_FORMAT.getTranslation(templates);

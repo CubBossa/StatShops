@@ -1,8 +1,8 @@
 package de.bossascrew.shops.statshops.hook;
 
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.general.handler.CurrencyHandler;
+import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.shop.currency.Currency;
 import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
@@ -14,7 +14,8 @@ public class VaultHook {
 
 	private StatShops shopPlugin;
 
-	public static final Currency<Void> CURRENCY_VAULT = new Currency<Void>("<amount> <currency>", (integer, unused) -> {
+	public static final Currency<Void> CURRENCY_VAULT = new Currency<>(
+			StatShops.getInstance().getShopsConfig().getCurrencyVaultFormatting(), "lol", (integer, unused) -> {
 		return Component.text(integer == 1 ? economy.currencyNameSingular() : economy.currencyNamePlural()); //TODO evtl legacy parsing
 	}) {
 		@Override

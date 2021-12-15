@@ -485,7 +485,7 @@ public class ShopManagementMenu {
 			player.closeInventory();
 			new AnvilGUI.Builder()
 					.plugin(StatShops.getInstance())
-					.text(TextUtils.DURATION_FORMAT)
+					.text("50%")
 					.title(Message.GUI_DISCOUNT_SET_DURATION_TITLE.getLegacyTranslation())
 					.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> {
 						chestMenu.refresh(7);
@@ -494,10 +494,12 @@ public class ShopManagementMenu {
 					.onComplete((p, s) -> {
 						double d = 0;
 						try {
-							d = Double.parseDouble(s);
+							d = Double.parseDouble(s.replace("%", ""));
 						} catch (NumberFormatException ignored) {
 						}
-						discount.setPercent(Math.abs(d));
+						discount.setPercent(d);
+						chestMenu.refresh(7);
+						chestMenu.openInventory(player);
 						return AnvilGUI.Response.close();
 					}).open(player);
 		});

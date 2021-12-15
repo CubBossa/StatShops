@@ -113,11 +113,11 @@ public class StatShops extends JavaPlugin {
 		this.miniMessage = MiniMessage.get();
 		this.consoleAudience = bukkitAudiences.sender(Bukkit.getConsoleSender());
 
-		this.currencyHandler = new CurrencyHandler();
-
 		// Initialize and load Config
 		this.shopsConfig = new Config(super.getDataFolder().getPath() + "\\config.yml");
 		this.shopsConfig.loadConfig();
+
+		this.currencyHandler = new CurrencyHandler();
 
 		// Initialize Vault
 		if (Bukkit.getPluginManager().getPlugin("Vault") != null) {

@@ -24,6 +24,7 @@ import java.util.function.BiFunction;
 public abstract class Currency<T> {
 
 	private final String format;
+	private final String formatDiscounted;
 	private final boolean castToInt;
 	private final BiFunction<Double, T, Component> currencyFormatter;
 
@@ -32,8 +33,8 @@ public abstract class Currency<T> {
 	 * @param currencyFormatter It provides the component for the currency. If the currency is itemstack, for example, the function could return
 	 *                          the translatable component of the material. It accepts the amount to allow singular and plural currencies (1 Dollar, 2 Dollars)
 	 */
-	public Currency(String format, BiFunction<Double, T, Component> currencyFormatter) {
-		this(format, false, currencyFormatter);
+	public Currency(String format, String formatDiscounted, BiFunction<Double, T, Component> currencyFormatter) {
+		this(format, formatDiscounted, false, currencyFormatter);
 	}
 
 	/**
@@ -42,8 +43,9 @@ public abstract class Currency<T> {
 	 * @param currencyFormatter It provides the component for the currency. If the currency is itemstack, for example, the function could return
 	 *                          the translatable component of the material. It accepts the amount to allow singular and plural currencies (1 Dollar, 2 Dollars)
 	 */
-	public Currency(String format, boolean castToInt, BiFunction<Double, T, Component> currencyFormatter) {
+	public Currency(String format, String formatDiscounted, boolean castToInt, BiFunction<Double, T, Component> currencyFormatter) {
 		this.format = format;
+		this.formatDiscounted = formatDiscounted;
 		this.castToInt = castToInt;
 		this.currencyFormatter = currencyFormatter;
 	}
@@ -59,9 +61,10 @@ public abstract class Currency<T> {
 	 *               "1x Diamond" or "3x Enchanted Sword", depending on the provided currencyFormatter.
 	 * @return a component that displays the amount of T objects in a user-friendly way
 	 */
-	public Component format(double amount, @Nullable T object) {
-		return StatShops.getInstance().getMiniMessage().parse(format,
+	public Component format(double amount, @Nullable T object, double discount) {
+		return StatShops.getInstance().getMiniMessage().parse(discount != 1 ? formatDiscounted : format,
 				Template.of("amount", (castToInt ? "" + ((int) amount) : "" + amount)),
+				Template.of("amount_dc", (castToInt ? "" + ((int) (amount * discount)) : "" + amount * discount)),
 				Template.of("currency", currencyFormatter.apply(amount, object)));
 	}
 

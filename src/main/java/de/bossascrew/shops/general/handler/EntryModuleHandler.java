@@ -26,9 +26,15 @@ import java.util.function.Function;
 @Getter
 public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHandler.EntryModuleProvider> {
 
+	public static EntryModuleProvider STATIC_PROVIDER;
+	public static EntryModuleProvider NEXT_PAGE_PROVIDER;
+	public static EntryModuleProvider PREV_PAGE_PROVIDER;
+	public static EntryModuleProvider EXACT_PAGE_PROVIDER;
+	public static EntryModuleProvider TRADE_ITEM_PROVIDER;
+	public static EntryModuleProvider TRADE_VAULT_PROVIDER;
+
 	public static PageModule openExactPage(ShopEntry shopEntry, int page) {
-		PageBaseModule pageModule = new PageBaseModule(Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
-				Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry, (customer, se, integer) -> {
+		PageBaseModule pageModule = new PageBaseModule(EXACT_PAGE_PROVIDER, shopEntry, (customer, se, integer) -> {
 			if (se.getShop() instanceof PaginatedShop ps) {
 				ps.open(customer, integer);
 				return;
@@ -40,8 +46,7 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	}
 
 	public static PageModule openNextPage(ShopEntry shopEntry, int page) {
-		PageBaseModule pageModule = new PageBaseModule(Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
-				Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry, (customer, se, integer) -> {
+		PageBaseModule pageModule = new PageBaseModule(NEXT_PAGE_PROVIDER, shopEntry, (customer, se, integer) -> {
 			if (se.getShop() instanceof PaginatedShop ps) {
 				ps.open(customer, integer);
 				return;
@@ -53,8 +58,7 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	}
 
 	public static PageModule openPrevPage(ShopEntry shopEntry, int page) {
-		PageBaseModule pageModule = new PageBaseModule(Message.GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
-				Message.GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry, (customer, se, integer) -> {
+		PageBaseModule pageModule = new PageBaseModule(PREV_PAGE_PROVIDER, shopEntry, (customer, se, integer) -> {
 			if (se.getShop() instanceof PaginatedShop ps) {
 				ps.open(customer, integer);
 				return;
@@ -66,15 +70,15 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	}
 
 	public static TradeModule<ItemStack, ItemStack> tradeItemItem(ItemStack gain, ItemStack pay) {
-		return new TradeBaseModule<>(
+		return new TradeBaseModule<>(TRADE_ITEM_PROVIDER,
 				new Price<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
 				new Price<>(CurrencyHandler.CURRENCY_ITEM, gain.getAmount(), gain));
 	}
 
-	public static TradeModule<ItemStack, Void> sellItemMoney(ItemStack article) {
-		return new TradeBaseModule<>(
+	public static TradeModule<ItemStack, Void> tradeItemMoney(ItemStack article, double amount) {
+		return new TradeBaseModule<>(TRADE_VAULT_PROVIDER,
 				new Price<>(CurrencyHandler.CURRENCY_ITEM, article.getAmount(), article),
-				new Price<>(VaultHook.CURRENCY_VAULT, 20, null));
+				new Price<>(VaultHook.CURRENCY_VAULT, amount, null));
 	}
 
 	public static Price<ItemStack> itemPrice(int amount, ItemStack stack) {
@@ -97,8 +101,10 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 		entryModules = new LinkedHashMap<>();
 	}
 
-	public void registerEntryModule(String key, ItemStack itemStack, Message name, Message lore, Function<ShopEntry, EntryModule> moduleSupplier) {
-		entryModules.put(key, new EntryModuleProvider(key, itemStack, name, lore, moduleSupplier));
+	public EntryModuleProvider registerEntryModule(String key, ItemStack itemStack, Message name, Message lore, Function<ShopEntry, EntryModule> moduleSupplier) {
+		EntryModuleProvider provider = new EntryModuleProvider(key, itemStack, name, lore, moduleSupplier);
+		entryModules.put(key, provider);
+		return provider;
 	}
 
 	/**
@@ -111,14 +117,18 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	}
 
 	public void registerDefaults() {
-		registerEntryModule("static", new ItemStack(Material.BLACK_STAINED_GLASS), Message.GUI_ENTRY_FUNCTION_STATIC_NAME,
+		STATIC_PROVIDER = registerEntryModule("static", new ItemStack(Material.BLACK_STAINED_GLASS), Message.GUI_ENTRY_FUNCTION_STATIC_NAME,
 				Message.GUI_ENTRY_FUNCTION_STATIC_LORE, shopEntry -> null);
-		registerEntryModule("exact_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
+		EXACT_PAGE_PROVIDER = registerEntryModule("exact_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
 				Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry -> openExactPage(shopEntry, 1));
-		registerEntryModule("next_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
-				Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry -> openExactPage(shopEntry, 1));
-		registerEntryModule("prev_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
-				Message.GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry -> openExactPage(shopEntry, 1));
+		NEXT_PAGE_PROVIDER = registerEntryModule("next_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
+				Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, shopEntry -> openNextPage(shopEntry, 1));
+		PREV_PAGE_PROVIDER = registerEntryModule("prev_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
+				Message.GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry -> openPrevPage(shopEntry, 1));
+		TRADE_ITEM_PROVIDER = registerEntryModule("trade_item_item", new ItemStack(Material.EMERALD), Message.GUI_ENTRY_FUNCTION_TRADE_ITEM_NAME,
+				Message.GUI_ENTRY_FUNCTION_TRADE_ITEM_LORE, shopEntry -> tradeItemItem(shopEntry.getDisplayItem(), new ItemStack(Material.EMERALD, 5)));
+		TRADE_VAULT_PROVIDER = registerEntryModule("trade_item_vault", new ItemStack(Material.GOLD_INGOT), Message.GUI_ENTRY_FUNCTION_TRADE_VAULT_NAME,
+				Message.GUI_ENTRY_FUNCTION_TRADE_VAULT_LORE, shopEntry -> tradeItemMoney(shopEntry.getDisplayItem(), 10.)); //TODO default werte config
 	}
 
 	@Override
@@ -153,7 +163,7 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 		@Override
 		public ItemStack getListDisplayItem() {
-			return ItemStackUtils.createItemStack(itemStack, name, lore);
+			return ItemStackUtils.createItemStack(itemStack.clone(), name, lore);
 		}
 	}
 }

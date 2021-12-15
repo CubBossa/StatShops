@@ -1,13 +1,13 @@
 package de.bossascrew.shops.statshops.handler;
 
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
-import de.bossascrew.shops.general.menu.ShopMenu;
-import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.general.Taggable;
 import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.Pair;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -34,8 +34,9 @@ public class DiscountHandler implements
 	public DiscountHandler() {
 		instance = this;
 
-		discountMap = StatShops.getInstance().getDatabase().loadDiscounts();
+		subscribers = new HashMap<>();
 		tagMap = new HashMap<>();
+		discountMap = StatShops.getInstance().getDatabase().loadDiscounts();
 		for (Discount discount : discountMap.values()) {
 			for (String tag : discount.getTags()) {
 				List<Discount> discounts = tagMap.getOrDefault(tag, new ArrayList<>());
@@ -43,7 +44,6 @@ public class DiscountHandler implements
 				tagMap.put(tag, discounts);
 			}
 		}
-		subscribers = new HashMap<>();
 	}
 
 	public List<Discount> getDiscounts() {
@@ -97,7 +97,15 @@ public class DiscountHandler implements
 		updateAllSubscribers(discount);
 	}
 
-	public void handleDiscountTagsUpdate(Discount discount) {
+	public void handleDiscountTagRemoved(Discount discount, String tag) {
+		tagMap.get(tag).remove(discount);
+		updateAllSubscribers(discount);
+	}
+
+	public void handleDiscountTagAdded(Discount discount, String tag) {
+		List<Discount> discounts = tagMap.getOrDefault(tag, new ArrayList<>());
+		discounts.add(discount);
+		tagMap.put(tag, discounts);
 		updateAllSubscribers(discount);
 	}
 
@@ -125,18 +133,17 @@ public class DiscountHandler implements
 		}
 	}
 
-	public void addDiscountsLore(ShopEntry shopEntry, List<Component> lore) {
-		List<Discount> discounts = getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
-		ItemStackUtils.addLoreDiscount(lore, discounts);
-	}
-
-	public double combineDiscounts(Taggable... taggables) {
-		double discountValue = 0;
-		List<Discount> discounts = getDiscountsWithMatchingTags(taggables);
+	public double combineDiscounts(List<Discount> discounts) {
+		double discountValue = 1;
 		for (Discount discount : discounts) {
-			discountValue += discount.getPercent();
+			discountValue += discount.getPercent() / 100;
 		}
 		return discountValue;
+	}
+
+	public double combineDiscountsWithMatchingTags(Taggable... taggables) {
+		List<Discount> discounts = getDiscountsWithMatchingTags(taggables);
+		return combineDiscounts(discounts);
 	}
 
 	public List<Discount> getDiscountsWithMatchingTags(Taggable... taggables) {

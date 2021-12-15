@@ -89,11 +89,12 @@ shop:
     # The lore of items that are displayed in a shop.
     item:
       lore:
-        spacer: "----------------------"
+        spacer: "<gradient:#24054F:#2F0768:#24054F>---------------------------</gradient>"
+        price: "<gray>Buy/Sell Price: <yellow><price>"
         # Valid placeholders: <price>
-        buy_price: "<gray>Buy: <price>"
+        buy_price: "<gray>Buy Price: <yellow><price>"
         # Valid placeholders: <price>
-        sell_price: "<gray>Sell: <price>"
+        sell_price: "<gray>Sell Price: <yellow><price>"
         # Valid placeholders: <keybind>, <action>
         keybinding: "<gray>» <yellow><keybind>: <gray><action>"
         # Valid placeholders: <name>, <percent>, <start-date>, <duration>, <remaining>
@@ -283,6 +284,12 @@ manager:
         exact_page:
           name: "<white>Exact Page"
           lore: "<gray>Opens an exact page."
+        trade_item:
+          name: "<white>Trade Item"
+          lore: "<gray>Trades items with other items."
+        trade_vault:
+          name: "<white>Trade Money"
+          lore: "<gray>Trades items against vault money."
 
     limits:
       title: "Create and manage shop limits"

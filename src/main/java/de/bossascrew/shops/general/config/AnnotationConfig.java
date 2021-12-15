@@ -1,7 +1,7 @@
 package de.bossascrew.shops.general.config;
 
-import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.general.util.LoggingPolicy;
+import de.bossascrew.shops.statshops.StatShops;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -31,7 +31,7 @@ public class AnnotationConfig {
 
 		for (Field f : cls.getFields()) {
 			if (f.isAnnotationPresent(ConfigEntry.class)) {
-				String target = "";
+				String target;
 				ConfigEntry cf = f.getAnnotation(ConfigEntry.class);
 				target = cf.path();
 				if (target.isEmpty()) {
@@ -39,7 +39,11 @@ public class AnnotationConfig {
 				}
 
 				try {
-					f.set(this, config.get(target, f.get(this)));
+					if (f.getType().isEnum()) {
+
+					} else {
+						f.set(this, config.get(target, f.get(this)));
+					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					StatShops.getInstance().log(LoggingPolicy.ERROR, "Could not load file " + path, e);
 					return false;

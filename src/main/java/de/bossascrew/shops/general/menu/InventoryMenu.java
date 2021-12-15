@@ -2,12 +2,11 @@ package de.bossascrew.shops.general.menu;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import de.bossascrew.shops.general.menu.DefaultSpecialItem;
-import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.general.menu.contexts.ActionContext;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
+import de.bossascrew.shops.statshops.StatShops;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -37,7 +36,6 @@ public abstract class InventoryMenu<T, A extends ActionContext<T>, B extends Bac
 	protected final T[] actions;
 
 	@Getter
-	@Setter
 	protected Map<T, ContextConsumer<A>> defaultClickHandler;
 
 	@Getter
@@ -188,6 +186,12 @@ public abstract class InventoryMenu<T, A extends ActionContext<T>, B extends Bac
 
 	public void setDefaultClickHandler(T action, ContextConsumer<A> clickHandler) {
 		defaultClickHandler.put(action, clickHandler);
+	}
+
+	public void setDefaultClickHandler(ContextConsumer<A> clickHandler) {
+		for (T action : actions) {
+			defaultClickHandler.put(action, clickHandler);
+		}
 	}
 
 	public void setDefaultCancelled(boolean cancel) {

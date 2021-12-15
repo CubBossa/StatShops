@@ -1,5 +1,6 @@
 package de.bossascrew.shops.statshops.data;
 
+import com.google.common.collect.Lists;
 import de.bossascrew.shops.general.config.AnnotationConfig;
 import de.bossascrew.shops.general.config.ConfigEntry;
 import de.bossascrew.shops.general.util.LoggingPolicy;
@@ -10,7 +11,6 @@ import lombok.Setter;
 import org.bukkit.event.inventory.ClickType;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -59,7 +59,15 @@ public class Config extends AnnotationConfig {
 	@ConfigEntry(path = "shops.trade-message-feedback")
 	public TradeMessageType tradeMessageFeedback = TradeMessageType.CUMULATIVE_SHOP;
 
+	@ConfigEntry(path = "shops.entry-lore")
+	public List<String> entryLoreOrder = Lists.newArrayList("price", "actions", "discounts", "limits", "info");
+
 	//CURRENCIES
+	@ConfigEntry(path = "currencies.item-formatting")
+	public String currencyItemFormatting = "<yellow><amount>x</yellow> <gold><currency></gold>";
+	@ConfigEntry(path = "currencies.vault-formatting")
+	public String currencyVaultFormatting = "<yellow><amount></yellow> <gold><currency></gold>";
+
 	@ConfigEntry(path = "currencies.dynamic.enabled")
 	public boolean dynamicPricingEnabled = false;
 	@ConfigEntry(path = "currencies.dynamic.live_update")

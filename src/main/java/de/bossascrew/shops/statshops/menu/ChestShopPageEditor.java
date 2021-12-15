@@ -94,7 +94,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 			}
 		}
 
-		setDefaultClickHandler(ClickType.LEFT, clickContext -> {
+		setDefaultClickHandler(clickContext -> {
 			ShopEntry clickedEntry = shop.getEntry(shopMode, clickContext.getSlot() + shopPage * RowedOpenableMenu.LARGEST_INV_SIZE);
 			clickContext.setCancelled(shopEditor.isFreezeItems());
 

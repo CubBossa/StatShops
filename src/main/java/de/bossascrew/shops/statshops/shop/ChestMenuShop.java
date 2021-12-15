@@ -12,12 +12,15 @@ import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.events.ShopOpenEvent;
+import de.bossascrew.shops.statshops.events.ShopTurnPageEvent;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.menu.ChestShopEditor;
 import de.bossascrew.shops.statshops.menu.ChestShopMenu;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -308,7 +311,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 				return false;
 			}
 		} else {
-			if (!handleShopOpen(customer)) {
+			if (!handleShopOpen(customer, page)) {
 				return false;
 			}
 		}
@@ -316,7 +319,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 		ChestShopMenu menu = new ChestShopMenu(this, backHandler);
 		menu.setCloseHandler(closeContext -> {
 			if (!pageTurningPlayers.contains(customer.getUuid())) {
-				handleShopClose(customer);
+				if (handleShopClose(customer)) ;
 			}
 		});
 		menu.openInventorySync(customer.getPlayer(), null, shopMode, page);
@@ -330,9 +333,10 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 		return true;
 	}
 
-	private boolean handleShopOpen(Customer customer) {
-		//TODO call event
-		return true;
+	private boolean handleShopOpen(Customer customer, int page) {
+		ShopOpenEvent shopOpenEvent = new ShopOpenEvent(this, customer, page);
+		Bukkit.getPluginManager().callEvent(shopOpenEvent);
+		return !shopOpenEvent.isCancelled();
 	}
 
 	private boolean handleShopClose(Customer customer) {
@@ -342,7 +346,11 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 	}
 
 	private boolean handleShopTurnPage(Customer customer, int page) {
-		//TODO call event
+		ShopTurnPageEvent turnPageEvent = new ShopTurnPageEvent(this, customer, page);
+		Bukkit.getPluginManager().callEvent(turnPageEvent);
+		if (turnPageEvent.isCancelled()) {
+			return false;
+		}
 		balanceMessenger.handlePageClose(customer.getPlayer());
 		return true;
 	}
@@ -373,16 +381,16 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 		new ChestShopEditor(this, backHandler).openInventory(player, getDefaultShopMode(), getDefaultShopPage());
 	}
 
-	public ShopInteractionResult interact(Customer customer, ShopMode shopMode, int slot, EntryInteractionType interactionType) {
+	public EntryInteractionResult interact(Customer customer, ShopMode shopMode, int slot, EntryInteractionType interactionType) {
 		if (editor != null && !customer.getUuid().equals(editor.getUniqueId())) {
-			return ShopInteractionResult.FAIL_SHOP_DISABLED;
+			return EntryInteractionResult.FAIL_SHOP_DISABLED;
 		}
 		ShopEntry entry = getEntry(shopMode, slot);
 		if (entry == null) {
-			return ShopInteractionResult.FAIL_NO_ENTRY;
+			return EntryInteractionResult.FAIL_NO_ENTRY;
 		}
 		if (!entry.hasPermission(customer)) {
-			return ShopInteractionResult.FAIL_NO_PERMISSION;
+			return EntryInteractionResult.FAIL_NO_PERMISSION;
 		}
 		return entry.interact(customer, interactionType);
 	}

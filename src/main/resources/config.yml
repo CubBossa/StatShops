@@ -90,7 +90,30 @@ shops:
   # CUMULATIVE_SHOP:     All costs and gains will be cached until the shop closes and then sent in a bundled message.
   trade-message-feedback: CUMULATIVE_SHOP
 
+  # The order and visibility of the lore segments of a single shop entry.
+  # You can simply remove or reorder them to customize the lore.
+  #
+  # Spacers are defined in the messages.yml and separate each segment of the lore if required.
+  # Don't worry, multiple spacers (in case there are no discounts e.g.) will automatically be removed.
+  # Valid values: "price", "actions", "discounts", "limits", "info", "spacer"
+  entry-lore:
+    - "spacer"
+    - "price"
+    - "discounts"
+    - "spacer"
+    #- "actions"
+    #- "spacer"
+    - "limits"
+    - "spacer"
+    - "info"
+
 currencies:
+
+  # Item currency formatting
+  item-formatting: "<yellow><amount>x</yellow> <gold><currency></gold>"
+
+  # Vault formatting (the currency will be singular/plural depending on the amount and the configuration of the economy plugin)
+  vault-formatting: "<yellow><amount></yellow> <gold><currency></gold>"
 
   # Dynamic pricing means, that the price of a trade module will be calculated and might be more than just a constant.
   # You can activate dynamic pricing and use constants anyways, but if you're only using constant prices we recommend you to disable it.

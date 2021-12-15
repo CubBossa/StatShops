@@ -6,9 +6,11 @@ import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.handler.TemplateHandler;
 import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.shop.*;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -64,6 +66,7 @@ public class TestDatabase implements Database, LogDatabase {
 		ShopEntry entry2 = createEntry(UUID.randomUUID(), s1, new ItemStack(Material.POTION), ShopHandler.getInstance().getShopModes().get(0), 1);
 		ItemStack article2 = new ItemStack(Material.POTION);
 		PotionMeta pmeta = (PotionMeta) article2.getItemMeta();
+		pmeta.setDisplayName(TextUtils.toLegacy(MiniMessage.get().parse("<rainbow>Huiiiiiiiii")));
 		pmeta.setBasePotionData(new PotionData(PotionType.SPEED));
 		article2.setItemMeta(pmeta);
 
@@ -123,9 +126,8 @@ public class TestDatabase implements Database, LogDatabase {
 	@Override
 	public Map<UUID, Discount> loadDiscounts() {
 		Map<UUID, Discount> map = new HashMap<>();
-		Discount d1 = new Discount(UUID.randomUUID(), "<red>XMas Discount", LocalDateTime.now(), Duration.of(3, ChronoUnit.DAYS), 10, null);
-
-
+		Discount d1 = new Discount(UUID.randomUUID(), "XMas Discount", LocalDateTime.now(), Duration.of(3, ChronoUnit.DAYS), 80, null);
+		d1.addTag("global");
 		map.put(d1.getUuid(), d1);
 		return map;
 	}

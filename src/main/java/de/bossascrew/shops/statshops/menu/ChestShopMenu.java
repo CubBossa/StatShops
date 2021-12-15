@@ -19,7 +19,7 @@ import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
-import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
+import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import de.bossascrew.shops.statshops.shop.ShopMode;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
@@ -187,8 +187,8 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 					return;
 				}
 			}
-			ShopInteractionResult result = entry.interact(customer, EntryInteractionType.fromClickType(clickContext.getAction()));
-			if (result == ShopInteractionResult.SUCCESS && entry.getModule() != null && entry.getModule() instanceof TradeModule tm) {
+			EntryInteractionResult result = entry.interact(customer, EntryInteractionType.fromClickType(clickContext.getAction()));
+			if (result == EntryInteractionResult.SUCCESS && entry.getModule() != null && entry.getModule() instanceof TradeModule tm) {
 				shop.getBalanceMessenger().handleTransaction(tm.getLastTransaction(customer));
 			}
 			interactionCooldown.put(player, now);

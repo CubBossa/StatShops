@@ -7,8 +7,9 @@ import de.bossascrew.shops.general.util.Duplicable;
 import de.bossascrew.shops.general.util.Editable;
 import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.data.DatabaseObject;
-import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
+import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import de.bossascrew.shops.statshops.shop.ShopMode;
+import de.bossascrew.shops.statshops.shop.entry.DataSlot;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -43,13 +44,13 @@ public interface ShopEntry extends Taggable, Duplicable<ShopEntry>, DatabaseObje
 
 	boolean hasPermission(Customer customer);
 
-	<T> T getData(Class<T> clazz, String key);
+	<T extends DataSlot<?>> T getData(Class<T> clazz, String key);
 
-	<T> T storeData(Class<T> clazz, String key, T value);
+	<T> T storeData(DataSlot<T> data);
 
 	@Nullable EntryModule getModule();
 
 	void setModule(EntryModule module);
 
-	ShopInteractionResult interact(Customer customer, EntryInteractionType interactionType);
+	EntryInteractionResult interact(Customer customer, EntryInteractionType interactionType);
 }

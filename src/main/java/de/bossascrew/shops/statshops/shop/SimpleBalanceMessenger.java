@@ -39,8 +39,8 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 		TradeModule<?, ?> tm = (TradeModule<?, ?>) transaction.getShopEntry().getModule();
 		Price<?> gain = tm.getGainPrice().duplicate();
 		Price<?> pay = tm.getPayPrice(transaction.getInteractionType().isBuy()).duplicate();
-		gain.setAmount(gain.getAmount() * (transaction.getInteractionType().isBuy() ? 1 : -1));
-		pay.setAmount(pay.getAmount() * (transaction.getInteractionType().isBuy() ? -1 : 1));
+		gain.setAmount((int) (gain.getAmount() * transaction.getDiscount()) * (transaction.getInteractionType().isBuy() ? 1 : -1));
+		pay.setAmount((int) (pay.getAmount() * transaction.getDiscount()) * (transaction.getInteractionType().isBuy() ? -1 : 1));
 
 		List<Price<?>> prices = tradeCache.getOrDefault(customer.getUuid(), new ArrayList<>());
 
@@ -88,6 +88,9 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 		}
 		cache = cache.stream().sorted().collect(Collectors.toList());
 		for (Price<?> price : cache) {
+			if (price.getAmount() == 0) {
+				continue;
+			}
 			customer.sendMessage("", getTransactionFeedback(price), 0);
 		}
 		tradeCache.put(customer.getUuid(), new ArrayList<>());

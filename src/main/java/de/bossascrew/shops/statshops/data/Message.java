@@ -70,6 +70,8 @@ public enum Message {
 			new Pair<>("page", "" + 2),
 			new Pair<>("mode", "<gold>Sell</gold>"),
 			new Pair<>("pages", "" + 3)),
+	SHOP_ITEM_LORE_SPACER("shop.gui.item.lore.spacer"),
+	SHOP_ITEM_LORE_BOTH_PRICE("shop.gui.item.lore.price"),
 	SHOP_ITEM_LORE_BUY_PRICE("shop.gui.item.lore.buy_price"),
 	SHOP_ITEM_LORE_SELL_PRICE("shop.gui.item.lore.sell_price"),
 	SHOP_ITEM_LORE_KEYBIND("shop.gui.item.lore.keybinding"),
@@ -257,8 +259,19 @@ public enum Message {
 	GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE("manager.gui.entry.defaults.next_page.lore"),
 	GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME("manager.gui.entry.defaults.exact_page.name"),
 	GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE("manager.gui.entry.defaults.exact_page.lore"),
-	GUI_ENTRY_FUNCTION_TRADE_NAME("manager.gui.entry.defaults.trade.name"),
-	GUI_ENTRY_FUNCTION_TRADE_LORE("manager.gui.entry.defaults.trade.lore"),
+	GUI_ENTRY_FUNCTION_TRADE_ITEM_NAME("manager.gui.entry.defaults.trade_item.name"),
+	GUI_ENTRY_FUNCTION_TRADE_ITEM_LORE("manager.gui.entry.defaults.trade_item.lore"),
+	GUI_ENTRY_FUNCTION_TRADE_VAULT_NAME("manager.gui.entry.defaults.trade_vault.name"),
+	GUI_ENTRY_FUNCTION_TRADE_VAULT_LORE("manager.gui.entry.defaults.trade_vault.lore"),
+
+	GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER(""),
+	GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER_DESC(""),
+	GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION(""),
+	GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION_DESC(""),
+	GUI_ENTRY_FUNCTION_DATA_TYPE_STRING(""),
+	GUI_ENTRY_FUNCTION_DATA_TYPE_STRING_DESC(""),
+	GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK(""),
+	GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK_DESC(""),
 
 	;
 
@@ -294,6 +307,9 @@ public enum Message {
 		MiniMessage miniMessage = StatShops.getInstance().getMiniMessage();
 		for (String string : toFormat) {
 			result.add(miniMessage.parse(string, templates));
+		}
+		if (result.stream().allMatch(component -> component.equals(Component.text("")))) {
+			return new ArrayList<>();
 		}
 		return result;
 	}

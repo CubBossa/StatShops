@@ -2,7 +2,7 @@ package de.bossascrew.shops.statshops.shop.currency;
 
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.util.Duplicable;
-import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
+import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -31,20 +31,28 @@ public class Price<T> implements Duplicable<Price<T>>, Comparable<Price<T>> {
 		return true; //TODO
 	}
 
-	public ShopInteractionResult pay(Customer customer) {
-		if (!canPay(customer)) {
-			return ShopInteractionResult.FAIL_CANT_AFFORD;
-		}
-		currency.removeAmount(customer, amount, object);
-		return ShopInteractionResult.SUCCESS;
+	public EntryInteractionResult pay(Customer customer) {
+		return pay(customer, 1.);
 	}
 
-	public ShopInteractionResult gain(Customer customer) {
-		if (!canGain(customer)) {
-			return ShopInteractionResult.FAIL_CANT_REWARD;
+	public EntryInteractionResult pay(Customer customer, double discount) {
+		if (!canPay(customer)) {
+			return EntryInteractionResult.FAIL_CANT_AFFORD;
 		}
-		currency.addAmount(customer, amount, object);
-		return ShopInteractionResult.SUCCESS;
+		currency.removeAmount(customer, amount * discount, object);
+		return EntryInteractionResult.SUCCESS;
+	}
+
+	public EntryInteractionResult gain(Customer customer) {
+		return gain(customer, 1.);
+	}
+
+	public EntryInteractionResult gain(Customer customer, double discount) {
+		if (!canGain(customer)) {
+			return EntryInteractionResult.FAIL_CANT_REWARD;
+		}
+		currency.addAmount(customer, amount * discount, object);
+		return EntryInteractionResult.SUCCESS;
 	}
 
 	public Component getObjectComponent() {
@@ -52,7 +60,11 @@ public class Price<T> implements Duplicable<Price<T>>, Comparable<Price<T>> {
 	}
 
 	public Component getPriceComponent() {
-		return currency.format(amount, object);
+		return getPriceComponent(1.);
+	}
+
+	public Component getPriceComponent(double discount) {
+		return currency.format(amount, object, discount);
 	}
 
 	public boolean equals(Price<?> object) {

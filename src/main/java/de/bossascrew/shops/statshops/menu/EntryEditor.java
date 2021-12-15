@@ -1,17 +1,18 @@
 package de.bossascrew.shops.statshops.menu;
 
+import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.menu.ChestMenu;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
+import de.bossascrew.shops.general.menu.EditorMenu;
 import de.bossascrew.shops.general.menu.ListMenu;
-import de.bossascrew.shops.general.menu.ShopMenu;
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
-import de.bossascrew.shops.general.entry.EntryModule;
-import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.general.util.LoggingPolicy;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.shop.entry.DataSlot;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.minimessage.Template;
@@ -25,16 +26,19 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.Consumer;
 
-public class EntryEditor extends ChestMenu {
+public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 
 	private final ShopEntry entry;
 	private final ContextConsumer<BackContext> backHandler;
 	@Getter
 	@Setter
-	@Nullable private Collection<Class<?>> allowedModuleTypes = null;
+	@Nullable
+	private Collection<Class<?>> allowedModuleTypes = null;
 
 	public EntryEditor(ShopEntry entry, ContextConsumer<BackContext> backHandler) {
 		super(Message.GUI_SHOP_ENTRY, 3);
@@ -80,7 +84,7 @@ public class EntryEditor extends ChestMenu {
 					menu.openInventory(player);
 				});
 
-		setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(entry.getModule() == null ? new ItemStack(Material.BLACK_STAINED_GLASS) :
+		setItemAndClickHandler(0, 3, ItemStackUtils.createItemStack(entry.getModule() == null ? new ItemStack(Material.BLACK_STAINED_GLASS) :
 						entry.getModule().getDisplayItem(), Message.GUI_ENTRY_SET_FUNCTION_NAME.getTranslation(Template.of("name", entry.getModule() == null ?
 						Message.GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName())),
 				Message.GUI_ENTRY_SET_FUNCTION_LORE.getTranslations(Template.of("function", entry.getModule() == null ?
@@ -90,7 +94,8 @@ public class EntryEditor extends ChestMenu {
 					Message.GUI_ENTRY_SET_FUNCTION_TITLE, backContext -> openInventory(clickContext.getPlayer()));
 
 			listMenu.setDisplayPredicate(provider -> allowedModuleTypes == null || allowedModuleTypes.stream().anyMatch(aClass -> aClass.isInstance(provider)));
-
+			listMenu.setGlowPredicate(provider -> (entry.getModule() == null) ||
+					(entry.getModule() != null && entry.getModule().getProvider().getKey().equals(provider.getKey())));
 			listMenu.setClickHandler(cc -> {
 				entry.setModule(cc.getTarget().getModule(entry));
 				openInventory(cc.getPlayer());
@@ -98,25 +103,53 @@ public class EntryEditor extends ChestMenu {
 			listMenu.openInventory(clickContext.getPlayer());
 		});
 
+		int[] blackSlots = {4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 12, 21, 22, 23, 24, 25};
+		for (int i : blackSlots) {
+			setItem(i, DefaultSpecialItem.EMPTY_DARK.createSpecialItem());
+		}
 		if (entry.getModule() != null) {
-			for (EntryModule.DataSlot<?> dataSlot : entry.getModule().getDataSlots()) {
-				Object data = dataSlot.getData();
-				if (dataSlot.getType() == ItemStack.class) {
 
-				} else if (dataSlot.getType() == String.class) {
+			Iterator<Integer> dataSlots = Arrays.stream(new int[]{4, 5, 6, 7, 8, 13, 14, 15, 16, 17}).iterator();
 
-				} else if (dataSlot.getType() == Integer.class) {
-
+			for (DataSlot<?> dataSlot : entry.getModule().getDataSlots()) {
+				if (!dataSlots.hasNext()) {
+					StatShops.getInstance().log(LoggingPolicy.WARN, "EntryEditor cannot display data slot because there are too many data slots.");
+					continue;
 				}
+				// Data that cannot be edited via gui
+				if (dataSlot.getDisplayItem() == null) {
+					continue;
+				}
+				setItemAndClickHandler(dataSlots.next(), dataSlot.getDisplayItem(), clickContext -> {
+					dataSlot.getClickHandler().accept(clickContext);
+					openInventory(clickContext.getPlayer());
+				});
 			}
 		}
-
-		//TODO alle dataslots für das Modul
 	}
 
 	@Override
 	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer) {
 		prepareMenu();
 		return super.openInventorySync(player, inventoryPreparer);
+	}
+
+	@Override
+	public boolean isEditorSet() {
+		return entry.getShop().getEditor() != null;
+	}
+
+	@Override
+	public boolean setEditor(Player editor) {
+		if (isEditorSet()) {
+			return false;
+		}
+		entry.getShop().setEditor(editor);
+		return true;
+	}
+
+	@Override
+	public Player getEditor() {
+		return entry.getShop().getEditor();
 	}
 }

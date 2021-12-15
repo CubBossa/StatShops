@@ -9,10 +9,13 @@ import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.general.util.TagUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Config;
-import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
+import de.bossascrew.shops.statshops.events.ShopEntryInteractEvent;
+import de.bossascrew.shops.statshops.events.ShopEntryInteractedEvent;
+import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import de.bossascrew.shops.statshops.shop.ShopMode;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -67,24 +70,34 @@ public class BaseEntry implements ShopEntry {
 	}
 
 	@Override
-	public <T> T getData(Class<T> clazz, String key) {
+	public <T extends DataSlot<?>> T getData(Class<T> clazz, String key) {
+		//TODO try and retrieve data
 		return null;
 	}
 
 	@Override
-	public <T> T storeData(Class<T> clazz, String key, T value) {
+	public <T> T storeData(DataSlot<T> dataSlot) {
 		return null;
 	}
 
-	public ShopInteractionResult interact(Customer customer, EntryInteractionType interactionType) {
+	public EntryInteractionResult interact(Customer customer, EntryInteractionType interactionType) {
+		ShopEntryInteractEvent entryInteractEvent = new ShopEntryInteractEvent(this, customer, interactionType);
+		Bukkit.getPluginManager().callEvent(entryInteractEvent);
+		if (entryInteractEvent.isCancelled()) {
+			return EntryInteractionResult.FAIL_UNKNOWN;
+		}
 		if (module == null) {
-			return ShopInteractionResult.STATIC;
+			return EntryInteractionResult.STATIC;
 		}
 		if (!hasPermission(customer)) {
-			return ShopInteractionResult.FAIL_NO_PERMISSION;
+			return EntryInteractionResult.FAIL_NO_PERMISSION;
 		}
-		ShopInteractionResult result = module.perform(customer, interactionType);
+		EntryInteractionResult result = module.perform(customer, interactionType);
 		StatShops.getInstance().getLogDatabase().logToDatabase(module.createLogEntry(customer, result));
+
+		ShopEntryInteractedEvent event = new ShopEntryInteractedEvent(this, customer, interactionType, result);
+		Bukkit.getPluginManager().callEvent(event);
+
 		return result;
 	}
 

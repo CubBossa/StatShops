@@ -8,7 +8,7 @@ import de.bossascrew.shops.general.menu.VillagerMenu;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
-import de.bossascrew.shops.statshops.shop.ShopInteractionResult;
+import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import de.bossascrew.shops.statshops.shop.VillagerShop;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import org.bukkit.Bukkit;
@@ -47,7 +47,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 			}
 			ShopEntry entry = entryMap.get(targetContext.getTarget());
 			if(entry.getModule() != null) {
-				StatShops.getInstance().getLogDatabase().logToDatabase(entry.getModule().createLogEntry(Customer.wrap(targetContext.getPlayer()), ShopInteractionResult.SUCCESS));
+				StatShops.getInstance().getLogDatabase().logToDatabase(entry.getModule().createLogEntry(Customer.wrap(targetContext.getPlayer()), EntryInteractionResult.SUCCESS));
 			}
 		});
 	}
@@ -101,7 +101,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 		recipe.setMaxUses(Integer.min(recipe.getMaxUses(), Integer.MAX_VALUE)); //TODO limits
 
 		//Discounts
-		double discount = DiscountHandler.getInstance().combineDiscounts(entry, entry.getShop());
+		double discount = DiscountHandler.getInstance().combineDiscountsWithMatchingTags(entry, entry.getShop());
 		recipe.setPriceMultiplier((float) discount);
 		//TODO debug
 		recipe.setMaxUses(discount < 1 ? 0 : 1);

@@ -19,5 +19,6 @@ public class Transaction {
 	private final Price<?> payPrice;
 	private final Price<?> gainPrice;
 	private final LocalDateTime localDateTime;
+	private final double discount;
 	private final List<Discount> accountedDiscounts;
 }

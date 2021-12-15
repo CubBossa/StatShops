@@ -132,7 +132,7 @@ public class Discount implements
 			// only set value because we may find a later start date.
 			searched = startTime;
 		}
-		return null;
+		return searched;
 	}
 
 	/**
@@ -171,14 +171,14 @@ public class Discount implements
 			return false;
 		}
 		tags.add(tag);
-		DiscountHandler.getInstance().handleDiscountTagsUpdate(this);
+		DiscountHandler.getInstance().handleDiscountTagAdded(this, tag);
 		return true;
 	}
 
 	@Override
 	public boolean removeTag(String tag) {
 		boolean ret = tags.remove(tag);
-		DiscountHandler.getInstance().handleDiscountTagsUpdate(this);
+		DiscountHandler.getInstance().handleDiscountTagRemoved(this, tag);
 		return ret;
 	}
 

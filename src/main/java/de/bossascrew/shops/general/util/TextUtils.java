@@ -1,8 +1,10 @@
 package de.bossascrew.shops.general.util;
 
 import de.bossascrew.shops.statshops.StatShops;
+import de.tr7zw.nbtapi.NBTItem;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.nbt.api.BinaryTagHolder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -73,13 +75,20 @@ public class TextUtils {
 		}
 	}
 
+	/**
+	 * @param itemStack the itemstack to display as a text component with hover text.
+	 * @return the displayname of the itemstack with the nbt data as hover text.
+	 */
 	public Component toComponent(ItemStack itemStack) {
-		return toTranslatable(itemStack.getType()).append(Component.text("*"))
+		return (itemStack.getItemMeta().hasDisplayName() ?
+				fromLegacy(itemStack.getItemMeta().getDisplayName()) :
+				toTranslatable(itemStack.getType()))
 				.hoverEvent(HoverEvent.showItem(HoverEvent.ShowItem
-						.of(Key.key(itemStack.getType().getKey().toString()), 1)));
+						.of(Key.key(itemStack.getType().getKey().toString()), 1, BinaryTagHolder.of(new NBTItem(itemStack).asNBTString()))));
 	}
 
 	public Component toTranslatable(Material material) {
-		return Component.translatable("item.minecraft." + String.valueOf(material).toLowerCase());
+		return Component.text(material.toString().replace("_", "").toLowerCase()); //TODO
+		//return Component.translatable("item.minecraft." + String.valueOf(material).toLowerCase());
 	}
 }

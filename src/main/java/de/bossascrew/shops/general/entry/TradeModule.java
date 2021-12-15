@@ -17,6 +17,8 @@ public interface TradeModule<P, G> extends EntryModule {
 
 	Component getPriceDisplay(boolean buy);
 
+	Component getPriceDisplay(boolean buy, double discount);
+
 	Transaction getLastTransaction(Customer customer);
 
 	Price<P> getPayPrice(boolean buy);

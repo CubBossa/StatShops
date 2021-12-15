@@ -8,6 +8,7 @@ import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.Config;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
@@ -109,7 +110,23 @@ public class ItemStackUtils {
 		itemStack.setItemMeta(meta);
 	}
 
-	public List<Component> addLoreDiscount(List<Component> existingLore, List<Discount> discounts) {
+	public void addLorePrice(List<Component> existingLore, TradeModule<?, ?> tradeModule, double discount) {
+		if (tradeModule.isBuyable() && tradeModule.isSellable() && tradeModule.getPayPrice(true).equals(tradeModule.getPayPrice(false))) {
+			existingLore.addAll(Message.SHOP_ITEM_LORE_BOTH_PRICE.getTranslations(Template.of("price", tradeModule.getPriceDisplay(true, discount))));
+		} else {
+			if (tradeModule.isBuyable()) {
+				existingLore.addAll(Message.SHOP_ITEM_LORE_BUY_PRICE.getTranslations(
+						Template.of("price", tradeModule.getPriceDisplay(true, discount))));
+			}
+			if (tradeModule.isSellable()) {
+				existingLore.addAll(Message.SHOP_ITEM_LORE_SELL_PRICE.getTranslations(
+						Template.of("price", tradeModule.getPriceDisplay(false, discount))));
+			}
+		}
+
+	}
+
+	public void addLoreDiscount(List<Component> existingLore, List<Discount> discounts) {
 		for (Discount discount : discounts) {
 			existingLore.addAll(Message.SHOP_ITEM_LORE_DISCOUNT.getTranslations(
 					Template.of("percent", discount.getPercent() + ""),
@@ -119,47 +136,93 @@ public class ItemStackUtils {
 					Template.of("remaining", DURATION_PARSER.format(discount.getRemaining()))
 			));
 		}
-		return existingLore;
 	}
 
-	public List<Component> addLoreLimits(List<Component> existingLore, Limit userLimit, Limit globalLimit, int bought) {
+	public void addLoreLimits(List<Component> existingLore, Limit userLimit, Limit globalLimit, int bought) {
+		if (userLimit == null && globalLimit == null) {
+			return;
+		}
 		existingLore.addAll(Message.SHOP_ITEM_LORE_LIMIT.getTranslations(
 				Template.of("transactioncount", bought + ""),
-				Template.of("userlimit", userLimit.getTransactionLimit() + ""),
-				Template.of("globallimit", globalLimit.getTransactionLimit() + "")
+				Template.of("userlimit", userLimit == null ? "" : userLimit.getTransactionLimit() + ""),
+				Template.of("globallimit", globalLimit == null ? "" : globalLimit.getTransactionLimit() + "")
 		));
-		return existingLore;
+	}
+
+	public void addLoreActions(List<Component> existingLore, TradeModule tradeEntry) {
+		Config sc = StatShops.getInstance().getShopsConfig();
+		if (tradeEntry.isBuyable()) {
+			if (!sc.getBuyKeyBinding().isEmpty()) {
+				getActionComponent(existingLore, sc.getBuyKeyBinding().get(0), Message.ACTION_BUY);
+			}
+			if (tradeEntry.isBuyableStacked()) {
+				if (!sc.getBuyStackKeyBinding().isEmpty()) {
+					getActionComponent(existingLore, sc.getBuyStackKeyBinding().get(0), Message.ACTION_BUY_STACK);
+				}
+			}
+		}
+		if (tradeEntry.isSellable()) {
+			if (!sc.getSellKeyBinding().isEmpty()) {
+				getActionComponent(existingLore, sc.getSellKeyBinding().get(0), Message.ACTION_SELL);
+			}
+			if (tradeEntry.isBuyableStacked()) {
+				if (!sc.getSellStackKeyBinding().isEmpty()) {
+					getActionComponent(existingLore, sc.getSellStackKeyBinding().get(0), Message.ACTION_SELL_STACK);
+				}
+			}
+		}
 	}
 
 	public ItemStack createEntryItemStack(ShopEntry entry) {
 		ItemStack itemStack = entry.getDisplayItem().clone();
+
+		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(entry, entry.getShop());;
+		double discount = DiscountHandler.getInstance().combineDiscounts(discounts);
 		List<Component> additionalLore = new ArrayList<>();
 
 		if (entry.getModule() instanceof TradeModule tradeEntry) {
 
-			//Price lore
-			additionalLore.addAll(Message.SHOP_ITEM_LORE_BUY_PRICE.getTranslations(Template.of("price", tradeEntry.getPriceDisplay(true))));
-			additionalLore.addAll(Message.SHOP_ITEM_LORE_SELL_PRICE.getTranslations(Template.of("price", tradeEntry.getPriceDisplay(false))));
-
-			additionalLore.add(Component.empty());
-			additionalLore.addAll(Message.SHOP_ITEM_LORE_KEYBIND.getTranslations()); //TODO templates
-			additionalLore.add(Component.empty());
-
-
-			//Lore for discount
-			DiscountHandler.getInstance().addDiscountsLore(entry, additionalLore);
-
-			//Lore for limit
-			LimitsHandler.getInstance().addLimitsLore(entry, additionalLore);
-		}
-
-		//Addidional Lore from Entry
-		if (entry.getInfoLoreFormat() != null) {
-			MiniMessage mm = StatShops.getInstance().getMiniMessage();
-			additionalLore.addAll(Arrays.stream(entry.getInfoLoreFormat().split("\n")).map(mm::parse).collect(Collectors.toList()));
+			List<String> order = StatShops.getInstance().getShopsConfig().getEntryLoreOrder();
+			Component spacer = Message.SHOP_ITEM_LORE_SPACER.getTranslation();
+			for (String segment : order) {
+				// Place segments in order that is provided via config
+				switch (segment) {
+					case "price" -> {
+						addLorePrice(additionalLore, tradeEntry, discount);
+					}
+					case "actions" -> addLoreActions(additionalLore, tradeEntry);
+					case "discounts" -> {
+						addLoreDiscount(additionalLore, discounts);
+					}
+					case "limits" -> {
+						LimitsHandler.getInstance().addLimitsLore(entry, additionalLore);
+					}
+					case "info" -> {
+						if (entry.getInfoLoreFormat() != null) {
+							MiniMessage mm = StatShops.getInstance().getMiniMessage();
+							additionalLore.addAll(Arrays.stream(entry.getInfoLoreFormat().split("\n")).map(mm::parse).collect(Collectors.toList()));
+						}
+					}
+					case "spacer" -> {
+						if (additionalLore.isEmpty() || !additionalLore.get(additionalLore.size() - 1).equals(spacer)) {
+							additionalLore.add(spacer);
+						}
+					}
+				}
+			}
+			// Remove last spacer in case it is not intended
+			if (!order.isEmpty() && !order.get(order.size() - 1).equals("spacer") && !additionalLore.isEmpty() && additionalLore.get(additionalLore.size() - 1).equals(spacer)) {
+				additionalLore.remove(additionalLore.size() - 1);
+			}
 		}
 		ItemStackUtils.addLore(itemStack, additionalLore);
 		return itemStack;
+	}
+
+	private void getActionComponent(List<Component> additionalLore, String key, Message action) {
+		additionalLore.addAll(Message.SHOP_ITEM_LORE_KEYBIND.getTranslations(
+				Template.of("keybind", key.toLowerCase(Locale.ROOT).replace("_", "-") + "-click"),
+				Template.of("action", action.getTranslation())));
 	}
 
 	public ItemStack prepareEditorEntryItemStack(ShopEntry entry) {
@@ -321,6 +384,7 @@ public class ItemStackUtils {
 		ItemMeta meta = item.getItemMeta();
 		if (meta != null) {
 			meta.addEnchant(Enchantment.LUCK, 1, true);
+			meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 			item.setItemMeta(meta);
 		}
 		return item;

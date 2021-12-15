@@ -3,6 +3,7 @@ package de.bossascrew.shops.general.handler;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
+import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.shop.currency.Currency;
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
@@ -15,9 +16,10 @@ public class CurrencyHandler {
 	@Getter
 	private static CurrencyHandler instance;
 
-	public static final Currency<ItemStack> CURRENCY_ITEM = new Currency<>("<yellow><amount>x <gold><currency>", true, (integer, itemStack) -> {
-		return TextUtils.toComponent(itemStack); //TODO
-		//return Component.translatable("item.minecraft." + itemStack.getType().toString().toLowerCase());
+	//TODO format erst nach laden der cfg
+	public static final Currency<ItemStack> CURRENCY_ITEM = new Currency<>(
+			StatShops.getInstance().getShopsConfig().getCurrencyItemFormatting(), "<yellow><st><amount></st> <amount_dc><yellow> <gold><currency></gold>", true, (integer, itemStack) -> {
+		return TextUtils.toComponent(itemStack);
 	}) {
 		@Override
 		public double getAmount(Customer customer, ItemStack object) {
@@ -43,6 +45,7 @@ public class CurrencyHandler {
 
 		@Override
 		public boolean removeAmount(Customer customer, double amount, ItemStack object) {
+			amount = (int) amount;
 			Map<Integer, ItemStack> removableStacks = new HashMap<>();
 			for (int slot = 0; slot < customer.getPlayer().getInventory().getSize(); slot++) {
 				ItemStack i = customer.getPlayer().getInventory().getItem(slot);

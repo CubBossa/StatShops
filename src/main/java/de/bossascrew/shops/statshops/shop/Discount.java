@@ -2,16 +2,17 @@ package de.bossascrew.shops.statshops.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.DatabaseObject;
 import de.bossascrew.shops.general.Taggable;
-import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.util.*;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.DatabaseObject;
+import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -158,11 +159,11 @@ public class Discount implements
 	}
 
 	@JsonIgnore
-	public Component getFormattedPercent(boolean negativeGreen) {
+	public Component getFormattedPercent() {
 		if (percent > 0) {
-			return Component.text("-" + percent, negativeGreen ? NamedTextColor.GREEN : NamedTextColor.RED);
+			return Message.SHOP_ITEM_LORE_DISCOUNT_POSITIVE.getTranslation(Template.of("discount", "" + percent));
 		}
-		return Component.text("+" + percent, negativeGreen ? NamedTextColor.RED : NamedTextColor.GREEN);
+		return Message.SHOP_ITEM_LORE_DISCOUNT_NEGATIVE.getTranslation(Template.of("discount", "" + percent));
 	}
 
 	@Override

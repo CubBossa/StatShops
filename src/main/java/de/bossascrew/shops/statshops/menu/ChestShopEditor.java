@@ -23,7 +23,7 @@ public class ChestShopEditor {
 
 	@Getter
 	@Setter
-	private boolean freezeItems = false;
+	private boolean freezeItems = true;
 
 	public ChestShopEditor(ChestMenuShop shop, ContextConsumer<BackContext> backHandler) {
 		this.shop = shop;

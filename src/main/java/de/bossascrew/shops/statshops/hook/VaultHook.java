@@ -12,12 +12,12 @@ public class VaultHook {
 
 	private static Economy economy = null;
 
-	private StatShops shopPlugin;
+	private final StatShops shopPlugin;
 
 	public static final Currency<Void> CURRENCY_VAULT = new Currency<>(
-			StatShops.getInstance().getShopsConfig().getCurrencyVaultFormatting(), "lol", (integer, unused) -> {
-		return Component.text(integer == 1 ? economy.currencyNameSingular() : economy.currencyNamePlural()); //TODO evtl legacy parsing
-	}) {
+			StatShops.getInstance().getShopsConfig().getCurrencyVaultFormatting(),
+			StatShops.getInstance().getShopsConfig().getCurrencyVaultFormattingDiscounted(),
+			(integer, unused) -> Component.text(integer == 1 ? economy.currencyNameSingular() : economy.currencyNamePlural())) {
 		@Override
 		public double getAmount(Customer customer, Void object) {
 			return economy.getBalance(customer.getPlayer());

@@ -9,6 +9,8 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 public class Price<T> implements Duplicable<Price<T>>, Comparable<Price<T>> {
@@ -74,7 +76,7 @@ public class Price<T> implements Duplicable<Price<T>>, Comparable<Price<T>> {
 		if (this.object instanceof ItemStack isa && object.object instanceof ItemStack isb) {
 			return isa.isSimilar(isb);
 		}
-		return this.object.equals(object.object) && this.currency.equals(object.currency);
+		return Objects.equals(this.object, object.object) && this.currency.equals(object.currency);
 	}
 
 	@Override

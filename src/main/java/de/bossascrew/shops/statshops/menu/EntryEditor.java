@@ -78,7 +78,8 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 						Message.GUI_ENTRY_SET_TAGS_NAME, Message.GUI_LIMIT_SET_TAGS_LORE),
 				clickContext -> {
 					Player player = clickContext.getPlayer();
-					TagsEditorMenu<ShopEntry> menu = new TagsEditorMenu<>(entry, Message.GUI_TAGS_TITLE.getTranslation(),
+					TagsEditorMenu<ShopEntry> menu = new TagsEditorMenu<>(entry,
+							Message.GUI_TAGS_TITLE.getTranslation(Template.of("name", "shop entry")),
 							Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
 							Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openInventory(player));
 					menu.openInventory(player);

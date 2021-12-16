@@ -9,11 +9,19 @@ public interface TradeModule<P, G> extends EntryModule {
 
 	boolean isBuyable();
 
+	void setBuyable(boolean buyable);
+
 	boolean isSellable();
+
+	void setSellable(boolean sellable);
 
 	boolean isBuyableStacked();
 
+	void setBuyableStacked(boolean buyableStacked);
+
 	boolean isSellableStacked();
+
+	void setSellableStacked(boolean sellableStacked);
 
 	Component getPriceDisplay(boolean buy);
 

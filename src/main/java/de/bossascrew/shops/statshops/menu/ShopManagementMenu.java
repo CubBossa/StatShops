@@ -478,7 +478,7 @@ public class ShopManagementMenu {
 					}).open(player);
 		});
 
-		Template percent = Template.of("percent", discount.getFormattedPercent(true));
+		Template percent = Template.of("percent", discount.getFormattedPercent());
 		chestMenu.setItemAndClickHandler(0, 7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_SET_PERCENT_NAME.getTranslation(percent),
 				Message.GUI_DISCOUNT_SET_PERCENT_LORE.getTranslations(percent)), clickContext -> {
 

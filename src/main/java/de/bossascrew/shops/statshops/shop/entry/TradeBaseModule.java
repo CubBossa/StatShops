@@ -65,7 +65,7 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 		if (buy) {
 			return buyPayPrice.getPriceComponent(discount);
 		}
-		return sellPayPrice.getPriceComponent(discount);
+		return sellPayPrice.getPriceComponent((discount - 1) * -1 + 1);
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 
 		EntryInteractionResult result = pay.pay(customer, interactionType.isBuy() ? discount : 1);
 		if (result.equals(EntryInteractionResult.SUCCESS)) {
-			gain.gain(customer, interactionType.isBuy() ? 1 : discount);
+			gain.gain(customer, interactionType.isBuy() ? 1 : (discount - 1) * -1 + 1);
 			Transaction transaction = new Transaction(customer, getShopEntry(), interactionType,
 					interactionType.isBuy() ? buyPayPrice : sellPayPrice, gainPrice, LocalDateTime.now(), discount, discounts);
 			lastTransactions.put(customer.getUuid(), transaction);

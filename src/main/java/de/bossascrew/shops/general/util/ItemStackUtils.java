@@ -111,7 +111,7 @@ public class ItemStackUtils {
 	}
 
 	public void addLorePrice(List<Component> existingLore, TradeModule<?, ?> tradeModule, double discount) {
-		if (tradeModule.isBuyable() && tradeModule.isSellable() && tradeModule.getPayPrice(true).equals(tradeModule.getPayPrice(false))) {
+		if (tradeModule.isBuyable() && tradeModule.isSellable() && tradeModule.getPayPrice(true).equals(tradeModule.getPayPrice(false)) && discount == 1) {
 			existingLore.addAll(Message.SHOP_ITEM_LORE_BOTH_PRICE.getTranslations(Template.of("price", tradeModule.getPriceDisplay(true, discount))));
 		} else {
 			if (tradeModule.isBuyable()) {
@@ -123,13 +123,13 @@ public class ItemStackUtils {
 						Template.of("price", tradeModule.getPriceDisplay(false, discount))));
 			}
 		}
-
 	}
 
 	public void addLoreDiscount(List<Component> existingLore, List<Discount> discounts) {
+		discounts.sort(Discount::compareTo);
 		for (Discount discount : discounts) {
 			existingLore.addAll(Message.SHOP_ITEM_LORE_DISCOUNT.getTranslations(
-					Template.of("percent", discount.getPercent() + ""),
+					Template.of("percent", discount.getFormattedPercent()),
 					Template.of("name", discount.getName()),
 					Template.of("start-date", TextUtils.formatLocalDateTime(discount.getNextStart())),
 					Template.of("duration", DURATION_PARSER.format(discount.getDuration())),
@@ -331,7 +331,7 @@ public class ItemStackUtils {
 				Message.GUI_DISCOUNTS_ENTRY_NAME.getTranslation(
 						Template.of("name", discount.getName())),
 				Message.GUI_DISCOUNTS_ENTRY_LORE.getTranslations(
-						Template.of("percent", discount.getFormattedPercent(true)),
+						Template.of("percent", discount.getFormattedPercent()),
 						Template.of("uuid", discount.getUuid().toString()),
 						Template.of("permission", discount.getPermission() == null ? "X" : discount.getPermission()),
 						Template.of("name", discount.getName()),

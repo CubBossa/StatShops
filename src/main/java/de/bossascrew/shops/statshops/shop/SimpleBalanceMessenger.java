@@ -56,12 +56,12 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 		} else {
 			cachedPay.setAmount(cachedPay.getAmount() + pay.getAmount());
 		}
+		tradeCache.put(customer.getUuid(), prices);
 
 		TradeMessageType feedback = StatShops.getInstance().getShopsConfig().getTradeMessageFeedback();
 		if (feedback.equals(TradeMessageType.PROMPT)) {
 			printCachedBalanceAndClear(customer, false);
 		}
-		tradeCache.put(customer.getUuid(), prices);
 	}
 
 	@Override
@@ -80,6 +80,7 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 
 	private void printCachedBalanceAndClear(Customer customer, boolean header) {
 		List<Price<?>> cache = tradeCache.get(customer.getUuid());
+		tradeCache.put(customer.getUuid(), new ArrayList<>());
 		if (cache == null || cache.stream().noneMatch(price -> price.getAmount() != 0)) {
 			return;
 		}
@@ -93,7 +94,6 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 			}
 			customer.sendMessage("", getTransactionFeedback(price), 0);
 		}
-		tradeCache.put(customer.getUuid(), new ArrayList<>());
 	}
 
 	private Component getTransactionFeedback(Price<?> price) {
@@ -102,7 +102,9 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 		price.setAmount(Math.abs(price.getAmount()));
 
 		Template[] templates = {
-				Template.of("indicator", actualAmount >= 0 ? Message.SHOP_TRADE_FEEDBACK_GAIN.getTranslation() : Message.SHOP_TRADE_FEEDBACK_PAY.getTranslation()),
+				Template.of("indicator", actualAmount >= 0 ?
+						Message.SHOP_TRADE_FEEDBACK_GAIN.getTranslation() :
+						Message.SHOP_TRADE_FEEDBACK_PAY.getTranslation()),
 				Template.of("transaction", price.getPriceComponent()),
 		};
 		if (tradeMessageType.equals(TradeMessageType.PROMPT)) {

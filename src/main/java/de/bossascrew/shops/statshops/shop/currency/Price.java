@@ -25,8 +25,8 @@ public class Price<T> implements Duplicable<Price<T>>, Comparable<Price<T>> {
 		this.object = object;
 	}
 
-	public boolean canPay(Customer customer) {
-		return currency.hasAmount(customer, amount, object);
+	public boolean canPay(Customer customer, double discount) {
+		return currency.hasAmount(customer, amount * discount, object);
 	}
 
 	public boolean canGain(Customer customer) {
@@ -38,7 +38,7 @@ public class Price<T> implements Duplicable<Price<T>>, Comparable<Price<T>> {
 	}
 
 	public EntryInteractionResult pay(Customer customer, double discount) {
-		if (!canPay(customer)) {
+		if (!canPay(customer, discount)) {
 			return EntryInteractionResult.FAIL_CANT_AFFORD;
 		}
 		currency.removeAmount(customer, amount * discount, object);

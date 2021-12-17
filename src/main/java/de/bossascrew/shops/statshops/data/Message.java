@@ -9,277 +9,263 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public enum Message {
+public class Message {
 
-	PREFIX("general.prefix"),
+	public static final Message PREFIX = new Message("general.prefix");
 
-	GENERAL_NO_PERMISSION("general.no_permission"),
-	GENERAL_PLUGIN_LOADING("general.plugin_loading"),
-	GENERAL_CONFIG_RELOADED_IN_MS("general.config_reloaded"),
-	GENERAL_CONFIG_RELOAD_ERROR("general.config_error"),
-	GENERAL_LANGUAGE_RELOADED_IN_MS("general.language_reloaded"),
-	GENERAL_LANGUAGE_RELOAD_ERROR("general.language_error"),
-	GENERAL_GUI_BACK_NAME("general.gui.back.name"),
-	GENERAL_GUI_BACK_LORE("general.gui.back.lore"),
-	GENERAL_GUI_ERROR_NAME("general.gui.error.name"),
-	GENERAL_GUI_ERROR_LORE("general.gui.error.lore"),
-	GENERAL_GUI_DELETE_NAME("general.gui.delete.name"),
-	GENERAL_GUI_DELETE_LORE("general.gui.delete.lore"),
-	GENERAL_GUI_NEXT_PAGE_NAME("general.gui.next_page.name"),
-	GENERAL_GUI_NEXT_PAGE_LORE("general.gui.next_page.lore"),
-	GENERAL_GUI_PREV_PAGE_NAME("general.gui.prev_page.name"),
-	GENERAL_GUI_PREV_PAGE_LORE("general.gui.prev_page.lore"),
-	GENERAL_GUI_ACCEPT_NAME("general.gui.accept.name"),
-	GENERAL_GUI_ACCEPT_LORE("general.gui.accept.lore"),
-	GENERAL_GUI_DECLINE_NAME("general.gui.decline.name"),
-	GENERAL_GUI_DECLINE_LORE("general.gui.decline.lore"),
-	GENERAL_GUI_LIST_INFO_NAME("general.gui.list_info.name"),
-	GENERAL_GUI_LIST_INFO_LORE("general.gui.list_info.lore"),
-	GENERAL_WEBINTERFACE_LOADING("general.webinterface.loading"),
-	GENERAL_WEBINTERFACE_LINK("general.webinterface.link"),
-	GENERAL_WEBINTERFACE_ERROR("general.webinterface.error"),
-	GENERAL_EDITABLE_CURRENTLY_EDITED("general.editable_edited"),
+	public static final Message GENERAL_NO_PERMISSION = new Message("general.no_permission");
+	public static final Message GENERAL_PLUGIN_LOADING = new Message("general.plugin_loading");
+	public static final Message GENERAL_CONFIG_RELOADED_IN_MS = new Message("general.config_reloaded");
+	public static final Message GENERAL_CONFIG_RELOAD_ERROR = new Message("general.config_error");
+	public static final Message GENERAL_LANGUAGE_RELOADED_IN_MS = new Message("general.language_reloaded");
+	public static final Message GENERAL_LANGUAGE_RELOAD_ERROR = new Message("general.language_error");
+	public static final Message GENERAL_GUI_BACK_NAME = new Message("general.gui.back.name");
+	public static final Message GENERAL_GUI_BACK_LORE = new Message("general.gui.back.lore");
+	public static final Message GENERAL_GUI_ERROR_NAME = new Message("general.gui.error.name");
+	public static final Message GENERAL_GUI_ERROR_LORE = new Message("general.gui.error.lore");
+	public static final Message GENERAL_GUI_DELETE_NAME = new Message("general.gui.delete.name");
+	public static final Message GENERAL_GUI_DELETE_LORE = new Message("general.gui.delete.lore");
+	public static final Message GENERAL_GUI_NEXT_PAGE_NAME = new Message("general.gui.next_page.name");
+	public static final Message GENERAL_GUI_NEXT_PAGE_LORE = new Message("general.gui.next_page.lore");
+	public static final Message GENERAL_GUI_PREV_PAGE_NAME = new Message("general.gui.prev_page.name");
+	public static final Message GENERAL_GUI_PREV_PAGE_LORE = new Message("general.gui.prev_page.lore");
+	public static final Message GENERAL_GUI_ACCEPT_NAME = new Message("general.gui.accept.name");
+	public static final Message GENERAL_GUI_ACCEPT_LORE = new Message("general.gui.accept.lore");
+	public static final Message GENERAL_GUI_DECLINE_NAME = new Message("general.gui.decline.name");
+	public static final Message GENERAL_GUI_DECLINE_LORE = new Message("general.gui.decline.lore");
+	public static final Message GENERAL_GUI_LIST_INFO_NAME = new Message("general.gui.list_info.name");
+	public static final Message GENERAL_GUI_LIST_INFO_LORE = new Message("general.gui.list_info.lore");
+	public static final Message GENERAL_WEBINTERFACE_LOADING = new Message("general.webinterface.loading");
+	public static final Message GENERAL_WEBINTERFACE_LINK = new Message("general.webinterface.link");
+	public static final Message GENERAL_WEBINTERFACE_ERROR = new Message("general.webinterface.error");
+	public static final Message GENERAL_EDITABLE_CURRENTLY_EDITED = new Message("general.editable_edited");
 
-	CITIZENS_ASSIGNED("citizens.assign.success"),
-	CITIZENS_CONFIRM_OVERRIDE("citizens.assign.confirm"),
-	CITIZENS_CLICK_TO_ASSIGN("citizens.assign.info"),
-
-	ACTION_BUY("shop.actions.buy"),
-	ACTION_SELL("shop.actions.sell"),
-	ACTION_BUY_STACK("shop.actions.buy_stack"),
-	ACTION_SELL_STACK("shop.actions.sell_stack"),
-
-	CLICK_TYPE_RIGHT("general.keybinding.clicktype.right"),
-	CLICK_TYPE_LEFT("general.keybinding.clicktype.left"),
-	CLICK_TYPE_SHIFT_RIGHT("general.keybinding.clicktype.shift_right"),
-	CLICK_TYPE_SHIFT_LEFT("general.keybinding.clicktype.shift_left"),
-	CLICK_TYPE_MIDDLE("general.keybinding.clicktype.middle"),
-
-	SHOP_NO_PERMISSION("shop.no_permission"),
-	SHOP_NOT_ENABLED("shop.not_enabled"),
-	SHOP_COOLDOWN("shop.cooldown"),
-
-	SHOP_GUI_TITLE("shop.gui.title",
+	public static final Message CITIZENS_ASSIGNED = new Message("citizens.assign.success");
+	public static final Message CITIZENS_CONFIRM_OVERRIDE = new Message("citizens.assign.confirm");
+	public static final Message CITIZENS_CLICK_TO_ASSIGN = new Message("citizens.assign.info");
+	public static final Message ACTION_BUY = new Message("shop.actions.buy");
+	public static final Message ACTION_SELL = new Message("shop.actions.sell");
+	public static final Message ACTION_BUY_STACK = new Message("shop.actions.buy_stack");
+	public static final Message ACTION_SELL_STACK = new Message("shop.actions.sell_stack");
+	public static final Message SHOP_NO_PERMISSION = new Message("shop.no_permission");
+	public static final Message SHOP_NOT_ENABLED = new Message("shop.not_enabled");
+	public static final Message SHOP_COOLDOWN = new Message("shop.cooldown");
+	public static final Message SHOP_GUI_TITLE = new Message("shop.gui.title",
 			"Defines the title of the shop menu",
 			new Pair<>("name", "<gradient:dark_green:green:dark_green>Example Shop"),
 			new Pair<>("page", "" + 2),
 			new Pair<>("mode", "<gold>Sell</gold>"),
-			new Pair<>("pages", "" + 3)),
-	SHOP_ITEM_LORE_SPACER("shop.gui.item.lore.spacer"),
-	SHOP_ITEM_LORE_BOTH_PRICE("shop.gui.item.lore.price"),
-	SHOP_ITEM_LORE_BUY_PRICE("shop.gui.item.lore.buy_price"),
-	SHOP_ITEM_LORE_SELL_PRICE("shop.gui.item.lore.sell_price"),
-	SHOP_ITEM_LORE_KEYBIND("shop.gui.item.lore.keybinding"),
-	SHOP_ITEM_LORE_DISCOUNT("shop.gui.item.lore.discount"),
-	SHOP_ITEM_LORE_DISCOUNT_POSITIVE("shop.gui.item.lore.discount_positive"),
-	SHOP_ITEM_LORE_DISCOUNT_NEGATIVE("shop.gui.item.lore.discount_negative"),
-	SHOP_ITEM_LORE_LIMIT("shop.gui.item.lore.limit"),
-	SHOP_MODE_BUY_NAME("shop.modes.buy.name"),
-	SHOP_MODE_BUY_LORE("shop.modes.buy.lore"),
-	SHOP_MODE_SELL_NAME("shop.modes.sell.name"),
-	SHOP_MODE_SELL_LORE("shop.modes.sell.lore"),
-	SHOP_MODE_TRADE_NAME("shop.modes.trade.name"),
-	SHOP_MODE_TRADE_LORE("shop.modes.trade.lore"),
-	SHOP_TRADE_FEEDBACK_PROMPT_FORMAT("shop.prompt_feedback"),
-	SHOP_TRADE_FEEDBACK_CUMUL_FORMAT("shop.cumulative_feedback"),
-	SHOP_TRADE_FEEDBACK_CUMUL_TITLE("shop.cumulative_title"),
-	SHOP_TRADE_FEEDBACK_PAY("shop.trade_feedback_indicator_pay"),
-	SHOP_TRADE_FEEDBACK_GAIN("shop.trade_feedback_indicator_gain"),
+			new Pair<>("pages", "" + 3));
+	public static final Message SHOP_ITEM_LORE_SPACER = new Message("shop.gui.item.lore.spacer");
+	public static final Message SHOP_ITEM_LORE_BOTH_PRICE = new Message("shop.gui.item.lore.price");
+	public static final Message SHOP_ITEM_LORE_BUY_PRICE = new Message("shop.gui.item.lore.buy_price");
+	public static final Message SHOP_ITEM_LORE_SELL_PRICE = new Message("shop.gui.item.lore.sell_price");
+	public static final Message SHOP_ITEM_LORE_KEYBIND = new Message("shop.gui.item.lore.keybinding");
+	public static final Message SHOP_ITEM_LORE_DISCOUNT = new Message("shop.gui.item.lore.discount");
+	public static final Message SHOP_ITEM_LORE_DISCOUNT_POSITIVE = new Message("shop.gui.item.lore.discount_positive");
+	public static final Message SHOP_ITEM_LORE_DISCOUNT_NEGATIVE = new Message("shop.gui.item.lore.discount_negative");
+	public static final Message SHOP_ITEM_LORE_LIMIT = new Message("shop.gui.item.lore.limit");
+	public static final Message SHOP_MODE_BUY_NAME = new Message("shop.modes.buy.name");
+	public static final Message SHOP_MODE_BUY_LORE = new Message("shop.modes.buy.lore");
+	public static final Message SHOP_MODE_SELL_NAME = new Message("shop.modes.sell.name");
+	public static final Message SHOP_MODE_SELL_LORE = new Message("shop.modes.sell.lore");
+	public static final Message SHOP_MODE_TRADE_NAME = new Message("shop.modes.trade.name");
+	public static final Message SHOP_MODE_TRADE_LORE = new Message("shop.modes.trade.lore");
+	public static final Message SHOP_TRADE_FEEDBACK_PROMPT_FORMAT = new Message("shop.prompt_feedback");
+	public static final Message SHOP_TRADE_FEEDBACK_CUMUL_FORMAT = new Message("shop.cumulative_feedback");
+	public static final Message SHOP_TRADE_FEEDBACK_CUMUL_TITLE = new Message("shop.cumulative_title");
+	public static final Message SHOP_TRADE_FEEDBACK_PAY = new Message("shop.trade_feedback_indicator_pay");
+	public static final Message SHOP_TRADE_FEEDBACK_GAIN = new Message("shop.trade_feedback_indicator_gain");
 
-	VILLAGER_SHOP_TITLE("villager_shop.gui.title"),
+	public static final Message VILLAGER_SHOP_TITLE = new Message("villager_shop.gui.title");
 
-	GUI_MAIN_TITLE("manager.gui.main.title"),
-	GUI_MAIN_SHOPS_NAME("manager.gui.main.shops.name"),
-	GUI_MAIN_SHOPS_LORE("manager.gui.main.shops.lore"),
-	GUI_MAIN_DISCOUNTS_NAME("manager.gui.main.discounts.name"),
-	GUI_MAIN_DISCOUNTS_LORE("manager.gui.main.discounts.lore"),
-	GUI_MAIN_LIMITS_NAME("manager.gui.main.limits.name"),
-	GUI_MAIN_LIMITS_LORE("manager.gui.main.limits.lore"),
-	GUI_MAIN_LANGUAGE_NAME("manager.gui.main.language.name"),
-	GUI_MAIN_LANGUAGE_LORE("manager.gui.main.language.lore"),
-	GUI_MAIN_WEBINTERFACE_NAME("manager.gui.main.webinterface.name"),
-	GUI_MAIN_WEBINTERFACE_LORE("manager.gui.main.webinterface.lore"),
+	public static final Message GUI_MAIN_TITLE = new Message("manager.gui.main.title");
+	public static final Message GUI_MAIN_SHOPS_NAME = new Message("manager.gui.main.shops.name");
+	public static final Message GUI_MAIN_SHOPS_LORE = new Message("manager.gui.main.shops.lore");
+	public static final Message GUI_MAIN_DISCOUNTS_NAME = new Message("manager.gui.main.discounts.name");
+	public static final Message GUI_MAIN_DISCOUNTS_LORE = new Message("manager.gui.main.discounts.lore");
+	public static final Message GUI_MAIN_LIMITS_NAME = new Message("manager.gui.main.limits.name");
+	public static final Message GUI_MAIN_LIMITS_LORE = new Message("manager.gui.main.limits.lore");
+	public static final Message GUI_MAIN_LANGUAGE_NAME = new Message("manager.gui.main.language.name");
+	public static final Message GUI_MAIN_LANGUAGE_LORE = new Message("manager.gui.main.language.lore");
+	public static final Message GUI_MAIN_WEBINTERFACE_NAME = new Message("manager.gui.main.webinterface.name");
+	public static final Message GUI_MAIN_WEBINTERFACE_LORE = new Message("manager.gui.main.webinterface.lore");
+	public static final Message GUI_SHOPS_TITLE = new Message("manager.gui.shops.title");
+	public static final Message GUI_SHOPS_DELETE_CONFIRM = new Message("manager.gui.shops.confirm_delete");
+	public static final Message GUI_SHOPS_NEW_TITLE = new Message("manager.gui.shops.new_shop.title");
+	public static final Message GUI_SHOPS_NEW_NAME = new Message("manager.gui.shops.new_shop.name");
+	public static final Message GUI_SHOPS_NEW_LORE = new Message("manager.gui.shops.new_shop.lore");
+	public static final Message GUI_SHOPS_NAME = new Message("manager.gui.shops.entry.name");
+	public static final Message GUI_SHOPS_LORE = new Message("manager.gui.shops.entry.lore");
+	public static final Message GUI_SHOPS_ALREADY_EDITED = new Message("manager.gui.shops.already_edited");
 
-	GUI_SHOPS_TITLE("manager.gui.shops.title"),
-	GUI_SHOPS_DELETE_CONFIRM("manager.gui.shops.confirm_delete"),
-	GUI_SHOPS_NEW_TITLE("manager.gui.shops.new_shop.title"),
-	GUI_SHOPS_NEW_NAME("manager.gui.shops.new_shop.name"),
-	GUI_SHOPS_NEW_LORE("manager.gui.shops.new_shop.lore"),
-	GUI_SHOPS_NAME("manager.gui.shops.entry.name"),
-	GUI_SHOPS_LORE("manager.gui.shops.entry.lore"),
-	GUI_SHOPS_ALREADY_EDITED("manager.gui.shops.already_edited"),
+	public static final Message GUI_SHOP_SET_NAME_TITLE = new Message("manager.gui.shop.set_name.title");
+	public static final Message GUI_SHOP_SET_NAME_NAME = new Message("manager.gui.shop.set_name.name");
+	public static final Message GUI_SHOP_SET_NAME_LORE = new Message("manager.gui.shop.set_name.lore");
+	public static final Message GUI_SHOP_SET_PERMISSION_TITLE = new Message("manager.gui.shop.set_permission.title");
+	public static final Message GUI_SHOP_SET_PERMISSION_NAME = new Message("manager.gui.shop.set_permission.name");
+	public static final Message GUI_SHOP_SET_PERMISSION_LORE = new Message("manager.gui.shop.set_permission.lore");
+	public static final Message GUI_SHOP_SET_TAGS_NAME = new Message("manager.gui.shop.set_tags.name");
+	public static final Message GUI_SHOP_SET_TAGS_LORE = new Message("manager.gui.shop.set_tags.lore");
+	public static final Message GUI_SHOP_SET_LIMITS_NAME = new Message("manager.gui.shop.set_limits.name");
+	public static final Message GUI_SHOP_SET_LIMITS_LORE = new Message("manager.gui.shop.set_limits.lore");
+	public static final Message GUI_SHOP_SET_DISCOUNTS_NAME = new Message("manager.gui.shop.set_discounts.name");
+	public static final Message GUI_SHOP_SET_DISCOUNTS_LORE = new Message("manager.gui.shop.set_discounts.lore");
+	public static final Message GUI_SHOP_SET_TEMPLATE_NAME = new Message("manager.gui.shop.set_template.name");
+	public static final Message GUI_SHOP_SET_TEMPLATE_LORE = new Message("manager.gui.shop.set_template.lore");
+	public static final Message GUI_SHOP_SET_NPC_NAME = new Message("manager.gui.shop.set_citizens.name",
+			"The name of the item in the shop menu, that allows you to assign this shop to an citizens npc.");
+	public static final Message GUI_SHOP_SET_NPC_LORE = new Message("manager.gui.shop.set_citizens.lore",
+			"The lore of the item in the shop menu, that allows you to assign this shop to an citizens npc.");
+	public static final Message GUI_SHOP_SET_ENABLED_NAME = new Message("manager.gui.shop.set_enabled.name");
+	public static final Message GUI_SHOP_SET_ENABLED_LORE = new Message("manager.gui.shop.set_enabled.lore");
+	public static final Message GUI_SHOP_SET_REMEMBER_PAGE_NAME = new Message("manager.gui.shop.set_remember_page.name");
+	public static final Message GUI_SHOP_SET_REMEMBER_PAGE_LORE = new Message("manager.gui.shop.set_remember_page.lore");
+	public static final Message GUI_SHOP_SET_REMEMBER_MODE_NAME = new Message("manager.gui.shop.set_remember_mode.name");
+	public static final Message GUI_SHOP_SET_REMEMBER_MODE_LORE = new Message("manager.gui.shop.set_remember_mode.lore");
+	public static final Message GUI_SHOP_SET_CONTENT_NAME = new Message("manager.gui.shop.set_content.name");
+	public static final Message GUI_SHOP_SET_CONTENT_LORE = new Message("manager.gui.shop.set_content.lore");
+	public static final Message GUI_SHOP_SET_PREVIEW_NAME = new Message("manager.gui.shop.preview.name");
+	public static final Message GUI_SHOP_SET_PREVIEW_LORE = new Message("manager.gui.shop.preview.lore");
+	public static final Message GUI_SHOP_SET_DEFAULT_MODE_NAME = new Message("manager.gui.shop.set_default_mode.name");
+	public static final Message GUI_SHOP_SET_DEFAULT_MODE_LORE = new Message("manager.gui.shop.set_default_mode.lore");
+	public static final Message GUI_SHOP_SET_DEFAULT_PAGE_NAME = new Message("manager.gui.shop.set_default_page.name");
+	public static final Message GUI_SHOP_SET_DEFAULT_PAGE_LORE = new Message("manager.gui.shop.set_default_page.lore");
+	public static final Message GUI_SHOP_SET_ROWS_NAME = new Message("manager.gui.shop.set_rows.name");
+	public static final Message GUI_SHOP_SET_ROWS_LORE = new Message("manager.gui.shop.set_rows.lore");
+	public static final Message GUI_SHOP_LIMITS_TITLE = new Message("manager.gui.shop.limits.title");
+	public static final Message GUI_SHOP_LIMITS_INFO_NAME = new Message("manager.gui.shop.limits.info.name");
+	public static final Message GUI_SHOP_LIMITS_INFO_LORE = new Message("manager.gui.shop.limits.info.lore");
+	public static final Message GUI_SHOP_DISCOUNTS_TITLE = new Message("manager.gui.shop.discounts.title");
+	public static final Message GUI_SHOP_DISCOUNTS_INFO_NAME = new Message("manager.gui.shop.discounts.info.name");
+	public static final Message GUI_SHOP_DISCOUNTS_INFO_LORE = new Message("manager.gui.shop.discounts.info.lore");
+	public static final Message GUI_SHOP_TEMPLATE_TITLE = new Message("manager.gui.shop.template.title");
+	public static final Message GUI_SHOP_TEMPLATE_INFO_NAME = new Message("manager.gui.shop.template.info.name");
+	public static final Message GUI_SHOP_TEMPLATE_INFO_LORE = new Message("manager.gui.shop.template.info.lore");
+	public static final Message GUI_TAGS_TITLE = new Message("manager.gui.tags.title");
+	public static final Message GUI_TAGS_NEW_TAG_TITLE = new Message("manager.gui.tags.new_tag.title");
+	public static final Message GUI_TAGS_NEW_TAG_NAME = new Message("manager.gui.tags.new_tag.name");
+	public static final Message GUI_TAGS_NEW_TAG_LORE = new Message("manager.gui.tags.new_tag.lore");
 
-	GUI_SHOP_SET_NAME_TITLE("manager.gui.shop.set_name.title"),
-	GUI_SHOP_SET_NAME_NAME("manager.gui.shop.set_name.name"),
-	GUI_SHOP_SET_NAME_LORE("manager.gui.shop.set_name.lore"),
-	GUI_SHOP_SET_PERMISSION_TITLE("manager.gui.shop.set_permission.title"),
-	GUI_SHOP_SET_PERMISSION_NAME("manager.gui.shop.set_permission.name"),
-	GUI_SHOP_SET_PERMISSION_LORE("manager.gui.shop.set_permission.lore"),
-	GUI_SHOP_SET_TAGS_NAME("manager.gui.shop.set_tags.name"),
-	GUI_SHOP_SET_TAGS_LORE("manager.gui.shop.set_tags.lore"),
-	GUI_SHOP_SET_LIMITS_NAME("manager.gui.shop.set_limits.name"),
-	GUI_SHOP_SET_LIMITS_LORE("manager.gui.shop.set_limits.lore"),
-	GUI_SHOP_SET_DISCOUNTS_NAME("manager.gui.shop.set_discounts.name"),
-	GUI_SHOP_SET_DISCOUNTS_LORE("manager.gui.shop.set_discounts.lore"),
-	GUI_SHOP_SET_TEMPLATE_NAME("manager.gui.shop.set_template.name"),
-	GUI_SHOP_SET_TEMPLATE_LORE("manager.gui.shop.set_template.lore"),
-	GUI_SHOP_SET_NPC_NAME("manager.gui.shop.set_citizens.name",
-			"The name of the item in the shop menu, that allows you to assign this shop to an citizens npc."),
-	GUI_SHOP_SET_NPC_LORE("manager.gui.shop.set_citizens.lore",
-			"The lore of the item in the shop menu, that allows you to assign this shop to an citizens npc."),
-	GUI_SHOP_SET_ENABLED_NAME("manager.gui.shop.set_enabled.name"),
-	GUI_SHOP_SET_ENABLED_LORE("manager.gui.shop.set_enabled.lore"),
-	GUI_SHOP_SET_REMEMBER_PAGE_NAME("manager.gui.shop.set_remember_page.name"),
-	GUI_SHOP_SET_REMEMBER_PAGE_LORE("manager.gui.shop.set_remember_page.lore"),
-	GUI_SHOP_SET_REMEMBER_MODE_NAME("manager.gui.shop.set_remember_mode.name"),
-	GUI_SHOP_SET_REMEMBER_MODE_LORE("manager.gui.shop.set_remember_mode.lore"),
-	GUI_SHOP_SET_CONTENT_NAME("manager.gui.shop.set_content.name"),
-	GUI_SHOP_SET_CONTENT_LORE("manager.gui.shop.set_content.lore"),
-	GUI_SHOP_SET_PREVIEW_NAME("manager.gui.shop.preview.name"),
-	GUI_SHOP_SET_PREVIEW_LORE("manager.gui.shop.preview.lore"),
-	GUI_SHOP_SET_DEFAULT_MODE_NAME("manager.gui.shop.set_default_mode.name"),
-	GUI_SHOP_SET_DEFAULT_MODE_LORE("manager.gui.shop.set_default_mode.lore"),
-	GUI_SHOP_SET_DEFAULT_PAGE_NAME("manager.gui.shop.set_default_page.name"),
-	GUI_SHOP_SET_DEFAULT_PAGE_LORE("manager.gui.shop.set_default_page.lore"),
-	GUI_SHOP_SET_ROWS_NAME("manager.gui.shop.set_rows.name"),
-	GUI_SHOP_SET_ROWS_LORE("manager.gui.shop.set_rows.lore"),
-	GUI_SHOP_LIMITS_TITLE("manager.gui.shop.limits.title"),
-	GUI_SHOP_LIMITS_INFO_NAME("manager.gui.shop.limits.info.name"),
-	GUI_SHOP_LIMITS_INFO_LORE("manager.gui.shop.limits.info.lore"),
-	GUI_SHOP_DISCOUNTS_TITLE("manager.gui.shop.discounts.title"),
-	GUI_SHOP_DISCOUNTS_INFO_NAME("manager.gui.shop.discounts.info.name"),
-	GUI_SHOP_DISCOUNTS_INFO_LORE("manager.gui.shop.discounts.info.lore"),
-	GUI_SHOP_TEMPLATE_TITLE("manager.gui.shop.template.title"),
-	GUI_SHOP_TEMPLATE_INFO_NAME("manager.gui.shop.template.info.name"),
-	GUI_SHOP_TEMPLATE_INFO_LORE("manager.gui.shop.template.info.lore"),
+	public static final Message GENERAL_GUI_TAGS_INFO_NAME = new Message("manager.gui.tags.info.name");
+	public static final Message GENERAL_GUI_TAGS_INFO_LORE = new Message("manager.gui.tags.info.lore");
+	public static final Message GENERAL_GUI_TAGS_REMOVE_TAG = new Message("manager.gui.tags.remove_tag");
 
-	GUI_TAGS_TITLE("manager.gui.tags.title"),
-	GUI_TAGS_NEW_TAG_TITLE("manager.gui.tags.new_tag.title"),
-	GUI_TAGS_NEW_TAG_NAME("manager.gui.tags.new_tag.name"),
-	GUI_TAGS_NEW_TAG_LORE("manager.gui.tags.new_tag.lore"),
-	GENERAL_GUI_TAGS_INFO_NAME("manager.gui.tags.info.name"),
-	GENERAL_GUI_TAGS_INFO_LORE("manager.gui.tags.info.lore"),
-	GENERAL_GUI_TAGS_REMOVE_TAG("manager.gui.tags.remove_tag"),
+	public static final Message GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME = new Message("manager.gui.shop_editor.template.name");
+	public static final Message GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE = new Message("manager.gui.shop_editor.template.lore");
+	public static final Message GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME = new Message("manager.gui.shop_editor.freeze.name");
+	public static final Message GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE = new Message("manager.gui.shop_editor.freeze.lore");
 
-	GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME("manager.gui.shop_editor.template.name"),
-	GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE("manager.gui.shop_editor.template.lore"),
-	GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME("manager.gui.shop_editor.freeze.name"),
-	GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE("manager.gui.shop_editor.freeze.lore"),
+	public static final Message GUI_LIMITS = new Message("manager.gui.limits.title");
+	public static final Message GUI_LIMITS_ALREADY_EDITED = new Message("manager.gui.limits.already_edited");
+	public static final Message GUI_LIMITS_DELETE_CONFIRM = new Message("manager.gui.limits.confirm_delete");
+	public static final Message GUI_LIMITS_ENTRY_NAME = new Message("manager.gui.limits.entry.name");
+	public static final Message GUI_LIMITS_ENTRY_LORE = new Message("manager.gui.limits.entry.lore");
+	public static final Message GUI_LIMITS_NEW_TITLE = new Message("manager.gui.limits.new.title");
+	public static final Message GUI_LIMITS_NEW_NAME = new Message("manager.gui.limits.new.name");
+	public static final Message GUI_LIMITS_NEW_LORE = new Message("manager.gui.limits.new.lore");
+	public static final Message GUI_LIMIT_SET_NAME_TITLE = new Message("manager.gui.limit.set_name.title");
+	public static final Message GUI_LIMIT_SET_NAME_NAME = new Message("manager.gui.limit.set_name.name");
+	public static final Message GUI_LIMIT_SET_NAME_LORE = new Message("manager.gui.limit.set_name.lore");
+	public static final Message GUI_LIMIT_SET_TAGS_NAME = new Message("manager.gui.limit.set_tags.name");
+	public static final Message GUI_LIMIT_SET_TAGS_LORE = new Message("manager.gui.limit.set_tags.lore");
+	public static final Message GUI_LIMIT_SET_PERMISSION_TITLE = new Message("manager.gui.limit.set_permission.title");
+	public static final Message GUI_LIMIT_SET_PERMISSION_NAME = new Message("manager.gui.limit.set_permission.name");
+	public static final Message GUI_LIMIT_SET_PERMISSION_LORE = new Message("manager.gui.limit.set_permission.lore");
 
-	GUI_LIMITS("manager.gui.limits.title"),
-	GUI_LIMITS_ALREADY_EDITED("manager.gui.limits.already_edited"),
-	GUI_LIMITS_DELETE_CONFIRM("manager.gui.limits.confirm_delete"),
-	GUI_LIMITS_ENTRY_NAME("manager.gui.limits.entry.name"),
-	GUI_LIMITS_ENTRY_LORE("manager.gui.limits.entry.lore"),
-	GUI_LIMITS_NEW_TITLE("manager.gui.limits.new.title"),
-	GUI_LIMITS_NEW_NAME("manager.gui.limits.new.name"),
-	GUI_LIMITS_NEW_LORE("manager.gui.limits.new.lore"),
+	public static final Message GUI_DISCOUNTS = new Message("manager.gui.discounts.title");
+	public static final Message GUI_DISCOUNTS_DELETE_CONFIRM = new Message("manager.gui.discounts.confirm_delete");
+	public static final Message GUI_DISCOUNTS_ALREADY_EDITED = new Message("manager.gui.discounts.already_edited");
+	public static final Message GUI_DISCOUNTS_ENTRY_NAME = new Message("manager.gui.discounts.entry.name");
+	public static final Message GUI_DISCOUNTS_ENTRY_LORE = new Message("manager.gui.discounts.entry.lore");
+	public static final Message GUI_DISCOUNTS_NEW_TITLE = new Message("manager.gui.discounts.new.title");
+	public static final Message GUI_DISCOUNTS_NEW_NAME = new Message("manager.gui.discounts.new.name");
+	public static final Message GUI_DISCOUNTS_NEW_LORE = new Message("manager.gui.discounts.new.lore");
 
-	GUI_LIMIT_SET_NAME_TITLE("manager.gui.limit.set_name.title"),
-	GUI_LIMIT_SET_NAME_NAME("manager.gui.limit.set_name.name"),
-	GUI_LIMIT_SET_NAME_LORE("manager.gui.limit.set_name.lore"),
-	GUI_LIMIT_SET_TAGS_NAME("manager.gui.limit.set_tags.name"),
-	GUI_LIMIT_SET_TAGS_LORE("manager.gui.limit.set_tags.lore"),
-	GUI_LIMIT_SET_PERMISSION_TITLE("manager.gui.limit.set_permission.title"),
-	GUI_LIMIT_SET_PERMISSION_NAME("manager.gui.limit.set_permission.name"),
-	GUI_LIMIT_SET_PERMISSION_LORE("manager.gui.limit.set_permission.lore"),
+	public static final Message GUI_DISCOUNT = new Message("manager.gui.discount.title");
+	public static final Message GUI_DISCOUNT_SET_NAME_TITLE = new Message("manager.gui.discount.set_name.title");
+	public static final Message GUI_DISCOUNT_SET_NAME_NAME = new Message("manager.gui.discount.set_name.name");
+	public static final Message GUI_DISCOUNT_SET_NAME_LORE = new Message("manager.gui.discount.set_name.lore");
+	public static final Message GUI_DISCOUNT_SET_PERMISSION_TITLE = new Message("manager.gui.discount.set_permission.title");
+	public static final Message GUI_DISCOUNT_SET_PERMISSION_NAME = new Message("manager.gui.discount.set_permission.name");
+	public static final Message GUI_DISCOUNT_SET_PERMISSION_LORE = new Message("manager.gui.discount.set_permission.lore");
+	public static final Message GUI_DISCOUNT_SET_TAGS_NAME = new Message("manager.gui.discount.set_tags.name");
+	public static final Message GUI_DISCOUNT_SET_TAGS_LORE = new Message("manager.gui.discount.set_tags.lore");
+	public static final Message GUI_DISCOUNT_SET_DURATION_TITLE = new Message("manager.gui.discount.set_duration.title");
+	public static final Message GUI_DISCOUNT_SET_DURATION_NAME = new Message("manager.gui.discount.set_duration.name");
+	public static final Message GUI_DISCOUNT_SET_DURATION_LORE = new Message("manager.gui.discount.set_duration.lore");
+	public static final Message GUI_DISCOUNT_SET_START_TITLE = new Message("manager.gui.discount.set_start.title");
+	public static final Message GUI_DISCOUNT_SET_START_NAME = new Message("manager.gui.discount.set_start.name");
+	public static final Message GUI_DISCOUNT_SET_START_LORE = new Message("manager.gui.discount.set_start.lore");
+	public static final Message GUI_DISCOUNT_SET_PERCENT_TITLE = new Message("manager.gui.discount.set_percent.title");
+	public static final Message GUI_DISCOUNT_SET_PERCENT_NAME = new Message("manager.gui.discount.set_percent.name");
+	public static final Message GUI_DISCOUNT_SET_PERCENT_LORE = new Message("manager.gui.discount.set_percent.lore");
+	public static final Message GUI_DISCOUNT_START_INFO_NAME = new Message("manager.gui.discount.start.info.name");
+	public static final Message GUI_DISCOUNT_START_INFO_LORE = new Message("manager.gui.discount.start.info.lore");
+	public static final Message GUI_DISCOUNT_START_NEW_TITLE = new Message("manager.gui.discount.start.new.title");
+	public static final Message GUI_DISCOUNT_START_NEW_NAME = new Message("manager.gui.discount.start.new.name");
+	public static final Message GUI_DISCOUNT_START_NEW_LORE = new Message("manager.gui.discount.start.new.lore");
+	public static final Message GUI_DISCOUNT_START_DELETE_CONFIRM = new Message("manager.gui.discount.start.confirm_delete");
 
-	GUI_DISCOUNTS("manager.gui.discounts.title"),
-	GUI_DISCOUNTS_DELETE_CONFIRM("manager.gui.discounts.confirm_delete"),
-	GUI_DISCOUNTS_ALREADY_EDITED("manager.gui.discounts.already_edited"),
-	GUI_DISCOUNTS_ENTRY_NAME("manager.gui.discounts.entry.name"),
-	GUI_DISCOUNTS_ENTRY_LORE("manager.gui.discounts.entry.lore"),
-	GUI_DISCOUNTS_NEW_TITLE("manager.gui.discounts.new.title"),
-	GUI_DISCOUNTS_NEW_NAME("manager.gui.discounts.new.name"),
-	GUI_DISCOUNTS_NEW_LORE("manager.gui.discounts.new.lore"),
-
-	GUI_DISCOUNT("manager.gui.discount.title"),
-	GUI_DISCOUNT_SET_NAME_TITLE("manager.gui.discount.set_name.title"),
-	GUI_DISCOUNT_SET_NAME_NAME("manager.gui.discount.set_name.name"),
-	GUI_DISCOUNT_SET_NAME_LORE("manager.gui.discount.set_name.lore"),
-	GUI_DISCOUNT_SET_PERMISSION_TITLE("manager.gui.discount.set_permission.title"),
-	GUI_DISCOUNT_SET_PERMISSION_NAME("manager.gui.discount.set_permission.name"),
-	GUI_DISCOUNT_SET_PERMISSION_LORE("manager.gui.discount.set_permission.lore"),
-	GUI_DISCOUNT_SET_TAGS_NAME("manager.gui.discount.set_tags.name"),
-	GUI_DISCOUNT_SET_TAGS_LORE("manager.gui.discount.set_tags.lore"),
-	GUI_DISCOUNT_SET_DURATION_TITLE("manager.gui.discount.set_duration.title"),
-	GUI_DISCOUNT_SET_DURATION_NAME("manager.gui.discount.set_duration.name"),
-	GUI_DISCOUNT_SET_DURATION_LORE("manager.gui.discount.set_duration.lore"),
-	GUI_DISCOUNT_SET_START_TITLE("manager.gui.discount.set_start.title"),
-	GUI_DISCOUNT_SET_START_NAME("manager.gui.discount.set_start.name"),
-	GUI_DISCOUNT_SET_START_LORE("manager.gui.discount.set_start.lore"),
-	GUI_DISCOUNT_SET_PERCENT_TITLE("manager.gui.discount.set_percent.title"),
-	GUI_DISCOUNT_SET_PERCENT_NAME("manager.gui.discount.set_percent.name"),
-	GUI_DISCOUNT_SET_PERCENT_LORE("manager.gui.discount.set_percent.lore"),
-
-	GUI_DISCOUNT_START_INFO_NAME("manager.gui.discount.start.info.name"),
-	GUI_DISCOUNT_START_INFO_LORE("manager.gui.discount.start.info.lore"),
-	GUI_DISCOUNT_START_NEW_TITLE("manager.gui.discount.start.new.title"),
-	GUI_DISCOUNT_START_NEW_NAME("manager.gui.discount.start.new.name"),
-	GUI_DISCOUNT_START_NEW_LORE("manager.gui.discount.start.new.lore"),
-	GUI_DISCOUNT_START_DELETE_CONFIRM("manager.gui.discount.start.confirm_delete"),
-
-	GUI_SHOP_ENTRY("manager.gui.shop_entry.title"),
-
-	GUI_TEMPLATES("manager.gui.templates.title"),
-	GUI_TEMPLATES_CHOOSE("manager.gui.templates.choose_title"),
-	GUI_TEMPLATES_APPLY("manager.gui.templates.apply_title"),
-	GUI_TEMPLATES_NEW("manager.gui.templates.new_title"),
-	GUI_TEMPLATES_ENTRY_NAME("manager.gui.templates.entry.name",
+	public static final Message GUI_SHOP_ENTRY = new Message("manager.gui.shop_entry.title");
+	public static final Message GUI_TEMPLATES = new Message("manager.gui.templates.title");
+	public static final Message GUI_TEMPLATES_CHOOSE = new Message("manager.gui.templates.choose_title");
+	public static final Message GUI_TEMPLATES_APPLY = new Message("manager.gui.templates.apply_title");
+	public static final Message GUI_TEMPLATES_NEW = new Message("manager.gui.templates.new_title");
+	public static final Message GUI_TEMPLATES_ENTRY_NAME = new Message("manager.gui.templates.entry.name",
 			"Sets the display name of a template entry in the templates menu",
-			new Pair<>("template", "<white>Default Shop Layout")),
-	GUI_TEMPLATES_ENTRY_LORE("manager.gui.templates.entry.lore",
+			new Pair<>("template", "<white>Default Shop Layout"));
+	public static final Message GUI_TEMPLATES_ENTRY_LORE = new Message("manager.gui.templates.entry.lore",
 			"Sets the lore of a template entry in the templates menu",
 			new Pair<>("template", "<white>Default Shop Layout"),
 			new Pair<>("uuid", UUID.randomUUID().toString()),
-			new Pair<>("size", "7")),
+			new Pair<>("size", "7"));
 
-	GUI_ENTRY_TITLE("manager.gui.entry.title"),
-	GUI_ENTRY_SET_LORE_NAME("manager.gui.entry.set_lore.name"),
-	GUI_ENTRY_SET_LORE_LORE("manager.gui.entry.set_lore.lore"),
-	GUI_ENTRY_SET_PERMISSION_TITLE("manager.gui.entry.set_permission.title"),
-	GUI_ENTRY_SET_PERMISSION_NAME("manager.gui.entry.set_permission.name"),
-	GUI_ENTRY_SET_PERMISSION_LORE("manager.gui.entry.set_permission.lore"),
-	GUI_ENTRY_SET_TAGS_NAME("manager.gui.entry.set_tags.name"),
-	GUI_ENTRY_SET_TAGS_LORE("manager.gui.entry.set_tags.lore"),
-	GUI_ENTRY_SET_FUNCTION_TITLE("manager.gui.entry.set_function.title"),
-	GUI_ENTRY_SET_FUNCTION_NAME("manager.gui.entry.set_function.name",
-			new Pair<>("name", "<white>Static")),
-	GUI_ENTRY_SET_FUNCTION_LORE("manager.gui.entry.set_function.lore",
-			new Pair<>("function", "<white>Static")),
+	public static final Message GUI_ENTRY_TITLE = new Message("manager.gui.entry.title");
+	public static final Message GUI_ENTRY_SET_LORE_NAME = new Message("manager.gui.entry.set_lore.name");
+	public static final Message GUI_ENTRY_SET_LORE_LORE = new Message("manager.gui.entry.set_lore.lore");
+	public static final Message GUI_ENTRY_SET_PERMISSION_TITLE = new Message("manager.gui.entry.set_permission.title");
+	public static final Message GUI_ENTRY_SET_PERMISSION_NAME = new Message("manager.gui.entry.set_permission.name");
+	public static final Message GUI_ENTRY_SET_PERMISSION_LORE = new Message("manager.gui.entry.set_permission.lore");
+	public static final Message GUI_ENTRY_SET_TAGS_NAME = new Message("manager.gui.entry.set_tags.name");
+	public static final Message GUI_ENTRY_SET_TAGS_LORE = new Message("manager.gui.entry.set_tags.lore");
+	public static final Message GUI_ENTRY_SET_FUNCTION_TITLE = new Message("manager.gui.entry.set_function.title");
+	public static final Message GUI_ENTRY_SET_FUNCTION_NAME = new Message("manager.gui.entry.set_function.name",
+			new Pair<>("name", "<white>Static"));
+	public static final Message GUI_ENTRY_SET_FUNCTION_LORE = new Message("manager.gui.entry.set_function.lore",
+			new Pair<>("function", "<white>Static"));
 
-	GUI_ENTRY_FUNCTION_STATIC_NAME("manager.gui.entry.defaults.static.name"),
-	GUI_ENTRY_FUNCTION_STATIC_LORE("manager.gui.entry.defaults.static.lore"),
-	GUI_ENTRY_FUNCTION_PREV_PAGE_NAME("manager.gui.entry.defaults.prev_page.name"),
-	GUI_ENTRY_FUNCTION_PREV_PAGE_LORE("manager.gui.entry.defaults.prev_page.lore"),
-	GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME("manager.gui.entry.defaults.next_page.name"),
-	GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE("manager.gui.entry.defaults.next_page.lore"),
-	GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME("manager.gui.entry.defaults.exact_page.name"),
-	GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE("manager.gui.entry.defaults.exact_page.lore"),
-	GUI_ENTRY_FUNCTION_TRADE_ITEM_ITEM_NAME("manager.gui.entry.defaults.trade_item_item.name"),
-	GUI_ENTRY_FUNCTION_TRADE_ITEM_ITEM_LORE("manager.gui.entry.defaults.trade_item_item.lore"),
-	GUI_ENTRY_FUNCTION_TRADE_ITEM_VAULT_NAME("manager.gui.entry.defaults.trade_item_vault.name"),
-	GUI_ENTRY_FUNCTION_TRADE_ITEM_VAULT_LORE("manager.gui.entry.defaults.trade_item_vault.lore"),
-	GUI_ENTRY_FUNCTION_TRADE_CMD_ITEM_NAME("manager.gui.entry.defaults.trade_cmd_item.name"),
-	GUI_ENTRY_FUNCTION_TRADE_CMD_ITEM_LORE("manager.gui.entry.defaults.trade_cmd_item.lore"),
-	GUI_ENTRY_FUNCTION_TRADE_CMD_VAULT_NAME("manager.gui.entry.defaults.trade_cmd_vault.name"),
-	GUI_ENTRY_FUNCTION_TRADE_CMD_VAULT_LORE("manager.gui.entry.defaults.trade_cmd_vault.lore"),
-
-	GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER(""),
-	GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER_DESC(""),
-	GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION(""),
-	GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION_DESC(""),
-	GUI_ENTRY_FUNCTION_DATA_TYPE_STRING(""),
-	GUI_ENTRY_FUNCTION_DATA_TYPE_STRING_DESC(""),
-	GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK(""),
-	GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK_DESC(""),
-
-	;
+	public static final Message GUI_ENTRY_FUNCTION_STATIC_NAME = new Message("manager.gui.entry.defaults.static.name");
+	public static final Message GUI_ENTRY_FUNCTION_STATIC_LORE = new Message("manager.gui.entry.defaults.static.lore");
+	public static final Message GUI_ENTRY_FUNCTION_PREV_PAGE_NAME = new Message("manager.gui.entry.defaults.prev_page.name");
+	public static final Message GUI_ENTRY_FUNCTION_PREV_PAGE_LORE = new Message("manager.gui.entry.defaults.prev_page.lore");
+	public static final Message GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME = new Message("manager.gui.entry.defaults.next_page.name");
+	public static final Message GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE = new Message("manager.gui.entry.defaults.next_page.lore");
+	public static final Message GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME = new Message("manager.gui.entry.defaults.exact_page.name");
+	public static final Message GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE = new Message("manager.gui.entry.defaults.exact_page.lore");
+	public static final Message GUI_ENTRY_FUNCTION_TRADE_ITEM_ITEM_NAME = new Message("manager.gui.entry.defaults.trade_item_item.name");
+	public static final Message GUI_ENTRY_FUNCTION_TRADE_ITEM_ITEM_LORE = new Message("manager.gui.entry.defaults.trade_item_item.lore");
+	public static final Message GUI_ENTRY_FUNCTION_TRADE_ITEM_VAULT_NAME = new Message("manager.gui.entry.defaults.trade_item_vault.name");
+	public static final Message GUI_ENTRY_FUNCTION_TRADE_ITEM_VAULT_LORE = new Message("manager.gui.entry.defaults.trade_item_vault.lore");
+	public static final Message GUI_ENTRY_FUNCTION_TRADE_CMD_ITEM_NAME = new Message("manager.gui.entry.defaults.trade_cmd_item.name");
+	public static final Message GUI_ENTRY_FUNCTION_TRADE_CMD_ITEM_LORE = new Message("manager.gui.entry.defaults.trade_cmd_item.lore");
+	public static final Message GUI_ENTRY_FUNCTION_TRADE_CMD_VAULT_NAME = new Message("manager.gui.entry.defaults.trade_cmd_vault.name");
+	public static final Message GUI_ENTRY_FUNCTION_TRADE_CMD_VAULT_LORE = new Message("manager.gui.entry.defaults.trade_cmd_vault.lore");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER = new Message("");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER_DESC = new Message("");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION = new Message("");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION_DESC = new Message("");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_STRING = new Message("");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_STRING_DESC = new Message("");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK = new Message("");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK_DESC = new Message("");
 
 	@Getter
 	private final String key;
@@ -288,11 +274,13 @@ public enum Message {
 	@Getter
 	private final Pair<String, String>[] examplePlaceholders;
 
-	Message(String key, Pair<String, String>... examplePlaceholders) {
+	@SafeVarargs
+	public Message(String key, Pair<String, String>... examplePlaceholders) {
 		this(key, "", examplePlaceholders);
 	}
 
-	Message(String key, String comment, Pair<String, String>... examplePlaceholders) {
+	@SafeVarargs
+	public Message(String key, String comment, Pair<String, String>... examplePlaceholders) {
 		this.key = key;
 		this.comment = comment;
 		this.examplePlaceholders = examplePlaceholders;
@@ -326,5 +314,19 @@ public enum Message {
 
 	public List<String> getLegacyTranslations(Template... templates) {
 		return getTranslations(templates).stream().map(TextUtils::toLegacy).collect(Collectors.toList());
+	}
+
+	public static List<Message> values() {
+		List<Message> messages = new ArrayList<>();
+		Field[] fields = Message.class.getDeclaredFields();
+		for (Field field : fields) {
+			try {
+				if (field.getType().equals(Message.class) && Modifier.isStatic(field.getModifiers())) {
+					messages.add((Message) field.get(null));
+				}
+			} catch (IllegalAccessException ignored) {
+			}
+		}
+		return messages;
 	}
 }

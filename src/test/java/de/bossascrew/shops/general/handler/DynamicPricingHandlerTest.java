@@ -18,7 +18,6 @@ class DynamicPricingHandlerTest {
 				return Map.of("test", 3.5);
 			}
 		});
-		System.out.println(String.format("%.0f", 1.23));
 		//assertEquals("asd3.5lol<>", dph.insertDefaultPrice("asd<db:test>lol<>"));
 		//assertEquals("10.0lol<>", dph.insertDefaultPrice("<db:asd<db:test>lol<>"));
 	}

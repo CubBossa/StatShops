@@ -88,7 +88,7 @@ shops:
   # PROMPT:              There will be a chat message for every successful trade interaction.
   # CUMULATIVE_PAGE:     All costs and gains will be cached until the player will turn the shop page and then sent in a bundled message.
   # CUMULATIVE_SHOP:     All costs and gains will be cached until the shop closes and then sent in a bundled message.
-  trade-message-feedback: CUMULATIVE_SHOP
+  trade-message-feedback: "CUMULATIVE_SHOP"
 
   # The order and visibility of the lore segments of a single shop entry.
   # You can simply remove or reorder them to customize the lore.

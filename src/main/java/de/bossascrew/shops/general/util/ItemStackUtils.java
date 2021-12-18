@@ -362,8 +362,8 @@ public class ItemStackUtils {
 						Template.of("name", limit.getName())),
 				Message.GUI_LIMITS_ENTRY_LORE.getTranslations(
 						Template.of("limit", "" + limit.getTransactionLimit()),
-						Template.of("combine-transactions", "" + limit.isSummTagMemberLimits()),
 						Template.of("uuid", limit.getUuid().toString()),
+						Template.of("global", "" + limit.isGlobal()),
 						Template.of("recover", DURATION_PARSER.format(limit.getRecover()))));
 	}
 

@@ -3,15 +3,15 @@ package de.bossascrew.shops.statshops.shop;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.DatabaseObject;
 import de.bossascrew.shops.general.Taggable;
-import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.general.menu.ListMenuElement;
-import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.general.util.Duplicable;
 import de.bossascrew.shops.general.util.Editable;
 import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.general.util.TextUtils;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.DatabaseObject;
+import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import lombok.Data;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -45,10 +45,6 @@ public class Limit implements
 	@JsonIgnore
 	private Predicate<Customer> appliesToCustomer;
 	private int transactionLimit;
-	/**
-	 * if set to true, all bought items with a tag that is also contained in this taggable will be summed before checking the limit
-	 */
-	private boolean summTagMemberLimits = false;
 	private final List<String> tags;
 
 	@JsonIgnore
@@ -67,6 +63,14 @@ public class Limit implements
 		this.nameFormat = nameFormat;
 		this.name = StatShops.getInstance().getMiniMessage().parse(nameFormat);
 		this.namePlain = TextUtils.toPlain(name);
+	}
+
+	/**
+	 * @param customer the customer to look for if the limit is not global
+	 * @return the global usage for this limit if this limit is global, otherwise the player usage count.
+	 */
+	public int getUses(Customer customer) {
+		return 3;
 	}
 
 	@Override

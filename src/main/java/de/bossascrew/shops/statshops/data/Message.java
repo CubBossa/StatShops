@@ -30,8 +30,6 @@ public class Message {
 	public static final Message GENERAL_GUI_BACK_LORE = new Message("general.gui.back.lore");
 	public static final Message GENERAL_GUI_ERROR_NAME = new Message("general.gui.error.name");
 	public static final Message GENERAL_GUI_ERROR_LORE = new Message("general.gui.error.lore");
-	public static final Message GENERAL_GUI_DELETE_NAME = new Message("general.gui.delete.name");
-	public static final Message GENERAL_GUI_DELETE_LORE = new Message("general.gui.delete.lore");
 	public static final Message GENERAL_GUI_NEXT_PAGE_NAME = new Message("general.gui.next_page.name");
 	public static final Message GENERAL_GUI_NEXT_PAGE_LORE = new Message("general.gui.next_page.lore");
 	public static final Message GENERAL_GUI_PREV_PAGE_NAME = new Message("general.gui.prev_page.name");

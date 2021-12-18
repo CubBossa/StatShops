@@ -194,6 +194,7 @@ manager:
       preview:
         name: "<white>Preview This Shop"
         lore: "<gray>Open this shop menu\n<gray>without enabling it for\n<gray>players."
+      # TODO ausgemustert?
       set_enabled:
         # Valid placeholders: <value>
         name: "<white>Shop Enabled: <value>"
@@ -312,8 +313,8 @@ manager:
       entry:
         # Valid placeholders: <name>
         name: "<white><name>"
-        # Valid placeholders: <limit>, <combine-transactions>, <uuid>, <recover>
-        lore: "<gray>Limit: <yellow><limit>\n<gray>Recover: <yellow><recover>\n<gray>Global: <yellow><combine-transactions>"
+        # Valid placeholders: <limit>, <global>, <uuid>, <recover>
+        lore: "<gray>Limit: <yellow><limit>\n<gray>Recover: <yellow><recover>\n<gray>Global: <yellow><global>"
       new:
         # The title of the anvil gui
         title: "Create New Limit"

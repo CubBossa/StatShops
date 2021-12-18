@@ -45,6 +45,10 @@ public class LimitsHandler implements
 		}
 	}
 
+	public void loadExpiringLimits() {
+		//TODO
+	}
+
 	public List<Limit> getLimits() {
 		return new ArrayList<>(limitMap.values());
 	}
@@ -83,10 +87,6 @@ public class LimitsHandler implements
 	public void addLimitsLore(ShopEntry shopEntry, List<Component> existingLore) {
 		Pair<Limit, Limit> pair = getMinimalLimitsWithMatchingTags(shopEntry, shopEntry.getShop());
 		ItemStackUtils.addLoreLimits(existingLore, pair.getLeft(), pair.getRight(), 3);
-	}
-
-	public void isLimited(Customer customer, String... tags) {
-		//TODO
 	}
 
 	public Pair<Limit, Limit> getMinimalLimitsWithMatchingTags(Taggable... taggables) {
@@ -146,7 +146,6 @@ public class LimitsHandler implements
 		Limit limit = createNew(element.getTransactionLimit() + "");
 		limit.setRecover(element.getRecover());
 		limit.setAppliesToCustomer(element.getAppliesToCustomer());
-		limit.setSummTagMemberLimits(element.isSummTagMemberLimits());
 		StatShops.getInstance().getDatabase().saveLimit(limit);
 		return limit;
 	}

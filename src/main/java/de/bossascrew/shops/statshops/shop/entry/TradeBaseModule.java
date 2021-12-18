@@ -91,7 +91,6 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 	@Override
 	public @Nullable LogEntry createLogEntry(Customer customer, EntryInteractionResult result) {
 		//TODO log
-		StatShops.getInstance().log(LoggingPolicy.INFO, customer.getPlayer().getDisplayName() + " interacts: " + "blablabla");
 		return new LogEntry();
 	}
 

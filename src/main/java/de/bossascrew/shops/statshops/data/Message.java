@@ -71,7 +71,9 @@ public class Message {
 	public static final Message SHOP_ITEM_LORE_DISCOUNT = new Message("shop.gui.item.lore.discount");
 	public static final Message SHOP_ITEM_LORE_DISCOUNT_POSITIVE = new Message("shop.gui.item.lore.discount_positive");
 	public static final Message SHOP_ITEM_LORE_DISCOUNT_NEGATIVE = new Message("shop.gui.item.lore.discount_negative");
-	public static final Message SHOP_ITEM_LORE_LIMIT = new Message("shop.gui.item.lore.limit");
+	public static final Message SHOP_ITEM_LORE_LIMIT = new Message("shop.gui.item.lore.limit_both");
+	public static final Message SHOP_ITEM_LORE_LIMIT_PERSONAL = new Message("shop.gui.item.lore.limit_personal");
+	public static final Message SHOP_ITEM_LORE_LIMIT_GLOBAL = new Message("shop.gui.item.lore.limit_global");
 	public static final Message SHOP_MODE_BUY_NAME = new Message("shop.modes.buy.name");
 	public static final Message SHOP_MODE_BUY_LORE = new Message("shop.modes.buy.lore");
 	public static final Message SHOP_MODE_SELL_NAME = new Message("shop.modes.sell.name");

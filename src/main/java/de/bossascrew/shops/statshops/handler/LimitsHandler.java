@@ -1,13 +1,15 @@
 package de.bossascrew.shops.statshops.handler;
 
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
-import de.bossascrew.shops.general.menu.ShopMenu;
-import de.bossascrew.shops.statshops.shop.Limit;
 import de.bossascrew.shops.general.Taggable;
 import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
+import de.bossascrew.shops.general.menu.ShopMenu;
+import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.Pair;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.shop.Discount;
+import de.bossascrew.shops.statshops.shop.Limit;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -31,16 +33,31 @@ public class LimitsHandler implements
 	public LimitsHandler() {
 		instance = this;
 
-		this.limitMap = new HashMap<>();
-		this.tagMap = new HashMap<>();
-		this.subscribers = new HashMap<>();
+		subscribers = new HashMap<>();
+		tagMap = new HashMap<>();
+		limitMap = StatShops.getInstance().getDatabase().loadLimits();
+		for (Limit limit : limitMap.values()) {
+			for (String tag : limit.getTags()) {
+				Collection<Limit> limits = tagMap.getOrDefault(tag, new ArrayList<>());
+				limits.add(limit);
+				tagMap.put(tag, limits);
+			}
+		}
 	}
 
 	public List<Limit> getLimits() {
 		return new ArrayList<>(limitMap.values());
 	}
 
-	public void handleLimitTagsUpdate(Limit limit) {
+	public void handleLimitTagAdded(Limit limit, String tag) {
+		Collection<Limit> limits = tagMap.getOrDefault(tag, new ArrayList<>());
+		limits.add(limit);
+		tagMap.put(tag, limits);
+		updateAllSubscribers(limit);
+	}
+
+	public void handleLimitTagRemoved(Limit limit, String tag) {
+		tagMap.get(tag).remove(limit);
 		updateAllSubscribers(limit);
 	}
 
@@ -64,11 +81,30 @@ public class LimitsHandler implements
 	}
 
 	public void addLimitsLore(ShopEntry shopEntry, List<Component> existingLore) {
-		//TODO
+		Pair<Limit, Limit> pair = getMinimalLimitsWithMatchingTags(shopEntry, shopEntry.getShop());
+		ItemStackUtils.addLoreLimits(existingLore, pair.getLeft(), pair.getRight(), 3);
 	}
 
 	public void isLimited(Customer customer, String... tags) {
 		//TODO
+	}
+
+	public Pair<Limit, Limit> getMinimalLimitsWithMatchingTags(Taggable... taggables) {
+		List<Limit> limits = getLimitsWithMatchingTags(taggables);
+		Limit smallLocal = null;
+		Limit smallGlobal = null;
+		for (Limit limit : limits) {
+			if (limit.isGlobal()) {
+				if (smallGlobal == null || limit.getTransactionLimit() < smallGlobal.getTransactionLimit()) {
+					smallGlobal = limit;
+				}
+			} else {
+				if (smallLocal == null || limit.getTransactionLimit() < smallLocal.getTransactionLimit()) {
+					smallLocal = limit;
+				}
+			}
+		}
+		return new Pair<>(smallGlobal, smallGlobal);
 	}
 
 	public List<Limit> getLimitsWithMatchingTags(Taggable... taggables) {

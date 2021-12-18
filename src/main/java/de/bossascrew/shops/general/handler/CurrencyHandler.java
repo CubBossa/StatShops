@@ -22,9 +22,7 @@ public class CurrencyHandler {
 	public static final Currency<ItemStack> CURRENCY_ITEM = new Currency<>(
 			StatShops.getInstance().getShopsConfig().getCurrencyItemFormatting(),
 			StatShops.getInstance().getShopsConfig().getCurrencyItemFormattingDiscounted(),
-			aDouble -> String.format("%.0f", aDouble), (integer, itemStack) -> {
-		return TextUtils.toComponent(itemStack);
-	}) {
+			aDouble -> String.format("%.0f", aDouble), (integer, itemStack) -> TextUtils.toComponent(itemStack)) {
 		@Override
 		public double applyDiscount(double amount, double discount) {
 			return (int) (amount * discount);

@@ -104,7 +104,9 @@ shop:
         discount_positive: "<red>+<discount>"
         discount_negative: "<green><discount>"
         # Valid placeholders: <transactioncount>, <userlimit>, <globallimit>
-        limit: "<red><transactioncount><gray>/<dark_red><userlimit> personal limit\n<red><transactioncount><gray>/<dark_red><globallimit> global limit"
+        limit_both: "<gray><red><transactioncount></red>/<dark_red><userlimit></dark_red> personal limit</gray>\n<gray><red><transactioncount></red>/<dark_red><globallimit></dark_red> global limit"
+        limit_personal: "<gray><red><transactioncount></red>/<dark_red><userlimit></dark_red> personal limit</gray>"
+        limit_global: "<gray><red><transactioncount></red>/<dark_red><globallimit></dark_red> global limit"
 
   modes:
     buy:

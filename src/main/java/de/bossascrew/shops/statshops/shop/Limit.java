@@ -41,6 +41,7 @@ public class Limit implements
 	private String namePlain;
 	private @Nullable String permission;
 	private Duration recover;
+	private boolean global = false;
 	@JsonIgnore
 	private Predicate<Customer> appliesToCustomer;
 	private int transactionLimit;
@@ -73,12 +74,16 @@ public class Limit implements
 		if (hasTag(tag)) {
 			return false;
 		}
-		return tags.add(tag);
+		tags.add(tag);
+		LimitsHandler.getInstance().handleLimitTagAdded(this, tag);
+		return true;
 	}
 
 	@Override
 	public boolean removeTag(String tag) {
-		return tags.remove(tag);
+		tags.remove(tag);
+		LimitsHandler.getInstance().handleLimitTagRemoved(this, tag);
+		return true;
 	}
 
 	@Override

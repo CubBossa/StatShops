@@ -7,6 +7,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.api.BinaryTagHolder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
@@ -20,6 +21,8 @@ import java.time.format.DateTimeParseException;
 
 @UtilityClass
 public class TextUtils {
+
+	private static final GsonComponentSerializer GSON_SERIALZIER = GsonComponentSerializer.builder().build();
 
 	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder()
 			.character('§')
@@ -45,6 +48,10 @@ public class TextUtils {
 
 	public String toPlain(Component component) {
 		return PLAIN_SERIALIZER.serialize(component);
+	}
+
+	public String toGson(Component component) {
+		return GSON_SERIALZIER.serialize(component);
 	}
 
 	public String toLegacyFromMiniMessage(String minimessage) {
@@ -79,12 +86,18 @@ public class TextUtils {
 	 * @param itemStack the itemstack to display as a text component with hover text.
 	 * @return the displayname of the itemstack with the nbt data as hover text.
 	 */
-	public Component toComponent(ItemStack itemStack) {
+	public Component toComponent(ItemStack itemStack, boolean hover) {
 		return (itemStack.getItemMeta() != null && itemStack.getItemMeta().hasDisplayName() ?
 				fromLegacy(itemStack.getItemMeta().getDisplayName()) :
 				toTranslatable(itemStack.getType()))
 				.hoverEvent(HoverEvent.showItem(HoverEvent.ShowItem.of(Key.key(itemStack.getType().getKey().toString()),
 						1, BinaryTagHolder.of(new NBTItem(itemStack).asNBTString()))));
+	}
+
+	public Component toComponent(ItemStack itemStack) {
+		return itemStack.getItemMeta() != null && itemStack.getItemMeta().hasDisplayName() ?
+				fromLegacy(itemStack.getItemMeta().getDisplayName()) :
+				toTranslatable(itemStack.getType());
 	}
 
 	public Component toTranslatable(Material material) {

@@ -151,7 +151,12 @@ public class TestDatabase implements Database, LogDatabase {
 	public Map<UUID, Limit> loadLimits() {
 		Map<UUID, Limit> map = new HashMap<>();
 		Limit limit = createLimit("Example Limit");
+		limit.addTag("global");
+		Limit limit2 = createLimit("Example Limit");
+		limit2.setGlobal(true);
+		limit2.addTag("global");
 		map.put(limit.getUuid(), limit);
+		map.put(limit2.getUuid(), limit2);
 		return map;
 	}
 

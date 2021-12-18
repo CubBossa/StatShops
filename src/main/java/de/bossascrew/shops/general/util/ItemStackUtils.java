@@ -15,10 +15,14 @@ import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.Limit;
+import de.tr7zw.nbtapi.NBTCompound;
+import de.tr7zw.nbtapi.NBTItem;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -63,6 +67,7 @@ public class ItemStackUtils {
 	public static Material MATERIAL_DURATIONS = Material.COMPASS;
 	public static Material MATERIAL_PERMISSIONS = Material.STRUCTURE_VOID;
 
+	public GsonComponentSerializer GSON_SERIALIZER = GsonComponentSerializer.builder().build();
 	public LegacyComponentSerializer SERIALIZER = LegacyComponentSerializer.builder()
 			.character('§')
 			.hexColors()
@@ -87,27 +92,33 @@ public class ItemStackUtils {
 		leftoverItems.forEach((index, item2) -> location.getWorld().dropItemNaturally(location, item2));
 	}
 
-	public void addLore(ItemStack itemStack, List<Component> lore) {
-		ItemMeta meta = itemStack.getItemMeta();
-		if (meta == null) {
-			return;
+	public ItemStack addLore(ItemStack itemStack, List<Component> lore) {
+		NBTItem item = new NBTItem(itemStack);
+		NBTCompound display = item.getCompound("display");
+		if (display == null) {
+			display = item.addCompound("display");
 		}
-		List<String> loreList = lore.stream().map(component -> SERIALIZER.serialize(component)).collect(Collectors.toList());
-		if (meta.getLore() != null) {
-			meta.getLore().addAll(loreList);
-		} else {
-			meta.setLore(loreList);
-		}
-		itemStack.setItemMeta(meta);
+		List<String> presentLore = display.getStringList("Lore");
+		presentLore.addAll(lore.stream().map(component -> {
+			return component.decoration(TextDecoration.ITALIC, component.decoration(TextDecoration.ITALIC) == TextDecoration.State.NOT_SET ?
+					TextDecoration.State.FALSE : component.decoration(TextDecoration.ITALIC));
+		}).map(component -> GSON_SERIALIZER.serialize(component)).collect(Collectors.toList()));
+		return item.getItem();
 	}
 
-	public void setLore(ItemStack itemStack, List<Component> lore) {
-		ItemMeta meta = itemStack.getItemMeta();
-		if (meta == null) {
-			return;
+	public ItemStack setLore(ItemStack itemStack, List<Component> lore) {
+		NBTItem item = new NBTItem(itemStack);
+		NBTCompound display = item.getCompound("display");
+		if (display == null) {
+			display = item.addCompound("display");
 		}
-		meta.setLore(lore.stream().map(component -> SERIALIZER.serialize(component)).collect(Collectors.toList()));
-		itemStack.setItemMeta(meta);
+		List<String> presentLore = display.getStringList("Lore");
+		presentLore.clear();
+		presentLore.addAll(lore.stream().map(component -> {
+			return component.decoration(TextDecoration.ITALIC, component.decoration(TextDecoration.ITALIC) == TextDecoration.State.NOT_SET ?
+					TextDecoration.State.FALSE : component.decoration(TextDecoration.ITALIC));
+		}).map(component -> GSON_SERIALIZER.serialize(component)).collect(Collectors.toList()));
+		return item.getItem();
 	}
 
 	public void addLorePrice(List<Component> existingLore, TradeModule<?, ?> tradeModule, double discount) {
@@ -142,10 +153,13 @@ public class ItemStackUtils {
 		if (userLimit == null && globalLimit == null) {
 			return;
 		}
-		existingLore.addAll(Message.SHOP_ITEM_LORE_LIMIT.getTranslations(
+		Message message = userLimit == null ? Message.SHOP_ITEM_LORE_LIMIT_GLOBAL :
+				globalLimit == null ? Message.SHOP_ITEM_LORE_LIMIT_PERSONAL :
+						Message.SHOP_ITEM_LORE_LIMIT;
+		existingLore.addAll(message.getTranslations(
 				Template.of("transactioncount", bought + ""),
-				Template.of("userlimit", userLimit == null ? "" : userLimit.getTransactionLimit() + ""),
-				Template.of("globallimit", globalLimit == null ? "" : globalLimit.getTransactionLimit() + "")
+				Template.of("userlimit", userLimit == null ? "-" : userLimit.getTransactionLimit() + ""),
+				Template.of("globallimit", globalLimit == null ? "-" : globalLimit.getTransactionLimit() + "")
 		));
 	}
 
@@ -215,8 +229,7 @@ public class ItemStackUtils {
 				additionalLore.remove(additionalLore.size() - 1);
 			}
 		}
-		ItemStackUtils.addLore(itemStack, additionalLore);
-		return itemStack;
+		return ItemStackUtils.addLore(itemStack, additionalLore);
 	}
 
 	private void getActionComponent(List<Component> additionalLore, String key, Message action) {

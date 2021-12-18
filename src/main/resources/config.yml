@@ -111,7 +111,7 @@ currencies:
 
   # Item currency formatting
   item-formatting: "<white><amount>x</white> <gray><currency></gray>"
-  item-formatting-discounted: "<white><st><amount></st> <amount_dc><white> <gray><currency></gray>"
+  item-formatting-discounted: "<white><st><amount>x</st> <amount_dc>x<white> <gray><currency></gray>"
 
   # Vault formatting (the currency will be singular/plural depending on the amount and the configuration of the economy plugin)
   vault-formatting: "<yellow><amount></yellow> <gold><currency></gold>"

@@ -166,6 +166,7 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	@Override
 	public boolean closeInventory(Player player) {
 		DiscountHandler.getInstance().unsubscribeToDisplayUpdates(this);
+		LimitsHandler.getInstance().unsubscribeToDisplayUpdates(this);
 		return super.closeInventory(player);
 	}
 

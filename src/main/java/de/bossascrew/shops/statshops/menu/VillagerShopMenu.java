@@ -101,7 +101,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 		recipe.setMaxUses(Integer.min(recipe.getMaxUses(), Integer.MAX_VALUE)); //TODO limits
 
 		//Discounts
-		double discount = DiscountHandler.getInstance().combineDiscountsWithMatchingTags(entry, entry.getShop());
+		double discount = DiscountHandler.getInstance().combineDiscountsWithMatchingTags(false, entry, entry.getShop());
 		recipe.setPriceMultiplier((float) discount);
 		//TODO debug
 		recipe.setMaxUses(discount < 1 ? 0 : 1);

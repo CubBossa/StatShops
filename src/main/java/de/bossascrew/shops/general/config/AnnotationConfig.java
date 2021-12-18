@@ -7,6 +7,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class AnnotationConfig {
 
@@ -21,6 +23,7 @@ public class AnnotationConfig {
 	}
 
 	public boolean loadConfig(String path) {
+		boolean success = true;
 		StatShops.getInstance().log(LoggingPolicy.INFO, "Loading config.yml with path: " + path);
 		if (path == null) {
 			path = "config.yml";
@@ -40,17 +43,21 @@ public class AnnotationConfig {
 
 				try {
 					if (f.getType().isEnum()) {
-
+						String input = config.getString(target);
+						if (input != null) {
+							Method valueOf = f.getType().getMethod("valueOf", String.class);
+							f.set(this, valueOf.invoke(null, input));
+						}
 					} else {
 						f.set(this, config.get(target, f.get(this)));
 					}
-				} catch (IllegalArgumentException | IllegalAccessException e) {
+				} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 					StatShops.getInstance().log(LoggingPolicy.ERROR, "Could not load file " + path, e);
-					return false;
+					success = false;
 				}
 			}
 		}
-		return true;
+		return success;
 	}
 
 	public boolean saveConfig() {

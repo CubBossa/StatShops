@@ -99,18 +99,25 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 	public EntryInteractionResult perform(Customer customer, EntryInteractionType interactionType) {
 		Price<?> pay = interactionType.isBuy() ? buyPayPrice : gainPrice;
 		Price<?> gain = interactionType.isBuy() ? gainPrice : sellPayPrice;
+		pay = pay.duplicate();
+		gain = gain.duplicate();
+
+		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
+		double discount = DiscountHandler.getInstance().combineDiscounts(discounts, interactionType.isSell());
+
+		if (interactionType.isBuy()) {
+			pay.applyDiscount(discount);
+		} else {
+			gain.applyDiscount(discount);
+		}
 
 		if (!gain.canGain(customer)) {
 			return EntryInteractionResult.FAIL_CANT_REWARD;
 		}
-		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
-		double discount = DiscountHandler.getInstance().combineDiscounts(discounts);
-
-		EntryInteractionResult result = pay.pay(customer, interactionType.isBuy() ? discount : 1);
+		EntryInteractionResult result = pay.pay(customer);
 		if (result.equals(EntryInteractionResult.SUCCESS)) {
-			gain.gain(customer, interactionType.isBuy() ? 1 : (discount - 1) * -1 + 1);
-			Transaction transaction = new Transaction(customer, getShopEntry(), interactionType,
-					interactionType.isBuy() ? buyPayPrice : sellPayPrice, gainPrice, LocalDateTime.now(), discount, discounts);
+			gain.gain(customer);
+			Transaction transaction = new Transaction(customer, getShopEntry(), interactionType, pay, gain, LocalDateTime.now(), discount, discounts);
 			lastTransactions.put(customer.getUuid(), transaction);
 		}
 		return result;

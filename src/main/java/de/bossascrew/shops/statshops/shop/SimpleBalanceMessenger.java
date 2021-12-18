@@ -2,7 +2,6 @@ package de.bossascrew.shops.statshops.shop;
 
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.TransactionBalanceMessenger;
-import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.util.TradeMessageType;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
@@ -36,11 +35,9 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 		}
 
 		Customer customer = transaction.getCustomer();
-		TradeModule<?, ?> tm = (TradeModule<?, ?>) transaction.getShopEntry().getModule();
-		Price<?> gain = tm.getGainPrice().duplicate();
-		Price<?> pay = tm.getPayPrice(transaction.getInteractionType().isBuy()).duplicate();
-		gain.setAmount((int) (gain.getAmount() * transaction.getDiscount()) * (transaction.getInteractionType().isBuy() ? 1 : -1));
-		pay.setAmount((int) (pay.getAmount() * transaction.getDiscount()) * (transaction.getInteractionType().isBuy() ? -1 : 1));
+		Price<?> gain = transaction.getGainPrice().duplicate();
+		Price<?> pay = transaction.getPayPrice().duplicate();
+		pay.setAmount(pay.getAmount() * -1);
 
 		List<Price<?>> prices = tradeCache.getOrDefault(customer.getUuid(), new ArrayList<>());
 

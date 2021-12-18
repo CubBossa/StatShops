@@ -19,6 +19,11 @@ public class VaultHook {
 			StatShops.getInstance().getShopsConfig().getCurrencyVaultFormattingDiscounted(),
 			(integer, unused) -> Component.text(integer == 1 ? economy.currencyNameSingular() : economy.currencyNamePlural())) {
 		@Override
+		public double applyDiscount(double amount, double discount) {
+			return amount * discount;
+		}
+
+		@Override
 		public double getAmount(Customer customer, Void object) {
 			return economy.getBalance(customer.getPlayer());
 		}

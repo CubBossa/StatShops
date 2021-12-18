@@ -26,6 +26,11 @@ public class CurrencyHandler {
 		return TextUtils.toComponent(itemStack);
 	}) {
 		@Override
+		public double applyDiscount(double amount, double discount) {
+			return (int) (amount * discount);
+		}
+
+		@Override
 		public double getAmount(Customer customer, ItemStack object) {
 			int count = 0;
 			for (ItemStack i : customer.getPlayer().getInventory()) {
@@ -79,6 +84,11 @@ public class CurrencyHandler {
 	};
 	public static Currency<String> CURRENCY_COMMAND = new Currency<String>("Command: <currency>", "Command: <currency>", (aDouble, s) -> Component.text(s)) {
 		@Override
+		public double applyDiscount(double amount, double discount) {
+			return (int) (amount * discount);
+		}
+
+		@Override
 		public double getAmount(Customer customer, String object) {
 			return 0;
 		}
@@ -97,6 +107,11 @@ public class CurrencyHandler {
 		}
 	};
 	public static Currency<String> CURRENCY_CONSOLE_COMMAND = new Currency<String>("Command: <currency>", "Command: <currency>", (aDouble, s) -> Component.text(s)) {
+		@Override
+		public double applyDiscount(double amount, double discount) {
+			return (int) (amount * discount);
+		}
+
 		@Override
 		public double getAmount(Customer customer, String object) {
 			return 0;

@@ -177,7 +177,7 @@ public class ItemStackUtils {
 		ItemStack itemStack = entry.getDisplayItem().clone();
 
 		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(entry, entry.getShop());;
-		double discount = DiscountHandler.getInstance().combineDiscounts(discounts);
+		double discount = DiscountHandler.getInstance().combineDiscounts(discounts, false);
 		List<Component> additionalLore = new ArrayList<>();
 
 		if (entry.getModule() instanceof TradeModule tradeEntry) {

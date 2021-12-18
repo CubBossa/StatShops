@@ -67,7 +67,7 @@ public abstract class Currency<T> {
 	public Component format(double amount, @Nullable T object, double discount) {
 		return StatShops.getInstance().getMiniMessage().parse(discount != 1 ? formatDiscounted : format,
 				Template.of("amount", countFormatter.apply(amount)),
-				Template.of("amount_dc", countFormatter.apply(amount * discount)),
+				Template.of("amount_dc", countFormatter.apply(applyDiscount(amount, discount))),
 				Template.of("currency", currencyFormatter.apply(amount, object)));
 	}
 
@@ -78,6 +78,8 @@ public abstract class Currency<T> {
 	public boolean hasAmount(Customer customer, double amount, T object) {
 		return getAmount(customer, object) >= amount;
 	}
+
+	public abstract double applyDiscount(double amount, double discount);
 
 	public abstract double getAmount(Customer customer, T object);
 

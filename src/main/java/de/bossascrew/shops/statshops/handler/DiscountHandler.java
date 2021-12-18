@@ -4,13 +4,11 @@ import de.bossascrew.shops.general.Taggable;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
 import de.bossascrew.shops.general.menu.ShopMenu;
-import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 
 import java.time.Duration;
@@ -133,17 +131,22 @@ public class DiscountHandler implements
 		}
 	}
 
-	public double combineDiscounts(List<Discount> discounts) {
+	/**
+	 * @param discounts All provided discounts will be divided by 100 and summed to 1. 80% -> 1.8
+	 * @param invert    If the result is supposed to be inverted to 1. 1.8 -> 0.2
+	 * @return the sum of all discount percentages
+	 */
+	public double combineDiscounts(List<Discount> discounts, boolean invert) {
 		double discountValue = 1;
 		for (Discount discount : discounts) {
 			discountValue += discount.getPercent() / 100;
 		}
-		return discountValue;
+		return invert ? (discountValue - 1) * -1 + 1 : discountValue;
 	}
 
-	public double combineDiscountsWithMatchingTags(Taggable... taggables) {
+	public double combineDiscountsWithMatchingTags(boolean invert, Taggable... taggables) {
 		List<Discount> discounts = getDiscountsWithMatchingTags(taggables);
-		return combineDiscounts(discounts);
+		return combineDiscounts(discounts, invert);
 	}
 
 	public List<Discount> getDiscountsWithMatchingTags(Taggable... taggables) {

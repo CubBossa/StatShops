@@ -65,9 +65,11 @@ public class Config extends AnnotationConfig {
 	//CURRENCIES
 	@ConfigEntry(path = "currencies.item-formatting")
 	public String currencyItemFormatting = "<white><amount>x</white> <gray><currency></gray>";
+	@ConfigEntry(path = "currencies.item-formatting-discounted")
 	public String currencyItemFormattingDiscounted = "<white><st><amount></st> <amount_dc><white> <gray><currency></gray>";
 	@ConfigEntry(path = "currencies.vault-formatting")
 	public String currencyVaultFormatting = "<yellow><amount></yellow> <gold><currency></gold>";
+	@ConfigEntry(path = "currencies.vault-formatting-discounted")
 	public String currencyVaultFormattingDiscounted = "<yellow><st><amount></st> <amount_dc></yellow> <gold><currency></gold>";
 
 	@ConfigEntry(path = "currencies.dynamic.enabled")

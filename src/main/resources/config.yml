@@ -110,10 +110,12 @@ shops:
 currencies:
 
   # Item currency formatting
-  item-formatting: "<yellow><amount>x</yellow> <gold><currency></gold>"
+  item-formatting: "<white><amount>x</white> <gray><currency></gray>"
+  item-formatting-discounted: "<white><st><amount></st> <amount_dc><white> <gray><currency></gray>"
 
   # Vault formatting (the currency will be singular/plural depending on the amount and the configuration of the economy plugin)
   vault-formatting: "<yellow><amount></yellow> <gold><currency></gold>"
+  vault-formatting-discounted: "<yellow><st><amount></st> <amount_dc></yellow> <gold><currency></gold>"
 
   # Dynamic pricing means, that the price of a trade module will be calculated and might be more than just a constant.
   # You can activate dynamic pricing and use constants anyways, but if you're only using constant prices we recommend you to disable it.

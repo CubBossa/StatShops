@@ -66,8 +66,8 @@ shop:
 
   # Valid placeholders:
   #   <indicator>:       "<green>+" if object received, "<red>-" if object paid (general.trade_feedback_indicator_gain/pay)
-  #   <transaction>:     The transaction, already formatted by the currency
-  prompt_feedback: "<prefix><indicator><transaction>"
+  #   <transaction>:     The transaction, already formatted by the currency. Check the currency format for more control.
+  prompt_feedback: "<indicator><transaction>"
 
   # Valid placeholders:
   #   <indicator>:       "<green>+" if object received, "<red>-" if object paid (general.trade_feedback_indicator_gain/pay)

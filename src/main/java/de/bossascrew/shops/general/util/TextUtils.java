@@ -80,15 +80,14 @@ public class TextUtils {
 	 * @return the displayname of the itemstack with the nbt data as hover text.
 	 */
 	public Component toComponent(ItemStack itemStack) {
-		return (itemStack.getItemMeta().hasDisplayName() ?
+		return (itemStack.getItemMeta() != null && itemStack.getItemMeta().hasDisplayName() ?
 				fromLegacy(itemStack.getItemMeta().getDisplayName()) :
 				toTranslatable(itemStack.getType()))
-				.hoverEvent(HoverEvent.showItem(HoverEvent.ShowItem
-						.of(Key.key(itemStack.getType().getKey().toString()), 1, BinaryTagHolder.of(new NBTItem(itemStack).asNBTString()))));
+				.hoverEvent(HoverEvent.showItem(HoverEvent.ShowItem.of(Key.key(itemStack.getType().getKey().toString()),
+						1, BinaryTagHolder.of(new NBTItem(itemStack).asNBTString()))));
 	}
 
 	public Component toTranslatable(Material material) {
-		return Component.text(material.toString().replace("_", "").toLowerCase()); //TODO
-		//return Component.translatable("item.minecraft." + String.valueOf(material).toLowerCase());
+		return Component.translatable("item.minecraft." + String.valueOf(material).toLowerCase());
 	}
 }

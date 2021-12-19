@@ -1,7 +1,5 @@
 package de.bossascrew.shops.general.menu;
 
-import de.bossascrew.shops.general.menu.ChestMenu;
-import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ClickContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
@@ -56,12 +54,12 @@ public class ConfirmMenu extends ChestMenu {
 
 	public void setAcceptHandler(ContextConsumer<ClickContext> acceptHandler) {
 		this.acceptHandler = acceptHandler;
-		setItemAndClickHandler(1, 2, DefaultSpecialItem.ACCEPT.createSpecialItem(), ClickType.LEFT, acceptHandler);
+		setItemAndClickHandler(1, 2, DefaultSpecialItem.ACCEPT_RP.createSpecialItem(), ClickType.LEFT, acceptHandler);
 	}
 
 	public void setDenyHandler(ContextConsumer<ClickContext> denyHandler) {
 		this.denyHandler = denyHandler;
-		setItemAndClickHandler(1, 6, DefaultSpecialItem.DECLINE.createSpecialItem(), ClickType.LEFT, denyHandler);
+		setItemAndClickHandler(1, 6, DefaultSpecialItem.DECLINE_RP.createSpecialItem(), ClickType.LEFT, denyHandler);
 	}
 }
 

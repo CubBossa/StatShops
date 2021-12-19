@@ -346,8 +346,8 @@ public class ItemStackUtils {
 
 	public ItemStack createInfoItem(Message name, Message lore) {
 		ItemStack stack = new ItemStack(Material.PAPER, 1);
-		setNameAndLore(stack, name, lore);
-		setCustomModelData(stack, 7121000);
+		stack = setNameAndLore(stack, name, lore);
+		stack = setCustomModelData(stack, 7121000);
 		return stack;
 	}
 
@@ -408,8 +408,8 @@ public class ItemStackUtils {
 	}
 
 	public ItemStack setNameAndLore(ItemStack itemStack, Message name, Message lore) {
-		setDisplayName(itemStack, name.getTranslation());
-		setLore(itemStack, lore.getTranslations());
+		itemStack = setDisplayName(itemStack, name.getTranslation());
+		itemStack = setLore(itemStack, lore.getTranslations());
 		return itemStack;
 	}
 

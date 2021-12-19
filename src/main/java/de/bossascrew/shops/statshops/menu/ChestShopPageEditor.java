@@ -109,10 +109,10 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 		fillBottom();
 		setBackSlotBottom(8);
 		setBackHandlerAction(backHandler);
-		setItemAndClickHandlerBottom(0, 0, shopPage > 0 ? DefaultSpecialItem.PREV_PAGE : DefaultSpecialItem.PREV_PAGE_OFF, clickContext -> {
+		setItemAndClickHandlerBottom(0, 0, shopPage > 0 ? DefaultSpecialItem.PREV_PAGE_RP : DefaultSpecialItem.PREV_PAGE_OFF_RP, clickContext -> {
 			shopEditor.openInventory(clickContext.getPlayer(), shopMode, shopPage > 0 ? shopPage - 1 : shopPage);
 		});
-		setItemAndClickHandlerBottom(0, 1, DefaultSpecialItem.NEXT_PAGE, clickContext -> {
+		setItemAndClickHandlerBottom(0, 1, DefaultSpecialItem.NEXT_PAGE_RP, clickContext -> {
 			shopEditor.openInventory(clickContext.getPlayer(), shopMode, shopPage + 1);
 		});
 		setItemAndClickHandlerBottom(0, 2, getDefaultModeItem(shop.getDefaultShopMode()), clickContext -> {
@@ -268,11 +268,11 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 		for (ShopEntry entry : template.getEntries(shop.getRows()).values()) {
 			menu.setItem(entry.getSlot(), entry.getDisplayItem());
 		}
-		menu.setItemAndClickHandlerBottom(ROW_SIZE + 2, DefaultSpecialItem.ACCEPT, clickContext -> {
+		menu.setItemAndClickHandlerBottom(ROW_SIZE + 2, DefaultSpecialItem.ACCEPT_RP, clickContext -> {
 			shop.applyTemplate(template, shopMode, shopPage);
 			openInventory(player);
 		});
-		menu.setItemAndClickHandlerBottom(ROW_SIZE + 6, DefaultSpecialItem.DECLINE, clickContext -> openInventory(player));
+		menu.setItemAndClickHandlerBottom(ROW_SIZE + 6, DefaultSpecialItem.DECLINE_RP, clickContext -> openInventory(player));
 		menu.openInventory(player);
 	}
 

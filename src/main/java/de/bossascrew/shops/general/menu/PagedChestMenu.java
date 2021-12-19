@@ -147,7 +147,7 @@ public class PagedChestMenu {
 								menuEntry.getClickHandler()));
 
 		menu.setItemAndClickHandler(menu.getRowCount() - 1, 0, page > 0 ?
-				DefaultSpecialItem.PREV_PAGE.createSpecialItem() : DefaultSpecialItem.PREV_PAGE_OFF.createSpecialItem(), c -> {
+				DefaultSpecialItem.PREV_PAGE_RP.createSpecialItem() : DefaultSpecialItem.PREV_PAGE_OFF_RP.createSpecialItem(), c -> {
 			if (page > 0) {
 				openInventory(c.getPlayer(), page - 1);
 			}
@@ -155,7 +155,7 @@ public class PagedChestMenu {
 
 		boolean hasPrev = (menuEntries.size() - 1) / entriesPerPage > page;
 		menu.setItemAndClickHandler(menu.getRowCount() - 1, 1, hasPrev ?
-				DefaultSpecialItem.NEXT_PAGE.createSpecialItem() : DefaultSpecialItem.NEXT_PAGE_OFF.createSpecialItem(), c -> {
+				DefaultSpecialItem.NEXT_PAGE_RP.createSpecialItem() : DefaultSpecialItem.NEXT_PAGE_OFF_RP.createSpecialItem(), c -> {
 			if (hasPrev) {
 				openInventory(c.getPlayer(), page + 1);
 			}

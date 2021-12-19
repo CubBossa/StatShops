@@ -14,6 +14,8 @@ import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Material;
+import org.bukkit.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,8 @@ import java.util.UUID;
 public class TemplateHandler implements
 		WebAccessable<EntryTemplate>,
 		ListManagementMenuElementHolder<EntryTemplate> {
+
+	public static final Material[] DISCS = Tag.ITEMS_CREEPER_DROP_MUSIC_DISCS.getValues().toArray(new Material[0]);
 
 	public static final UUID UUID_BOTTOM = UUID.fromString("00000000-0000-0000-0000-000000000001");
 	public static final UUID UUID_BOTTOM_PREV = UUID.fromString("00000000-0000-0000-0000-000000000002");
@@ -114,7 +118,7 @@ public class TemplateHandler implements
 		for (int i = 0; i < 9; i++) {
 			int _i = i;
 			bottomLine.put(row -> (row - 1) * 9 + _i, new BaseEntry(UUID.randomUUID(), null,
-					DefaultSpecialItem.EMPTY_DARK.createSpecialItem(), null, i, null));
+					DefaultSpecialItem.EMPTY_DARK_SIMPLE.createSpecialItem(), null, i, null));
 		}
 		if(prevPage) {
 			BaseEntry entryPrev1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.PREV_PAGE.createSpecialItem(), null,
@@ -128,6 +132,7 @@ public class TemplateHandler implements
 			entryNext1.setModule(EntryModuleHandler.openNextPage(entryNext1, 1));
 			bottomLine.put(row -> (row - 1) * 9 + 1, entryNext1);
 		}
+		bottomLine.setDiscIndex((short) (1 + (nextPage ? 1 : 0) + (prevPage ? 1 : 0)));
 		return bottomLine;
 	}
 }

@@ -249,7 +249,14 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 	public void openTemplatesListMenu(Player player) {
 		ListMenu<EntryTemplate> menu = new ListMenu<>(3, TemplateHandler.getInstance(),
 				Message.GUI_TEMPLATES_CHOOSE, backHandler -> openInventory(player));
-		menu.setClickHandler(clickContext -> openTemplateApplyMenu(player, clickContext.getTarget()));
+		menu.setClickHandler(clickContext -> {
+			if(clickContext.getAction().isRightClick()) {
+				clickContext.getTarget().setDiscIndex((short) ((clickContext.getTarget().getDiscIndex() + 1) % TemplateHandler.DISCS.length));
+				openTemplatesListMenu(player);
+				return;
+			}
+			openTemplateApplyMenu(player, clickContext.getTarget());
+		});
 		menu.openInventory(player);
 	}
 
@@ -273,6 +280,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 			openInventory(player);
 		});
 		menu.setItemAndClickHandlerBottom(ROW_SIZE + 6, DefaultSpecialItem.DECLINE_RP, clickContext -> openInventory(player));
+		menu.setItemBottom(0, 5, DefaultSpecialItem.EMPTY_DARK_RP.createSpecialItem());
 		menu.openInventory(player);
 	}
 

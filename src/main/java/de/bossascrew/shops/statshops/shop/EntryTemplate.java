@@ -9,6 +9,7 @@ import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.general.util.Duplicable;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,6 +23,9 @@ public class EntryTemplate implements ListMenuElement, Duplicable<EntryTemplate>
 
 	@Getter
 	private final UUID uuid;
+	@Getter
+	@Setter
+	private short discIndex = 0;
 
 	@Getter
 	private String nameFormat;

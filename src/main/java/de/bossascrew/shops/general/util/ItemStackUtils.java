@@ -6,6 +6,7 @@ import com.mojang.authlib.properties.Property;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
+import de.bossascrew.shops.general.handler.TemplateHandler;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Config;
@@ -112,7 +113,9 @@ public class ItemStackUtils {
 		if (display == null) {
 			display = item.addCompound("display");
 		}
-		display.setString("Name", GSON_SERIALIZER.serialize(name));
+		TextDecoration.State decoration = name.decoration(TextDecoration.ITALIC);
+		display.setString("Name", GSON_SERIALIZER.serialize(name.decoration(TextDecoration.ITALIC,
+				decoration.equals(TextDecoration.State.NOT_SET) ? TextDecoration.State.FALSE : decoration)));
 		return item.getItem();
 	}
 
@@ -398,7 +401,7 @@ public class ItemStackUtils {
 		if (template == null) {
 			return DefaultSpecialItem.ERROR.createSpecialItem();
 		}
-		return createItemStack(MATERIAL_TEMPLATE,
+		return createItemStack(TemplateHandler.DISCS[template.getDiscIndex()],
 				Message.GUI_TEMPLATES_ENTRY_NAME.getTranslation(
 						Template.of("template", template.getName())),
 				Message.GUI_TEMPLATES_ENTRY_LORE.getTranslations(

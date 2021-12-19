@@ -5,7 +5,6 @@ import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

@@ -12,12 +12,7 @@ class DynamicPricingHandlerTest {
 	@Test
 	void getDefaultPrice() {
 		DynamicPricingHandler dph = new DynamicPricingHandler();
-		dph.loadDefaultPricing(new DefaultPricingDatabase() {
-			@Override
-			public Map<String, Double> loadPricing() {
-				return Map.of("test", 3.5);
-			}
-		});
+		dph.loadDefaultPricing("test", key -> Map.of("test", 3.5));
 		//assertEquals("asd3.5lol<>", dph.insertDefaultPrice("asd<db:test>lol<>"));
 		//assertEquals("10.0lol<>", dph.insertDefaultPrice("<db:asd<db:test>lol<>"));
 	}

@@ -106,6 +106,16 @@ public class ItemStackUtils {
 		return item.getItem();
 	}
 
+	public ItemStack setDisplayName(ItemStack stack, Component name) {
+		NBTItem item = new NBTItem(stack);
+		NBTCompound display = item.getCompound("display");
+		if (display == null) {
+			display = item.addCompound("display");
+		}
+		display.setString("Name", GSON_SERIALIZER.serialize(name));
+		return item.getItem();
+	}
+
 	public ItemStack setLore(ItemStack itemStack, List<Component> lore) {
 		NBTItem item = new NBTItem(itemStack);
 		NBTCompound display = item.getCompound("display");
@@ -119,6 +129,16 @@ public class ItemStackUtils {
 					TextDecoration.State.FALSE : component.decoration(TextDecoration.ITALIC));
 		}).map(component -> GSON_SERIALIZER.serialize(component)).collect(Collectors.toList()));
 		return item.getItem();
+	}
+
+	public ItemStack setCustomModelData(ItemStack itemStack, int customModelData) {
+		ItemMeta meta = itemStack.getItemMeta();
+		if (meta == null) {
+			meta = Bukkit.getItemFactory().getItemMeta(itemStack.getType());
+		}
+		meta.setCustomModelData(customModelData);
+		itemStack.setItemMeta(meta);
+		return itemStack;
 	}
 
 	public void addLorePrice(List<Component> existingLore, TradeModule<?, ?> tradeModule, double discount) {
@@ -324,6 +344,13 @@ public class ItemStackUtils {
 		return itemStack;
 	}
 
+	public ItemStack createInfoItem(Message name, Message lore) {
+		ItemStack stack = new ItemStack(Material.PAPER, 1);
+		setNameAndLore(stack, name, lore);
+		setCustomModelData(stack, 7121000);
+		return stack;
+	}
+
 	public ItemStack createShopItemStack(Shop shop) {
 		if (shop == null) {
 			return DefaultSpecialItem.ERROR.createSpecialItem();
@@ -378,6 +405,12 @@ public class ItemStackUtils {
 						Template.of("template", template.getName()),
 						Template.of("uuid", "" + template.getUuid()),
 						Template.of("size", "" + template.size())));
+	}
+
+	public ItemStack setNameAndLore(ItemStack itemStack, Message name, Message lore) {
+		setDisplayName(itemStack, name.getTranslation());
+		setLore(itemStack, lore.getTranslations());
+		return itemStack;
 	}
 
 	public ItemStack setNameAndLore(ItemStack item, String displayName, String lore) {

@@ -5,11 +5,12 @@ import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.DefaultPricingDatabase;
 import lombok.Getter;
 import lombok.Setter;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +22,6 @@ public class DynamicPricingHandler {
 	@Getter
 	private static DynamicPricingHandler instance;
 
-
-	private final ScriptEngine scriptEngine;
 	/**
 	 * A function that will be applied to every price that ever occurs in a shop as final step.
 	 */
@@ -36,7 +35,6 @@ public class DynamicPricingHandler {
 	public DynamicPricingHandler() {
 		instance = this;
 
-		scriptEngine = new ScriptEngineManager().getEngineByName("Nashorn");
 		defaultTemplates = new ArrayList<>();
 		defaultPricing = new HashMap<>();
 	}
@@ -65,12 +63,8 @@ public class DynamicPricingHandler {
 
 		priceInput = insertDefaultPrice(priceInput);
 
-		try {
-			return dynamicPricingProcessor.apply((Double) scriptEngine.eval(priceInput));
-		} catch (ScriptException e) {
-			e.printStackTrace();
-		}
-		return null;
+		Expression e = new ExpressionBuilder(priceInput).build();
+		return dynamicPricingProcessor.apply(e.evaluate());
 	}
 
 	/**
@@ -91,11 +85,13 @@ public class DynamicPricingHandler {
 			StatShops.getInstance().log(LoggingPolicy.WARN, "A shop with dynamic pricing requested the default pricing: '" + key + "', which does not exist." +
 					"The plugin will automatically load 10.0 as default.");
 		}
-		return input.substring(0, index) + result + input.substring(endIndex + 1, input.length());
+		return input.substring(0, index) + result + input.substring(endIndex + 1);
 	}
 
-	public void loadDefaultPricing(DefaultPricingDatabase database) {
-		this.defaultPricing.putAll(database.loadPricing());
+	public void loadDefaultPricing(String key, DefaultPricingDatabase database) {
+		Map<String, Double> map = database.loadPricing(key);
+		StatShops.getInstance().log(LoggingPolicy.INFO, "Loaded default-value-database with " + map.size() + " entries.");
+		this.defaultPricing.putAll(map);
 	}
 
 	public Template registerTemplate(String placeholder, double value) {

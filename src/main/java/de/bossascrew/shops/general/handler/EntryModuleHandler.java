@@ -10,7 +10,9 @@ import de.bossascrew.shops.general.menu.ListMenuElementHolder;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.hook.VaultHook;
-import de.bossascrew.shops.statshops.shop.currency.Price;
+import de.bossascrew.shops.statshops.shop.currency.DynamicPrice;
+import de.bossascrew.shops.statshops.shop.currency.SimplePrice;
+import de.bossascrew.shops.statshops.shop.entry.CloseModule;
 import de.bossascrew.shops.statshops.shop.entry.PageBaseModule;
 import de.bossascrew.shops.statshops.shop.entry.TradeBaseModule;
 import lombok.Getter;
@@ -27,6 +29,7 @@ import java.util.function.Function;
 public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHandler.EntryModuleProvider> {
 
 	public static EntryModuleProvider STATIC_PROVIDER;
+	public static EntryModuleProvider CLOSE_PROVIDER;
 	public static EntryModuleProvider NEXT_PAGE_PROVIDER;
 	public static EntryModuleProvider PREV_PAGE_PROVIDER;
 	public static EntryModuleProvider EXACT_PAGE_PROVIDER;
@@ -35,6 +38,10 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	public static EntryModuleProvider TRADE_CMD_ITEM_PROVIDER;
 	public static EntryModuleProvider TRADE_CMD_VAULT_PROVIDER;
 	public static EntryModuleProvider TRADE_CONSOLE_CMD_PROVIDER;
+
+	public static CloseModule closeShop(ShopEntry shopEntry) {
+		return new CloseModule(CLOSE_PROVIDER, shopEntry);
+	}
 
 	public static PageModule openExactPage(ShopEntry shopEntry, int page) {
 		PageBaseModule pageModule = new PageBaseModule(EXACT_PAGE_PROVIDER, shopEntry, (customer, se, integer) -> {
@@ -74,20 +81,26 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 	public static TradeModule<ItemStack, ItemStack> tradeItemItem(ItemStack gain, ItemStack pay) {
 		return new TradeBaseModule<>(TRADE_ITEM_ITEM_PROVIDER,
-				new Price<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
-				new Price<>(CurrencyHandler.CURRENCY_ITEM, gain.getAmount(), gain));
+				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
+				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, gain.getAmount(), gain));
 	}
 
 	public static TradeModule<Void, ItemStack> tradeItemMoney(ItemStack article, double amount) {
 		return new TradeBaseModule<>(TRADE_ITEM_VAULT_PROVIDER,
-				new Price<>(VaultHook.CURRENCY_VAULT, amount, null),
-				new Price<>(CurrencyHandler.CURRENCY_ITEM, article.getAmount(), article));
+				new SimplePrice<>(VaultHook.CURRENCY_VAULT, amount, null),
+				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, article.getAmount(), article));
+	}
+
+	public static TradeModule<Void, ItemStack> tradeItemMoney(ItemStack article, String amount) {
+		return new TradeBaseModule<>(TRADE_ITEM_VAULT_PROVIDER,
+				new DynamicPrice<>(VaultHook.CURRENCY_VAULT, amount, null),
+				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, article.getAmount(), article));
 	}
 
 	public static TradeModule<Void, String> tradeCmdMoney(String cmd, int cmdAmount, double amount) {
 		TradeModule<Void, String> tm = new TradeBaseModule<>(TRADE_CMD_VAULT_PROVIDER,
-				new Price<>(VaultHook.CURRENCY_VAULT, amount, null),
-				new Price<>(CurrencyHandler.CURRENCY_COMMAND, cmdAmount, cmd));
+				new SimplePrice<>(VaultHook.CURRENCY_VAULT, amount, null),
+				new SimplePrice<>(CurrencyHandler.CURRENCY_COMMAND, cmdAmount, cmd));
 		tm.setSellable(false);
 		tm.setBuyableStacked(false);
 		return tm;
@@ -95,19 +108,19 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 	public static TradeModule<ItemStack, String> tradeCmdItem(String cmd, int cmdAmount, ItemStack pay) {
 		TradeModule<ItemStack, String> tm = new TradeBaseModule<>(TRADE_CMD_ITEM_PROVIDER,
-				new Price<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
-				new Price<>(CurrencyHandler.CURRENCY_COMMAND, cmdAmount, cmd));
+				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
+				new SimplePrice<>(CurrencyHandler.CURRENCY_COMMAND, cmdAmount, cmd));
 		tm.setSellable(false);
 		tm.setBuyableStacked(false);
 		return tm;
 	}
 
-	public static Price<ItemStack> itemPrice(int amount, ItemStack stack) {
-		return new Price<>(CurrencyHandler.CURRENCY_ITEM, amount, stack);
+	public static SimplePrice<ItemStack> itemPrice(int amount, ItemStack stack) {
+		return new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, amount, stack);
 	}
 
-	public static Price<Void> moneyPrice(double amount) {
-		return new Price<>(VaultHook.CURRENCY_VAULT, amount, null);
+	public static SimplePrice<Void> moneyPrice(double amount) {
+		return new SimplePrice<>(VaultHook.CURRENCY_VAULT, amount, null);
 	}
 
 	//TODO andere defaults
@@ -141,6 +154,8 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 		//TODO default werte config
 		STATIC_PROVIDER = registerEntryModule("static", new ItemStack(Material.BLACK_STAINED_GLASS), Message.GUI_ENTRY_FUNCTION_STATIC_NAME,
 				Message.GUI_ENTRY_FUNCTION_STATIC_LORE, shopEntry -> null);
+		CLOSE_PROVIDER = registerEntryModule("close", new ItemStack(Material.SPRUCE_DOOR), Message.GUI_ENTRY_FUNCTION_CLOSE_NAME,
+				Message.GUI_ENTRY_FUNCTION_CLOSE_LORE, EntryModuleHandler::closeShop);
 		EXACT_PAGE_PROVIDER = registerEntryModule("exact_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
 				Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, shopEntry -> openExactPage(shopEntry, 1));
 		NEXT_PAGE_PROVIDER = registerEntryModule("next_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,

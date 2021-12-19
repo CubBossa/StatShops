@@ -49,7 +49,7 @@ public class TagsEditorMenu<T extends Editable<Player> & Taggable> extends Paged
 	public void prepareMenu() {
 		clearMenuEntries();
 
-		setNavigationEntry(4, ItemStackUtils.createItemStack(Material.PAPER, Message.GENERAL_GUI_TAGS_INFO_NAME, Message.GENERAL_GUI_TAGS_INFO_LORE),clickContext -> {});
+		setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GENERAL_GUI_TAGS_INFO_NAME, Message.GENERAL_GUI_TAGS_INFO_LORE),clickContext -> {});
 
 		setNavigationEntry(7, ItemStackUtils.createItemStack(Material.EMERALD, newTagName, newTagLore), clickContext -> {
 			Player player = clickContext.getPlayer();

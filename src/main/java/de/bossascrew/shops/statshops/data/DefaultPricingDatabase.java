@@ -9,5 +9,5 @@ import java.util.Map;
  */
 public interface DefaultPricingDatabase {
 
-	Map<String, Double> loadPricing();
+	Map<String, Double> loadPricing(String databaseKey);
 }

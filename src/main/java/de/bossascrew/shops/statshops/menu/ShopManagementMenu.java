@@ -68,7 +68,7 @@ public class ShopManagementMenu {
 
 					Paste paste = WebSessionUtils.generateWebSession();
 					if (paste == null) {
-						customer.sendMessage(Message.GENERAL_WEBINTERFACE_ERROR); //TODO natürlich das language webinterface
+						customer.sendMessage(Message.GENERAL_WEBINTERFACE_ERROR);
 						return;
 					}
 					customer.sendMessage(Message.GENERAL_WEBINTERFACE_LINK.getKey(), Message.GENERAL_WEBINTERFACE_LINK.getTranslation(Template.of("link", "https://127.0.0.1:8080/" + paste.getId())));
@@ -298,7 +298,7 @@ public class ShopManagementMenu {
 
 	public void openShopLimitsMenu(Player player, Shop shop, int fromPage, int page) {
 		ListMenu<Limit> listMenu = new ListMenu<>(3, LimitsHandler.getInstance(), Message.GUI_SHOP_LIMITS_TITLE, backContext -> openShopMenu(player, shop, fromPage));
-		listMenu.setNavigationEntry(4, ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_SHOP_LIMITS_INFO_NAME, Message.GUI_SHOP_LIMITS_INFO_LORE), clickContext -> {
+		listMenu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_LIMITS_INFO_NAME, Message.GUI_SHOP_LIMITS_INFO_LORE), clickContext -> {
 		});
 		listMenu.setGlowPredicate(limit -> TagUtils.hasCommonTags(shop, limit));
 		listMenu.setClickHandler(targetContext -> {
@@ -315,7 +315,7 @@ public class ShopManagementMenu {
 
 	public void openShopDiscountsMenu(Player player, Shop shop, int fromPage, int page) {
 		ListMenu<Discount> listMenu = new ListMenu<>(3, DiscountHandler.getInstance(), Message.GUI_SHOP_DISCOUNTS_TITLE, backContext -> openShopMenu(player, shop, fromPage));
-		listMenu.setNavigationEntry(4, ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_SHOP_DISCOUNTS_INFO_NAME, Message.GUI_SHOP_DISCOUNTS_INFO_LORE), clickContext -> {
+		listMenu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_DISCOUNTS_INFO_NAME, Message.GUI_SHOP_DISCOUNTS_INFO_LORE), clickContext -> {
 		});
 		listMenu.setGlowPredicate(discount -> TagUtils.hasCommonTags(shop, discount));
 		listMenu.setClickHandler(targetContext -> {
@@ -332,7 +332,7 @@ public class ShopManagementMenu {
 
 	public void openDefaultTemplateMenu(Player player, Shop shop, int fromPage, int page) {
 		ListMenu<EntryTemplate> listMenu = new ListMenu<>(3, TemplateHandler.getInstance(), Message.GUI_SHOP_TEMPLATE_TITLE, backContext -> openShopMenu(player, shop, fromPage));
-		listMenu.setNavigationEntry(4, ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_SHOP_TEMPLATE_INFO_NAME, Message.GUI_SHOP_TEMPLATE_INFO_LORE), clickContext -> {
+		listMenu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_TEMPLATE_INFO_NAME, Message.GUI_SHOP_TEMPLATE_INFO_LORE), clickContext -> {
 		});
 		listMenu.setGlowPredicate(template -> shop.getDefaultTemplate() != null && template.equals(shop.getDefaultTemplate()));
 		listMenu.setClickHandler(targetContext -> {
@@ -512,8 +512,7 @@ public class ShopManagementMenu {
 			openDiscountMenu(player, discount, fromPage);
 		});
 
-		menu.setNavigationEntry(4, ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_DISCOUNT_START_INFO_NAME,
-				Message.GUI_DISCOUNT_START_INFO_LORE), cc -> {
+		menu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_DISCOUNT_START_INFO_NAME, Message.GUI_DISCOUNT_START_INFO_LORE), cc -> {
 		});
 
 		menu.setNavigationEntry(7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_START_NEW_NAME,

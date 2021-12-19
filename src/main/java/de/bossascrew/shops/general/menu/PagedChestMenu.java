@@ -2,11 +2,11 @@ package de.bossascrew.shops.general.menu;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ClickContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
+import de.bossascrew.shops.statshops.data.Message;
 import lombok.Data;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -133,6 +133,7 @@ public class PagedChestMenu {
 		ChestMenu menu = new ChestMenu(title, rowCount, defaultClickHandler, closeHandler);
 		menu.fillMenu();
 		menu.fillBottomLine(backHandler);
+		menu.setItem(rowCount - 1, 5, DefaultSpecialItem.EMPTY_DARK_RP.createSpecialItem());
 
 		AtomicInteger index = new AtomicInteger();
 		menuEntries.stream().sorted(Comparator.comparing(PagedMenuEntry::getDisplayItemStack, sortingComparator)).skip((long) page * entriesPerPage)

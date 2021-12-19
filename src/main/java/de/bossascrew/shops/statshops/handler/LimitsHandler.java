@@ -1,6 +1,5 @@
 package de.bossascrew.shops.statshops.handler;
 
-import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Taggable;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
@@ -8,7 +7,6 @@ import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.Limit;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
@@ -152,7 +150,8 @@ public class LimitsHandler implements
 
 	@Override
 	public boolean delete(Limit limit) {
-		//TODO alle shops aktuallisieren, die dem limit entsprechen.
+		// Automatically updates all guis. Doesn't matter because limit is deleted anyways
+		limit.getTags().forEach(limit::removeTag);
 
 		StatShops.getInstance().getDatabase().deleteLimit(limit);
 		limitMap.remove(limit.getUuid());

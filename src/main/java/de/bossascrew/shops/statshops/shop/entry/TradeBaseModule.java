@@ -5,14 +5,14 @@ import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.util.EntryInteractionType;
-import de.bossascrew.shops.general.util.LoggingPolicy;
-import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import de.bossascrew.shops.statshops.shop.Transaction;
+import de.bossascrew.shops.statshops.shop.currency.DynamicPrice;
 import de.bossascrew.shops.statshops.shop.currency.Price;
+import de.bossascrew.shops.statshops.shop.currency.SimplePrice;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -96,10 +96,10 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 
 	@Override
 	public EntryInteractionResult perform(Customer customer, EntryInteractionType interactionType) {
-		Price<?> pay = interactionType.isBuy() ? buyPayPrice : gainPrice;
-		Price<?> gain = interactionType.isBuy() ? gainPrice : sellPayPrice;
-		pay = pay.duplicate();
-		gain = gain.duplicate();
+		Price<?> _pay = interactionType.isBuy() ? buyPayPrice : gainPrice;
+		Price<?> _gain = interactionType.isBuy() ? gainPrice : sellPayPrice;
+		SimplePrice<?> pay = _pay instanceof DynamicPrice dpay ? dpay.toSimplePrice() : (SimplePrice<?>) _pay.duplicate();
+		SimplePrice<?> gain = _gain instanceof DynamicPrice dgain ? dgain.toSimplePrice() : (SimplePrice<?>) _gain.duplicate();
 
 		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
 		double discount = DiscountHandler.getInstance().combineDiscounts(discounts, interactionType.isSell());

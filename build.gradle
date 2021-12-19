@@ -68,6 +68,7 @@ dependencies {
     shadow "net.kyori:adventure-text-serializer-legacy:4.9.3"
     shadow "net.kyori:adventure-text-serializer-gson:4.9.3"
     shadow "net.kyori:adventure-text-serializer-plain:4.9.3"
+    shadow 'net.objecthunter:exp4j:0.4.8'
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     shadow 'com.github.ben-manes.caffeine:caffeine:3.0.4'
     shadow "net.wesjd:anvilgui:1.5.3-SNAPSHOT"

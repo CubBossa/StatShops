@@ -55,7 +55,7 @@ public class ListManagerMenu<L extends ListMenuElement> extends PagedChestMenu {
 	private void prepareInventory() {
 		super.clearMenuEntries();
 
-		setNavigationEntry(4, ItemStackUtils.createItemStack(Material.PAPER, Message.GENERAL_GUI_LIST_INFO_NAME, Message.GENERAL_GUI_LIST_INFO_LORE),clickContext -> {});
+		setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GENERAL_GUI_LIST_INFO_NAME, Message.GENERAL_GUI_LIST_INFO_LORE),clickContext -> {});
 
 		for (L element : elementHolder.getValues()) {
 			addMenuEntry(element.getListDisplayItem(), clickContext -> {

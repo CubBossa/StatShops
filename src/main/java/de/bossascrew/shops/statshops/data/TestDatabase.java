@@ -70,7 +70,7 @@ public class TestDatabase implements Database, LogDatabase {
 		pmeta.setBasePotionData(new PotionData(PotionType.SPEED));
 		article2.setItemMeta(pmeta);
 
-		entry2.setModule(EntryModuleHandler.tradeItemItem(article2, new ItemStack(Material.EMERALD, 2)));
+		entry2.setModule(EntryModuleHandler.tradeItemMoney(article2, "6 / 2 * <db:diamond>"));
 		entry2.addTag("test");
 		s1.addEntry(ShopHandler.getInstance().getShopModes().get(0), 1, entry2);
 

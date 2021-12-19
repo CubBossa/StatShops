@@ -20,7 +20,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -105,8 +104,6 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 					new EntryEditor(clickedEntry, backHandler -> shopEditor.openInventory(clickContext.getPlayer(), shopMode, shopPage))
 							.openInventory(clickContext.getPlayer());
 				}
-			} else if (clickContext.getAction() == ClickType.MIDDLE) {
-				//TODO clone clicked stack in hand
 			}
 		});
 		fillBottom();
@@ -161,6 +158,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 				openTemplatesListMenu(clickContext.getPlayer());
 			}
 		});
+		setItemBottom(0, 5, DefaultSpecialItem.EMPTY_DARK_RP.createSpecialItem());
 	}
 
 	private void handleUnfreeze() {

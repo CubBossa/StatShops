@@ -28,6 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -38,9 +39,8 @@ import org.bukkit.material.Colorable;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.io.File;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -147,6 +147,19 @@ public class StatShops extends JavaPlugin {
 
 		// Register dynamic pricing
 		this.dynamicPricingHandler = new DynamicPricingHandler();
+		this.dynamicPricingHandler.loadDefaultPricing("statshops", dbKey -> {
+			Map<String, Double> defaultValues = new HashMap<>();
+			saveResource("default_values.yml", false);
+			File file = new File(getDataFolder(), "default_values.yml");
+			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+			for (String key : cfg.getKeys(false)) {
+				Double d = cfg.getDouble(key, 10.);
+				// To simplify prices for admins every key is registered without namespace as well for the default database.
+				defaultValues.put(key, d);
+				defaultValues.put(dbKey + ":" + key, d);
+			}
+			return defaultValues;
+		});
 
 		// Enable Entry Modules
 		this.entryModuleHandler = new EntryModuleHandler();

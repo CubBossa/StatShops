@@ -3,101 +3,41 @@ package de.bossascrew.shops.statshops.shop.currency;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.util.Duplicable;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
-import lombok.Getter;
-import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+public interface Price<T> extends Duplicable<Price<T>>, Comparable<Price<T>> {
 
-@Getter
-@Setter
-public class Price<T> implements Duplicable<Price<T>>, Comparable<Price<T>> {
+	void applyDiscount(double discount);
 
-	private final Currency<T> currency;
-	private double amount;
-	private final T object;
+	double getAmount(double discount);
 
-	public Price(Currency<T> currency, double amount, T object) {
-		this.currency = currency;
-		this.amount = amount;
-		this.object = object;
-	}
+	boolean canPay(Customer customer, double discount);
 
-	public void applyDiscount(double discount) {
-		this.amount = currency.applyDiscount(amount, discount);
-	}
+	boolean canGain(Customer customer);
 
-	public double getAmount(double discount) {
-		return currency.applyDiscount(amount, discount);
-	}
+	boolean canGain(Customer customer, double discount);
 
-	public boolean canPay(Customer customer, double discount) {
-		return currency.hasAmount(customer, currency.applyDiscount(amount, discount), object);
-	}
+	EntryInteractionResult pay(Customer customer);
 
-	public boolean canGain(Customer customer) {
-		return true; //TODO
-	}
+	EntryInteractionResult pay(Customer customer, double discount);
 
-	public boolean canGain(Customer customer, double discount) {
-		return true;
-	}
+	EntryInteractionResult gain(Customer customer);
 
-	public EntryInteractionResult pay(Customer customer) {
-		return pay(customer, 1.);
-	}
+	EntryInteractionResult gain(Customer customer, double discount);
 
-	public EntryInteractionResult pay(Customer customer, double discount) {
-		if (!canPay(customer, discount)) {
-			return EntryInteractionResult.FAIL_CANT_AFFORD;
-		}
-		currency.removeAmount(customer, currency.applyDiscount(amount, discount), object);
-		return EntryInteractionResult.SUCCESS;
-	}
+	Component getObjectComponent();
 
-	public EntryInteractionResult gain(Customer customer) {
-		return gain(customer, 1.);
-	}
+	Component getPriceComponent();
 
-	public EntryInteractionResult gain(Customer customer, double discount) {
-		if (!canGain(customer)) {
-			return EntryInteractionResult.FAIL_CANT_REWARD;
-		}
-		currency.addAmount(customer, currency.applyDiscount(amount, discount), object);
-		return EntryInteractionResult.SUCCESS;
-	}
+	Component getPriceComponent(double discount);
 
-	public Component getObjectComponent() {
-		return currency.getCurrencyComponent(amount, object);
-	}
+	boolean equals(Price<?> object);
 
-	public Component getPriceComponent() {
-		return getPriceComponent(1.);
-	}
+	Currency<T> getCurrency();
 
-	public Component getPriceComponent(double discount) {
-		return currency.format(amount, object, discount);
-	}
+	double getAmount();
 
-	public boolean equals(Price<?> object) {
-		if (this == object) {
-			return true;
-		}
-		if (this.object instanceof ItemStack isa && object.object instanceof ItemStack isb) {
-			return isa.isSimilar(isb);
-		}
-		return Objects.equals(this.object, object.object) && this.currency.equals(object.currency);
-	}
+	T getObject();
 
-	@Override
-	public Price<T> duplicate() {
-		return new Price<>(currency, amount, object);
-	}
-
-	@Override
-	public int compareTo(@NotNull Price<T> o) {
-		return Double.compare(amount, o.amount);
-	}
+	void setAmount(double amount);
 }

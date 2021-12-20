@@ -40,4 +40,6 @@ public interface Price<T> extends Duplicable<Price<T>>, Comparable<Price<T>> {
 	T getObject();
 
 	void setAmount(double amount);
+
+	void setObject(T object);
 }

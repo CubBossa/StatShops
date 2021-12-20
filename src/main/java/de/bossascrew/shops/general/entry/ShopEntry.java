@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public interface ShopEntry extends Taggable, Duplicable<ShopEntry>, DatabaseObject, Editable<Player> {
 
@@ -44,7 +45,7 @@ public interface ShopEntry extends Taggable, Duplicable<ShopEntry>, DatabaseObje
 
 	boolean hasPermission(Customer customer);
 
-	<T extends DataSlot<?>> T getData(Class<T> clazz, String key);
+	<T extends DataSlot<?>> T getData(Class<T> clazz, String key, Supplier<T> fallbackValue);
 
 	<T> T storeData(DataSlot<T> data);
 

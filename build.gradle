@@ -54,23 +54,23 @@ configurations {
 
 dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0'
-    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-    shadow 'com.squareup.okhttp3:okhttp:4.9.2'
-    shadow 'org.json:json:20210307'
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    shadow 'com.squareup.okhttp3:okhttp:4.9.3'
+    shadow 'org.json:json:20211205'
     shadow 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
     compileOnly "org.projectlombok:lombok:1.18.22"
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
     shadow "co.aikar:acf-bukkit:0.5.0-SNAPSHOT"
     compileOnly "org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT"
     shadow "net.kyori:adventure-api:4.9.3"
-    shadow "net.kyori:adventure-platform-bukkit:4.0.0"
+    shadow 'net.kyori:adventure-platform-bukkit:4.0.1'
     shadow "net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT"
     shadow "net.kyori:adventure-text-serializer-legacy:4.9.3"
     shadow "net.kyori:adventure-text-serializer-gson:4.9.3"
     shadow "net.kyori:adventure-text-serializer-plain:4.9.3"
     shadow 'net.objecthunter:exp4j:0.4.8'
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    shadow 'com.github.ben-manes.caffeine:caffeine:3.0.4'
+    shadow 'com.github.ben-manes.caffeine:caffeine:3.0.5'
     shadow "net.wesjd:anvilgui:1.5.3-SNAPSHOT"
     compileOnly 'com.mojang:authlib:1.5.21'
     compileOnly 'de.tr7zw:item-nbt-api-plugin:2.6.0'

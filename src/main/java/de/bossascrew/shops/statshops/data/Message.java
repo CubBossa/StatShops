@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 public class Message {
 
+	public static final Message NONE = new Message("");
 	public static final Message PREFIX = new Message("general.prefix");
 
 	public static final Message GENERAL_NO_PERMISSION = new Message("general.no_permission");
@@ -260,14 +261,23 @@ public class Message {
 	public static final Message GUI_ENTRY_FUNCTION_TRADE_CMD_ITEM_LORE = new Message("manager.gui.entry.defaults.trade_cmd_item.lore");
 	public static final Message GUI_ENTRY_FUNCTION_TRADE_CMD_VAULT_NAME = new Message("manager.gui.entry.defaults.trade_cmd_vault.name");
 	public static final Message GUI_ENTRY_FUNCTION_TRADE_CMD_VAULT_LORE = new Message("manager.gui.entry.defaults.trade_cmd_vault.lore");
-	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER = new Message("");
-	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER_DESC = new Message("");
-	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION = new Message("");
-	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION_DESC = new Message("");
-	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_STRING = new Message("");
-	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_STRING_DESC = new Message("");
-	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK = new Message("");
-	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK_DESC = new Message("");
+
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL = new Message("manager.gui.entry.function.type.bool.name");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL_DESC = new Message("manager.gui.entry.function.type.bool.lore");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER = new Message("manager.gui.entry.function.type.int.name");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER_DESC = new Message("manager.gui.entry.function.type.int.lore");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION = new Message("manager.gui.entry.function.type.equation.name");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION_DESC = new Message("manager.gui.entry.function.type.equation.lore");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_STRING = new Message("manager.gui.entry.function.type.string.name");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_STRING_DESC = new Message("manager.gui.entry.function.type.string.lore");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK = new Message("manager.gui.entry.function.type.itemstack.name");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK_DESC = new Message("manager.gui.entry.function.type.itemstack.lore");
+
+	public static final Message GUI_ENTRY_FUNCTION_PAGE = new Message("manager.gui.entry.function.data.page");
+	public static final Message GUI_ENTRY_FUNCTION_PURCHASABLE = new Message("manager.gui.entry.function.data.purchasable");
+	public static final Message GUI_ENTRY_FUNCTION_PURCHASABLE_STACKED = new Message("manager.gui.entry.function.data.purchasable_stacked");
+	public static final Message GUI_ENTRY_FUNCTION_SELLABLE = new Message("manager.gui.entry.function.data.sellable");
+	public static final Message GUI_ENTRY_FUNCTION_SELLABLE_STACKED = new Message("manager.gui.entry.function.data.sellable_stacked");
 
 	@Getter
 	private final String key;

@@ -208,11 +208,11 @@ public class ShopManagementMenu {
 			});
 
 			//Set mode remembered
-			ItemStack rememberMode = getButton(ms.isModeRemembered(),
+			ItemStack rememberMode = ItemStackUtils.createButtonItemStack(ms.isModeRemembered(),
 					Message.GUI_SHOP_SET_REMEMBER_MODE_NAME, Message.GUI_SHOP_SET_REMEMBER_MODE_LORE);
 			chestMenu.setItemAndClickHandler(24, rememberMode, clickContext -> {
 				ms.setModeRemembered(!ms.isModeRemembered());
-				chestMenu.setItem(24, getButton(ms.isModeRemembered(),
+				chestMenu.setItem(24, ItemStackUtils.createButtonItemStack(ms.isModeRemembered(),
 						Message.GUI_SHOP_SET_REMEMBER_MODE_NAME, Message.GUI_SHOP_SET_REMEMBER_MODE_LORE));
 				chestMenu.refresh(24);
 			});
@@ -230,11 +230,11 @@ public class ShopManagementMenu {
 			});
 
 			//Set page remembered
-			ItemStack rememberPage = getButton(ps.isPageRemembered(),
+			ItemStack rememberPage = ItemStackUtils.createButtonItemStack(ps.isPageRemembered(),
 					Message.GUI_SHOP_SET_REMEMBER_PAGE_NAME, Message.GUI_SHOP_SET_REMEMBER_PAGE_LORE);
 			chestMenu.setItemAndClickHandler(23, rememberPage, clickContext -> {
 				ps.setPageRemembered(!ps.isPageRemembered());
-				chestMenu.setItem(23, getButton(ps.isPageRemembered(),
+				chestMenu.setItem(23, ItemStackUtils.createButtonItemStack(ps.isPageRemembered(),
 						Message.GUI_SHOP_SET_REMEMBER_PAGE_NAME, Message.GUI_SHOP_SET_REMEMBER_PAGE_LORE));
 				chestMenu.refresh(23);
 			});
@@ -289,12 +289,6 @@ public class ShopManagementMenu {
 		lore.add(Message.GUI_SHOP_SET_DEFAULT_PAGE_LORE.getTranslation(Template.of("page", "" + (page + 1)), Template.of("pages", "" + pageCount)));
 		return ItemStackUtils.createItemStack(new ItemStack(Material.BOOK, Integer.max(page, 1)),
 				Message.GUI_SHOP_SET_DEFAULT_PAGE_NAME.getTranslation(Template.of("page", "" + (page + 1)), Template.of("pages", "" + pageCount)), lore);
-	}
-
-	private ItemStack getButton(boolean val, Message name, Message lore) {
-		return ItemStackUtils.createItemStack(val ? Material.LIME_DYE : Material.GRAY_DYE,
-				name.getTranslation(Template.of("value", val + "")),
-				lore.getTranslations(Template.of("value", val + "")));
 	}
 
 	public void openShopLimitsMenu(Player player, Shop shop, int fromPage, int page) {

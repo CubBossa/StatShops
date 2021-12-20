@@ -3,22 +3,21 @@ package de.bossascrew.shops.general.entry;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.statshops.shop.Transaction;
 import de.bossascrew.shops.statshops.shop.currency.Price;
-import de.bossascrew.shops.statshops.shop.currency.SimplePrice;
 import net.kyori.adventure.text.Component;
 
 public interface TradeModule<P, G> extends EntryModule {
 
-	boolean isBuyable();
+	boolean isPurchasable();
 
-	void setBuyable(boolean buyable);
+	void setPurchasable(boolean purchasable);
 
 	boolean isSellable();
 
 	void setSellable(boolean sellable);
 
-	boolean isBuyableStacked();
+	boolean isPurchasableStacked();
 
-	void setBuyableStacked(boolean buyableStacked);
+	void setPurchasableStacked(boolean purchasableStacked);
 
 	boolean isSellableStacked();
 

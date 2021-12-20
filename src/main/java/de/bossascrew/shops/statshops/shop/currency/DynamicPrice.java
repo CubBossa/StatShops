@@ -18,7 +18,7 @@ public class DynamicPrice<T> implements Price<T> {
 	private final Currency<T> currency;
 	private double amount;
 	private String dynamicPriceString;
-	private final T object;
+	private T object;
 
 	public DynamicPrice(Currency<T> currency, String dynamicPriceString, T object) {
 		this.currency = currency;

@@ -303,6 +303,35 @@ manager:
         trade_cmd_vault:
           name: "<white>Trade Vault -> Command"
           lore: "<gray>Buy the execution of a command\n<gray>for vault money."
+      function:
+        # Valid placeholders
+        # - in name: <name>
+        # - in lore: <current>
+        type:
+          bool:
+            name: "<white>Boolean value: <name>"
+            lore: "<gray>Current value: <gold><current>"
+          int:
+            name: "<white>Integer value: <name>"
+            lore: "<gray>Current value: <gold><current>"
+          equation:
+            name: "<white>Term value: <name>"
+            lore: "<gray>Current: <gold><current>\n<gray>Terms are mathematical expressions\n<gray>like \"(3 + 5) * <db:diamond>\""
+          string:
+            name: "<white>String value: <name>"
+            lore: "<gray>Current: <gold><current>"
+          itemstack:
+            name: "<white>Item value: <name>"
+            lore: "<gray>Current: <gold><current>"
+        data:
+          # Page module
+          page: "Page"
+          # Trade module
+          purchasable: "Purchasable"
+          purchasable_stacked: "Purchasable stacked"
+          sellable: "Sellable"
+          sellable_stacked: "Sellable stacked"
+
 
     limits:
       title: "Create and manage shop limits"

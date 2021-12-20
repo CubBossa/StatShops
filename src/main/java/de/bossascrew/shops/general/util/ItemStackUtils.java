@@ -145,10 +145,10 @@ public class ItemStackUtils {
 	}
 
 	public void addLorePrice(List<Component> existingLore, TradeModule<?, ?> tradeModule, double discount) {
-		if (tradeModule.isBuyable() && tradeModule.isSellable() && tradeModule.getPayPrice(true).equals(tradeModule.getPayPrice(false)) && discount == 1) {
+		if (tradeModule.isPurchasable() && tradeModule.isSellable() && tradeModule.getPayPrice(true).equals(tradeModule.getPayPrice(false)) && discount == 1) {
 			existingLore.addAll(Message.SHOP_ITEM_LORE_BOTH_PRICE.getTranslations(Template.of("price", tradeModule.getPriceDisplay(true, discount))));
 		} else {
-			if (tradeModule.isBuyable()) {
+			if (tradeModule.isPurchasable()) {
 				existingLore.addAll(Message.SHOP_ITEM_LORE_BUY_PRICE.getTranslations(
 						Template.of("price", tradeModule.getPriceDisplay(true, discount))));
 			}
@@ -188,11 +188,11 @@ public class ItemStackUtils {
 
 	public void addLoreActions(List<Component> existingLore, TradeModule tradeEntry) {
 		Config sc = StatShops.getInstance().getShopsConfig();
-		if (tradeEntry.isBuyable()) {
+		if (tradeEntry.isPurchasable()) {
 			if (!sc.getBuyKeyBinding().isEmpty()) {
 				getActionComponent(existingLore, sc.getBuyKeyBinding().get(0), Message.ACTION_BUY);
 			}
-			if (tradeEntry.isBuyableStacked()) {
+			if (tradeEntry.isPurchasableStacked()) {
 				if (!sc.getBuyStackKeyBinding().isEmpty()) {
 					getActionComponent(existingLore, sc.getBuyStackKeyBinding().get(0), Message.ACTION_BUY_STACK);
 				}
@@ -202,7 +202,7 @@ public class ItemStackUtils {
 			if (!sc.getSellKeyBinding().isEmpty()) {
 				getActionComponent(existingLore, sc.getSellKeyBinding().get(0), Message.ACTION_SELL);
 			}
-			if (tradeEntry.isBuyableStacked()) {
+			if (tradeEntry.isPurchasableStacked()) {
 				if (!sc.getSellStackKeyBinding().isEmpty()) {
 					getActionComponent(existingLore, sc.getSellStackKeyBinding().get(0), Message.ACTION_SELL_STACK);
 				}
@@ -210,10 +210,17 @@ public class ItemStackUtils {
 		}
 	}
 
+	public ItemStack createButtonItemStack(boolean val, Message name, Message lore) {
+		return ItemStackUtils.createItemStack(val ? Material.LIME_DYE : Material.GRAY_DYE,
+				name.getTranslation(Template.of("value", val + "")), //TODO true false translation
+				lore.getTranslations(Template.of("value", val + "")));
+	}
+
 	public ItemStack createEntryItemStack(ShopEntry entry) {
 		ItemStack itemStack = entry.getDisplayItem().clone();
 
-		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(entry, entry.getShop());;
+		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(entry, entry.getShop());
+		;
 		double discount = DiscountHandler.getInstance().combineDiscounts(discounts, false);
 		List<Component> additionalLore = new ArrayList<>();
 
@@ -408,6 +415,12 @@ public class ItemStackUtils {
 						Template.of("template", template.getName()),
 						Template.of("uuid", "" + template.getUuid()),
 						Template.of("size", "" + template.size())));
+	}
+
+	public ItemStack setNameAndLore(ItemStack itemStack, Component name, List<Component> lore) {
+		itemStack = setDisplayName(itemStack, name);
+		itemStack = setLore(itemStack, lore);
+		return itemStack;
 	}
 
 	public ItemStack setNameAndLore(ItemStack itemStack, Message name, Message lore) {

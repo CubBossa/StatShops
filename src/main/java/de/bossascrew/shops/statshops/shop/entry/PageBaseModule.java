@@ -9,6 +9,7 @@ import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.util.Consumer3;
 import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.data.LogEntry;
+import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import org.jetbrains.annotations.Nullable;
@@ -59,14 +60,12 @@ public class PageBaseModule extends BaseModule implements PageModule {
 
 	@Override
 	public void loadData() {
-		page = shopEntry.getData(DataSlot.IntegerSlot.class, "page");
-		if (page == null) {
-			page = new DataSlot.IntegerSlot(1);
-		}
-		mode = shopEntry.getData(DataSlot.IntegerSlot.class, "mode");
-		if (mode == null) {
-			mode = new DataSlot.IntegerSlot(1);
-		}
+		page = shopEntry.getData(DataSlot.IntegerSlot.class, "page", () -> {
+			return new DataSlot.IntegerSlot("page", 1, Message.GUI_ENTRY_FUNCTION_PAGE);
+		});
+		mode = shopEntry.getData(DataSlot.IntegerSlot.class, "mode", () -> {
+			return new DataSlot.IntegerSlot("mode", 1, Message.NONE);
+		});
 		switch (mode.getData()) {
 			case -1 -> this.newPageProvider = integer -> integer - page.getData();
 			case 0 -> this.newPageProvider = integer -> page.getData();

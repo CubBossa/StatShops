@@ -79,39 +79,39 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 		return pageModule;
 	}
 
-	public static TradeModule<ItemStack, ItemStack> tradeItemItem(ItemStack gain, ItemStack pay) {
-		return new TradeBaseModule<>(TRADE_ITEM_ITEM_PROVIDER,
+	public static TradeModule<ItemStack, ItemStack> tradeItemItem(ShopEntry entry, ItemStack gain, ItemStack pay) {
+		return new TradeBaseModule.TradeItemItem(entry, TRADE_ITEM_ITEM_PROVIDER,
 				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
 				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, gain.getAmount(), gain));
 	}
 
-	public static TradeModule<Void, ItemStack> tradeItemMoney(ItemStack article, double amount) {
-		return new TradeBaseModule<>(TRADE_ITEM_VAULT_PROVIDER,
+	public static TradeModule<Void, ItemStack> tradeItemMoney(ShopEntry entry, ItemStack article, double amount) {
+		return new TradeBaseModule<>(entry, TRADE_ITEM_VAULT_PROVIDER,
 				new SimplePrice<>(VaultHook.CURRENCY_VAULT, amount, null),
 				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, article.getAmount(), article));
 	}
 
-	public static TradeModule<Void, ItemStack> tradeItemMoney(ItemStack article, String amount) {
-		return new TradeBaseModule<>(TRADE_ITEM_VAULT_PROVIDER,
+	public static TradeModule<Void, ItemStack> tradeItemMoney(ShopEntry entry, ItemStack article, String amount) {
+		return new TradeBaseModule<>(entry, TRADE_ITEM_VAULT_PROVIDER,
 				new DynamicPrice<>(VaultHook.CURRENCY_VAULT, amount, null),
 				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, article.getAmount(), article));
 	}
 
-	public static TradeModule<Void, String> tradeCmdMoney(String cmd, int cmdAmount, double amount) {
-		TradeModule<Void, String> tm = new TradeBaseModule<>(TRADE_CMD_VAULT_PROVIDER,
+	public static TradeModule<Void, String> tradeCmdMoney(ShopEntry entry, String cmd, int cmdAmount, double amount) {
+		TradeModule<Void, String> tm = new TradeBaseModule<>(entry, TRADE_CMD_VAULT_PROVIDER,
 				new SimplePrice<>(VaultHook.CURRENCY_VAULT, amount, null),
 				new SimplePrice<>(CurrencyHandler.CURRENCY_COMMAND, cmdAmount, cmd));
 		tm.setSellable(false);
-		tm.setBuyableStacked(false);
+		tm.setPurchasableStacked(false);
 		return tm;
 	}
 
-	public static TradeModule<ItemStack, String> tradeCmdItem(String cmd, int cmdAmount, ItemStack pay) {
-		TradeModule<ItemStack, String> tm = new TradeBaseModule<>(TRADE_CMD_ITEM_PROVIDER,
+	public static TradeModule<ItemStack, String> tradeCmdItem(ShopEntry entry, String cmd, int cmdAmount, ItemStack pay) {
+		TradeModule<ItemStack, String> tm = new TradeBaseModule<>(entry, TRADE_CMD_ITEM_PROVIDER,
 				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
 				new SimplePrice<>(CurrencyHandler.CURRENCY_COMMAND, cmdAmount, cmd));
 		tm.setSellable(false);
-		tm.setBuyableStacked(false);
+		tm.setPurchasableStacked(false);
 		return tm;
 	}
 
@@ -163,13 +163,13 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 		PREV_PAGE_PROVIDER = registerEntryModule("prev_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
 				Message.GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, shopEntry -> openPrevPage(shopEntry, 1));
 		TRADE_ITEM_ITEM_PROVIDER = registerEntryModule("trade_item_item", new ItemStack(Material.EMERALD), Message.GUI_ENTRY_FUNCTION_TRADE_ITEM_ITEM_NAME,
-				Message.GUI_ENTRY_FUNCTION_TRADE_ITEM_ITEM_LORE, shopEntry -> tradeItemItem(shopEntry.getDisplayItem(), new ItemStack(Material.EMERALD, 5)));
+				Message.GUI_ENTRY_FUNCTION_TRADE_ITEM_ITEM_LORE, shopEntry -> tradeItemItem(shopEntry, shopEntry.getDisplayItem(), new ItemStack(Material.EMERALD, 5)));
 		TRADE_ITEM_VAULT_PROVIDER = registerEntryModule("trade_item_vault", new ItemStack(Material.GOLD_INGOT), Message.GUI_ENTRY_FUNCTION_TRADE_ITEM_VAULT_NAME,
-				Message.GUI_ENTRY_FUNCTION_TRADE_ITEM_VAULT_LORE, shopEntry -> tradeItemMoney(shopEntry.getDisplayItem(), 10.));
+				Message.GUI_ENTRY_FUNCTION_TRADE_ITEM_VAULT_LORE, shopEntry -> tradeItemMoney(shopEntry, shopEntry.getDisplayItem(), 10.));
 		TRADE_CMD_ITEM_PROVIDER = registerEntryModule("trade_cmd_item", new ItemStack(Material.REDSTONE), Message.GUI_ENTRY_FUNCTION_TRADE_CMD_ITEM_NAME,
-				Message.GUI_ENTRY_FUNCTION_TRADE_CMD_ITEM_LORE, shopEntry -> tradeCmdItem("none", 1, new ItemStack(Material.EMERALD, 5)));
+				Message.GUI_ENTRY_FUNCTION_TRADE_CMD_ITEM_LORE, shopEntry -> tradeCmdItem(shopEntry, "none", 1, new ItemStack(Material.EMERALD, 5)));
 		TRADE_CMD_VAULT_PROVIDER = registerEntryModule("trade_cmd_vault", new ItemStack(Material.REDSTONE), Message.GUI_ENTRY_FUNCTION_TRADE_CMD_VAULT_NAME,
-				Message.GUI_ENTRY_FUNCTION_TRADE_CMD_VAULT_LORE, shopEntry -> tradeCmdMoney("none", 1, 10.));
+				Message.GUI_ENTRY_FUNCTION_TRADE_CMD_VAULT_LORE, shopEntry -> tradeCmdMoney(shopEntry, "none", 1, 10.));
 	}
 
 	@Override

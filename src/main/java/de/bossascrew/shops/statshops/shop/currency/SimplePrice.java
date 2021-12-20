@@ -16,7 +16,7 @@ public class SimplePrice<T> implements Price<T> {
 
 	private final Currency<T> currency;
 	private double amount;
-	private final T object;
+	private T object;
 
 	public SimplePrice(Currency<T> currency, double amount, T object) {
 		this.currency = currency;

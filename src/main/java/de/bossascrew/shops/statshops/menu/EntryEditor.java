@@ -121,9 +121,11 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 				if (dataSlot.getDisplayItem() == null) {
 					continue;
 				}
-				setItemAndClickHandler(dataSlots.next(), dataSlot.getDisplayItem(), clickContext -> {
+				int slot = dataSlots.next();
+				setItemAndClickHandler(slot, dataSlot.getDisplayItem(), clickContext -> {
 					dataSlot.getClickHandler().accept(clickContext);
-					openInventory(clickContext.getPlayer());
+					setItem(slot, dataSlot.getDisplayItem());
+					refresh(slot);
 				});
 			}
 		}

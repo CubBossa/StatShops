@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * A shop entry to be used for all itembased shops (not for chat shops or hologram shops e.g.)
@@ -70,9 +71,9 @@ public class BaseEntry implements ShopEntry {
 	}
 
 	@Override
-	public <T extends DataSlot<?>> T getData(Class<T> clazz, String key) {
-		//TODO try and retrieve data
-		return null;
+	public <T extends DataSlot<?>> T getData(Class<T> clazz, String key, Supplier<T> fallbackValue) {
+		//TODO load data
+		return fallbackValue.get();
 	}
 
 	@Override

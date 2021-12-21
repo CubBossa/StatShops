@@ -5,7 +5,7 @@ import de.bossascrew.shops.general.TransactionBalanceMessenger;
 import de.bossascrew.shops.general.util.TradeMessageType;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.statshops.shop.currency.SimplePrice;
+import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -20,7 +20,7 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 	@Getter
 	@Setter
 	private TradeMessageType tradeMessageType;
-	private final Map<UUID, List<SimplePrice<?>>> tradeCache;
+	private final Map<UUID, List<Price<?>>> tradeCache;
 
 	public SimpleBalanceMessenger(TradeMessageType tradeMessageType) {
 		this.tradeMessageType = tradeMessageType;
@@ -35,19 +35,19 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 		}
 
 		Customer customer = transaction.getCustomer();
-		SimplePrice<?> gain = transaction.getGainPrice().duplicate();
-		SimplePrice<?> pay = transaction.getPayPrice().duplicate();
+		Price<?> gain = transaction.getGainPrice().toSimplePrice();
+		Price<?> pay = transaction.getPayPrice().toSimplePrice();
 		pay.setAmount(pay.getAmount() * -1);
 
-		List<SimplePrice<?>> prices = tradeCache.getOrDefault(customer.getUuid(), new ArrayList<>());
+		List<Price<?>> prices = tradeCache.getOrDefault(customer.getUuid(), new ArrayList<>());
 
-		SimplePrice<?> cachedGain = prices.stream().filter(price -> price.equals(gain)).findAny().orElse(null);
+		Price<?> cachedGain = prices.stream().filter(price -> price.equals(gain)).findAny().orElse(null);
 		if (cachedGain == null) {
 			prices.add(gain);
 		} else {
 			cachedGain.setAmount(cachedGain.getAmount() + gain.getAmount());
 		}
-		SimplePrice<?> cachedPay = prices.stream().filter(price -> price.equals(pay)).findAny().orElse(null);
+		Price<?> cachedPay = prices.stream().filter(price -> price.equals(pay)).findAny().orElse(null);
 		if (cachedPay == null) {
 			prices.add(pay);
 		} else {
@@ -76,7 +76,7 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 	}
 
 	private void printCachedBalanceAndClear(Customer customer, boolean header) {
-		List<SimplePrice<?>> cache = tradeCache.get(customer.getUuid());
+		List<Price<?>> cache = tradeCache.get(customer.getUuid());
 		tradeCache.put(customer.getUuid(), new ArrayList<>());
 		if (cache == null || cache.stream().noneMatch(price -> price.getAmount() != 0)) {
 			return;
@@ -85,7 +85,7 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 			customer.sendMessage(Message.SHOP_TRADE_FEEDBACK_CUMUL_TITLE, 0);
 		}
 		cache = cache.stream().sorted().collect(Collectors.toList());
-		for (SimplePrice<?> price : cache) {
+		for (Price<?> price : cache) {
 			if (price.getAmount() == 0) {
 				continue;
 			}
@@ -93,7 +93,7 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 		}
 	}
 
-	private Component getTransactionFeedback(SimplePrice<?> price) {
+	private Component getTransactionFeedback(Price<?> price) {
 		double actualAmount = price.getAmount();
 		price = price.duplicate();
 		price.setAmount(Math.abs(price.getAmount()));

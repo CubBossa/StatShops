@@ -280,7 +280,7 @@ public abstract class InventoryMenu<T, A extends ActionContext<T>, B extends Bac
 	 * Befüllt das gesamte Inventar mit hellgrauen Glasscheiben (DefaultSpecialItem.EMPTY_LIGHT)
 	 */
 	public void fillMenu() {
-		fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
+		fillMenu(DefaultSpecialItem.EMPTY_LIGHT_RP);
 	}
 
 	/**
@@ -317,7 +317,7 @@ public abstract class InventoryMenu<T, A extends ActionContext<T>, B extends Bac
 	}
 
 	public void fillMenu(ContextConsumer<B> backHandler) {
-		fillMenu(backHandler, DefaultSpecialItem.EMPTY_LIGHT);
+		fillMenu(backHandler, DefaultSpecialItem.EMPTY_LIGHT_RP);
 	}
 
 	@Deprecated

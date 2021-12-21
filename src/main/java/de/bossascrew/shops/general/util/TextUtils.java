@@ -101,6 +101,9 @@ public class TextUtils {
 	}
 
 	public Component toTranslatable(Material material) {
+		if(material.isBlock()) {
+			return Component.translatable("block.minecraft." + String.valueOf(material).toLowerCase());
+		}
 		return Component.translatable("item.minecraft." + String.valueOf(material).toLowerCase());
 	}
 }

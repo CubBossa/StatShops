@@ -61,10 +61,10 @@ public class PageBaseModule extends BaseModule implements PageModule {
 	@Override
 	public void loadData() {
 		page = shopEntry.getData(DataSlot.IntegerSlot.class, "page", () -> {
-			return new DataSlot.IntegerSlot("page", 1, Message.GUI_ENTRY_FUNCTION_PAGE);
+			return new DataSlot.IntegerSlot("page", 1, Message.GUI_ENTRY_FUNCTION_PAGE_NAME, Message.GUI_ENTRY_FUNCTION_PAGE_LORE);
 		});
 		mode = shopEntry.getData(DataSlot.IntegerSlot.class, "mode", () -> {
-			return new DataSlot.IntegerSlot("mode", 1, Message.NONE);
+			return new DataSlot.IntegerSlot("mode", 1, Message.NONE, Message.NONE);
 		});
 		switch (mode.getData()) {
 			case -1 -> this.newPageProvider = integer -> integer - page.getData();

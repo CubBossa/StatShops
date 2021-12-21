@@ -13,6 +13,8 @@ public interface PaginatedModedShop extends ModedShop, PaginatedShop {
 
 	ShopEntry getEntry(ShopMode mode, int slot);
 
+	boolean removeEntry(ShopEntry entry);
+
 	List<ShopEntry> getEntries(ShopMode shopMode, int shopPage);
 
 	ShopEntry createEntry(ItemStack displayItem, ShopMode shopMode, int slot);

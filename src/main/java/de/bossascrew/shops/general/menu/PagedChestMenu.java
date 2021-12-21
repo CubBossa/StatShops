@@ -9,6 +9,7 @@ import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.statshops.data.Message;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -31,7 +32,8 @@ public class PagedChestMenu {
 	Map<ClickType, ContextConsumer<ClickContext>> defaultClickHandler;
 
 	@Getter
-	private final @Nullable
+	@Setter
+	private @Nullable
 	ContextConsumer<CloseContext> closeHandler;
 
 	private final @Nullable

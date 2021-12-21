@@ -55,21 +55,28 @@ public abstract class DataSlot<T> {
 
 	public static class EquationSlot extends DataSlot<String> {
 
-		public EquationSlot(String storageKey, Component name, List<Component> lore) {
-			super(storageKey, name, lore);
+		public EquationSlot(String storageKey, String data, Message name, Message lore) {
+			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK.getTranslation(Template.of("name", name.getTranslation())),
+					lore.getTranslations(Template.of("current", data)));
+			super.setClickHandler(clickContext -> {
+				//TODO
+			});
+			super.setData(data);
+			super.setDisplayItem(new ItemStack(Material.COMMAND_BLOCK));
 		}
 	}
 
 	public static class ItemStackSlot extends DataSlot<ItemStack> {
 
-		public ItemStackSlot(String storageKey, ItemStack data, Message name) {
+		public ItemStackSlot(String storageKey, ItemStack data, Message name, Message lore) {
 			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK.getTranslation(Template.of("name", name.getTranslation())),
-					Message.GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK_DESC.getTranslations(Template.of("current", TextUtils.toComponent(data))));
+					lore.getTranslations(Template.of("current", TextUtils.toComponent(data))));
 			super.setClickHandler(clickContext -> {
 				ItemStack hand = clickContext.getPlayer().getItemOnCursor();
 				if (hand != null && !hand.getType().equals(Material.AIR)) {
-					setData(hand);
-					setDisplayItem(getData().clone());
+					setData(hand.clone());
+					getData().setAmount(1);
+					setDisplayItem(getData());
 				}
 			});
 			super.setData(data);
@@ -79,14 +86,14 @@ public abstract class DataSlot<T> {
 
 	public static class BooleanSlot extends DataSlot<Boolean> {
 
-		public BooleanSlot(String storageKey, boolean data, Message name) {
+		public BooleanSlot(String storageKey, boolean data, Message name, Message lore) {
 			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL.getTranslation(Template.of("name", name.getTranslation())),
-					Message.GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL_DESC.getTranslations(Template.of("current", "" + data)));
+					lore.getTranslations(Template.of("current", "" + data)));
 			setData(data);
 			super.setClickHandler(clickContext -> {
 				setData(Boolean.FALSE.equals(getData()));
 				super.setDisplayItem(ItemStackUtils.createButtonItemStack(Boolean.TRUE.equals(getData()), Message.NONE, Message.NONE));
-				super.setLore(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL_DESC.getTranslations(Template.of("current", "" + Boolean.TRUE.equals(getData()))));
+				super.setLore(lore.getTranslations(Template.of("current", "" + Boolean.TRUE.equals(getData()))));
 			});
 			super.setDisplayItem(ItemStackUtils.createButtonItemStack(data, Message.NONE, Message.NONE));
 		}
@@ -94,22 +101,22 @@ public abstract class DataSlot<T> {
 
 	public static class IntegerSlot extends DataSlot<Integer> {
 
-		public IntegerSlot(String storageKey, Integer data, Message name) {
+		public IntegerSlot(String storageKey, Integer data, Message name, Message lore) {
 			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.getTranslation(Template.of("name", name.getTranslation())),
-					Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER_DESC.getTranslations(Template.of("current", Component.text(data))));
+					lore.getTranslations(Template.of("current", Component.text(data))));
 			super.setClickHandler(clickContext -> {
 				Player player = clickContext.getPlayer();
 				player.closeInventory();
 				new AnvilGUI.Builder()
 						.plugin(StatShops.getInstance())
-						.text("" + 10)
+						.text("" + getData())
 						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.getLegacyTranslation(Template.of("name", name.getTranslation())))
 						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> {
 							//TODO backhandler
 						}, 1L))
 						.onComplete((p, s) -> {
 							try {
-								setData(Integer.parseInt(s));
+								setData(Integer.parseInt(s.replace(" ", "")));
 								//TODO call backhandler
 								return AnvilGUI.Response.close();
 							} catch (NumberFormatException e) {

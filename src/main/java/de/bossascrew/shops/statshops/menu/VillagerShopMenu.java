@@ -12,9 +12,7 @@ import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.*;
-import de.bossascrew.shops.statshops.shop.currency.DynamicPrice;
 import de.bossascrew.shops.statshops.shop.currency.Price;
-import de.bossascrew.shops.statshops.shop.currency.SimplePrice;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -56,10 +54,8 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 				List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(entry, entry.getShop());
 				double discount = DiscountHandler.getInstance().combineDiscounts(discounts, false);
 
-				Price<?> _pay = tradeModule.getPayPrice(true).duplicate();
-				Price<?> _gain = tradeModule.getGainPrice().duplicate();
-				SimplePrice<?> pay = _pay instanceof DynamicPrice dpay ? dpay.toSimplePrice() : (SimplePrice<?>) _pay;
-				SimplePrice<?> gain = _gain instanceof DynamicPrice dgain ? dgain.toSimplePrice() : (SimplePrice<?>) _gain;
+				Price<?> pay = tradeModule.getPayPrice(true).duplicate();
+				Price<?> gain = tradeModule.getGainPrice().duplicate();
 				pay.applyDiscount(discount);
 
 				balanceMessenger.handleTransaction(new Transaction(Customer.wrap(targetContext.getPlayer()), entry, EntryInteractionType.BUY,

@@ -2,6 +2,8 @@ package de.bossascrew.shops.statshops.shop;
 
 public enum EntryInteractionResult {
 	STATIC,
+	FAIL_NOT_PURCHASABLE,
+	FAIL_NOT_SELLABLE,
 	FAIL_UNKNOWN,
 	FAIL_SHOP_DISABLED,
 	FAIL_VAULT_UNKNOWN,

@@ -63,7 +63,7 @@ public class ListManagerMenu<L extends ListMenuElement> extends PagedChestMenu {
 
 				//Check if interacted object can be edited. Cancel interaction if someone is editing (e.g. prevent delete while someone is editing)
 				if (element instanceof Editable editable) {
-					if (editable.getEditor() != null) {
+					if (editable.getEditor() != null && !(editable.getEditor() instanceof Player p && p.getUniqueId().equals(player.getUniqueId()))) {
 						String name = "unknown";
 						if (editable.getEditor() instanceof Player p) {
 							name = p.getName();

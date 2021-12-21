@@ -38,13 +38,18 @@ public class ShopManagementMenu {
 		ChestMenu chestMenu = new ChestMenu(Message.GUI_MAIN_TITLE, 3);
 		chestMenu.fillMenu();
 
+		// Main menu background texture
+		ItemStack glass_rp = DefaultSpecialItem.EMPTY_LIGHT.createSpecialItem();
+		ItemStackUtils.setCustomModelData(glass_rp, 7122001);
+		chestMenu.setItem(1, 0, glass_rp);
+
 		chestMenu.setItemAndClickHandler(1, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_SHOP,
 				Message.GUI_MAIN_SHOPS_NAME, Message.GUI_MAIN_SHOPS_LORE), clickContext -> openShopsMenu(player, 0));
 		chestMenu.setItemAndClickHandler(1, 2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
 				Message.GUI_MAIN_LIMITS_NAME, Message.GUI_MAIN_LIMITS_LORE), clickContext -> openLimitsMenu(player, 0));
 		chestMenu.setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
 				Message.GUI_MAIN_DISCOUNTS_NAME, Message.GUI_MAIN_DISCOUNTS_LORE), clickContext -> openDiscountsMenu(player, 0));
-		chestMenu.setItemAndClickHandler(1, 6, ItemStackUtils.createItemStack(Material.BOOK,
+		chestMenu.setItemAndClickHandler(1, 6, ItemStackUtils.createItemStack(Material.WRITABLE_BOOK,
 				Message.GUI_MAIN_LANGUAGE_NAME.getTranslation(), Message.GUI_MAIN_LANGUAGE_LORE.getTranslations(Template.of("file",
 						StatShops.getInstance().getShopsConfig().getLanguage() + ".yml"))), clickContext -> {
 			if (clickContext.getAction().equals(ClickType.RIGHT)) {

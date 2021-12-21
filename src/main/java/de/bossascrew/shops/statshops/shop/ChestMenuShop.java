@@ -112,8 +112,13 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 	}
 
 	public @Nullable
-	ShopEntry getEntry(ShopMode shopEntry, int slot) {
-		return modeEntryMap.getOrDefault(shopEntry, new TreeMap<>()).getOrDefault(slot, null);
+	ShopEntry getEntry(ShopMode shopMode, int slot) {
+		return modeEntryMap.getOrDefault(shopMode, new TreeMap<>()).getOrDefault(slot, null);
+	}
+
+	@Override
+	public boolean removeEntry(ShopEntry shopEntry) {
+		return modeEntryMap.getOrDefault(shopEntry.getShopMode(), new TreeMap<>()).remove(shopEntry.getSlot(), shopEntry);
 	}
 
 	@Override
@@ -169,6 +174,8 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 			StatShops.getInstance().log(LoggingPolicy.ERROR, "Tried to move an entry that was not contained in this shop.");
 			return false;
 		}
+		removeEntry(entry);
+
 		boolean override = getEntry(shopMode, slot) != null;
 		entry.setShopMode(shopMode);
 		entry.setSlot(slot);

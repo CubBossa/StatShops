@@ -9,8 +9,6 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.jetbrains.annotations.Nullable;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +59,9 @@ public class DynamicPricingHandler {
 			priceInput = priceInput.replace(template.placeholder(), template.value() + "");
 		}
 
-		priceInput = insertDefaultPrice(priceInput);
+		while (priceInput.contains("<db:")) {
+			priceInput = insertDefaultPrice(priceInput);
+		}
 
 		Expression e = new ExpressionBuilder(priceInput).build();
 		return dynamicPricingProcessor.apply(e.evaluate());
@@ -75,7 +75,10 @@ public class DynamicPricingHandler {
 		String start = "<db:";
 		int index = input.indexOf(start);
 		int endIndex = index;
-		while (endIndex < input.length() && input.charAt(endIndex) != '>') {
+		if (index == -1) {
+			return input;
+		}
+		while (endIndex < input.length() - 1 && input.charAt(endIndex) != '>') {
 			endIndex++;
 		}
 

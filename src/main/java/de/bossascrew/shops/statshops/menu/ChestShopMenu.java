@@ -126,7 +126,7 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 			}
 		}
 
-		fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
+		fillMenu(DefaultSpecialItem.EMPTY_LIGHT_RP);
 
 		Map<Integer, ShopEntry> entries = shop.getModeEntryMap().getOrDefault(shopMode, new TreeMap<>());
 		int pageSlots = shop.getRows() * RowedOpenableMenu.ROW_SIZE;

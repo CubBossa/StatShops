@@ -44,10 +44,11 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 		super(Message.GUI_SHOP_ENTRY, 3);
 		this.entry = entry;
 		this.backHandler = backHandler;
+		this.closeHandler = closeContext -> setEditor(null);
 	}
 
 	private void prepareMenu() {
-		fillMenu(null, DefaultSpecialItem.EMPTY_LIGHT);
+		fillMenu(null, DefaultSpecialItem.EMPTY_LIGHT_RP);
 		setBackHandlerAction(backHandler);
 		//Set deco lore
 		setItemAndClickHandler(0, 0, ItemStackUtils.createItemStack(entry.getDisplayItem().getType(),
@@ -85,7 +86,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 					menu.openInventory(player);
 				});
 
-		setItemAndClickHandler(0, 3, ItemStackUtils.createItemStack(entry.getModule() == null ? new ItemStack(Material.BLACK_STAINED_GLASS) :
+		setItemAndClickHandler(0, 2, ItemStackUtils.createItemStack(entry.getModule() == null ? new ItemStack(Material.BLACK_STAINED_GLASS) :
 						entry.getModule().getDisplayItem(), Message.GUI_ENTRY_SET_FUNCTION_NAME.getTranslation(Template.of("name", entry.getModule() == null ?
 						Message.GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName())),
 				Message.GUI_ENTRY_SET_FUNCTION_LORE.getTranslations(Template.of("function", entry.getModule() == null ?
@@ -95,7 +96,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 					Message.GUI_ENTRY_SET_FUNCTION_TITLE, backContext -> openInventory(clickContext.getPlayer()));
 
 			listMenu.setDisplayPredicate(provider -> allowedModuleTypes == null || allowedModuleTypes.stream().anyMatch(aClass -> aClass.isInstance(provider)));
-			listMenu.setGlowPredicate(provider -> (entry.getModule() == null) ||
+			listMenu.setGlowPredicate(provider -> (entry.getModule() == null && provider.getKey().equals("static")) ||
 					(entry.getModule() != null && entry.getModule().getProvider().getKey().equals(provider.getKey())));
 			listMenu.setClickHandler(cc -> {
 				entry.setModule(cc.getTarget().getModule(entry));
@@ -104,13 +105,17 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 			listMenu.openInventory(clickContext.getPlayer());
 		});
 
-		int[] blackSlots = {4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 12, 21, 22, 23, 24, 25};
+		int[] blackSlots = {3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25};
 		for (int i : blackSlots) {
 			setItem(i, DefaultSpecialItem.EMPTY_DARK.createSpecialItem());
 		}
+		ItemStack glass_rp = DefaultSpecialItem.EMPTY_DARK.createSpecialItem();
+		ItemStackUtils.setCustomModelData(glass_rp, 7122002);
+		setItem(11, glass_rp);
+
 		if (entry.getModule() != null) {
 
-			Iterator<Integer> dataSlots = Arrays.stream(new int[]{4, 5, 6, 7, 8, 13, 14, 15, 16, 17}).iterator();
+			Iterator<Integer> dataSlots = Arrays.stream(new int[]{3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17}).iterator();
 
 			for (DataSlot<?> dataSlot : entry.getModule().getDataSlots()) {
 				if (!dataSlots.hasNext()) {
@@ -133,6 +138,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 
 	@Override
 	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer) {
+		setEditor(player);
 		prepareMenu();
 		return super.openInventorySync(player, inventoryPreparer);
 	}

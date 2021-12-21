@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 public enum DefaultSpecialItem {
 
 	EMPTY_LIGHT(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ", null),
+	EMPTY_LIGHT_RP(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ", null, 7122000),
 	EMPTY_MIDDLE(Material.GRAY_STAINED_GLASS_PANE, " ", null),
 	EMPTY_DARK_SIMPLE(Material.BLACK_STAINED_GLASS_PANE, " ", null),
 	EMPTY_DARK(Material.BLACK_STAINED_GLASS_PANE, " ", null, 7122000),

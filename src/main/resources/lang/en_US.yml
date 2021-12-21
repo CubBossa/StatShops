@@ -304,34 +304,56 @@ manager:
           name: "<white>Trade Vault -> Command"
           lore: "<gray>Buy the execution of a command\n<gray>for vault money."
       function:
-        # Valid placeholders
-        # - in name: <name>
-        # - in lore: <current>
+        # Valid placeholders: <name>
         type:
-          bool:
-            name: "<white>Boolean value: <name>"
-            lore: "<gray>Current value: <gold><current>"
-          int:
-            name: "<white>Integer value: <name>"
-            lore: "<gray>Current value: <gold><current>"
-          equation:
-            name: "<white>Term value: <name>"
-            lore: "<gray>Current: <gold><current>\n<gray>Terms are mathematical expressions\n<gray>like \"(3 + 5) * <db:diamond>\""
-          string:
-            name: "<white>String value: <name>"
-            lore: "<gray>Current: <gold><current>"
-          itemstack:
-            name: "<white>Item value: <name>"
-            lore: "<gray>Current: <gold><current>"
+          bool: "<white>Boolean: <name>"
+          int: "<white>Integer: <name>"
+          equation: "<white>Term: <name>"
+          string: "<white>String: <name>"
+          itemstack: "<white>Item: <name>"
+        # Valid placeholders in lore: <current>
         data:
           # Page module
-          page: "Page"
+          page:
+            name: "Page"
+            lore: "<gray>Current: <gold><current>\n<gray>The amount of pages."
           # Trade module
-          purchasable: "Purchasable"
-          purchasable_stacked: "Purchasable stacked"
-          sellable: "Sellable"
-          sellable_stacked: "Sellable stacked"
-
+          purchasable:
+            name: "Purchasable"
+            lore: "<gray>If this entry can be purchased."
+          purchasable_stacked:
+            name: "Purchasable stacked"
+            lore: "<gray>If this entry can be purchased\n<gray>in stacks."
+          sellable:
+            name: "Sellable"
+            lore: "<gray>If customers can sell items on\n<gray>this entry."
+          sellable_stacked:
+            name: "Sellable stacked"
+            lore: "<gray>If customers can sell items as\n<gray>stacks on this entry."
+          gain_item:
+            name: "Article"
+            lore: "<gray>The item that will be sold\n<gray>to the customer."
+          buy_price_item:
+            name: "Buy Price Item"
+            lore: "<gray>The item that the customer\n<gray>pays to get the article."
+          sell_price_item:
+            name: "Sell Price Item"
+            lore: "<gray>The item that the customer\n<gray>gets when selling the article.\n\n<gray>Only necessary when \"sellable\"\n<gray>is active."
+          gain_amount:
+            name: "Article Amount"
+            lore: "<gray>Current: <gold><current>\n<gray>The amount of articles to sell in\n<gray>one interaction with the entry.\n<gray>Most likely 1."
+          buy_price_amount:
+            name: "Buy Price Amount"
+            lore: "<gray>Current: <gold><current>\n<gray>The amount of pay items to\n<gray>pay to get the article."
+          sell_price_amount:
+            name: "Sell Price Item"
+            lore: "<gray>Current: <gold><current>\n<gray>The amount of sell price items\n<gray>that the customer gets when selling\n<gray>the article.\n\n<gray>Only necessary when \"sellable\"\n<gray>is active."
+          buy_price_equation:
+            name: "Buy Price Equation"
+            lore: "<gray>Current: <gold><current>\n<gray>The amount of pay items to\n<gray>pay to get the article.\n\n<gray>You may want to use an external\n<gray>database for prices. Reference\n<gray>entries with <white><db:diamond></white> for example."
+          sell_price_equation:
+            name: "Sell Price Equation"
+            lore: "<gray>Current: <gold><current>\n<gray>The amount of sell price items\n<gray>that the customer gets when selling\n<gray>the article.\n\n<gray>You may want to use an external\n<gray>database for prices. Reference\n<gray>entries with <white><db:diamond></white> for example."
 
     limits:
       title: "Create and manage shop limits"

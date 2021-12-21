@@ -10,8 +10,7 @@ import de.bossascrew.shops.general.menu.ListMenuElementHolder;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.hook.VaultHook;
-import de.bossascrew.shops.statshops.shop.currency.DynamicPrice;
-import de.bossascrew.shops.statshops.shop.currency.SimplePrice;
+import de.bossascrew.shops.statshops.shop.currency.Price;
 import de.bossascrew.shops.statshops.shop.entry.CloseModule;
 import de.bossascrew.shops.statshops.shop.entry.PageBaseModule;
 import de.bossascrew.shops.statshops.shop.entry.TradeBaseModule;
@@ -81,26 +80,26 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 	public static TradeModule<ItemStack, ItemStack> tradeItemItem(ShopEntry entry, ItemStack gain, ItemStack pay) {
 		return new TradeBaseModule.TradeItemItem(entry, TRADE_ITEM_ITEM_PROVIDER,
-				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
-				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, gain.getAmount(), gain));
+				new Price<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
+				new Price<>(CurrencyHandler.CURRENCY_ITEM, gain.getAmount(), gain));
 	}
 
 	public static TradeModule<Void, ItemStack> tradeItemMoney(ShopEntry entry, ItemStack article, double amount) {
 		return new TradeBaseModule<>(entry, TRADE_ITEM_VAULT_PROVIDER,
-				new SimplePrice<>(VaultHook.CURRENCY_VAULT, amount, null),
-				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, article.getAmount(), article));
+				new Price<>(VaultHook.CURRENCY_VAULT, amount, null),
+				new Price<>(CurrencyHandler.CURRENCY_ITEM, article.getAmount(), article));
 	}
 
 	public static TradeModule<Void, ItemStack> tradeItemMoney(ShopEntry entry, ItemStack article, String amount) {
 		return new TradeBaseModule<>(entry, TRADE_ITEM_VAULT_PROVIDER,
-				new DynamicPrice<>(VaultHook.CURRENCY_VAULT, amount, null),
-				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, article.getAmount(), article));
+				new Price<>(VaultHook.CURRENCY_VAULT, amount, null),
+				new Price<>(CurrencyHandler.CURRENCY_ITEM, article.getAmount(), article));
 	}
 
 	public static TradeModule<Void, String> tradeCmdMoney(ShopEntry entry, String cmd, int cmdAmount, double amount) {
 		TradeModule<Void, String> tm = new TradeBaseModule<>(entry, TRADE_CMD_VAULT_PROVIDER,
-				new SimplePrice<>(VaultHook.CURRENCY_VAULT, amount, null),
-				new SimplePrice<>(CurrencyHandler.CURRENCY_COMMAND, cmdAmount, cmd));
+				new Price<>(VaultHook.CURRENCY_VAULT, amount, null),
+				new Price<>(CurrencyHandler.CURRENCY_COMMAND, cmdAmount, cmd));
 		tm.setSellable(false);
 		tm.setPurchasableStacked(false);
 		return tm;
@@ -108,19 +107,19 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 	public static TradeModule<ItemStack, String> tradeCmdItem(ShopEntry entry, String cmd, int cmdAmount, ItemStack pay) {
 		TradeModule<ItemStack, String> tm = new TradeBaseModule<>(entry, TRADE_CMD_ITEM_PROVIDER,
-				new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
-				new SimplePrice<>(CurrencyHandler.CURRENCY_COMMAND, cmdAmount, cmd));
+				new de.bossascrew.shops.statshops.shop.currency.Price<>(CurrencyHandler.CURRENCY_ITEM, pay.getAmount(), pay),
+				new de.bossascrew.shops.statshops.shop.currency.Price<>(CurrencyHandler.CURRENCY_COMMAND, cmdAmount, cmd));
 		tm.setSellable(false);
 		tm.setPurchasableStacked(false);
 		return tm;
 	}
 
-	public static SimplePrice<ItemStack> itemPrice(int amount, ItemStack stack) {
-		return new SimplePrice<>(CurrencyHandler.CURRENCY_ITEM, amount, stack);
+	public static Price<ItemStack> itemPrice(int amount, ItemStack stack) {
+		return new Price<>(CurrencyHandler.CURRENCY_ITEM, amount, stack);
 	}
 
-	public static SimplePrice<Void> moneyPrice(double amount) {
-		return new SimplePrice<>(VaultHook.CURRENCY_VAULT, amount, null);
+	public static Price<Void> moneyPrice(double amount) {
+		return new Price<>(VaultHook.CURRENCY_VAULT, amount, null);
 	}
 
 	//TODO andere defaults

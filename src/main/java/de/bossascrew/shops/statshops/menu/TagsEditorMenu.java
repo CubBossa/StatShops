@@ -22,7 +22,8 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-public class TagsEditorMenu<T extends Editable<Player> & Taggable> extends PagedChestMenu implements EditorMenu<Player> {
+public class TagsEditorMenu<T extends Editable<Player> & Taggable> extends PagedChestMenu implements
+		EditorMenu<Player> {
 
 	private final T taggable;
 
@@ -34,16 +35,18 @@ public class TagsEditorMenu<T extends Editable<Player> & Taggable> extends Paged
 	public TagsEditorMenu(T taggable, Component title,
 						  Message newTagTitle, Message newTagName, Message newTagLore, Message confirmRemove,
 						  ContextConsumer<BackContext> backHandler) {
-		super(title, 3, null, closeContext -> {
-			if (taggable instanceof DatabaseObject databaseObject) {
-				databaseObject.saveToDatabase();
-			}
-		}, backHandler);
+		super(title, 3, null, null, backHandler);
 		this.taggable = taggable;
 		this.newTagTitle = newTagTitle;
 		this.newTagName = newTagName;
 		this.newTagLore = newTagLore;
 		this.confirmRemove = confirmRemove;
+		this.setCloseHandler(closeContext -> {
+			setEditor(null);
+			if (taggable instanceof DatabaseObject databaseObject) {
+				databaseObject.saveToDatabase();
+			}
+		});
 	}
 
 	public void prepareMenu() {
@@ -94,6 +97,7 @@ public class TagsEditorMenu<T extends Editable<Player> & Taggable> extends Paged
 					Message.GENERAL_EDITABLE_CURRENTLY_EDITED.getTranslation(Template.of("editor", getEditor().getName())));
 			return;
 		}
+		setEditor(player);
 		prepareMenu();
 		super.openInventory(player, page);
 	}

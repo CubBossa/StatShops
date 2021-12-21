@@ -57,6 +57,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 		this.backHandler = backHandler;
 		//Save all changed items before closing menu
 		this.closeHandler = closeContext -> {
+			setEditor(null);
 			if (!shopEditor.isFreezeItems()) {
 				shopEditor.setFreezeItems(true);
 				handleFreeze();
@@ -124,7 +125,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 				shopEditor.openInventory(clickContext.getPlayer(), shopMode.getNext(), shopPage);
 			}
 		});
-		setItemAndClickHandlerBottom(0, 4, getButton(!shopEditor.isFreezeItems(), Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
+		setItemAndClickHandlerBottom(0, 4, ItemStackUtils.createButtonItemStack(!shopEditor.isFreezeItems(), Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
 				Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE), clickContext -> {
 
 			if (shopEditor.isFreezeItems()) {
@@ -134,7 +135,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 			}
 
 			shopEditor.setFreezeItems(!shopEditor.isFreezeItems());
-			setItemBottom(0, 4, getButton(!shopEditor.isFreezeItems(), Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
+			setItemBottom(0, 4, ItemStackUtils.createButtonItemStack(!shopEditor.isFreezeItems(), Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
 					Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE));
 			refresh(clickContext.getPlayer(), 4 + INDEX_DIFFERENCE + ROW_SIZE);
 		});
@@ -225,6 +226,9 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 				if (entry == null) {
 					ShopEntry unusedEntry = shop.getUnusedEntry(uuid);
 					if (unusedEntry != null) {
+
+						unusedEntry.setSlot(shopSlot);
+						unusedEntry.setShopMode(shopMode);
 						shop.addEntry(shopMode, shopSlot, unusedEntry);
 					}
 				} else {
@@ -262,7 +266,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 
 	public void openTemplateApplyMenu(Player player, EntryTemplate template) {
 		BottomTopChestMenu menu = new BottomTopChestMenu(Message.GUI_TEMPLATES_APPLY.getTranslation(Template.of("name", template.getName())), shop.getRows(), 1);
-		menu.fillMenu(DefaultSpecialItem.EMPTY_LIGHT);
+		menu.fillMenu(DefaultSpecialItem.EMPTY_LIGHT_RP);
 		menu.fillBottom();
 		int dif = shopPage * INDEX_DIFFERENCE;
 		for (int i = 0; i < shop.getRows() * ROW_SIZE; i++) {
@@ -282,12 +286,6 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 		menu.setItemAndClickHandlerBottom(ROW_SIZE + 6, DefaultSpecialItem.DECLINE_RP, clickContext -> openInventory(player));
 		menu.setItemBottom(0, 5, DefaultSpecialItem.EMPTY_DARK_RP.createSpecialItem());
 		menu.openInventory(player);
-	}
-
-	private ItemStack getButton(boolean val, Message name, Message lore) {
-		return ItemStackUtils.createItemStack(val ? Material.LIME_DYE : Material.GRAY_DYE,
-				name.getTranslation(Template.of("value", val + "")),
-				lore.getTranslations(Template.of("value", val + "")));
 	}
 
 	private ItemStack getDefaultModeItem(ShopMode shopMode) {

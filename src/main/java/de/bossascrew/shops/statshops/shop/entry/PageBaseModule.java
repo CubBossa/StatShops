@@ -21,8 +21,8 @@ public class PageBaseModule extends BaseModule implements PageModule {
 	private final Consumer3<Customer, ShopEntry, Integer> openPageHandler;
 	private Function<Integer, Integer> newPageProvider = null;
 
-	private DataSlot.IntegerSlot mode;
-	private DataSlot.IntegerSlot page;
+	private DataSlot.NumberSlot mode;
+	private DataSlot.NumberSlot page;
 
 	public PageBaseModule(EntryModuleHandler.EntryModuleProvider provider, ShopEntry shopEntry, Consumer3<Customer, ShopEntry, Integer> openPageHandler) {
 		super(provider, shopEntry);
@@ -60,16 +60,16 @@ public class PageBaseModule extends BaseModule implements PageModule {
 
 	@Override
 	public void loadData() {
-		page = shopEntry.getData(DataSlot.IntegerSlot.class, "page", () -> {
-			return new DataSlot.IntegerSlot("page", 1, Message.GUI_ENTRY_FUNCTION_PAGE_NAME, Message.GUI_ENTRY_FUNCTION_PAGE_LORE);
+		page = shopEntry.getData(DataSlot.NumberSlot.class, "page", () -> {
+			return new DataSlot.NumberSlot("page", 1., Message.GUI_ENTRY_FUNCTION_PAGE_NAME, Message.GUI_ENTRY_FUNCTION_PAGE_LORE);
 		});
-		mode = shopEntry.getData(DataSlot.IntegerSlot.class, "mode", () -> {
-			return new DataSlot.IntegerSlot("mode", 1, Message.NONE, Message.NONE);
+		mode = shopEntry.getData(DataSlot.NumberSlot.class, "mode", () -> {
+			return new DataSlot.NumberSlot("mode", 1., Message.NONE, Message.NONE);
 		});
-		switch (mode.getData()) {
-			case -1 -> this.newPageProvider = integer -> integer - page.getData();
-			case 0 -> this.newPageProvider = integer -> page.getData();
-			case 1 -> this.newPageProvider = integer -> integer + page.getData();
+		switch (mode.getData().intValue()) {
+			case -1 -> this.newPageProvider = integer -> (int) (integer - page.getData());
+			case 0 -> this.newPageProvider = integer -> page.getData().intValue();
+			case 1 -> this.newPageProvider = integer -> (int) (integer + page.getData());
 		}
 	}
 

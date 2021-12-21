@@ -71,7 +71,7 @@ public class Price<T> implements Comparable<Price<?>> {
 
 
 	public boolean canGain(Customer customer) {
-		return true; //TODO
+		return true; //TODO in currency ein lower limit, ein upper limit und eine transaction schwelle (0$ zb) definieren
 	}
 
 

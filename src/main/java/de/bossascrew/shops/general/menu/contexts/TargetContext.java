@@ -19,4 +19,9 @@ public class TargetContext<A, T> extends ActionContext<A> {
 		super(player, itemStack, slot, action, cancelled);
 		this.target = target;
 	}
+
+	public TargetContext(ActionContext<A> clickContext, T target) {
+		super(clickContext.getPlayer(), clickContext.getItemStack(), clickContext.getSlot(), clickContext.getAction(), clickContext.isCancelled());
+		this.target = target;
+	}
 }

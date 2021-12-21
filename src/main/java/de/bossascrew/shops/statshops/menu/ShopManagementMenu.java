@@ -43,13 +43,13 @@ public class ShopManagementMenu {
 		ItemStackUtils.setCustomModelData(glass_rp, 7122001);
 		chestMenu.setItem(1, 0, glass_rp);
 
-		chestMenu.setItemAndClickHandler(1, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_SHOP,
-				Message.GUI_MAIN_SHOPS_NAME, Message.GUI_MAIN_SHOPS_LORE), clickContext -> openShopsMenu(player, 0));
 		chestMenu.setItemAndClickHandler(1, 2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
 				Message.GUI_MAIN_LIMITS_NAME, Message.GUI_MAIN_LIMITS_LORE), clickContext -> openLimitsMenu(player, 0));
 		chestMenu.setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
 				Message.GUI_MAIN_DISCOUNTS_NAME, Message.GUI_MAIN_DISCOUNTS_LORE), clickContext -> openDiscountsMenu(player, 0));
-		chestMenu.setItemAndClickHandler(1, 6, ItemStackUtils.createItemStack(Material.WRITABLE_BOOK,
+		chestMenu.setItemAndClickHandler(1, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_SHOP,
+				Message.GUI_MAIN_SHOPS_NAME, Message.GUI_MAIN_SHOPS_LORE), clickContext -> openShopsMenu(player, 0));
+		chestMenu.setItemAndClickHandler(1, 5, ItemStackUtils.createItemStack(Material.WRITABLE_BOOK,
 				Message.GUI_MAIN_LANGUAGE_NAME.getTranslation(), Message.GUI_MAIN_LANGUAGE_LORE.getTranslations(Template.of("file",
 						StatShops.getInstance().getShopsConfig().getLanguage() + ".yml"))), clickContext -> {
 			if (clickContext.getAction().equals(ClickType.RIGHT)) {
@@ -62,7 +62,7 @@ public class ShopManagementMenu {
 						return;
 					}
 					Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOAD_ERROR);
-					chestMenu.setItem(1, 6, DefaultSpecialItem.ERROR.createSpecialItem());
+					chestMenu.setItem(1, 5, DefaultSpecialItem.ERROR.createSpecialItem());
 				});
 			} else if (clickContext.getAction().equals(ClickType.LEFT)) {
 				player.closeInventory();
@@ -80,7 +80,7 @@ public class ShopManagementMenu {
 				});
 			}
 		});
-		chestMenu.setItemAndClickHandler(1, 7, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_WEBINTERFACE,
+		chestMenu.setItemAndClickHandler(1, 6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_WEBINTERFACE,
 				Message.GUI_MAIN_WEBINTERFACE_NAME, Message.GUI_MAIN_WEBINTERFACE_LORE), clickContext -> {
 			player.closeInventory();
 			Customer customer = Customer.wrap(player);

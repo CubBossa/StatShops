@@ -59,7 +59,7 @@ public class TestDatabase implements Database, LogDatabase {
 		meta.addEnchant(Enchantment.ARROW_INFINITE, 2, true);
 		article.setItemMeta(meta);
 
-		entry1.setModule(EntryModuleHandler.tradeItemItem(entry1, article, new ItemStack(Material.EMERALD, 3)));
+		entry1.setModule(EntryModuleHandler.getInstance().getEntryModules().get("trade_item").getModule(entry1));
 		entry1.addTag("test");
 		s1.addEntry(ShopHandler.getInstance().getShopModes().get(0), 0, entry1);
 
@@ -70,7 +70,8 @@ public class TestDatabase implements Database, LogDatabase {
 		pmeta.setBasePotionData(new PotionData(PotionType.SPEED));
 		article2.setItemMeta(pmeta);
 
-		entry2.setModule(EntryModuleHandler.tradeItemMoney(entry2, article2, "6 / 2 * <db:diamond>"));
+		entry2.setModule(EntryModuleHandler.getInstance().getEntryModules().get("trade_item").getModule(entry2));
+		//entry2.setModule(EntryModuleHandler.tradeItemMoney(entry2, article2, "6 / 2 * <db:diamond>"));
 		entry2.addTag("test");
 		s1.addEntry(ShopHandler.getInstance().getShopModes().get(0), 1, entry2);
 
@@ -78,7 +79,8 @@ public class TestDatabase implements Database, LogDatabase {
 
 		Shop s3 = new VillagerShop("<dark_purple>Villager Shop", UUID.randomUUID());
 		ShopEntry entry = createEntry(UUID.randomUUID(), s3, new ItemStack(Material.MINECART), ShopHandler.getInstance().getShopModes().get(0), 0);
-		entry.setModule(EntryModuleHandler.tradeItemItem(entry, new ItemStack(Material.MINECART), new ItemStack(Material.EMERALD, 2)));
+		entry.setModule(EntryModuleHandler.getInstance().getEntryModules().get("trade_item").getModule(entry));
+		//entry.setModule(EntryModuleHandler.tradeItemItem(entry, new ItemStack(Material.MINECART), new ItemStack(Material.EMERALD, 2)));
 		entry.addTag("test");
 		s3.newEntry(0, entry);
 

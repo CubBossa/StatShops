@@ -1,6 +1,7 @@
 package de.bossascrew.shops.general.handler;
 
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.util.ExperienceManager;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
@@ -8,6 +9,7 @@ import de.bossascrew.shops.statshops.shop.currency.Currency;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -80,7 +82,7 @@ public class CurrencyHandler {
 			return true;
 		}
 	};
-	public static Currency<String> CURRENCY_COMMAND = new Currency<String>("Command: <currency>", "Command: <currency>", (aDouble, s) -> Component.text(s)) {
+	public static Currency<String> CURRENCY_COMMAND = new Currency<>("Command: <currency>", "Command: <currency>", (aDouble, s) -> Component.text(s)) {
 		@Override
 		public double applyDiscount(double amount, double discount) {
 			return (int) (amount * discount);
@@ -104,7 +106,7 @@ public class CurrencyHandler {
 			return false;
 		}
 	};
-	public static Currency<String> CURRENCY_CONSOLE_COMMAND = new Currency<String>("Command: <currency>", "Command: <currency>", (aDouble, s) -> Component.text(s)) {
+	public static Currency<String> CURRENCY_CONSOLE_COMMAND = new Currency<>("<amount>x Command: <currency>", "<amount>x Command: <currency>", (aDouble, s) -> Component.text(s)) {
 		@Override
 		public double applyDiscount(double amount, double discount) {
 			return (int) (amount * discount);
@@ -126,6 +128,32 @@ public class CurrencyHandler {
 		@Override
 		public boolean removeAmount(Customer customer, double amount, String object) {
 			return false;
+		}
+	};
+	public static final Currency<Void> CURRENCY_EXP = new Currency<Void>("<amount> Exp", "<st><amount></st> <amount_dc> Exp", (aDouble, unused) -> Component.text("Exp")) { //TODO config
+
+		@Override
+		public double applyDiscount(double amount, double discount) {
+			return amount * discount; //TODO max  2,147,483,647;
+		}
+
+		@Override
+		public double getAmount(Customer customer, Void object) {
+			return customer.getPlayer().getExp();
+		}
+
+		@Override
+		public boolean addAmount(Customer customer, double amount, Void object) {
+			Player player = customer.getPlayer();
+			player.setExp((float) (player.getExp() + amount));
+			return true;
+		}
+
+		@Override
+		public boolean removeAmount(Customer customer, double amount, Void object) {
+			Player player = customer.getPlayer();
+			player.setExp((float) (player.getExp() - amount));
+			return true;
 		}
 	};
 

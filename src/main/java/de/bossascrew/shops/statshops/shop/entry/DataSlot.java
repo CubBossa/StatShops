@@ -1,7 +1,7 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
-import de.bossascrew.shops.general.menu.contexts.ClickContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
+import de.bossascrew.shops.general.menu.contexts.TargetContext;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
@@ -15,10 +15,10 @@ import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
@@ -26,20 +26,20 @@ import java.util.function.Consumer;
 @Setter
 public abstract class DataSlot<T> {
 
-	//TODO messages mit lore, damit man zb erklären kann wieso man das erkaufte item seperat setzen kann
-
 	private final String storageKey;
 	private ItemStack displayItem = new ItemStack(Material.BARRIER);
-	private Component name;
-	private List<Component> lore;
-	private ContextConsumer<ClickContext> clickHandler = c -> {
+	private final Message typeMessage;
+	private Message name;
+	private Message lore;
+	private ContextConsumer<TargetContext<ClickType, Runnable>> clickHandler = c -> {
 	};
 	private @Nullable T data;
 	private Consumer<T> updateHandler = t -> {
 	};
 
-	public DataSlot(String storageKey, Component name, List<Component> lore) {
+	public DataSlot(String storageKey, Message typeMessage, Message name, Message lore) {
 		this.storageKey = storageKey;
+		this.typeMessage = typeMessage;
 		this.name = name;
 		this.lore = lore;
 	}
@@ -50,14 +50,14 @@ public abstract class DataSlot<T> {
 	}
 
 	public ItemStack getDisplayItem() {
-		return ItemStackUtils.setNameAndLore(displayItem, name, lore);
+		return ItemStackUtils.setNameAndLore(displayItem, typeMessage.getTranslation(Template.of("name", name.getTranslation())),
+				lore.getTranslations(Template.of("current", "" + data)));
 	}
 
 	public static class EquationSlot extends DataSlot<String> {
 
 		public EquationSlot(String storageKey, String data, Message name, Message lore) {
-			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK.getTranslation(Template.of("name", name.getTranslation())),
-					lore.getTranslations(Template.of("current", data)));
+			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION, name, lore);
 			super.setClickHandler(clickContext -> {
 				//TODO
 			});
@@ -69,8 +69,7 @@ public abstract class DataSlot<T> {
 	public static class ItemStackSlot extends DataSlot<ItemStack> {
 
 		public ItemStackSlot(String storageKey, ItemStack data, Message name, Message lore) {
-			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK.getTranslation(Template.of("name", name.getTranslation())),
-					lore.getTranslations(Template.of("current", TextUtils.toComponent(data))));
+			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK, name, lore);
 			super.setClickHandler(clickContext -> {
 				ItemStack hand = clickContext.getPlayer().getItemOnCursor();
 				if (hand != null && !hand.getType().equals(Material.AIR)) {
@@ -87,23 +86,20 @@ public abstract class DataSlot<T> {
 	public static class BooleanSlot extends DataSlot<Boolean> {
 
 		public BooleanSlot(String storageKey, boolean data, Message name, Message lore) {
-			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL.getTranslation(Template.of("name", name.getTranslation())),
-					lore.getTranslations(Template.of("current", "" + data)));
+			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL, name, lore);
 			setData(data);
 			super.setClickHandler(clickContext -> {
 				setData(Boolean.FALSE.equals(getData()));
 				super.setDisplayItem(ItemStackUtils.createButtonItemStack(Boolean.TRUE.equals(getData()), Message.NONE, Message.NONE));
-				super.setLore(lore.getTranslations(Template.of("current", "" + Boolean.TRUE.equals(getData()))));
 			});
 			super.setDisplayItem(ItemStackUtils.createButtonItemStack(data, Message.NONE, Message.NONE));
 		}
 	}
 
-	public static class IntegerSlot extends DataSlot<Integer> {
+	public static class NumberSlot extends DataSlot<Double> {
 
-		public IntegerSlot(String storageKey, Integer data, Message name, Message lore) {
-			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.getTranslation(Template.of("name", name.getTranslation())),
-					lore.getTranslations(Template.of("current", Component.text(data))));
+		public NumberSlot(String storageKey, Double data, Message name, Message lore) {
+			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER, name, lore);
 			super.setClickHandler(clickContext -> {
 				Player player = clickContext.getPlayer();
 				player.closeInventory();
@@ -111,21 +107,23 @@ public abstract class DataSlot<T> {
 						.plugin(StatShops.getInstance())
 						.text("" + getData())
 						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.getLegacyTranslation(Template.of("name", name.getTranslation())))
-						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> {
-							//TODO backhandler
-						}, 1L))
+						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> clickContext.getTarget().run(), 1L))
 						.onComplete((p, s) -> {
 							try {
-								setData(Integer.parseInt(s.replace(" ", "")));
-								//TODO call backhandler
+								setData(Double.parseDouble(s.replace(" ", "")));
+								clickContext.getTarget().run();
 								return AnvilGUI.Response.close();
 							} catch (NumberFormatException e) {
-								return AnvilGUI.Response.text("Lol" /*TODO*/);
+								return AnvilGUI.Response.text("" + getData());
 							}
 						}).open(player);
 			});
 			super.setData(data);
-			super.setDisplayItem(new ItemStack(Material.PAPER, Integer.min(Integer.max(1, data), 64)));
+			super.setDisplayItem(new ItemStack(Material.PAPER, Integer.min(Integer.max(1, data.intValue()), 64)));
+		}
+
+		public void setData(int data) {
+			super.setData((double) data);
 		}
 	}
 }

@@ -278,10 +278,15 @@ manager:
         name: "<name>"
         # Valid placeholders: <function>
         lore: "<gray>Click to choose a function\n<gray>for this Shop Entry.\n\n<gray>Current: <function>"
+      set_costs:
+        title: "Choose costs"
       defaults:
         static:
           name: "<white>Static Item"
           lore: "<gray>Simply does nothing."
+        close:
+          name: "<white>Close Shop"
+          lore: "<gray>Closes the shop window."
         next_page:
           name: "<white>Next Page"
           lore: "<gray>Turns n pages ahead."
@@ -291,18 +296,22 @@ manager:
         exact_page:
           name: "<white>Exact Page"
           lore: "<gray>Opens an exact page."
-        trade_item_item:
-          name: "<white>Trade Item <-> Item"
-          lore: "<gray>Trades items with other items."
-        trade_item_vault:
-          name: "<white>Trade Item <-> Money"
-          lore: "<gray>Trades items for vault money."
-        trade_cmd_item:
-          name: "<white>Trade Item -> Command"
-          lore: "<gray>Buy the execution of a command\n<gray>for ingame items."
-        trade_cmd_vault:
-          name: "<white>Trade Vault -> Command"
-          lore: "<gray>Buy the execution of a command\n<gray>for vault money."
+        article_item:
+          name: "<white>Buy Item"
+          lore: "<gray>Simply buy items."
+        article_cmd:
+          name: "<white>Buy Commands"
+          lore: "<gray>Buy the execution of a command."
+        costs_item:
+          name: "<white>Item Costs"
+          lore: "<gray>Pay items to buy articles."
+        costs_xp:
+          name: "<white>XP Costs"
+          lore: "<gray>Pay XP to buy articles."
+        costs_vault:
+          name: "<white>Money Costs"
+          lore: "<gray>Pay money to buy articles."
+
       function:
         # Valid placeholders: <name>
         type:

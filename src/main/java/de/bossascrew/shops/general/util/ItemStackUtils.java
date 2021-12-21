@@ -144,7 +144,7 @@ public class ItemStackUtils {
 		return itemStack;
 	}
 
-	public void addLorePrice(List<Component> existingLore, TradeModule<?, ?> tradeModule, double discount) {
+	public void addLorePrice(List<Component> existingLore, TradeModule tradeModule, double discount) {
 		if (tradeModule.isPurchasable() && tradeModule.isSellable() && tradeModule.getPayPrice(true).equals(tradeModule.getPayPrice(false)) && discount == 1) {
 			existingLore.addAll(Message.SHOP_ITEM_LORE_BOTH_PRICE.getTranslations(Template.of("price", tradeModule.getPriceDisplay(true, discount))));
 		} else {

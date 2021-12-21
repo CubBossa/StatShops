@@ -1,12 +1,12 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
+import com.google.common.collect.Lists;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.util.EntryInteractionType;
-import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
@@ -17,19 +17,21 @@ import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @Setter
-public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, G> {
+public class TradeBaseModule extends BaseModule implements TradeModule {
 
-	private Price<P> buyPayPrice;
-	private Price<P> sellPayPrice;
-	private Price<G> gainPrice;
+
+	private ArticleSubModule<?> article;
+	private CostsSubModule<?> costs;
 	private final Map<UUID, Transaction> lastTransactions;
 
 	private DataSlot.BooleanSlot purchasable;
@@ -37,23 +39,33 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 	private DataSlot.BooleanSlot purchasableStacked;
 	private DataSlot.BooleanSlot sellableStacked;
 
-	public TradeBaseModule(ShopEntry entry, EntryModuleHandler.EntryModuleProvider provider, Price<P> payPrice, Price<G> gainPrice) {
-		this(entry, provider, payPrice, payPrice, gainPrice);
-	}
-
-	public TradeBaseModule(ShopEntry entry, EntryModuleHandler.EntryModuleProvider provider, Price<P> buyPayPrice, Price<P> sellPayPrice, Price<G> gainPrice) {
+	public TradeBaseModule(ShopEntry entry, EntryModuleHandler.EntryModuleProvider provider, ArticleSubModule<?> article, CostsSubModule<?> costs) {
 		super(provider, entry);
 
-		this.buyPayPrice = buyPayPrice;
-		this.sellPayPrice = sellPayPrice;
-		this.gainPrice = gainPrice;
+		this.article = article;
+		this.costs = costs;
 		this.lastTransactions = new HashMap<>();
 
 		loadData();
 	}
 
-	public Price<P> getPayPrice(boolean buy) {
-		return buy ? buyPayPrice : sellPayPrice;
+	public void setArticle(ArticleSubModule<?> article) {
+		this.article = article;
+		this.article.loadDataSlots(shopEntry);
+	}
+
+	public void setCosts(CostsSubModule<?> costs) {
+		this.costs = costs;
+		this.costs.loadDataSlots(shopEntry);
+	}
+
+	public Price<?> getPayPrice(boolean buy) {
+		return buy ? costs.getBuyPrice() : costs.getSellPrice();
+	}
+
+	@Override
+	public Price<?> getGainPrice() {
+		return article.getPrice();
 	}
 
 	@Override
@@ -63,9 +75,9 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 
 	public Component getPriceDisplay(boolean buy, double discount) {
 		if (buy) {
-			return buyPayPrice.getPriceComponent(discount);
+			return costs.getBuyPrice().getPriceComponent(discount);
 		}
-		return sellPayPrice.getPriceComponent((discount - 1) * -1 + 1);
+		return costs.getSellPrice().getPriceComponent((discount - 1) * -1 + 1);
 	}
 
 	@Override
@@ -75,10 +87,10 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 
 	@Override
 	public DataSlot<?>[] getDataSlots() {
-		return new DataSlot[]{
-				purchasable, purchasableStacked,
-				sellable, sellableStacked
-		};
+		List<DataSlot<?>> data = Lists.newArrayList(purchasable, purchasableStacked, sellable, sellableStacked);
+		data.addAll(article.getDataSlots());
+		data.addAll(costs.getDataSlots());
+		return data.toArray(new DataSlot[0]);
 	}
 
 	@Override
@@ -99,6 +111,9 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 			return new DataSlot.BooleanSlot("sellable_stacked", false,
 					Message.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_NAME, Message.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_LORE);
 		});
+
+		article.loadDataSlots(shopEntry);
+		costs.loadDataSlots(shopEntry);
 	}
 
 	@Override
@@ -107,6 +122,9 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 		shopEntry.storeData(sellable);
 		shopEntry.storeData(purchasableStacked);
 		shopEntry.storeData(sellableStacked);
+
+		article.saveDataSlots(shopEntry);
+		costs.saveDataSlots(shopEntry);
 	}
 
 	@Override
@@ -124,8 +142,8 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 			return EntryInteractionResult.FAIL_NOT_SELLABLE;
 		}
 
-		Price<?> pay = (interactionType.isBuy() ? buyPayPrice : gainPrice).toSimplePrice();
-		Price<?> gain = (interactionType.isBuy() ? gainPrice : sellPayPrice).toSimplePrice();
+		Price<?> pay = (interactionType.isBuy() ? costs.getBuyPrice() : article.getPrice()).toSimplePrice();
+		Price<?> gain = (interactionType.isBuy() ? article.getPrice() : costs.getSellPrice()).toSimplePrice();
 
 		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
 		double discount = DiscountHandler.getInstance().combineDiscounts(discounts, interactionType.isSell());
@@ -196,108 +214,5 @@ public class TradeBaseModule<P, G> extends BaseModule implements TradeModule<P, 
 	@Override
 	public void setSellableStacked(boolean sellableStacked) {
 		this.sellableStacked.setData(sellableStacked);
-	}
-
-	public static class TradeItemItem extends TradeBaseModule<ItemStack, ItemStack> {
-
-		private DataSlot.ItemStackSlot buyPayPriceItem;
-		private DataSlot.ItemStackSlot sellPayPriceItem;
-		private DataSlot.ItemStackSlot gainPriceItem;
-
-		private DataSlot.IntegerSlot gainPriceAmount;
-
-		private DataSlot.IntegerSlot buyPayPriceAmount;
-		private DataSlot.IntegerSlot sellPayPriceAmount;
-		private DataSlot.EquationSlot buyPayEquation;
-		private DataSlot.EquationSlot sellPayEquation;
-
-		public TradeItemItem(ShopEntry entry, EntryModuleHandler.EntryModuleProvider provider, Price<ItemStack> payPrice, Price<ItemStack> gainPrice) {
-			this(entry, provider, payPrice, payPrice.duplicate(), gainPrice);
-		}
-
-		public TradeItemItem(ShopEntry entry, EntryModuleHandler.EntryModuleProvider provider, Price<ItemStack> buyPayPrice, Price<ItemStack> sellPayPrice, Price<ItemStack> gainPrice) {
-			super(entry, provider, buyPayPrice, sellPayPrice, gainPrice);
-		}
-
-		@Override
-		public DataSlot<?>[] getDataSlots() {
-			List<DataSlot<?>> data = new ArrayList<>(Arrays.asList(super.getDataSlots()));
-			data.add(buyPayPriceItem);
-			data.add(sellPayPriceItem);
-			data.add(gainPriceItem);
-
-			//always int
-			data.add(gainPriceAmount);
-			if (StatShops.getInstance().getShopsConfig().isDynamicPricingEnabled()) {
-				data.add(buyPayEquation);
-				data.add(sellPayEquation);
-			} else {
-				data.add(buyPayPriceAmount);
-				data.add(sellPayPriceAmount);
-			}
-			return data.toArray(new DataSlot[0]);
-		}
-
-		@Override
-		public void saveData() {
-			super.saveData();
-			shopEntry.storeData(buyPayPriceItem);
-			shopEntry.storeData(sellPayPriceItem);
-			shopEntry.storeData(gainPriceItem);
-
-			shopEntry.storeData(gainPriceAmount);
-			shopEntry.storeData(buyPayPriceAmount);
-			shopEntry.storeData(sellPayPriceAmount);
-			shopEntry.storeData(buyPayEquation);
-			shopEntry.storeData(sellPayEquation);
-		}
-
-		@Override
-		public void loadData() {
-			super.loadData();
-			buyPayPriceItem = shopEntry.getData(DataSlot.ItemStackSlot.class, "buy_pay_price_item", () -> {
-				return new DataSlot.ItemStackSlot("buy_pay_price_item", getBuyPayPrice().getObject(),
-						Message.GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_LORE);
-			});
-			buyPayPriceItem.setUpdateHandler(itemStack -> getBuyPayPrice().setObject(itemStack));
-			sellPayPriceItem = shopEntry.getData(DataSlot.ItemStackSlot.class, "sell_pay_price_item", () -> {
-				return new DataSlot.ItemStackSlot("sell_pay_price_item", getSellPayPrice().getObject(),
-						Message.GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_LORE);
-			});
-			sellPayPriceItem.setUpdateHandler(itemStack -> getSellPayPrice().setObject(itemStack));
-			gainPriceItem = shopEntry.getData(DataSlot.ItemStackSlot.class, "gain_price_item", () -> {
-				return new DataSlot.ItemStackSlot("gain_price_item", getGainPrice().getObject(),
-						Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_LORE);
-			});
-			gainPriceItem.setUpdateHandler(itemStack -> getGainPrice().setObject(itemStack));
-
-			gainPriceAmount = shopEntry.getData(DataSlot.IntegerSlot.class, "gain_price_amount", () -> {
-				return new DataSlot.IntegerSlot("gain_price_amount", (int) getGainPrice().getAmount(),
-						Message.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_LORE);
-			});
-			gainPriceAmount.setUpdateHandler(integer -> getGainPrice().setAmount(integer));
-
-			buyPayPriceAmount = shopEntry.getData(DataSlot.IntegerSlot.class, "buy_pay_price_amount", () -> {
-				return new DataSlot.IntegerSlot("buy_pay_price_amount", 10,
-						Message.GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_LORE);
-			});
-			buyPayPriceAmount.setUpdateHandler(integer -> getBuyPayPrice().setAmount(integer));
-			sellPayPriceAmount = shopEntry.getData(DataSlot.IntegerSlot.class, "sell_pay_price_amount", () -> {
-				return new DataSlot.IntegerSlot("sell_pay_price_amount", 5,
-						Message.GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_LORE);
-			});
-			sellPayPriceAmount.setUpdateHandler(integer -> getSellPayPrice().setAmount(integer));
-
-			buyPayEquation = shopEntry.getData(DataSlot.EquationSlot.class, "buy_pay_price_equation", () -> {
-				return new DataSlot.EquationSlot("buy_pay_price_equation", "5+5",
-						Message.GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_LORE);
-			});
-			buyPayEquation.setUpdateHandler(s -> getBuyPayPrice().setDynamicPriceString(s));
-			sellPayEquation = shopEntry.getData(DataSlot.EquationSlot.class, "sell_pay_price_equation", () -> {
-				return new DataSlot.EquationSlot("sell_pay_price_equation", "3+2",
-						Message.GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_LORE);
-			});
-			buyPayEquation.setUpdateHandler(s -> getSellPayPrice().setDynamicPriceString(s));
-		}
 	}
 }

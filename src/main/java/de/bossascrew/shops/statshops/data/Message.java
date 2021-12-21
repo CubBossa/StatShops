@@ -242,6 +242,7 @@ public class Message {
 			new Pair<>("name", "<white>Static"));
 	public static final Message GUI_ENTRY_SET_FUNCTION_LORE = new Message("manager.gui.entry.set_function.lore",
 			new Pair<>("function", "<white>Static"));
+	public static final Message GUI_ENTRY_SET_COSTS_TITLE = new Message("manager.gui.entry.set_costs.title");
 
 	public static final Message GUI_ENTRY_FUNCTION_STATIC_NAME = new Message("manager.gui.entry.defaults.static.name");
 	public static final Message GUI_ENTRY_FUNCTION_STATIC_LORE = new Message("manager.gui.entry.defaults.static.lore");
@@ -253,14 +254,16 @@ public class Message {
 	public static final Message GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE = new Message("manager.gui.entry.defaults.next_page.lore");
 	public static final Message GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME = new Message("manager.gui.entry.defaults.exact_page.name");
 	public static final Message GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE = new Message("manager.gui.entry.defaults.exact_page.lore");
-	public static final Message GUI_ENTRY_FUNCTION_TRADE_ITEM_ITEM_NAME = new Message("manager.gui.entry.defaults.trade_item_item.name");
-	public static final Message GUI_ENTRY_FUNCTION_TRADE_ITEM_ITEM_LORE = new Message("manager.gui.entry.defaults.trade_item_item.lore");
-	public static final Message GUI_ENTRY_FUNCTION_TRADE_ITEM_VAULT_NAME = new Message("manager.gui.entry.defaults.trade_item_vault.name");
-	public static final Message GUI_ENTRY_FUNCTION_TRADE_ITEM_VAULT_LORE = new Message("manager.gui.entry.defaults.trade_item_vault.lore");
-	public static final Message GUI_ENTRY_FUNCTION_TRADE_CMD_ITEM_NAME = new Message("manager.gui.entry.defaults.trade_cmd_item.name");
-	public static final Message GUI_ENTRY_FUNCTION_TRADE_CMD_ITEM_LORE = new Message("manager.gui.entry.defaults.trade_cmd_item.lore");
-	public static final Message GUI_ENTRY_FUNCTION_TRADE_CMD_VAULT_NAME = new Message("manager.gui.entry.defaults.trade_cmd_vault.name");
-	public static final Message GUI_ENTRY_FUNCTION_TRADE_CMD_VAULT_LORE = new Message("manager.gui.entry.defaults.trade_cmd_vault.lore");
+	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_ITEM_NAME = new Message("manager.gui.entry.defaults.article_item.name");
+	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_ITEM_LORE = new Message("manager.gui.entry.defaults.article_item.lore");
+	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_CMD_NAME = new Message("manager.gui.entry.defaults.article_cmd.name");
+	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_CMD_LORE = new Message("manager.gui.entry.defaults.article_cmd.lore");
+	public static final Message GUI_ENTRY_FUNCTION_COSTS_ITEM_NAME = new Message("manager.gui.entry.defaults.costs_item.name");
+	public static final Message GUI_ENTRY_FUNCTION_COSTS_ITEM_LORE = new Message("manager.gui.entry.defaults.costs_item.lore");
+	public static final Message GUI_ENTRY_FUNCTION_COSTS_XP_NAME = new Message("manager.gui.entry.defaults.costs_xp.name");
+	public static final Message GUI_ENTRY_FUNCTION_COSTS_XP_LORE = new Message("manager.gui.entry.defaults.costs_xp.lore");
+	public static final Message GUI_ENTRY_FUNCTION_COSTS_VAULT_NAME = new Message("manager.gui.entry.defaults.costs_vault.name");
+	public static final Message GUI_ENTRY_FUNCTION_COSTS_VAULT_LORE = new Message("manager.gui.entry.defaults.costs_vault.lore");
 
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL = new Message("manager.gui.entry.function.type.bool");
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER = new Message("manager.gui.entry.function.type.int");

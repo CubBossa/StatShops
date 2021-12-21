@@ -1,13 +1,16 @@
 package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
+import de.bossascrew.shops.general.handler.SubModulesHandler;
 import de.bossascrew.shops.general.menu.ChestMenu;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.general.menu.EditorMenu;
 import de.bossascrew.shops.general.menu.ListMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
+import de.bossascrew.shops.general.menu.contexts.TargetContext;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
@@ -104,14 +107,26 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 			});
 			listMenu.openInventory(clickContext.getPlayer());
 		});
+		if (entry.getModule() instanceof TradeModule tm) {
+			setItemAndClickHandler(1, 2, tm.getCosts().getProvider().getListDisplayItem(), clickContext -> {
+				ListMenu<SubModulesHandler.CostsSubModuleProvider<?>> listMenu = new ListMenu<>(3, SubModulesHandler.getInstance(),
+						Message.GUI_ENTRY_SET_COSTS_TITLE, backContext -> openInventory(clickContext.getPlayer()));
+				listMenu.setGlowPredicate(s -> tm.getCosts().getProvider().equals(s));
+				listMenu.setClickHandler(cc -> {
+					tm.setCosts(cc.getTarget().getModule(entry));
+					openInventory(cc.getPlayer());
+				});
+				listMenu.openInventory(clickContext.getPlayer());
+			});
+		}
 
-		int[] blackSlots = {3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25};
+		int[] blackSlots = {3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25};
 		for (int i : blackSlots) {
 			setItem(i, DefaultSpecialItem.EMPTY_DARK.createSpecialItem());
 		}
 		ItemStack glass_rp = DefaultSpecialItem.EMPTY_DARK.createSpecialItem();
-		ItemStackUtils.setCustomModelData(glass_rp, 7122002);
-		setItem(11, glass_rp);
+		ItemStackUtils.setCustomModelData(glass_rp, entry.getModule() instanceof TradeModule ? 7122003 : 7122002);
+		setItem(20, glass_rp);
 
 		if (entry.getModule() != null) {
 
@@ -123,12 +138,12 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 					continue;
 				}
 				// Data that cannot be edited via gui
-				if (dataSlot.getDisplayItem() == null) {
+				if (dataSlot == null || dataSlot.getDisplayItem() == null) {
 					continue;
 				}
 				int slot = dataSlots.next();
 				setItemAndClickHandler(slot, dataSlot.getDisplayItem(), clickContext -> {
-					dataSlot.getClickHandler().accept(clickContext);
+					dataSlot.getClickHandler().accept(new TargetContext<>(clickContext, () -> openInventory(clickContext.getPlayer())));
 					setItem(slot, dataSlot.getDisplayItem());
 					refresh(slot);
 				});

@@ -1,0 +1,140 @@
+package de.bossascrew.shops.general.handler;
+
+import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.general.menu.ListMenuElement;
+import de.bossascrew.shops.general.menu.ListMenuElementHolder;
+import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.shop.entry.ArticleSubModule;
+import de.bossascrew.shops.statshops.shop.entry.CostsSubModule;
+import de.bossascrew.shops.statshops.shop.entry.TradeBaseModule;
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+
+public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandler.CostsSubModuleProvider<?>> {
+
+	public static ArticleSubModuleProvider<ItemStack> ARTICLE_ITEM_PROVIDER;
+	public static ArticleSubModuleProvider<String> ARTICLE_CMD_PROVIDER;
+	public static ArticleSubModuleProvider<String> ARTICLE_CONSOLE_CMD_PROVIDER;
+
+	public static CostsSubModuleProvider<ItemStack> COSTS_ITEM_PROVIDER;
+	public static CostsSubModuleProvider<Void> COSTS_XP_PROVIDER;
+
+	@Getter
+	private static SubModulesHandler instance;
+
+	private final Map<String, ArticleSubModuleProvider<?>> articleSubModules;
+	private final Map<String, CostsSubModuleProvider<?>> costsSubModules;
+
+	public SubModulesHandler() {
+		instance = this;
+
+		articleSubModules = new LinkedHashMap<>();
+		costsSubModules = new LinkedHashMap<>();
+	}
+
+	public void registerDefaults() {
+
+		COSTS_ITEM_PROVIDER = registerCostsSubModule("item", new ItemStack(Material.EMERALD), Message.GUI_ENTRY_FUNCTION_COSTS_ITEM_NAME,
+				Message.GUI_ENTRY_FUNCTION_COSTS_ITEM_LORE, (provider, shopEntry) -> new CostsSubModule.ItemCosts(provider));
+		COSTS_XP_PROVIDER = registerCostsSubModule("exp", new ItemStack(Material.EXPERIENCE_BOTTLE), Message.GUI_ENTRY_FUNCTION_COSTS_XP_NAME,
+				Message.GUI_ENTRY_FUNCTION_COSTS_XP_LORE, (provider, shopEntry) -> new CostsSubModule.ExpCosts(provider));
+		//TODO ingot -> mit custom modeldata
+		CostsSubModuleProvider<Void> costs = registerCostsSubModule("vault", new ItemStack(Material.GOLD_INGOT), Message.GUI_ENTRY_FUNCTION_COSTS_VAULT_NAME,
+				Message.GUI_ENTRY_FUNCTION_COSTS_VAULT_LORE, (provider, shopEntry) -> new CostsSubModule.MoneyCosts(provider));
+
+		ARTICLE_ITEM_PROVIDER = registerArticleSubModule("item", new ItemStack(Material.AZURE_BLUET), Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_NAME,
+				Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_LORE, (provider, shopEntry) -> new ArticleSubModule.ItemArticle(provider));
+		ARTICLE_CMD_PROVIDER = registerArticleSubModule("cmd", new ItemStack(Material.REDSTONE), Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_NAME,
+				Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_LORE, (provider, shopEntry) -> new ArticleSubModule.CommandArticle(provider));
+	}
+
+	public <A> ArticleSubModuleProvider<A> registerArticleSubModule(String key, ItemStack itemStack, Message name, Message lore, BiFunction<ArticleSubModuleProvider<A>, ShopEntry, ArticleSubModule<A>> moduleSupplier) {
+		ArticleSubModuleProvider<A> provider = new ArticleSubModuleProvider<>(key, itemStack, name, lore, moduleSupplier);
+		articleSubModules.put(key, provider);
+
+		EntryModuleHandler.getInstance().registerEntryModule("trade_" + key, itemStack, name, lore, (p, entry) -> {
+			return new TradeBaseModule(entry, p, provider.getModule(entry), COSTS_ITEM_PROVIDER.getModule(entry));
+		});
+		return provider;
+	}
+
+	public <A> CostsSubModuleProvider<A> registerCostsSubModule(String key, ItemStack itemStack, Message name, Message lore, BiFunction<CostsSubModuleProvider<A>, ShopEntry, CostsSubModule<A>> moduleSupplier) {
+		CostsSubModuleProvider<A> provider = new CostsSubModuleProvider<>(key, itemStack, name, lore, moduleSupplier);
+		costsSubModules.put(key, provider);
+		return provider;
+	}
+
+	@Override
+	public List<CostsSubModuleProvider<?>> getValues() {
+		return new ArrayList<>(costsSubModules.values());
+	}
+
+	public static class ArticleSubModuleProvider<T> {
+		@Getter
+		private final String key;
+		private final ItemStack itemStack;
+		private final Message name;
+		private final Message lore;
+		private final BiFunction<ArticleSubModuleProvider<T>, ShopEntry, ArticleSubModule<T>> moduleSupplier;
+
+		public ArticleSubModuleProvider(String key, ItemStack itemStack, Message name, Message lore, BiFunction<ArticleSubModuleProvider<T>, ShopEntry, ArticleSubModule<T>> moduleSupplier) {
+			this.key = key;
+			this.itemStack = itemStack;
+			this.name = name;
+			this.lore = lore;
+			this.moduleSupplier = moduleSupplier;
+		}
+
+		public ArticleSubModule<T> getModule(ShopEntry shopEntry) {
+			return moduleSupplier.apply(this, shopEntry);
+		}
+
+		public Component getName() {
+			return name.getTranslation();
+		}
+
+		public ItemStack getListDisplayItem() {
+			return ItemStackUtils.createItemStack(itemStack.clone(), name, lore);
+		}
+	}
+
+	public static class CostsSubModuleProvider<T> implements ListMenuElement {
+		@Getter
+		private final String key;
+		private final ItemStack itemStack;
+		private final Message name;
+		private final Message lore;
+		private final BiFunction<CostsSubModuleProvider<T>, ShopEntry, CostsSubModule<T>> moduleSupplier;
+
+		public CostsSubModuleProvider(String key, ItemStack itemStack, Message name, Message lore, BiFunction<CostsSubModuleProvider<T>, ShopEntry, CostsSubModule<T>> moduleSupplier) {
+			this.key = key;
+			this.itemStack = itemStack;
+			this.name = name;
+			this.lore = lore;
+			this.moduleSupplier = moduleSupplier;
+		}
+
+		public CostsSubModule<T> getModule(ShopEntry shopEntry) {
+			return moduleSupplier.apply(this, shopEntry);
+		}
+
+		@Override
+		public Component getName() {
+			return name.getTranslation();
+		}
+
+		@Override
+		public ItemStack getListDisplayItem() {
+			return ItemStackUtils.createItemStack(itemStack.clone(), name, lore);
+		}
+	}
+}

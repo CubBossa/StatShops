@@ -49,7 +49,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 			}
 			ShopEntry entry = entryMap.get(targetContext.getTarget());
 			if (StatShops.getInstance().getShopsConfig().getTradeMessageFeedback() != TradeMessageType.NONE) {
-				TradeModule<ItemStack, ?> tradeModule = (TradeModule<ItemStack, ?>) entry.getModule();
+				TradeModule tradeModule = (TradeModule) entry.getModule();
 
 				List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(entry, entry.getShop());
 				double discount = DiscountHandler.getInstance().combineDiscounts(discounts, false);
@@ -75,7 +75,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 			//Only works with Currency<ItemStack> for now
 			if (e.getModule() != null && e.getModule() instanceof TradeModule tm && tm.getPayPrice(true).getObject() instanceof ItemStack) {
 
-				Price<ItemStack> payPrice = tm.getPayPrice(true);
+				Price<ItemStack> payPrice = (Price<ItemStack>) tm.getPayPrice(true);
 				ItemStack price = payPrice.getObject();
 				price.setAmount(Integer.min((int) payPrice.getAmount(), 127));
 

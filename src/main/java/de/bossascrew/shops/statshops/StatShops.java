@@ -5,10 +5,7 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.handler.CurrencyHandler;
-import de.bossascrew.shops.general.handler.DynamicPricingHandler;
-import de.bossascrew.shops.general.handler.EntryModuleHandler;
-import de.bossascrew.shops.general.handler.TemplateHandler;
+import de.bossascrew.shops.general.handler.*;
 import de.bossascrew.shops.general.util.ItemFlags;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.itemeditor.ItemEditorCommand;
@@ -75,6 +72,8 @@ public class StatShops extends JavaPlugin {
 	private Database database;
 	@Getter
 	private LogDatabase logDatabase;
+	@Getter
+	private SubModulesHandler subModulesHandler;
 	@Getter
 	private EntryModuleHandler entryModuleHandler;
 	@Getter
@@ -161,9 +160,12 @@ public class StatShops extends JavaPlugin {
 			return defaultValues;
 		});
 
-		// Enable Entry Modules
+		// Enable Entry Modules and Sub modules
 		this.entryModuleHandler = new EntryModuleHandler();
 		this.entryModuleHandler.registerDefaults();
+
+		this.subModulesHandler = new SubModulesHandler();
+		this.subModulesHandler.registerDefaults();
 
 		// Setup ShopHandler and load shops and entries
 		this.shopHandler = new ShopHandler();

@@ -3,9 +3,19 @@ package de.bossascrew.shops.general.entry;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.statshops.shop.Transaction;
 import de.bossascrew.shops.statshops.shop.currency.Price;
+import de.bossascrew.shops.statshops.shop.entry.ArticleSubModule;
+import de.bossascrew.shops.statshops.shop.entry.CostsSubModule;
 import net.kyori.adventure.text.Component;
 
-public interface TradeModule<P, G> extends EntryModule {
+public interface TradeModule extends EntryModule {
+
+	ArticleSubModule<?> getArticle();
+
+	void setArticle(ArticleSubModule<?> article);
+
+	CostsSubModule<?> getCosts();
+
+	void setCosts(CostsSubModule<?> costs);
 
 	boolean isPurchasable();
 
@@ -29,7 +39,7 @@ public interface TradeModule<P, G> extends EntryModule {
 
 	Transaction getLastTransaction(Customer customer);
 
-	Price<P> getPayPrice(boolean buy);
+	Price<?> getPayPrice(boolean buy);
 
-	Price<G> getGainPrice();
+	Price<?> getGainPrice();
 }

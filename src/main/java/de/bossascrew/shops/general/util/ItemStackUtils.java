@@ -272,6 +272,10 @@ public class ItemStackUtils {
 		return entry.getDisplayItem();
 	}
 
+	public ItemStack createItemStack(Material material, int customModelData) {
+		return ItemStackUtils.setCustomModelData(new ItemStack(material), customModelData);
+	}
+
 
 	public ItemStack createItemStack(Material material, String displayName, @Nullable String lore) {
 		if (lore != null) {

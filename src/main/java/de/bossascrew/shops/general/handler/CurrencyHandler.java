@@ -1,10 +1,10 @@
 package de.bossascrew.shops.general.handler;
 
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.util.ExperienceManager;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.StatShopsExtension;
 import de.bossascrew.shops.statshops.shop.currency.Currency;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -165,6 +165,13 @@ public class CurrencyHandler {
 
 		registerCurrency("item", CURRENCY_ITEM);
 		registerCurrency("command", CURRENCY_COMMAND);
+		registerCurrency("console_command", CURRENCY_CONSOLE_COMMAND);
+		registerCurrency("experiencce", CURRENCY_EXP);
+
+		// Registering external currencies
+		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
+			extension.registerCurrencies(this);
+		}
 	}
 
 	public <T> void registerCurrency(String key, Currency<T> currency) {

@@ -139,6 +139,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 				}
 				// Data that cannot be edited via gui
 				if (dataSlot == null || dataSlot.getDisplayItem() == null) {
+					StatShops.getInstance().log(LoggingPolicy.WARN, "Entry was null or could not be displayed.");
 					continue;
 				}
 				int slot = dataSlots.next();

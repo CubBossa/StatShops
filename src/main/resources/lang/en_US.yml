@@ -287,6 +287,9 @@ manager:
         close:
           name: "<white>Close Shop"
           lore: "<gray>Closes the shop window."
+        open_shop:
+          name: "<white>Open Shop"
+          lore: "<gray>Opens another shop."
         next_page:
           name: "<white>Next Page"
           lore: "<gray>Turns n pages ahead."
@@ -320,8 +323,13 @@ manager:
           equation: "<white>Term: <name>"
           string: "<white>String: <name>"
           itemstack: "<white>Item: <name>"
+          shop: "<white>Shop: <name>"
         # Valid placeholders in lore: <current>
         data:
+          # Open Shop module
+          shop:
+            name: "Open Shop"
+            lore: "<gray>Current: <gold><current>\n<gray>The shop to open when interacted."
           # Page module
           page:
             name: "Page"

@@ -13,7 +13,7 @@ import de.bossascrew.shops.statshops.commands.ShopCommand;
 import de.bossascrew.shops.statshops.data.*;
 import de.bossascrew.shops.statshops.handler.*;
 import de.bossascrew.shops.statshops.hook.CitizensHook;
-import de.bossascrew.shops.statshops.hook.VaultHook;
+import de.bossascrew.shops.statshops.hook.VaultExtension;
 import de.bossascrew.shops.statshops.listener.PlayerListener;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -59,6 +59,9 @@ public class StatShops extends JavaPlugin {
 	private static StatShops instance;
 
 	@Getter
+	private static final List<StatShopsExtension> registeredExtensions = new ArrayList<>();
+
+	@Getter
 	private BukkitCommandManager commandManager;
 	private BukkitAudiences bukkitAudiences;
 	@Getter
@@ -94,7 +97,7 @@ public class StatShops extends JavaPlugin {
 	private static boolean loading = true;
 
 	@Getter
-	private VaultHook vaultHook = null;
+	private VaultExtension vaultExtension = null;
 	@Getter
 	private CitizensHook citizensHook = null;
 
@@ -107,6 +110,20 @@ public class StatShops extends JavaPlugin {
 	@Override
 	public void onEnable() {
 
+		// Initialize Vault
+		if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+			vaultExtension = new VaultExtension(this);
+			if (!vaultExtension.setupEconomy()) {
+				vaultExtension = null;
+			}
+			if (vaultExtension != null) {
+				registerExtension(vaultExtension);
+				log(LoggingPolicy.INFO, "Vault found and successfully hooked.");
+			} else {
+				log(LoggingPolicy.WARN, "Vault found but could not enable economy.");
+			}
+		}
+
 		// Initialize Kyori Adventure
 		this.bukkitAudiences = BukkitAudiences.create(this);
 		this.miniMessage = MiniMessage.get();
@@ -118,19 +135,6 @@ public class StatShops extends JavaPlugin {
 
 		this.currencyHandler = new CurrencyHandler();
 
-		// Initialize Vault
-		if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
-			vaultHook = new VaultHook(this);
-			if (vaultHook.setupEconomy()) {
-				vaultHook = null;
-			}
-			if (isVaultInstalled()) {
-				log(LoggingPolicy.INFO, "Vault found and successfully hooked.");
-			} else {
-				log(LoggingPolicy.WARN, "Vault found but could not enable economy.");
-			}
-		}
-
 		// Initialize Citizens
 		if (Bukkit.getPluginManager().getPlugin("Citizens") != null) {
 			citizensHook = new CitizensHook(this);
@@ -141,7 +145,7 @@ public class StatShops extends JavaPlugin {
 		this.translationHandler = new TranslationHandler("en_US");
 
 		// Setup Database
-		this.database = new TestDatabase(); //TODO
+		this.database = new TestDatabase(); //TODO databasehandler ...
 		this.logDatabase = (LogDatabase) this.database;
 
 		// Register dynamic pricing
@@ -210,6 +214,10 @@ public class StatShops extends JavaPlugin {
 		loading = false;
 	}
 
+	public static void registerExtension(StatShopsExtension statShopsExtension) {
+		registeredExtensions.add(statShopsExtension);
+	}
+
 	public static boolean busy() {
 		return loading;
 	}
@@ -232,10 +240,6 @@ public class StatShops extends JavaPlugin {
 			this.bukkitAudiences.close();
 			this.bukkitAudiences = null;
 		}
-	}
-
-	public boolean isVaultInstalled() {
-		return vaultHook != null;
 	}
 
 	public boolean isCitizensInstalled() {

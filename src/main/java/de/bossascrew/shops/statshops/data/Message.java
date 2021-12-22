@@ -248,6 +248,8 @@ public class Message {
 	public static final Message GUI_ENTRY_FUNCTION_STATIC_LORE = new Message("manager.gui.entry.defaults.static.lore");
 	public static final Message GUI_ENTRY_FUNCTION_CLOSE_NAME = new Message("manager.gui.entry.defaults.close.name");
 	public static final Message GUI_ENTRY_FUNCTION_CLOSE_LORE = new Message("manager.gui.entry.defaults.close.lore");
+	public static final Message GUI_ENTRY_FUNCTION_OPEN_SHOP_NAME = new Message("manager.gui.entry.defaults.open_shop.name");
+	public static final Message GUI_ENTRY_FUNCTION_OPEN_SHOP_LORE = new Message("manager.gui.entry.defaults.open_shop.lore");
 	public static final Message GUI_ENTRY_FUNCTION_PREV_PAGE_NAME = new Message("manager.gui.entry.defaults.prev_page.name");
 	public static final Message GUI_ENTRY_FUNCTION_PREV_PAGE_LORE = new Message("manager.gui.entry.defaults.prev_page.lore");
 	public static final Message GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME = new Message("manager.gui.entry.defaults.next_page.name");
@@ -269,8 +271,11 @@ public class Message {
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER = new Message("manager.gui.entry.function.type.int");
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION = new Message("manager.gui.entry.function.type.equation");
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_STRING = new Message("manager.gui.entry.function.type.string");
+	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_SHOP = new Message("manager.gui.entry.function.type.shop");
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK = new Message("manager.gui.entry.function.type.itemstack");
 
+	public static final Message GUI_ENTRY_FUNCTION_OPENED_SHOP_NAME = new Message("manager.gui.entry.function.data.page.name");
+	public static final Message GUI_ENTRY_FUNCTION_OPENED_SHOP_LORE = new Message("manager.gui.entry.function.data.page.lore");
 	public static final Message GUI_ENTRY_FUNCTION_PAGE_NAME = new Message("manager.gui.entry.function.data.page.name");
 	public static final Message GUI_ENTRY_FUNCTION_PAGE_LORE = new Message("manager.gui.entry.function.data.page.lore");
 	public static final Message GUI_ENTRY_FUNCTION_PURCHASABLE_NAME = new Message("manager.gui.entry.function.data.purchasable.name");

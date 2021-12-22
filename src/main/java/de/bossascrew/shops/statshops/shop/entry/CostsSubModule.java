@@ -5,7 +5,6 @@ import de.bossascrew.shops.general.handler.CurrencyHandler;
 import de.bossascrew.shops.general.handler.SubModulesHandler;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.statshops.hook.VaultHook;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -127,14 +126,6 @@ public class CostsSubModule<T> implements SubModule {
 		public ExpCosts(SubModulesHandler.CostsSubModuleProvider<Void> provider) {
 			super(provider, new Price<>(CurrencyHandler.CURRENCY_EXP, 100, null),
 					new Price<>(CurrencyHandler.CURRENCY_EXP, 80, null));
-		}
-	}
-
-	public static class MoneyCosts extends CostsSubModule<Void> { //TODO evtl nach vault
-
-		public MoneyCosts(SubModulesHandler.CostsSubModuleProvider<Void> provider) {
-			super(provider, new Price<>(VaultHook.CURRENCY_VAULT, 10, null),
-					new Price<>(VaultHook.CURRENCY_VAULT, 5, null));
 		}
 	}
 }

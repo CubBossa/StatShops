@@ -67,6 +67,7 @@ public class ArticleSubModule<T> implements SubModule {
 						Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_LORE);
 			});
 			gainPriceItem.setUpdateHandler(itemStack -> getPrice().setObject(itemStack));
+			gainPriceItem.getUpdateHandler().accept(shopEntry.getDisplayItem());
 		}
 
 		@Override
@@ -78,7 +79,7 @@ public class ArticleSubModule<T> implements SubModule {
 
 	public static class CommandArticle extends ArticleSubModule<String> {
 
-		public CommandArticle(SubModulesHandler.ArticleSubModuleProvider<String> provider) {
+		public CommandArticle(SubModulesHandler.ArticleSubModuleProvider<String> provider) { //TODO command dataslot
 			super(provider, new Price<>(CurrencyHandler.CURRENCY_COMMAND, 1, "help"));
 		}
 	}

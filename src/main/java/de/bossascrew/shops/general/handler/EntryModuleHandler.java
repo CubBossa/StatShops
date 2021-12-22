@@ -1,14 +1,18 @@
 package de.bossascrew.shops.general.handler;
 
 import de.bossascrew.shops.general.PaginatedShop;
+import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.PageModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.menu.ListMenuElementHolder;
 import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.StatShopsExtension;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.entry.CloseModule;
+import de.bossascrew.shops.statshops.shop.entry.OpenShopModule;
 import de.bossascrew.shops.statshops.shop.entry.PageBaseModule;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -25,12 +29,17 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 	public static EntryModuleProvider STATIC_PROVIDER;
 	public static EntryModuleProvider CLOSE_PROVIDER;
+	public static EntryModuleProvider OPEN_SHOP_PROVIDER;
 	public static EntryModuleProvider NEXT_PAGE_PROVIDER;
 	public static EntryModuleProvider PREV_PAGE_PROVIDER;
 	public static EntryModuleProvider EXACT_PAGE_PROVIDER;
 
 	public static CloseModule closeShop(ShopEntry shopEntry) {
 		return new CloseModule(CLOSE_PROVIDER, shopEntry);
+	}
+
+	public static OpenShopModule openShop(ShopEntry shopEntry, Shop shop) {
+		return new OpenShopModule(OPEN_SHOP_PROVIDER, shopEntry, shop);
 	}
 
 	public static PageModule openExactPage(ShopEntry shopEntry, int page) {
@@ -100,6 +109,8 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 				Message.GUI_ENTRY_FUNCTION_STATIC_LORE, (provider, shopEntry) -> null);
 		CLOSE_PROVIDER = registerEntryModule("close", new ItemStack(Material.SPRUCE_DOOR), Message.GUI_ENTRY_FUNCTION_CLOSE_NAME,
 				Message.GUI_ENTRY_FUNCTION_CLOSE_LORE, (provider, shopEntry) -> closeShop(shopEntry));
+		OPEN_SHOP_PROVIDER = registerEntryModule("open_shop", new ItemStack(Material.VILLAGER_SPAWN_EGG), Message.GUI_ENTRY_FUNCTION_OPEN_SHOP_NAME,
+				Message.GUI_ENTRY_FUNCTION_OPEN_SHOP_LORE, (provider, shopEntry) -> openShop(shopEntry, shopEntry.getShop()));
 		EXACT_PAGE_PROVIDER = registerEntryModule("exact_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
 				Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, (provider, shopEntry) -> openExactPage(shopEntry, 1));
 		NEXT_PAGE_PROVIDER = registerEntryModule("next_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
@@ -108,6 +119,11 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 				Message.GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, (provider, shopEntry) -> openPrevPage(shopEntry, 1));
 
 		// All trade modules are automatically registered by the submodules handler
+
+		// External entries
+		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
+			extension.registerEntryModules(this);
+		}
 	}
 
 	@Override

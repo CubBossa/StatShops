@@ -40,7 +40,6 @@ public class Price<T> implements Comparable<Price<?>> {
 
 	public void bakeDynamicPricing() {
 		this.amount = loadAmount();
-		System.out.println(amount);
 	}
 
 	public double loadAmount() {

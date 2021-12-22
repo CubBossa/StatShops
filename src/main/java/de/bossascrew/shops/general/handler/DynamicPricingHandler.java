@@ -2,6 +2,7 @@ package de.bossascrew.shops.general.handler;
 
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.StatShopsExtension;
 import de.bossascrew.shops.statshops.data.DefaultPricingDatabase;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +36,14 @@ public class DynamicPricingHandler {
 
 		defaultTemplates = new ArrayList<>();
 		defaultPricing = new HashMap<>();
+
+		registerExternalPricings();
+	}
+
+	private void registerExternalPricings() {
+		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
+			extension.registerDynamicPricingDefaultValues(this);
+		}
 	}
 
 	/**

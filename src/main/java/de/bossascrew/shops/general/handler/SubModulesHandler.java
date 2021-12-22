@@ -4,6 +4,8 @@ import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.menu.ListMenuElementHolder;
 import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.StatShopsExtension;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.entry.ArticleSubModule;
 import de.bossascrew.shops.statshops.shop.entry.CostsSubModule;
@@ -47,14 +49,15 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 				Message.GUI_ENTRY_FUNCTION_COSTS_ITEM_LORE, (provider, shopEntry) -> new CostsSubModule.ItemCosts(provider));
 		COSTS_XP_PROVIDER = registerCostsSubModule("exp", new ItemStack(Material.EXPERIENCE_BOTTLE), Message.GUI_ENTRY_FUNCTION_COSTS_XP_NAME,
 				Message.GUI_ENTRY_FUNCTION_COSTS_XP_LORE, (provider, shopEntry) -> new CostsSubModule.ExpCosts(provider));
-		//TODO ingot -> mit custom modeldata
-		CostsSubModuleProvider<Void> costs = registerCostsSubModule("vault", new ItemStack(Material.GOLD_INGOT), Message.GUI_ENTRY_FUNCTION_COSTS_VAULT_NAME,
-				Message.GUI_ENTRY_FUNCTION_COSTS_VAULT_LORE, (provider, shopEntry) -> new CostsSubModule.MoneyCosts(provider));
 
 		ARTICLE_ITEM_PROVIDER = registerArticleSubModule("item", new ItemStack(Material.AZURE_BLUET), Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_NAME,
 				Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_LORE, (provider, shopEntry) -> new ArticleSubModule.ItemArticle(provider));
 		ARTICLE_CMD_PROVIDER = registerArticleSubModule("cmd", new ItemStack(Material.REDSTONE), Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_NAME,
 				Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_LORE, (provider, shopEntry) -> new ArticleSubModule.CommandArticle(provider));
+
+		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
+			extension.registerTradeSubModules(this);
+		}
 	}
 
 	public <A> ArticleSubModuleProvider<A> registerArticleSubModule(String key, ItemStack itemStack, Message name, Message lore, BiFunction<ArticleSubModuleProvider<A>, ShopEntry, ArticleSubModule<A>> moduleSupplier) {
@@ -95,7 +98,9 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 		}
 
 		public ArticleSubModule<T> getModule(ShopEntry shopEntry) {
-			return moduleSupplier.apply(this, shopEntry);
+			ArticleSubModule<T> subModule = moduleSupplier.apply(this, shopEntry);
+			subModule.loadDataSlots(shopEntry);
+			return subModule;
 		}
 
 		public Component getName() {
@@ -124,7 +129,10 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 		}
 
 		public CostsSubModule<T> getModule(ShopEntry shopEntry) {
-			return moduleSupplier.apply(this, shopEntry);
+			CostsSubModule<T> subModule = moduleSupplier.apply(this, shopEntry);
+			;
+			subModule.loadDataSlots(shopEntry);
+			return subModule;
 		}
 
 		@Override

@@ -77,16 +77,16 @@ public class TestDatabase implements Database, LogDatabase {
 
 		Shop s2 = createShop("<white>Boring Shop", UUID.randomUUID());
 
-		Shop s3 = new VillagerShop("<dark_purple>Villager Shop", UUID.randomUUID());
+		/*Shop s3 = new VillagerShop("<dark_purple>Villager Shop", UUID.randomUUID());
 		ShopEntry entry = createEntry(UUID.randomUUID(), s3, new ItemStack(Material.MINECART), ShopHandler.getInstance().getShopModes().get(0), 0);
 		entry.setModule(EntryModuleHandler.getInstance().getEntryModules().get("trade_item").getModule(entry));
 		//entry.setModule(EntryModuleHandler.tradeItemItem(entry, new ItemStack(Material.MINECART), new ItemStack(Material.EMERALD, 2)));
 		entry.addTag("test");
 		s3.newEntry(0, entry);
-
+*/
 		map.put(s1.getUUID(), s1);
 		map.put(s2.getUUID(), s2);
-		map.put(s3.getUUID(), s3);
+//		map.put(s3.getUUID(), s3);
 		return map;
 	}
 
@@ -129,7 +129,7 @@ public class TestDatabase implements Database, LogDatabase {
 	public Map<UUID, Discount> loadDiscounts() {
 		Map<UUID, Discount> map = new HashMap<>();
 		Discount d1 = new Discount(UUID.randomUUID(), "XMas Discount", LocalDateTime.now(), Duration.of(3, ChronoUnit.DAYS), 80, null);
-		d1.addTag("global");
+		//d1.addTag("global");
 		map.put(d1.getUuid(), d1);
 		return map;
 	}

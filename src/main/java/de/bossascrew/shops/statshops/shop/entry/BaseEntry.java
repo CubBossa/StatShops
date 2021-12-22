@@ -110,6 +110,15 @@ public class BaseEntry implements ShopEntry {
 		//If auto-tagging is enabled, add all material tags to the entry
 		if (module != null && module instanceof TradeModule tm) {
 			Config config = StatShops.getInstance().getShopsConfig();
+
+			if(config.isAutoTaggingArticle()) {
+				tags.add("article:" + tm.getArticle().getProvider().getKey());
+			}
+			if(config.isAutoTaggingCurrency()) {
+				tags.add("currency:" + tm.getCosts().getBuyPrice().getCurrency().getKey());
+			}
+
+
 			if (tm.getGainPrice().getObject() instanceof ItemStack soldStack) {
 				tags.addAll(TagUtils.getTags(soldStack,
 						config.isAutoTaggingMaterials(),

@@ -98,7 +98,9 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 			ListMenu<EntryModuleHandler.EntryModuleProvider> listMenu = new ListMenu<>(3, EntryModuleHandler.getInstance(),
 					Message.GUI_ENTRY_SET_FUNCTION_TITLE, backContext -> openInventory(clickContext.getPlayer()));
 
-			listMenu.setDisplayPredicate(provider -> allowedModuleTypes == null || allowedModuleTypes.stream().anyMatch(aClass -> aClass.isInstance(provider)));
+			listMenu.setDisplayPredicate(provider -> (allowedModuleTypes == null
+					|| allowedModuleTypes.stream().anyMatch(aClass -> aClass.isInstance(provider))
+					&& (provider.getPermission() == null || clickContext.getPlayer().hasPermission(provider.getPermission()))));
 			listMenu.setGlowPredicate(provider -> (entry.getModule() == null && provider.getKey().equals("static")) ||
 					(entry.getModule() != null && entry.getModule().getProvider().getKey().equals(provider.getKey())));
 			listMenu.setClickHandler(cc -> {
@@ -111,6 +113,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 			setItemAndClickHandler(1, 2, tm.getCosts().getProvider().getListDisplayItem(), clickContext -> {
 				ListMenu<SubModulesHandler.CostsSubModuleProvider<?>> listMenu = new ListMenu<>(3, SubModulesHandler.getInstance(),
 						Message.GUI_ENTRY_SET_COSTS_TITLE, backContext -> openInventory(clickContext.getPlayer()));
+				listMenu.setDisplayPredicate(provider -> provider.getPermission() == null || clickContext.getPlayer().hasPermission(provider.getPermission()));
 				listMenu.setGlowPredicate(s -> tm.getCosts().getProvider().equals(s));
 				listMenu.setClickHandler(cc -> {
 					tm.setCosts(cc.getTarget().getModule(entry));

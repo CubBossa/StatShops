@@ -28,10 +28,12 @@ public class AnnotationConfig {
 		if (path == null) {
 			path = "config.yml";
 		}
-		YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(path));
+		File file = new File(path);
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
 		Class<? extends AnnotationConfig> cls = getClass();
 
+		boolean requiresSave = false;
 		for (Field f : cls.getFields()) {
 			if (f.isAnnotationPresent(ConfigEntry.class)) {
 				String target;
@@ -47,15 +49,31 @@ public class AnnotationConfig {
 						if (input != null) {
 							Method valueOf = f.getType().getMethod("valueOf", String.class);
 							f.set(this, valueOf.invoke(null, input));
+						} else {
+							config.set(cf.path(), f.get(this));
+							requiresSave = true;
 						}
 					} else {
-						f.set(this, config.get(target, f.get(this)));
+						var x = config.get(target);
+						if (x == null) {
+							config.set(cf.path(), f.get(this));
+							requiresSave = true;
+						} else {
+							f.set(this, x);
+						}
 					}
 				} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 					StatShops.getInstance().log(LoggingPolicy.ERROR, "Could not load file " + path, e);
 					success = false;
 				}
 			}
+		}
+		try {
+			if (requiresSave) {
+				config.save(file);
+			}
+		} catch (IOException e) {
+			StatShops.getInstance().log(LoggingPolicy.ERROR, "Could not save new default values to config.yml", e);
 		}
 		return success;
 	}

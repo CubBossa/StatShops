@@ -11,9 +11,11 @@ import de.bossascrew.shops.statshops.shop.entry.ArticleSubModule;
 import de.bossascrew.shops.statshops.shop.entry.CostsSubModule;
 import de.bossascrew.shops.statshops.shop.entry.TradeBaseModule;
 import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -45,33 +47,37 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 
 	public void registerDefaults() {
 
-		COSTS_ITEM_PROVIDER = registerCostsSubModule("item", new ItemStack(Material.EMERALD), Message.GUI_ENTRY_FUNCTION_COSTS_ITEM_NAME,
+		COSTS_ITEM_PROVIDER = registerCostsSubModule("item", StatShops.PERM_COSTS_ITEM, new ItemStack(Material.EMERALD), Message.GUI_ENTRY_FUNCTION_COSTS_ITEM_NAME,
 				Message.GUI_ENTRY_FUNCTION_COSTS_ITEM_LORE, (provider, shopEntry) -> new CostsSubModule.ItemCosts(provider));
-		COSTS_XP_PROVIDER = registerCostsSubModule("exp", new ItemStack(Material.EXPERIENCE_BOTTLE), Message.GUI_ENTRY_FUNCTION_COSTS_XP_NAME,
+		COSTS_XP_PROVIDER = registerCostsSubModule("exp", StatShops.PERM_COSTS_XP, new ItemStack(Material.EXPERIENCE_BOTTLE), Message.GUI_ENTRY_FUNCTION_COSTS_XP_NAME,
 				Message.GUI_ENTRY_FUNCTION_COSTS_XP_LORE, (provider, shopEntry) -> new CostsSubModule.ExpCosts(provider));
 
-		ARTICLE_ITEM_PROVIDER = registerArticleSubModule("item", new ItemStack(Material.AZURE_BLUET), Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_NAME,
+		ARTICLE_ITEM_PROVIDER = registerArticleSubModule("item", StatShops.PERM_ARTICLE_TRADE_ITEM, new ItemStack(Material.AZURE_BLUET), Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_NAME,
 				Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_LORE, (provider, shopEntry) -> new ArticleSubModule.ItemArticle(provider));
-		ARTICLE_CMD_PROVIDER = registerArticleSubModule("cmd", new ItemStack(Material.REDSTONE), Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_NAME,
+		ARTICLE_CMD_PROVIDER = registerArticleSubModule("cmd", StatShops.PERM_ARTICLE_TRADE_CMD, new ItemStack(Material.REDSTONE), Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_NAME,
 				Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_LORE, (provider, shopEntry) -> new ArticleSubModule.CommandArticle(provider));
+		ARTICLE_CONSOLE_CMD_PROVIDER = registerArticleSubModule("console_cmd", StatShops.PERM_ARTICLE_TRADE_CONSOLE_CMD, new ItemStack(Material.REPEATER), Message.GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_NAME,
+				Message.GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_LORE, (provider, shopEntry) -> new ArticleSubModule.ConsoleCommandArticle(provider));
 
 		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
 			extension.registerTradeSubModules(this);
 		}
 	}
 
-	public <A> ArticleSubModuleProvider<A> registerArticleSubModule(String key, ItemStack itemStack, Message name, Message lore, BiFunction<ArticleSubModuleProvider<A>, ShopEntry, ArticleSubModule<A>> moduleSupplier) {
+	public <A> ArticleSubModuleProvider<A> registerArticleSubModule(String key, @Nullable String permission, ItemStack itemStack, Message name, Message lore, BiFunction<ArticleSubModuleProvider<A>, ShopEntry, ArticleSubModule<A>> moduleSupplier) {
 		ArticleSubModuleProvider<A> provider = new ArticleSubModuleProvider<>(key, itemStack, name, lore, moduleSupplier);
 		articleSubModules.put(key, provider);
 
-		EntryModuleHandler.getInstance().registerEntryModule("trade_" + key, itemStack, name, lore, (p, entry) -> {
+		EntryModuleHandler.EntryModuleProvider entryModuleProvider = EntryModuleHandler.getInstance().registerEntryModule("trade_" + key, itemStack, name, lore, (p, entry) -> {
 			return new TradeBaseModule(entry, p, provider.getModule(entry), COSTS_ITEM_PROVIDER.getModule(entry));
 		});
+		entryModuleProvider.setPermission(permission);
 		return provider;
 	}
 
-	public <A> CostsSubModuleProvider<A> registerCostsSubModule(String key, ItemStack itemStack, Message name, Message lore, BiFunction<CostsSubModuleProvider<A>, ShopEntry, CostsSubModule<A>> moduleSupplier) {
+	public <A> CostsSubModuleProvider<A> registerCostsSubModule(String key, @Nullable String permission, ItemStack itemStack, Message name, Message lore, BiFunction<CostsSubModuleProvider<A>, ShopEntry, CostsSubModule<A>> moduleSupplier) {
 		CostsSubModuleProvider<A> provider = new CostsSubModuleProvider<>(key, itemStack, name, lore, moduleSupplier);
+		provider.setPermission(permission);
 		costsSubModules.put(key, provider);
 		return provider;
 	}
@@ -115,6 +121,9 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 	public static class CostsSubModuleProvider<T> implements ListMenuElement {
 		@Getter
 		private final String key;
+		@Getter
+		@Setter
+		private @Nullable String permission = null;
 		private final ItemStack itemStack;
 		private final Message name;
 		private final Message lore;

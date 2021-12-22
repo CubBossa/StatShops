@@ -5,27 +5,23 @@ import co.aikar.commands.annotation.*;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.PaginatedShop;
 import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.statshops.handler.DiscountHandler;
+import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import de.bossascrew.shops.statshops.menu.ShopManagementMenu;
-import de.bossascrew.shops.statshops.shop.Discount;
 import net.kyori.adventure.text.minimessage.Template;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.CompletableFuture;
 
 @CommandAlias("statshop|statshops|shop|shops")
 public class ShopCommand extends BaseCommand {
 
 	@Default
+	@Subcommand("editor")
+	@CommandPermission(StatShops.PERM_CMD_EDITOR)
 	public void onDefault(Player player) {
 		if (StatShops.busy()) {
 			Customer.wrap(player).sendMessage(Message.GENERAL_PLUGIN_LOADING);
@@ -35,6 +31,7 @@ public class ShopCommand extends BaseCommand {
 	}
 
 	@Subcommand("reload config")
+	@CommandPermission(StatShops.PERM_CMD_RELOAD)
 	public void reloadConfig(CommandSender sender) {
 		if (StatShops.busy()) {
 			StatShops.getInstance().sendMessage(sender, Message.GENERAL_PLUGIN_LOADING);
@@ -54,6 +51,7 @@ public class ShopCommand extends BaseCommand {
 	}
 
 	@Subcommand("reload language")
+	@CommandPermission(StatShops.PERM_CMD_RELOAD)
 	public void reloadTranslations(CommandSender sender) {
 		if (StatShops.busy()) {
 			StatShops.getInstance().sendMessage(sender, Message.GENERAL_PLUGIN_LOADING);
@@ -71,6 +69,7 @@ public class ShopCommand extends BaseCommand {
 	}
 
 	@Subcommand("open")
+	@CommandPermission(StatShops.PERM_CMD_OPEN)
 	@CommandCompletion(StatShops.COMPLETION_SHOPS + " 1|2|3")
 	public void onOpen(Player player, Shop shop, @Optional Integer page) {
 		if (page == null) {
@@ -85,6 +84,7 @@ public class ShopCommand extends BaseCommand {
 	}
 
 	@Subcommand("open-for")
+	@CommandPermission(StatShops.PERM_CMD_OPEN_FOR)
 	@CommandCompletion("@players " + StatShops.COMPLETION_SHOPS + " 1|2|3")
 	public void onOpenFor(Player player, Player other, Shop shop, @Optional Integer page) {
 		if (page == null) {
@@ -97,20 +97,4 @@ public class ShopCommand extends BaseCommand {
 			}
 		}
 	}
-
-	@Subcommand("test")
-	public void onTest(CommandSender player) {
-
-		Discount discount = DiscountHandler.getInstance().createDiscount("<rainbow>Test Discount", LocalDateTime.now(), Duration.of(3, ChronoUnit.SECONDS), 0.5, "test");
-		discount.addTag("test");
-		Bukkit.getScheduler().runTaskTimer(StatShops.getInstance(), () -> {
-			try {
-				discount.addStartTime(LocalDateTime.now());
-				DiscountHandler.getInstance().handleDiscountStart(discount);
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-		}, 120L, 6 * 20);
-	}
-
 }

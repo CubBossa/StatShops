@@ -260,6 +260,8 @@ public class Message {
 	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_ITEM_LORE = new Message("manager.gui.entry.defaults.article_item.lore");
 	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_CMD_NAME = new Message("manager.gui.entry.defaults.article_cmd.name");
 	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_CMD_LORE = new Message("manager.gui.entry.defaults.article_cmd.lore");
+	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_NAME = new Message("manager.gui.entry.defaults.article_console_cmd.name");
+	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_LORE = new Message("manager.gui.entry.defaults.article_console_cmd.lore");
 	public static final Message GUI_ENTRY_FUNCTION_COSTS_ITEM_NAME = new Message("manager.gui.entry.defaults.costs_item.name");
 	public static final Message GUI_ENTRY_FUNCTION_COSTS_ITEM_LORE = new Message("manager.gui.entry.defaults.costs_item.lore");
 	public static final Message GUI_ENTRY_FUNCTION_COSTS_XP_NAME = new Message("manager.gui.entry.defaults.costs_xp.name");

@@ -299,7 +299,10 @@ manager:
           lore: "<gray>Simply buy items."
         article_cmd:
           name: "<white>Buy Commands"
-          lore: "<gray>Buy the execution of a command."
+          lore:
+        article_console_cmd:
+          name: "<white>Buy Console Commands"
+          lore: "<gray>Buy the execution of a command\n<gray>that is executed in console."
         costs_item:
           name: "<white>Item Costs"
           lore: "<gray>Pay items to buy articles."

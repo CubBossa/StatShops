@@ -83,6 +83,10 @@ public class Config extends AnnotationConfig {
 
 
 	//TAGS
+	@ConfigEntry(path = "tags.auto-tagging-currency")
+	public boolean autoTaggingCurrency = false;
+	@ConfigEntry(path = "tags.auto-tagging-article")
+	public boolean autoTaggingArticle = false;
 	@ConfigEntry(path = "tags.auto-tagging-materials")
 	public boolean autoTaggingMaterials = false;
 	@ConfigEntry(path = "tags.auto-tagging-groups")

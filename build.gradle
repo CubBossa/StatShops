@@ -73,7 +73,7 @@ dependencies {
     shadow 'com.github.ben-manes.caffeine:caffeine:3.0.5'
     shadow "net.wesjd:anvilgui:1.5.3-SNAPSHOT"
     compileOnly 'com.mojang:authlib:1.5.21'
-    compileOnly 'de.tr7zw:item-nbt-api-plugin:2.6.0'
+    shadow 'de.tr7zw:item-nbt-api-plugin:2.8.0'
     compileOnly 'net.citizensnpcs:citizensapi:2.0.26-SNAPSHOT'
 }
 
@@ -82,8 +82,9 @@ shadowJar{
 
     relocate 'co.aikar.commands', 'de.bossascrew.shops.acf'
     relocate 'co.aikar.locales', 'de.bossascrew.shops.locales'
-    relocate 'net.kyori', 'de.bossascrew'
-    relocate 'net.wesjd', 'de.bossascrew'
+    relocate 'net.kyori', 'de.bossascrew.shops'
+    relocate 'net.wesjd', 'de.bossascrew.shops'
+    relocate 'de.tr7zw.changeme.nbtapi', 'de.bossascrew.shops.nbtapi'
 
 }
 

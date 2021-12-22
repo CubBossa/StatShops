@@ -7,8 +7,10 @@ import de.bossascrew.shops.general.handler.SubModulesHandler;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +20,9 @@ public class ArticleSubModule<T> implements SubModule {
 	@Getter
 	private SubModulesHandler.ArticleSubModuleProvider<T> provider;
 
-	DataSlot.NumberSlot gainPriceAmount;
+	private DataSlot.NumberSlot gainPriceAmount;
 	@Getter
-	private Price<T> price;
+	private final Price<T> price;
 
 	public ArticleSubModule(SubModulesHandler.ArticleSubModuleProvider<T> provider, Price<T> price) {
 		this.provider = provider;
@@ -81,6 +83,13 @@ public class ArticleSubModule<T> implements SubModule {
 
 		public CommandArticle(SubModulesHandler.ArticleSubModuleProvider<String> provider) { //TODO command dataslot
 			super(provider, new Price<>(CurrencyHandler.CURRENCY_COMMAND, 1, "help"));
+		}
+	}
+
+	public static class ConsoleCommandArticle extends ArticleSubModule<String> {
+
+		public ConsoleCommandArticle(SubModulesHandler.ArticleSubModuleProvider<String> provider) { //TODO command dataslot
+			super(provider, new Price<>(CurrencyHandler.CURRENCY_CONSOLE_COMMAND, 1, "help"));
 		}
 	}
 }

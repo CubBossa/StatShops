@@ -87,17 +87,20 @@ public class TextUtils {
 	 * @return the displayname of the itemstack with the nbt data as hover text.
 	 */
 	public Component toComponent(ItemStack itemStack, boolean hover) {
+		if (!hover) {
+			return itemStack.getItemMeta() != null && itemStack.getItemMeta().hasDisplayName() ?
+					fromLegacy(itemStack.getItemMeta().getDisplayName()) :
+					toTranslatable(itemStack.getType());
+		}
 		return (itemStack.getItemMeta() != null && itemStack.getItemMeta().hasDisplayName() ?
 				fromLegacy(itemStack.getItemMeta().getDisplayName()) :
 				toTranslatable(itemStack.getType()))
 				.hoverEvent(HoverEvent.showItem(HoverEvent.ShowItem.of(Key.key(itemStack.getType().getKey().toString()),
-						1, BinaryTagHolder.of(new NBTItem(itemStack).asNBTString()))));
+						1, BinaryTagHolder.of(new NBTItem(itemStack).toString()))));
 	}
 
 	public Component toComponent(ItemStack itemStack) {
-		return itemStack.getItemMeta() != null && itemStack.getItemMeta().hasDisplayName() ?
-				fromLegacy(itemStack.getItemMeta().getDisplayName()) :
-				toTranslatable(itemStack.getType());
+		return toComponent(itemStack, true);
 	}
 
 	public Component toTranslatable(Material material) {

@@ -26,27 +26,29 @@ import java.util.function.Function;
 @Setter
 public abstract class Currency<T> {
 
+	private final String key;
 	private final String format;
 	private final String formatDiscounted;
 	private final Function<Double, String> countFormatter;
 	private final BiFunction<Double, T, Component> currencyFormatter;
 
 	/**
-	 * @param format            the way to display the currency in minimessage format. Valid placeholders are "amount" and "currency"
+	 * @param key               An individual key to recognize the currency
 	 * @param currencyFormatter It provides the component for the currency. If the currency is itemstack, for example, the function could return
-	 *                          the translatable component of the material. It accepts the amount to allow singular and plural currencies (1 Dollar, 2 Dollars)
+	 * @param format            the way to display the currency in minimessage format. Valid placeholders are "amount" and "currency"
 	 */
-	public Currency(String format, String formatDiscounted, BiFunction<Double, T, Component> currencyFormatter) {
-		this(format, formatDiscounted, d -> String.format("%.2f", d), currencyFormatter);
+	public Currency(String key, String formatDiscounted, BiFunction<Double, T, Component> currencyFormatter, String format) {
+		this(key, format, formatDiscounted, d -> String.format("%.2f", d), currencyFormatter);
 	}
 
 	/**
+	 * @param key               An individual key to recognize the currency
 	 * @param format            the way to display the currency in minimessage format. Valid placeholders are "amount" and "currency"
 	 * @param countFormatter    Formats the given amount to a readable string.
 	 * @param currencyFormatter It provides the component for the currency. If the currency is itemstack, for example, the function could return
-	 *                          the translatable component of the material. It accepts the amount to allow singular and plural currencies (1 Dollar, 2 Dollars)
 	 */
-	public Currency(String format, String formatDiscounted, Function<Double, String> countFormatter, BiFunction<Double, T, Component> currencyFormatter) {
+	public Currency(String key, String format, String formatDiscounted, Function<Double, String> countFormatter, BiFunction<Double, T, Component> currencyFormatter) {
+		this.key = key;
 		this.format = format;
 		this.formatDiscounted = formatDiscounted;
 		this.countFormatter = countFormatter;

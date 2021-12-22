@@ -453,14 +453,19 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 
 	@Override
 	public void applyTemplate(EntryTemplate template, ShopMode shopMode, int shopPage) {
-		for (ShopEntry entry : template.getEntries(rows).values()) {
-			int shopSlot = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + entry.getSlot();
-			ShopEntry newEntry = entry.duplicate();
-			newEntry.setShopMode(shopMode);
-			newEntry.setSlot(shopSlot);
-			newEntry.setShop(this);
-			newEntry.saveToDatabase();
-			addEntry(shopMode, shopSlot, newEntry);
+		for (int page = 0; page < shopPage; page++) {
+			if (getEntries(shopMode, page).size() > 0) {
+				continue;
+			}
+			for (ShopEntry entry : template.getEntries(rows).values()) {
+				int shopSlot = page * RowedOpenableMenu.LARGEST_INV_SIZE + entry.getSlot();
+				ShopEntry newEntry = entry.duplicate();
+				newEntry.setShopMode(shopMode);
+				newEntry.setSlot(shopSlot);
+				newEntry.setShop(this);
+				newEntry.saveToDatabase();
+				addEntry(shopMode, shopSlot, newEntry);
+			}
 		}
 	}
 

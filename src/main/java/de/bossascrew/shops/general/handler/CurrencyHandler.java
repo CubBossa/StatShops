@@ -23,7 +23,7 @@ public class CurrencyHandler {
 
 	//TODO format erst nach laden der cfg
 	public static final Currency<ItemStack> CURRENCY_ITEM = new Currency<>(
-			StatShops.getInstance().getShopsConfig().getCurrencyItemFormatting(),
+			"item", StatShops.getInstance().getShopsConfig().getCurrencyItemFormatting(),
 			StatShops.getInstance().getShopsConfig().getCurrencyItemFormattingDiscounted(),
 			aDouble -> String.format("%.0f", aDouble), (integer, itemStack) -> TextUtils.toComponent(itemStack)) {
 		@Override
@@ -83,7 +83,7 @@ public class CurrencyHandler {
 			return true;
 		}
 	};
-	public static Currency<String> CURRENCY_COMMAND = new Currency<>("Command: <currency>", "Command: <currency>", (aDouble, s) -> Component.text(s)) {
+	public static Currency<String> CURRENCY_COMMAND = new Currency<>("command", "Command: <currency>", (aDouble, s) -> Component.text(s), "Command: <currency>") {
 		@Override
 		public double applyDiscount(double amount, double discount) {
 			return (int) (amount * discount);
@@ -107,7 +107,7 @@ public class CurrencyHandler {
 			return false;
 		}
 	};
-	public static Currency<String> CURRENCY_CONSOLE_COMMAND = new Currency<>("<amount>x Command: <currency>", "<amount>x Command: <currency>", (aDouble, s) -> Component.text(s)) {
+	public static Currency<String> CURRENCY_CONSOLE_COMMAND = new Currency<>("console_command", "<amount>x Command: <currency>", (aDouble, s) -> Component.text(s), "<amount>x Command: <currency>") {
 		@Override
 		public double applyDiscount(double amount, double discount) {
 			return (int) (amount * discount);
@@ -131,8 +131,8 @@ public class CurrencyHandler {
 			return false;
 		}
 	};
-	public static final Currency<Void> CURRENCY_EXP = new Currency<Void>(
-			"<amount> <#B9E45A>E<#39904C>x<#D8E45A>p",
+	public static final Currency<Void> CURRENCY_EXP = new Currency<>(
+			"experience", "<amount> <#B9E45A>E<#39904C>x<#D8E45A>p",
 			"<st><amount></st> <amount_dc> <#B9E45A>E<#39904C>x<#D8E45A>p",
 			d -> d.intValue() + "",
 			(d, unused) -> MiniMessage.get().parse("<#B9E45A>E<#39904C>x<#D8E45A>p")) { //TODO config
@@ -169,10 +169,10 @@ public class CurrencyHandler {
 		instance = this;
 		this.currencies = new HashMap<>();
 
-		registerCurrency("item", CURRENCY_ITEM);
-		registerCurrency("command", CURRENCY_COMMAND);
-		registerCurrency("console_command", CURRENCY_CONSOLE_COMMAND);
-		registerCurrency("experiencce", CURRENCY_EXP);
+		registerCurrency(CURRENCY_ITEM);
+		registerCurrency(CURRENCY_COMMAND);
+		registerCurrency(CURRENCY_CONSOLE_COMMAND);
+		registerCurrency(CURRENCY_EXP);
 
 		// Registering external currencies
 		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
@@ -180,8 +180,8 @@ public class CurrencyHandler {
 		}
 	}
 
-	public <T> void registerCurrency(String key, Currency<T> currency) {
-		this.currencies.put(key, currency);
+	public <T> void registerCurrency(Currency<T> currency) {
+		this.currencies.put(currency.getKey(), currency);
 	}
 
 	public void unregisterCurrency(String key) {

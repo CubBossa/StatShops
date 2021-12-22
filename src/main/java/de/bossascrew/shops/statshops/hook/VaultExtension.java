@@ -31,9 +31,8 @@ public class VaultExtension extends StatShopsExtension {
 		super.registerCurrencies(currencyHandler);
 
 		CURRENCY_VAULT = new Currency<>(
-				StatShops.getInstance().getShopsConfig().getCurrencyVaultFormatting(),
-				StatShops.getInstance().getShopsConfig().getCurrencyVaultFormattingDiscounted(),
-				(integer, unused) -> Component.text(integer == 1 ? economy.currencyNameSingular() : economy.currencyNamePlural())) {
+				"money", StatShops.getInstance().getShopsConfig().getCurrencyVaultFormattingDiscounted(), (integer, unused) -> Component.text(integer == 1 ? economy.currencyNameSingular() : economy.currencyNamePlural()), StatShops.getInstance().getShopsConfig().getCurrencyVaultFormatting()
+		) {
 			@Override
 			public double applyDiscount(double amount, double discount) {
 				return amount * discount;
@@ -54,7 +53,7 @@ public class VaultExtension extends StatShopsExtension {
 				return economy.withdrawPlayer(customer.getPlayer(), amount).transactionSuccess();
 			}
 		};
-		currencyHandler.registerCurrency("vault", CURRENCY_VAULT);
+		currencyHandler.registerCurrency(CURRENCY_VAULT);
 	}
 
 	@Override
@@ -68,7 +67,7 @@ public class VaultExtension extends StatShopsExtension {
 	public void registerTradeSubModules(SubModulesHandler subModulesHandler) {
 		super.registerTradeSubModules(subModulesHandler);
 
-		COSTS_VAULT_PROVIDER = subModulesHandler.registerCostsSubModule("vault", ItemStackUtils.createItemStack(Material.GOLD_INGOT, 7122000),
+		COSTS_VAULT_PROVIDER = subModulesHandler.registerCostsSubModule("vault", StatShops.PERM_COSTS_VAULT, ItemStackUtils.createItemStack(Material.GOLD_INGOT, 7122000),
 				Message.GUI_ENTRY_FUNCTION_COSTS_VAULT_NAME, Message.GUI_ENTRY_FUNCTION_COSTS_VAULT_LORE, (provider, shopEntry) -> new MoneyCosts(provider));
 	}
 

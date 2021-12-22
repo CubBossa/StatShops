@@ -15,9 +15,11 @@ import de.bossascrew.shops.statshops.shop.entry.CloseModule;
 import de.bossascrew.shops.statshops.shop.entry.OpenShopModule;
 import de.bossascrew.shops.statshops.shop.entry.PageBaseModule;
 import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -107,16 +109,22 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 		STATIC_PROVIDER = registerEntryModule("static", new ItemStack(Material.BLACK_STAINED_GLASS), Message.GUI_ENTRY_FUNCTION_STATIC_NAME,
 				Message.GUI_ENTRY_FUNCTION_STATIC_LORE, (provider, shopEntry) -> null);
+		STATIC_PROVIDER.setPermission(StatShops.PERM_ARTICLE_STATIC);
 		CLOSE_PROVIDER = registerEntryModule("close", new ItemStack(Material.SPRUCE_DOOR), Message.GUI_ENTRY_FUNCTION_CLOSE_NAME,
 				Message.GUI_ENTRY_FUNCTION_CLOSE_LORE, (provider, shopEntry) -> closeShop(shopEntry));
+		CLOSE_PROVIDER.setPermission(StatShops.PERM_ARTICLE_CLOSE_SHOP);
 		OPEN_SHOP_PROVIDER = registerEntryModule("open_shop", new ItemStack(Material.VILLAGER_SPAWN_EGG), Message.GUI_ENTRY_FUNCTION_OPEN_SHOP_NAME,
 				Message.GUI_ENTRY_FUNCTION_OPEN_SHOP_LORE, (provider, shopEntry) -> openShop(shopEntry, shopEntry.getShop()));
+		OPEN_SHOP_PROVIDER.setPermission(StatShops.PERM_ARTICLE_OPEN_SHOP);
 		EXACT_PAGE_PROVIDER = registerEntryModule("exact_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
 				Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, (provider, shopEntry) -> openExactPage(shopEntry, 1));
+		EXACT_PAGE_PROVIDER.setPermission(StatShops.PERM_ARTICLE_EXACT_PAGE);
 		NEXT_PAGE_PROVIDER = registerEntryModule("next_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
 				Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, (provider, shopEntry) -> openNextPage(shopEntry, 1));
+		NEXT_PAGE_PROVIDER.setPermission(StatShops.PERM_ARTICLE_NEXT_PAGE);
 		PREV_PAGE_PROVIDER = registerEntryModule("prev_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
 				Message.GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, (provider, shopEntry) -> openPrevPage(shopEntry, 1));
+		PREV_PAGE_PROVIDER.setPermission(StatShops.PERM_ARTICLE_PREV_PAGE);
 
 		// All trade modules are automatically registered by the submodules handler
 
@@ -134,6 +142,9 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	public static class EntryModuleProvider implements ListMenuElement {
 		@Getter
 		private final String key;
+		@Getter
+		@Setter
+		private @Nullable String permission = null;
 		private final ItemStack itemStack;
 		private final Message name;
 		private final Message lore;

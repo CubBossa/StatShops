@@ -4,9 +4,6 @@ main: de.bossascrew.shops.statshops.StatShops
 version: 0.1
 api-version: 1.17
 
-depend:
-  - NBTAPI
-
 softdepend:
-  - Vault
   - Citizens
+  - Vault

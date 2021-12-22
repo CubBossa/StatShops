@@ -146,6 +146,12 @@ currencies:
 
 tags:
 
+  # Currency auto-tagging will add the name of the currency as a tag for each purchasable entry
+  auto-tagging-currency: false
+
+  # Article auto-tagging will add the article type (item, command) as a tag
+  auto-tagging-article: false
+
   # Material auto-tagging will always add the material of the sold item as
   # tag to the shop entry. So you can apply a discount to all netherite_swords
   # for example.

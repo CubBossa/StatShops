@@ -44,6 +44,23 @@ import java.util.stream.Collectors;
 
 public class StatShops extends JavaPlugin {
 
+	public static final String PERM_ARTICLE_STATIC = "statshops.editor.article.static";
+	public static final String PERM_ARTICLE_CLOSE_SHOP = "statshops.editor.article.close_shop";
+	public static final String PERM_ARTICLE_OPEN_SHOP = "statshops.editor.article.open_shop";
+	public static final String PERM_ARTICLE_NEXT_PAGE = "statshops.editor.article.next_page";
+	public static final String PERM_ARTICLE_PREV_PAGE = "statshops.editor.article.prev_page";
+	public static final String PERM_ARTICLE_EXACT_PAGE = "statshops.editor.article.exact_page";
+	public static final String PERM_ARTICLE_TRADE_ITEM = "statshops.editor.article.trade_item";
+	public static final String PERM_ARTICLE_TRADE_CMD = "statshops.editor.article.trade_cmd";
+	public static final String PERM_ARTICLE_TRADE_CONSOLE_CMD = "statshops.editor.article.trade_console_cmd";
+	public static final String PERM_COSTS_ITEM = "statshops.editor.costs.item";
+	public static final String PERM_COSTS_XP = "statshops.editor.costs.xp";
+	public static final String PERM_COSTS_VAULT = "statshops.editor.costs.vault";
+	public static final String PERM_CMD_OPEN = "statshops.command.open";
+	public static final String PERM_CMD_OPEN_FOR = "statshops.command.openfor";
+	public static final String PERM_CMD_EDITOR = "statshops.command.editor";
+	public static final String PERM_CMD_RELOAD = "statshops.command.reload";
+
 	public static final String TAG_GLOBAL = "global";
 	public static final String CONDITION_ITEM_IN_HAND = "item_in_hand";
 	public static final String CONDITION_ITEM_HAS_META = "item_has_meta";

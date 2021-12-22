@@ -1,6 +1,7 @@
 package de.bossascrew.shops.general.handler;
 
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.util.ExperienceManager;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
@@ -8,8 +9,8 @@ import de.bossascrew.shops.statshops.StatShopsExtension;
 import de.bossascrew.shops.statshops.shop.currency.Currency;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -130,7 +131,11 @@ public class CurrencyHandler {
 			return false;
 		}
 	};
-	public static final Currency<Void> CURRENCY_EXP = new Currency<Void>("<amount> Exp", "<st><amount></st> <amount_dc> Exp", (aDouble, unused) -> Component.text("Exp")) { //TODO config
+	public static final Currency<Void> CURRENCY_EXP = new Currency<Void>(
+			"<amount> <#B9E45A>E<#39904C>x<#D8E45A>p",
+			"<st><amount></st> <amount_dc> <#B9E45A>E<#39904C>x<#D8E45A>p",
+			d -> d.intValue() + "",
+			(d, unused) -> MiniMessage.get().parse("<#B9E45A>E<#39904C>x<#D8E45A>p")) { //TODO config
 
 		@Override
 		public double applyDiscount(double amount, double discount) {
@@ -139,20 +144,21 @@ public class CurrencyHandler {
 
 		@Override
 		public double getAmount(Customer customer, Void object) {
-			return customer.getPlayer().getExp();
+			ExperienceManager experienceManager = new ExperienceManager(customer.getPlayer());
+			return experienceManager.getTotalExperience();
 		}
 
 		@Override
 		public boolean addAmount(Customer customer, double amount, Void object) {
-			Player player = customer.getPlayer();
-			player.setExp((float) (player.getExp() + amount));
+			ExperienceManager experienceManager = new ExperienceManager(customer.getPlayer());
+			experienceManager.setTotalExperience(experienceManager.getTotalExperience() + (int) (amount));
 			return true;
 		}
 
 		@Override
 		public boolean removeAmount(Customer customer, double amount, Void object) {
-			Player player = customer.getPlayer();
-			player.setExp((float) (player.getExp() - amount));
+			ExperienceManager experienceManager = new ExperienceManager(customer.getPlayer());
+			experienceManager.setTotalExperience(experienceManager.getTotalExperience() - (int) (amount));
 			return true;
 		}
 	};

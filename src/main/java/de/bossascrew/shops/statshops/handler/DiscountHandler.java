@@ -79,8 +79,10 @@ public class DiscountHandler implements
 	}
 
 	public boolean deleteDiscount(Discount discount) {
+		for (String tag : new ArrayList<>(discount.getTags())) {
+			discount.removeTag(tag);
+		}
 		StatShops.getInstance().getDatabase().deleteDiscount(discount);
-		handleDiscountExpire(discount);
 		return discountMap.remove(discount.getUuid()) != null;
 	}
 

@@ -138,7 +138,7 @@ public abstract class DataSlot<T> {
 						.onComplete((p, s) -> {
 							try {
 								setData(Double.parseDouble(s.replace(" ", "")));
-								super.setDisplayItem(new ItemStack(Material.PAPER, Integer.min(Integer.max(1, data.intValue()), 64)));
+								super.setDisplayItem(new ItemStack(Material.PAPER, Integer.min(Integer.max(1, getData().intValue()), 64)));
 								clickContext.getTarget().run();
 								return AnvilGUI.Response.close();
 							} catch (NumberFormatException e) {

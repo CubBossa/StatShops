@@ -194,11 +194,6 @@ manager:
       preview:
         name: "<white>Preview This Shop"
         lore: "<gray>Open this shop menu\n<gray>without enabling it for\n<gray>players."
-      # TODO ausgemustert?
-      set_enabled:
-        # Valid placeholders: <value>
-        name: "<white>Shop Enabled: <value>"
-        lore: "<gray>When entering this menu, a \n<gray>shop will automatically turned disabled. \n<gray>Players cannot use a shop while \n<gray>it is disabled."
       set_remember_page:
         # Valid placeholders: <value>
         name: "<white>Remember Page: <value>"

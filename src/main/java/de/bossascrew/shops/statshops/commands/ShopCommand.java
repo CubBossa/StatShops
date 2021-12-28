@@ -1,6 +1,7 @@
 package de.bossascrew.shops.statshops.commands;
 
 import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelpFormatter;
 import co.aikar.commands.annotation.*;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.PaginatedShop;

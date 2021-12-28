@@ -1,6 +1,6 @@
 package de.bossascrew.shops.general.handler;
 
-import de.bossascrew.shops.general.PaginatedModedShop;
+import de.bossascrew.shops.general.PaginatedShop;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
@@ -9,7 +9,6 @@ import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Config;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
-import de.bossascrew.shops.statshops.shop.ShopMode;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
@@ -52,9 +51,9 @@ public class TemplateHandler implements
 		return new ArrayList<>(templateMap.values());
 	}
 
-	public EntryTemplate createNew(String nameFormat, PaginatedModedShop shop, ShopMode shopMode, int page) {
+	public EntryTemplate createNew(String nameFormat, PaginatedShop shop, int page) {
 		EntryTemplate template = createNew(nameFormat);
-		for (ShopEntry entry : shop.getEntries(shopMode, page)) {
+		for (ShopEntry entry : shop.getEntries(page)) {
 			template.put(entry.getSlot() % RowedOpenableMenu.LARGEST_INV_SIZE, entry.duplicate());
 		}
 		return template;
@@ -118,17 +117,15 @@ public class TemplateHandler implements
 		for (int i = 0; i < 9; i++) {
 			int _i = i;
 			bottomLine.put(row -> (row - 1) * 9 + _i, new BaseEntry(UUID.randomUUID(), null,
-					DefaultSpecialItem.EMPTY_DARK_SIMPLE.createSpecialItem(), null, i, null));
+					DefaultSpecialItem.EMPTY_DARK_SIMPLE.createSpecialItem(), null, i));
 		}
 		if(prevPage) {
-			BaseEntry entryPrev1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.PREV_PAGE.createSpecialItem(), null,
-					0, null);
+			BaseEntry entryPrev1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.PREV_PAGE.createSpecialItem(), null, 0);
 			entryPrev1.setModule(EntryModuleHandler.openPrevPage(entryPrev1, 1));
 			bottomLine.put(row -> (row - 1) * 9, entryPrev1);
 		}
 		if(nextPage) {
-			BaseEntry entryNext1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.NEXT_PAGE.createSpecialItem(), null,
-					1, null);
+			BaseEntry entryNext1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.NEXT_PAGE.createSpecialItem(), null, 1);
 			entryNext1.setModule(EntryModuleHandler.openNextPage(entryNext1, 1));
 			bottomLine.put(row -> (row - 1) * 9 + 1, entryNext1);
 		}

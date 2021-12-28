@@ -1,21 +1,21 @@
 package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.ModedShop;
 import de.bossascrew.shops.general.PaginatedShop;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.handler.TemplateHandler;
 import de.bossascrew.shops.general.menu.*;
 import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.general.util.TagUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.statshops.handler.DiscountHandler;
-import de.bossascrew.shops.statshops.handler.LimitsHandler;
-import de.bossascrew.shops.statshops.handler.ShopHandler;
-import de.bossascrew.shops.statshops.handler.TranslationHandler;
-import de.bossascrew.shops.statshops.shop.*;
+import de.bossascrew.shops.statshops.handler.*;
+import de.bossascrew.shops.statshops.shop.ChestMenuShop;
+import de.bossascrew.shops.statshops.shop.Discount;
+import de.bossascrew.shops.statshops.shop.EntryTemplate;
+import de.bossascrew.shops.statshops.shop.Limit;
 import de.bossascrew.shops.web.WebSessionUtils;
 import de.bossascrew.shops.web.pasting.Paste;
 import net.kyori.adventure.text.Component;
@@ -165,12 +165,27 @@ public class ShopManagementMenu {
 						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openShopMenu(player, shop, fromPage)).openInventory(player));
 
 		//Open Limits menu
+		List<Component> limitsLore = new ArrayList<>();
+		Pair<Limit, Limit> limits = LimitsHandler.getInstance().getMinimalLimitsWithMatchingTags(shop);
+		ItemStackUtils.addLoreLimits(limitsLore, limits.getLeft(), limits.getRight(), 0);
+		if (limitsLore.size() > 0) {
+			limitsLore.add(Message.SHOP_ITEM_LORE_SPACER.getTranslation());
+		}
+		limitsLore.addAll(Message.GUI_SHOP_SET_LIMITS_LORE.getTranslations());
 		chestMenu.setItemAndClickHandler(0, 5, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
-						Message.GUI_SHOP_SET_LIMITS_NAME, Message.GUI_SHOP_SET_LIMITS_LORE),
+						Message.GUI_SHOP_SET_LIMITS_NAME.getTranslation(), limitsLore),
 				clickContext -> openShopLimitsMenu(player, shop, fromPage, 0));
+
 		//Open Discounts menu
+		List<Component> discountLore = new ArrayList<>();
+		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(shop);
+		ItemStackUtils.addLoreDiscount(discountLore, discounts);
+		if (discountLore.size() > 0) {
+			discountLore.add(Message.SHOP_ITEM_LORE_SPACER.getTranslation());
+		}
+		discountLore.addAll(Message.GUI_SHOP_SET_DISCOUNTS_LORE.getTranslations());
 		chestMenu.setItemAndClickHandler(0, 6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
-						Message.GUI_SHOP_SET_DISCOUNTS_NAME, Message.GUI_SHOP_SET_DISCOUNTS_LORE),
+						Message.GUI_SHOP_SET_DISCOUNTS_NAME.getTranslation(), discountLore),
 				clickContext -> openShopDiscountsMenu(player, shop, fromPage, 0));
 
 		//Open Templates menu
@@ -196,63 +211,40 @@ public class ShopManagementMenu {
 		});
 		chestMenu.setItemAndClickHandler(1, 2, ItemStackUtils.createItemStack(Material.CHEST,
 				Message.GUI_SHOP_SET_PREVIEW_NAME, Message.GUI_SHOP_SET_PREVIEW_LORE), clickContext -> {
-			shop.open(Customer.wrap(player), backContext -> openShopMenu(player, shop, fromPage));
+			shop.open(Customer.wrap(player)); //TODO open shop menu on real close (not page switch)
 		});
 
-		if (shop instanceof ModedShop ms) {
-			//Shopmode switch button
-			chestMenu.setItem(19, getDefaultModeItem(ms.getDefaultShopMode()));
-			chestMenu.setClickHandler(19, clickContext -> {
-				if (clickContext.getAction().isRightClick()) {
-					ms.setDefaultShopMode(ms.getDefaultShopMode().getPrevious());
-				} else if (clickContext.getAction().isLeftClick()) {
-					ms.setDefaultShopMode(ms.getDefaultShopMode().getNext());
-				}
-				chestMenu.setItem(19, getDefaultModeItem(ms.getDefaultShopMode()));
-				chestMenu.refresh(19);
-			});
-
-			//Set mode remembered
-			ItemStack rememberMode = ItemStackUtils.createButtonItemStack(ms.isModeRemembered(),
-					Message.GUI_SHOP_SET_REMEMBER_MODE_NAME, Message.GUI_SHOP_SET_REMEMBER_MODE_LORE);
-			chestMenu.setItemAndClickHandler(24, rememberMode, clickContext -> {
-				ms.setModeRemembered(!ms.isModeRemembered());
-				chestMenu.setItem(24, ItemStackUtils.createButtonItemStack(ms.isModeRemembered(),
-						Message.GUI_SHOP_SET_REMEMBER_MODE_NAME, Message.GUI_SHOP_SET_REMEMBER_MODE_LORE));
-				chestMenu.refresh(24);
-			});
-		}
 
 		if (shop instanceof PaginatedShop ps) {
-			chestMenu.setItemAndClickHandler(20, getDefaultPageItem(ps, ps.getDefaultShopPage()), clickContext -> {
+			chestMenu.setItemAndClickHandler(22, getDefaultPageItem(ps, ps.getDefaultShopPage()), clickContext -> {
 				if (clickContext.getAction().isRightClick()) {
 					ps.setDefaultShopPage((ps.getDefaultShopPage() - 1) % ps.getPageCount());
 				} else if (clickContext.getAction().isLeftClick()) {
 					ps.setDefaultShopPage((ps.getDefaultShopPage() + 1) % ps.getPageCount());
 				}
-				chestMenu.setItem(20, getDefaultPageItem(ps, ps.getDefaultShopPage()));
-				chestMenu.refresh(20);
+				chestMenu.setItem(22, getDefaultPageItem(ps, ps.getDefaultShopPage()));
+				chestMenu.refresh(22);
 			});
 
 			//Set page remembered
 			ItemStack rememberPage = ItemStackUtils.createButtonItemStack(ps.isPageRemembered(),
 					Message.GUI_SHOP_SET_REMEMBER_PAGE_NAME, Message.GUI_SHOP_SET_REMEMBER_PAGE_LORE);
-			chestMenu.setItemAndClickHandler(23, rememberPage, clickContext -> {
+			chestMenu.setItemAndClickHandler(24, rememberPage, clickContext -> {
 				ps.setPageRemembered(!ps.isPageRemembered());
-				chestMenu.setItem(23, ItemStackUtils.createButtonItemStack(ps.isPageRemembered(),
+				chestMenu.setItem(24, ItemStackUtils.createButtonItemStack(ps.isPageRemembered(),
 						Message.GUI_SHOP_SET_REMEMBER_PAGE_NAME, Message.GUI_SHOP_SET_REMEMBER_PAGE_LORE));
-				chestMenu.refresh(23);
+				chestMenu.refresh(24);
 			});
 		}
 		if (shop instanceof ChestMenuShop chestMenuShop) {
-			chestMenu.setItemAndClickHandler(21, getRowsItem(chestMenuShop.getRows()), clickContext -> {
+			chestMenu.setItemAndClickHandler(23, getRowsItem(chestMenuShop.getRows()), clickContext -> {
 				if (clickContext.getAction().isRightClick()) {
 					chestMenuShop.setRows(chestMenuShop.getRows() - 1);
 				} else if (clickContext.getAction().isLeftClick()) {
 					chestMenuShop.setRows(chestMenuShop.getRows() + 1);
 				}
-				chestMenu.setItem(21, getRowsItem(chestMenuShop.getRows()));
-				chestMenu.refresh(21);
+				chestMenu.setItem(23, getRowsItem(chestMenuShop.getRows()));
+				chestMenu.refresh(23);
 			});
 		}
 
@@ -264,6 +256,7 @@ public class ShopManagementMenu {
 		chestMenu.setCloseHandler(closeContext -> {
 			shop.setEditor(null);
 		});
+		System.out.println("Open shop menu");
 		chestMenu.openInventory(player);
 	}
 
@@ -275,24 +268,11 @@ public class ShopManagementMenu {
 				Template.of("rows", "" + row)), lore);
 	}
 
-	private ItemStack getDefaultModeItem(ShopMode shopMode) {
-		ItemStack modeItem = shopMode.getDisplayItem();
-		List<Component> lore = new ArrayList<>();
-		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
-		lore.add(Message.GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getPrevious().getDisplayName().color(NamedTextColor.GRAY))));
-		lore.add(Message.GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getDisplayName())));
-		lore.add(Message.GUI_SHOP_SET_DEFAULT_MODE_LORE.getTranslation(Template.of("mode", shopMode.getNext().getDisplayName().color(NamedTextColor.GRAY))));
-		lore.add(Component.text("...", NamedTextColor.DARK_GRAY));
-		return ItemStackUtils.createItemStack(modeItem.getType(),
-				Message.GUI_SHOP_SET_DEFAULT_MODE_NAME.getTranslation(Template.of("name", modeItem.getItemMeta().getDisplayName())),
-				lore);
-	}
-
 	private ItemStack getDefaultPageItem(PaginatedShop shop, int page) {
 		int pageCount = shop.getPageCount();
 		List<Component> lore = new ArrayList<>();
 		lore.add(Message.GUI_SHOP_SET_DEFAULT_PAGE_LORE.getTranslation(Template.of("page", "" + (page + 1)), Template.of("pages", "" + pageCount)));
-		return ItemStackUtils.createItemStack(new ItemStack(Material.BOOK, Integer.max(page, 1)),
+		return ItemStackUtils.createItemStack(new ItemStack(Material.BOOK, Integer.min(Integer.max(page + 1, 1), 127)),
 				Message.GUI_SHOP_SET_DEFAULT_PAGE_NAME.getTranslation(Template.of("page", "" + (page + 1)), Template.of("pages", "" + pageCount)), lore);
 	}
 
@@ -486,7 +466,7 @@ public class ShopManagementMenu {
 			new AnvilGUI.Builder()
 					.plugin(StatShops.getInstance())
 					.text("50%")
-					.title(Message.GUI_DISCOUNT_SET_DURATION_TITLE.getLegacyTranslation())
+					.title(Message.GUI_DISCOUNT_SET_PERCENT_TITLE.getLegacyTranslation())
 					.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> {
 						chestMenu.refresh(7);
 						chestMenu.openInventory(player);

@@ -74,6 +74,7 @@ public class AnnotationConfig {
 			}
 		} catch (IOException e) {
 			StatShops.getInstance().log(LoggingPolicy.ERROR, "Could not save new default values to config.yml", e);
+			success = false;
 		}
 		return success;
 	}

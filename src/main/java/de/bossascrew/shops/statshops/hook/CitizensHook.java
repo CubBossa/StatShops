@@ -1,16 +1,18 @@
 package de.bossascrew.shops.statshops.hook;
 
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.general.Shop;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.event.NPCClickEvent;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -37,12 +39,16 @@ public class CitizensHook implements Listener {
 	@EventHandler
 	public void onLeftClick(PlayerInteractEvent event) {
 		if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-			assigningPlayers.remove(event.getPlayer());
+			if (assigningPlayers.remove(event.getPlayer()) != null) {
+				event.setUseItemInHand(Event.Result.DENY);
+				event.setUseInteractedBlock(Event.Result.DENY);
+				Customer.wrap(event.getPlayer()).sendMessage(Message.CITIZENS_CANCELLED);
+			}
 		}
 	}
 
-	@EventHandler
-	public void onNpcClick(NPCClickEvent event) {
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onNpcClick(NPCRightClickEvent event) {
 
 		Player player = event.getClicker();
 		Customer customer = Customer.wrap(player);
@@ -53,12 +59,16 @@ public class CitizensHook implements Listener {
 				customer.sendMessage(Message.CITIZENS_CONFIRM_OVERRIDE);
 				return;
 			}
-			event.getNPC().addTrait(new ShopTrait(shop));
+			ShopTrait trait = new ShopTrait();
+			trait.setShop(shop);
+			event.getNPC().addTrait(trait);
+			event.setCancelled(true);
 		} else {
 			shop = confirmingPlayers.remove(player);
 			if (shop == null) {
 				return;
 			}
+			event.setCancelled(true);
 			event.getNPC().getTrait(ShopTrait.class).setShop(shop);
 		}
 		customer.sendMessage(Message.CITIZENS_ASSIGNED);

@@ -45,6 +45,7 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 		costsSubModules = new LinkedHashMap<>();
 	}
 
+
 	public void registerDefaults() {
 
 		COSTS_ITEM_PROVIDER = registerCostsSubModule("item", StatShops.PERM_COSTS_ITEM, new ItemStack(Material.EMERALD), Message.GUI_ENTRY_FUNCTION_COSTS_ITEM_NAME,
@@ -52,11 +53,11 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 		COSTS_XP_PROVIDER = registerCostsSubModule("exp", StatShops.PERM_COSTS_XP, new ItemStack(Material.EXPERIENCE_BOTTLE), Message.GUI_ENTRY_FUNCTION_COSTS_XP_NAME,
 				Message.GUI_ENTRY_FUNCTION_COSTS_XP_LORE, (provider, shopEntry) -> new CostsSubModule.ExpCosts(provider));
 
-		ARTICLE_ITEM_PROVIDER = registerArticleSubModule("item", StatShops.PERM_ARTICLE_TRADE_ITEM, new ItemStack(Material.AZURE_BLUET), Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_NAME,
+		ARTICLE_ITEM_PROVIDER = registerArticleSubModule(EntryModuleHandler.TRADE_ITEM, StatShops.PERM_ARTICLE_TRADE_ITEM, new ItemStack(Material.AZURE_BLUET), Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_NAME,
 				Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_LORE, (provider, shopEntry) -> new ArticleSubModule.ItemArticle(provider));
-		ARTICLE_CMD_PROVIDER = registerArticleSubModule("cmd", StatShops.PERM_ARTICLE_TRADE_CMD, new ItemStack(Material.REDSTONE), Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_NAME,
+		ARTICLE_CMD_PROVIDER = registerArticleSubModule(EntryModuleHandler.TRADE_CMD, StatShops.PERM_ARTICLE_TRADE_CMD, new ItemStack(Material.REDSTONE), Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_NAME,
 				Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_LORE, (provider, shopEntry) -> new ArticleSubModule.CommandArticle(provider));
-		ARTICLE_CONSOLE_CMD_PROVIDER = registerArticleSubModule("console_cmd", StatShops.PERM_ARTICLE_TRADE_CONSOLE_CMD, new ItemStack(Material.REPEATER), Message.GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_NAME,
+		ARTICLE_CONSOLE_CMD_PROVIDER = registerArticleSubModule(EntryModuleHandler.TRADE_CONSOLE_CMD, StatShops.PERM_ARTICLE_TRADE_CONSOLE_CMD, new ItemStack(Material.REPEATER), Message.GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_NAME,
 				Message.GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_LORE, (provider, shopEntry) -> new ArticleSubModule.ConsoleCommandArticle(provider));
 
 		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
@@ -68,7 +69,7 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 		ArticleSubModuleProvider<A> provider = new ArticleSubModuleProvider<>(key, itemStack, name, lore, moduleSupplier);
 		articleSubModules.put(key, provider);
 
-		EntryModuleHandler.EntryModuleProvider entryModuleProvider = EntryModuleHandler.getInstance().registerEntryModule("trade_" + key, itemStack, name, lore, (p, entry) -> {
+		EntryModuleHandler.EntryModuleProvider entryModuleProvider = EntryModuleHandler.getInstance().registerEntryModule(key, itemStack, name, lore, (p, entry) -> {
 			return new TradeBaseModule(entry, p, provider.getModule(entry), COSTS_ITEM_PROVIDER.getModule(entry));
 		});
 		entryModuleProvider.setPermission(permission);
@@ -139,7 +140,7 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 
 		public CostsSubModule<T> getModule(ShopEntry shopEntry) {
 			CostsSubModule<T> subModule = moduleSupplier.apply(this, shopEntry);
-			;
+
 			subModule.loadDataSlots(shopEntry);
 			return subModule;
 		}

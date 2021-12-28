@@ -29,7 +29,6 @@ import java.util.UUID;
 @Setter
 public class TradeBaseModule extends BaseModule implements TradeModule {
 
-
 	private ArticleSubModule<?> article;
 	private CostsSubModule<?> costs;
 	private final Map<UUID, Transaction> lastTransactions;

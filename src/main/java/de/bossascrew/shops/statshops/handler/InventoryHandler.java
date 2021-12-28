@@ -51,10 +51,10 @@ public class InventoryHandler {
 	}
 
 	public void handleMenuOpen(Player player, OpenableMenu menu) {
-		handleInventoryClose(player);
 		if(menu instanceof EditorMenu editorMenu) {
 			editorMenu.setEditor(player);
 		}
+		System.out.println("handle open");
 		this.openOpenableMenus.put(player.getUniqueId(), menu);
 	}
 
@@ -81,6 +81,7 @@ public class InventoryHandler {
 		OpenableMenu invMenu = openOpenableMenus.remove(playerId);
 
 		if (invMenu != null) {
+			System.out.println("handle close");
 			if(invMenu instanceof EditorMenu editorMenu) {
 				editorMenu.setEditor(null);
 			}

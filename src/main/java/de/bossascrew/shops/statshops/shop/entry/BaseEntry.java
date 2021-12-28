@@ -12,7 +12,6 @@ import de.bossascrew.shops.statshops.data.Config;
 import de.bossascrew.shops.statshops.events.ShopEntryInteractEvent;
 import de.bossascrew.shops.statshops.events.ShopEntryInteractedEvent;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
-import de.bossascrew.shops.statshops.shop.ShopMode;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -39,11 +38,9 @@ public class BaseEntry implements ShopEntry {
 	private String infoLoreFormat;
 	private final List<String> tags;
 	private @Nullable EntryModule module = null;
-
 	private int slot;
-	private ShopMode shopMode;
 
-	public BaseEntry(UUID uuid, Shop shop, ItemStack displayItem, @Nullable String permission, int slot, ShopMode shopMode) {
+	public BaseEntry(UUID uuid, Shop shop, ItemStack displayItem, @Nullable String permission, int slot) {
 		this.uuid = uuid;
 		this.shop = shop;
 		this.displayItem = displayItem;
@@ -51,7 +48,6 @@ public class BaseEntry implements ShopEntry {
 		this.tags = new ArrayList<>();
 
 		this.slot = slot;
-		this.shopMode = shopMode;
 	}
 
 	public void setModule(@Nullable EntryModule module) {
@@ -153,7 +149,7 @@ public class BaseEntry implements ShopEntry {
 
 	@Override
 	public ShopEntry duplicate() {
-		BaseEntry entry = new BaseEntry(UUID.randomUUID(), shop, displayItem.clone(), permission, slot, shopMode);
+		BaseEntry entry = new BaseEntry(UUID.randomUUID(), shop, displayItem.clone(), permission, slot);
 		if (module != null) {
 			EntryModule m = module.duplicate();
 			entry.setModule(m);

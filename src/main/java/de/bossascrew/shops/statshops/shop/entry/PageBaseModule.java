@@ -14,12 +14,9 @@ import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
-
 public class PageBaseModule extends BaseModule implements PageModule {
 
 	private final Consumer3<Customer, ShopEntry, Integer> openPageHandler;
-	private Function<Integer, Integer> newPageProvider = null;
 
 	private DataSlot.NumberSlot mode;
 	private DataSlot.NumberSlot page;
@@ -36,9 +33,8 @@ public class PageBaseModule extends BaseModule implements PageModule {
 	 * @param page the page to open
 	 */
 	public void setNewPage(int page) {
-		this.newPageProvider = integer -> page;
-		this.page.setData(page);
 		this.mode.setData(0);
+		this.page.setData(page);
 	}
 
 	/**
@@ -48,9 +44,9 @@ public class PageBaseModule extends BaseModule implements PageModule {
 		if (pageCount == 0) {
 			throw new IllegalArgumentException("The relative page cannot be 0.");
 		}
-		this.newPageProvider = integer -> integer + pageCount;
-		this.page.setData(Math.abs(pageCount));
 		this.mode.setData(Math.abs(pageCount) / pageCount);
+		System.out.println("mode: " + mode.getData().intValue());
+		this.page.setData(Math.abs(pageCount));
 	}
 
 	@Override
@@ -60,17 +56,13 @@ public class PageBaseModule extends BaseModule implements PageModule {
 
 	@Override
 	public void loadData() {
+		System.out.println("load data");
 		page = shopEntry.getData(DataSlot.NumberSlot.class, "page", () -> {
 			return new DataSlot.NumberSlot("page", 1., Message.GUI_ENTRY_FUNCTION_PAGE_NAME, Message.GUI_ENTRY_FUNCTION_PAGE_LORE);
 		});
 		mode = shopEntry.getData(DataSlot.NumberSlot.class, "mode", () -> {
 			return new DataSlot.NumberSlot("mode", 1., Message.NONE, Message.NONE);
 		});
-		switch (mode.getData().intValue()) {
-			case -1 -> this.newPageProvider = integer -> (int) (integer - page.getData());
-			case 0 -> this.newPageProvider = integer -> page.getData().intValue();
-			case 1 -> this.newPageProvider = integer -> (int) (integer + page.getData());
-		}
 	}
 
 	@Override
@@ -95,13 +87,20 @@ public class PageBaseModule extends BaseModule implements PageModule {
 		if (shopEntry.getShop() instanceof ChestMenuShop cms) {
 			cms.announceTurnPage(customer); //TODO verallgmeeinern
 		}
-		this.openPageHandler.accept(customer, shopEntry, this.newPageProvider.apply(shopEntry.getSlot() / RowedOpenableMenu.LARGEST_INV_SIZE));
+		System.out.println(mode.getData());
+		System.out.println(page.getData());
+		int newPage = mode.getData().intValue() == 0 ?
+				page.getData().intValue() - 1 :
+				shopEntry.getSlot() / RowedOpenableMenu.LARGEST_INV_SIZE + page.getData().intValue() * mode.getData().intValue();
+		System.out.println(newPage);
+		this.openPageHandler.accept(customer, shopEntry, newPage);
 	}
 
 	@Override
 	public EntryModule duplicate() {
 		PageBaseModule module = new PageBaseModule(provider, shopEntry, openPageHandler);
-		module.newPageProvider = newPageProvider;
+		module.mode.setData(mode.getData());
+		module.page.setData(page.getData());
 		return module;
 	}
 }

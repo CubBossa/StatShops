@@ -1,9 +1,11 @@
 package de.bossascrew.shops.general;
 
-import de.bossascrew.shops.general.menu.contexts.BackContext;
+import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
-import de.bossascrew.shops.statshops.shop.ShopMode;
+
+import java.util.List;
 
 public interface PaginatedShop extends Shop {
 
@@ -32,7 +34,11 @@ public interface PaginatedShop extends Shop {
 
 	void setDefaultShopPage(int page);
 
+	List<ShopEntry> getEntries(int page);
+
 	void applyTemplate(EntryTemplate template, int shopPage);
+
+	void applyDefaultTemplate(EntryTemplate template, int shopPage);
 
 	/**
 	 * @param customer the customer to open this shop for.
@@ -41,15 +47,5 @@ public interface PaginatedShop extends Shop {
 	 */
 	boolean open(Customer customer, int page);
 
-	boolean open(Customer customer, int page, ContextConsumer<BackContext> backHandler);
-
-	/**
-	 * @param customer the customer to open this shop for.
-	 * @param page     the page to open this shop at.
-	 * @param shopMode the mode to open this shop at.
-	 * @return true if the shop was opened successfully, false if errors occured
-	 */
-	boolean open(Customer customer, int page, ShopMode shopMode);
-
-	boolean open(Customer customer, int page, ShopMode shopMode, ContextConsumer<BackContext> backHandler);
+	boolean open(Customer customer, int page, ContextConsumer<CloseContext> closeHandler);
 }

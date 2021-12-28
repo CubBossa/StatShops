@@ -1,12 +1,12 @@
 package de.bossascrew.shops.general.menu;
 
 import com.google.common.base.Preconditions;
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.general.menu.contexts.ClickContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.util.LoggingPolicy;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -42,6 +42,16 @@ public class BottomTopChestMenu extends ChestMenu {
 		this.slots = getSlotsFromRows(rows, bottomRows);
 		this.inventories = new HashMap<>();
 		setCloseHandler(null);
+	}
+
+	public BottomTopChestMenu(ChestMenu chestMenu, int bottomRows) {
+		super(chestMenu.title, chestMenu.getRowCount());
+		this.bottomRows = bottomRows;
+		this.slots = getSlotsFromRows(getRowCount(), bottomRows);
+		this.inventories = new HashMap<>();
+		setCloseHandler(chestMenu.getCloseHandler());
+
+		setClickHandlers(chestMenu.getClickHandlers());
 	}
 
 	public void saveInventory(Player player) {

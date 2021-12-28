@@ -2,6 +2,7 @@ package de.bossascrew.shops.statshops.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.menu.VillagerMenu;
@@ -89,9 +90,20 @@ public class VillagerShop implements Shop {
 	}
 
 	@Override
-	public void newEntry(int slot, ShopEntry entry) {
+	public ShopEntry createEntry(ItemStack displayItem, int slot) {
+		return null;
+	}
+
+	@Override
+	public ShopEntry addEntry(ShopEntry entry, int slot) {
 		slotEntryMap.put(slot, entry);
 		uuidEntryMap.put(entry.getUUID(), entry);
+		return entry;
+	}
+
+	@Override
+	public boolean moveEntry(ShopEntry entry, int slot) {
+		return false;
 	}
 
 	@Override
@@ -115,6 +127,16 @@ public class VillagerShop implements Shop {
 	}
 
 	@Override
+	public boolean removeEntry(ShopEntry entry) {
+		return false;
+	}
+
+	@Override
+	public boolean deleteEntry(int slot) {
+		return false;
+	}
+
+	@Override
 	public boolean setEntryUnused(ShopEntry entry) {
 		unusedEntryCache.put(entry.getUUID(), entry);
 		return slotEntryMap.remove(entry.getSlot(), entry);
@@ -131,7 +153,7 @@ public class VillagerShop implements Shop {
 	}
 
 	@Override
-	public boolean open(Customer customer, @Nullable ContextConsumer<BackContext> backHandler) {
+	public boolean open(Customer customer, @Nullable ContextConsumer<CloseContext> closeHandler) {
 		return new VillagerShopMenu(this).openInventory(customer.getPlayer()) != null;
 	}
 

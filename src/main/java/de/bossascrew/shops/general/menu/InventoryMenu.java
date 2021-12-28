@@ -57,7 +57,8 @@ public abstract class InventoryMenu<T, A extends ActionContext<T>, B extends Bac
 	@Getter
 	protected final Map<Integer, ItemStack> specialItems = Maps.newHashMap();
 	@Getter
-	protected final Map<Integer, Map<T, ContextConsumer<A>>> clickHandlers = Maps.newHashMap();
+	@Setter
+	protected Map<Integer, Map<T, ContextConsumer<A>>> clickHandlers = Maps.newHashMap();
 
 	@Getter
 	protected int[] slots;

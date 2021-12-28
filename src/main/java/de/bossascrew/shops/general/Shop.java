@@ -1,5 +1,6 @@
 package de.bossascrew.shops.general;
 
+import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.statshops.data.DatabaseObject;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
@@ -10,6 +11,7 @@ import de.bossascrew.shops.general.util.Editable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -55,13 +57,21 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 
 	void setPermission(@Nullable String permission);
 
-	void newEntry(int slot, ShopEntry entry);
+	ShopEntry createEntry(ItemStack displayItem, int slot);
+
+	ShopEntry addEntry(ShopEntry entry, int slot);
+
+	boolean moveEntry(ShopEntry entry, int slot);
 
 	ShopEntry getEntry(UUID uuid);
 
 	ShopEntry getUnusedEntry(UUID uuid);
 
 	boolean deleteEntry(ShopEntry entry);
+
+	boolean removeEntry(ShopEntry entry);
+
+	boolean deleteEntry(int slot);
 
 	boolean setEntryUnused(ShopEntry entry);
 
@@ -82,7 +92,7 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	 */
 	boolean open(Customer customer);
 
-	boolean open(Customer customer, ContextConsumer<BackContext> backHandler);
+	boolean open(Customer customer, ContextConsumer<CloseContext> closeHandler);
 
 	/**
 	 * @param customer the customer to close this shop if he currently uses it.

@@ -8,7 +8,6 @@ import de.bossascrew.shops.general.util.Editable;
 import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.data.DatabaseObject;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
-import de.bossascrew.shops.statshops.shop.ShopMode;
 import de.bossascrew.shops.statshops.shop.entry.DataSlot;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -28,10 +27,6 @@ public interface ShopEntry extends Taggable, Duplicable<ShopEntry>, DatabaseObje
 	int getSlot();
 
 	void setSlot(int slot);
-
-	ShopMode getShopMode();
-
-	void setShopMode(ShopMode shopMode);
 
 	ItemStack getDisplayItem();
 

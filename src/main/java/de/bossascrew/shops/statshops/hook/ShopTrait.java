@@ -1,10 +1,10 @@
 package de.bossascrew.shops.statshops.hook;
 
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.util.LoggingPolicy;
+import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.handler.ShopHandler;
 import lombok.Getter;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
@@ -17,11 +17,11 @@ import java.util.UUID;
 public class ShopTrait extends Trait {
 
 	@Getter
-	private Shop shop;
+	private @Nullable Shop shop;
 
-	protected ShopTrait(Shop shop) {
+	public ShopTrait() {
 		super(CitizensHook.TRAIT_NAME);
-		this.shop = shop;
+		this.shop = null;
 	}
 
 	public void setShop(@Nullable Shop shop) {

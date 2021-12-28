@@ -190,7 +190,6 @@ public class StatShops extends JavaPlugin {
 
 		// Setup ShopHandler and load shops and entries
 		this.shopHandler = new ShopHandler();
-		this.shopHandler.registerDefaultShopModes();
 
 		// Setup and load shop templates
 		this.templateHandler = new TemplateHandler();

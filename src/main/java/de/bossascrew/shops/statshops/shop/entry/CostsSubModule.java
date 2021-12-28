@@ -7,10 +7,8 @@ import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +44,16 @@ public class CostsSubModule<T> implements SubModule {
 			data.add(sellPayPriceAmount);
 		}
 		return data;
+	}
+
+	public void setCosts(String buyPayEquation, String sellPayEquation) {
+		this.buyPayEquation.setData(buyPayEquation);
+		this.sellPayEquation.setData(sellPayEquation);
+	}
+
+	public void setCosts(double buyPayAmount, double sellPayAmount) {
+		this.buyPayPriceAmount.setData(buyPayAmount);
+		this.sellPayPriceAmount.setData(sellPayAmount);
 	}
 
 	public void loadDataSlots(ShopEntry shopEntry) {

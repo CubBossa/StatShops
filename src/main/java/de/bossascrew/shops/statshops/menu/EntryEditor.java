@@ -13,11 +13,18 @@ import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.menu.contexts.TargetContext;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.LoggingPolicy;
+import de.bossascrew.shops.general.util.Pair;
+import de.bossascrew.shops.general.util.TagUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.handler.DiscountHandler;
+import de.bossascrew.shops.statshops.handler.LimitsHandler;
+import de.bossascrew.shops.statshops.shop.Discount;
+import de.bossascrew.shops.statshops.shop.Limit;
 import de.bossascrew.shops.statshops.shop.entry.DataSlot;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -29,9 +36,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
@@ -79,7 +84,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 		});
 		//Set tags
 		setItemAndClickHandler(2, 0, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
-						Message.GUI_ENTRY_SET_TAGS_NAME, Message.GUI_LIMIT_SET_TAGS_LORE),
+						Message.GUI_ENTRY_SET_TAGS_NAME, Message.GUI_ENTRY_SET_TAGS_LORE),
 				clickContext -> {
 					Player player = clickContext.getPlayer();
 					TagsEditorMenu<ShopEntry> menu = new TagsEditorMenu<>(entry,
@@ -121,6 +126,30 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 				});
 				listMenu.openInventory(clickContext.getPlayer());
 			});
+
+			//Open Limits menu
+			List<Component> limitsLore = new ArrayList<>();
+			Pair<Limit, Limit> limits = LimitsHandler.getInstance().getMinimalLimitsWithMatchingTags(entry, entry.getShop());
+			ItemStackUtils.addLoreLimits(limitsLore, limits.getLeft(), limits.getRight(), 0);
+			if (limitsLore.size() > 0) {
+				limitsLore.add(Message.SHOP_ITEM_LORE_SPACER.getTranslation());
+			}
+			limitsLore.addAll(Message.GUI_SHOP_SET_LIMITS_LORE.getTranslations());
+			setItemAndClickHandler(1, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
+							Message.GUI_SHOP_SET_LIMITS_NAME.getTranslation(), limitsLore),
+					clickContext -> openShopLimitsMenu(clickContext.getPlayer(), 0));
+
+			//Open Discounts menu
+			List<Component> discountLore = new ArrayList<>();
+			List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(entry, entry.getShop());
+			ItemStackUtils.addLoreDiscount(discountLore, discounts);
+			if (discountLore.size() > 0) {
+				discountLore.add(Message.SHOP_ITEM_LORE_SPACER.getTranslation());
+			}
+			discountLore.addAll(Message.GUI_SHOP_SET_DISCOUNTS_LORE.getTranslations());
+			setItemAndClickHandler(2, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
+							Message.GUI_SHOP_SET_DISCOUNTS_NAME.getTranslation(), discountLore),
+					clickContext -> openShopDiscountsMenu(clickContext.getPlayer(), 0));
 		}
 
 		int[] blackSlots = {3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25};
@@ -179,5 +208,39 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 	@Override
 	public Player getEditor() {
 		return entry.getShop().getEditor();
+	}
+
+	public void openShopLimitsMenu(Player player, int page) {
+		ListMenu<Limit> listMenu = new ListMenu<>(3, LimitsHandler.getInstance(), Message.GUI_SHOP_LIMITS_TITLE, backContext -> openInventory(player));
+		listMenu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_LIMITS_INFO_NAME, Message.GUI_SHOP_LIMITS_INFO_LORE), clickContext -> {
+		});
+		listMenu.setGlowPredicate(limit -> TagUtils.hasCommonTags(entry, limit) || TagUtils.hasCommonTags(entry.getShop(), limit));
+		listMenu.setClickHandler(targetContext -> {
+			Limit limit = targetContext.getTarget();
+			if (targetContext.getAction().isRightClick()) {
+				limit.removeTag(entry.getUUID().toString());
+			} else if (targetContext.getAction().isLeftClick()) {
+				limit.addTag(entry.getUUID().toString());
+			}
+			listMenu.openInventory(player, listMenu.getCurrentPage());
+		});
+		listMenu.openInventory(player, page);
+	}
+
+	public void openShopDiscountsMenu(Player player, int page) {
+		ListMenu<Discount> listMenu = new ListMenu<>(3, DiscountHandler.getInstance(), Message.GUI_SHOP_DISCOUNTS_TITLE, backContext -> openInventory(player));
+		listMenu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_DISCOUNTS_INFO_NAME, Message.GUI_SHOP_DISCOUNTS_INFO_LORE), clickContext -> {
+		});
+		listMenu.setGlowPredicate(discount -> TagUtils.hasCommonTags(entry.getShop(), discount) || TagUtils.hasCommonTags(entry, discount));
+		listMenu.setClickHandler(targetContext -> {
+			Discount discount = targetContext.getTarget();
+			if (targetContext.getAction().isRightClick()) {
+				discount.removeTag(entry.getUUID().toString());
+			} else if (targetContext.getAction().isLeftClick()) {
+				discount.addTag(entry.getUUID().toString());
+			}
+			listMenu.openInventory(player, listMenu.getCurrentPage());
+		});
+		listMenu.openInventory(player, page);
 	}
 }

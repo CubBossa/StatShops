@@ -30,7 +30,7 @@ public class TestDatabase implements Database, LogDatabase {
 
 	@Override
 	public Customer loadCustomer(UUID uuid) {
-		return new Customer(Bukkit.getPlayer(uuid), new HashMap<>(), new HashMap<>());
+		return new Customer(Bukkit.getPlayer(uuid), new HashMap<>());
 	}
 
 	@Override
@@ -40,9 +40,7 @@ public class TestDatabase implements Database, LogDatabase {
 
 	@Override
 	public Shop createShop(String nameFormat, UUID uuid) {
-		ChestMenuShop shop = new ChestMenuShop(nameFormat, uuid);
-		shop.setDefaultShopMode(ShopHandler.getInstance().getShopModes().get(0));
-		return shop;
+		return new ChestMenuShop(nameFormat, uuid);
 	}
 
 	@Override
@@ -53,7 +51,7 @@ public class TestDatabase implements Database, LogDatabase {
 		s1.addTag("rainbow");
 		s1.setDefaultTemplate(TemplateHandler.getInstance().getDefaultTemplate());
 
-		ShopEntry entry1 = createEntry(UUID.randomUUID(), s1, new ItemStack(Material.MINECART), ShopHandler.getInstance().getShopModes().get(0), 0);
+		ShopEntry entry1 = createEntry(UUID.randomUUID(), s1, new ItemStack(Material.MINECART), 0);
 		ItemStack article = new ItemStack(Material.MINECART);
 		ItemMeta meta = article.getItemMeta();
 		meta.addEnchant(Enchantment.ARROW_INFINITE, 2, true);
@@ -61,9 +59,9 @@ public class TestDatabase implements Database, LogDatabase {
 
 		entry1.setModule(EntryModuleHandler.getInstance().getEntryModules().get("trade_item").getModule(entry1));
 		entry1.addTag("test");
-		s1.addEntry(ShopHandler.getInstance().getShopModes().get(0), 0, entry1);
+		s1.addEntry(entry1, 0);
 
-		ShopEntry entry2 = createEntry(UUID.randomUUID(), s1, new ItemStack(Material.POTION), ShopHandler.getInstance().getShopModes().get(0), 1);
+		ShopEntry entry2 = createEntry(UUID.randomUUID(), s1, new ItemStack(Material.POTION), 1);
 		ItemStack article2 = new ItemStack(Material.POTION);
 		PotionMeta pmeta = (PotionMeta) article2.getItemMeta();
 		pmeta.setDisplayName(TextUtils.toLegacy(MiniMessage.get().parse("<rainbow>Huiiiiiiiii")));
@@ -73,7 +71,7 @@ public class TestDatabase implements Database, LogDatabase {
 		entry2.setModule(EntryModuleHandler.getInstance().getEntryModules().get("trade_item").getModule(entry2));
 		//entry2.setModule(EntryModuleHandler.tradeItemMoney(entry2, article2, "6 / 2 * <db:diamond>"));
 		entry2.addTag("test");
-		s1.addEntry(ShopHandler.getInstance().getShopModes().get(0), 1, entry2);
+		s1.addEntry(entry2, 1);
 
 		Shop s2 = createShop("<white>Boring Shop", UUID.randomUUID());
 
@@ -101,8 +99,8 @@ public class TestDatabase implements Database, LogDatabase {
 	}
 
 	@Override
-	public ShopEntry createEntry(UUID uuid, Shop shop, ItemStack displayItem, ShopMode shopMode, int slot) {
-		return new BaseEntry(uuid, shop, displayItem, null, slot, shopMode);
+	public ShopEntry createEntry(UUID uuid, Shop shop, ItemStack displayItem, int slot) {
+		return new BaseEntry(uuid, shop, displayItem, null, slot);
 	}
 
 	@Override
@@ -182,8 +180,8 @@ public class TestDatabase implements Database, LogDatabase {
 		EntryTemplate template = new EntryTemplate(UUID.randomUUID(), "<gradient:dark_green:green:dark_green>Default Template");
 		for (int i = 0; i < 9; i++) {
 			int finalI = i;
-			template.put(rows -> (rows - 1) * 9 + finalI, new BaseEntry(UUID.randomUUID(), null, ItemStackUtils.createItemStack(Material.DIAMOND, "lol", ""),
-					null, i, ShopHandler.getInstance().getShopModes().get(0)));
+			template.put(rows -> (rows - 1) * 9 + finalI, new BaseEntry(UUID.randomUUID(), null, ItemStackUtils.createItemStack(Material.DIAMOND,
+					"lol", ""), 	null, i));
 		}
 		Map<UUID, EntryTemplate> map = new LinkedHashMap<>();
 		map.put(template.getUuid(), template);

@@ -24,6 +24,12 @@ public class TextUtils {
 
 	private static final GsonComponentSerializer GSON_SERIALZIER = GsonComponentSerializer.builder().build();
 
+	private static final LegacyComponentSerializer LEGACY_SERIALIZER_AND = LegacyComponentSerializer.builder()
+			.character('&')
+			.hexColors()
+			.hexCharacter('#')
+			.build();
+
 	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder()
 			.character('§')
 			.hexColors()
@@ -35,11 +41,23 @@ public class TextUtils {
 
 	public static final String DURATION_FORMAT = new DurationParser(true).format(0);
 
-	public static final String DATE_TIME_FORMAT = "dd.MM.yy, HH:mm";
+	public static final String DATE_TIME_FORMAT_SHORT = "dd.MM.yy HH:mm";
+	public static final String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm";
+	private static final DateTimeFormatter DATE_TIME_FORMATTER_SHORT = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT_SHORT);
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
+	/**
+	 * Format: §x§1§2§3§4§5§6
+	 */
 	public Component fromLegacy(String legacy) {
 		return LEGACY_SERIALIZER.deserialize(legacy);
+	}
+
+	/**
+	 * Format: &#123456
+	 */
+	public Component fromChatLegacy(String legacy) {
+		return LEGACY_SERIALIZER_AND.deserialize(legacy);
 	}
 
 	public String toLegacy(Component component) {
@@ -70,15 +88,19 @@ public class TextUtils {
 		if (localDateTime == null) {
 			return "-";
 		}
-		return localDateTime.format(DATE_TIME_FORMATTER);
+		return localDateTime.format(DATE_TIME_FORMATTER_SHORT);
 	}
 
 	public @Nullable LocalDateTime parseLocalDateTime(String string) {
 		try {
-			return LocalDateTime.parse(string, DATE_TIME_FORMATTER);
+			return LocalDateTime.parse(string, DATE_TIME_FORMATTER_SHORT);
 		} catch (DateTimeParseException e) {
-			e.printStackTrace();
-			return null;
+			try {
+				return LocalDateTime.parse(string, DATE_TIME_FORMATTER);
+			} catch (DateTimeParseException eInner) {
+				eInner.printStackTrace();
+				return null;
+			}
 		}
 	}
 

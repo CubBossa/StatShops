@@ -5,7 +5,6 @@ import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.Limit;
-import de.bossascrew.shops.statshops.shop.ShopMode;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -28,7 +27,7 @@ public interface Database {
 
 	void deleteShop(Shop shop);
 
-	ShopEntry createEntry(UUID uuid, Shop shop, ItemStack displayItem, ShopMode shopMode, int slot);
+	ShopEntry createEntry(UUID uuid, Shop shop, ItemStack displayItem, int slot);
 
 	Map<UUID, Shop> loadEntries(Shop shop);
 

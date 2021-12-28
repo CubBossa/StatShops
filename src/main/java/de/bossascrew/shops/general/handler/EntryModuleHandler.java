@@ -36,6 +36,10 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	public static EntryModuleProvider PREV_PAGE_PROVIDER;
 	public static EntryModuleProvider EXACT_PAGE_PROVIDER;
 
+	public static final String TRADE_ITEM = "trade_item";
+	public static final String TRADE_CMD = "trade_cmd";
+	public static final String TRADE_CONSOLE_CMD = "trade_console_cmd";
+
 	public static CloseModule closeShop(ShopEntry shopEntry) {
 		return new CloseModule(CLOSE_PROVIDER, shopEntry);
 	}
@@ -88,6 +92,10 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 	public EntryModuleHandler() {
 		instance = this;
 		entryModules = new LinkedHashMap<>();
+	}
+
+	public EntryModule getModule(ShopEntry shopEntry, String name) {
+		return entryModules.get(name).getModule(shopEntry);
 	}
 
 	public EntryModuleProvider registerEntryModule(String key, ItemStack itemStack, Message name, Message lore, BiFunction<EntryModuleProvider, ShopEntry, EntryModule> moduleSupplier) {

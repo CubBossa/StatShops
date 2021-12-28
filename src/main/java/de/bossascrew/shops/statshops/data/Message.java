@@ -49,6 +49,7 @@ public class Message {
 	public static final Message CITIZENS_ASSIGNED = new Message("citizens.assign.success");
 	public static final Message CITIZENS_CONFIRM_OVERRIDE = new Message("citizens.assign.confirm");
 	public static final Message CITIZENS_CLICK_TO_ASSIGN = new Message("citizens.assign.info");
+	public static final Message CITIZENS_CANCELLED = new Message("citizens.assign.cancelled");
 	public static final Message ACTION_BUY = new Message("shop.actions.buy");
 	public static final Message ACTION_SELL = new Message("shop.actions.sell");
 	public static final Message ACTION_BUY_STACK = new Message("shop.actions.buy_stack");
@@ -73,12 +74,6 @@ public class Message {
 	public static final Message SHOP_ITEM_LORE_LIMIT = new Message("shop.gui.item.lore.limit_both");
 	public static final Message SHOP_ITEM_LORE_LIMIT_PERSONAL = new Message("shop.gui.item.lore.limit_personal");
 	public static final Message SHOP_ITEM_LORE_LIMIT_GLOBAL = new Message("shop.gui.item.lore.limit_global");
-	public static final Message SHOP_MODE_BUY_NAME = new Message("shop.modes.buy.name");
-	public static final Message SHOP_MODE_BUY_LORE = new Message("shop.modes.buy.lore");
-	public static final Message SHOP_MODE_SELL_NAME = new Message("shop.modes.sell.name");
-	public static final Message SHOP_MODE_SELL_LORE = new Message("shop.modes.sell.lore");
-	public static final Message SHOP_MODE_TRADE_NAME = new Message("shop.modes.trade.name");
-	public static final Message SHOP_MODE_TRADE_LORE = new Message("shop.modes.trade.lore");
 	public static final Message SHOP_TRADE_FEEDBACK_PROMPT_FORMAT = new Message("shop.prompt_feedback");
 	public static final Message SHOP_TRADE_FEEDBACK_CUMUL_FORMAT = new Message("shop.cumulative_feedback");
 	public static final Message SHOP_TRADE_FEEDBACK_CUMUL_TITLE = new Message("shop.cumulative_title");
@@ -125,18 +120,12 @@ public class Message {
 			"The name of the item in the shop menu, that allows you to assign this shop to an citizens npc.");
 	public static final Message GUI_SHOP_SET_NPC_LORE = new Message("manager.gui.shop.set_citizens.lore",
 			"The lore of the item in the shop menu, that allows you to assign this shop to an citizens npc.");
-	public static final Message GUI_SHOP_SET_ENABLED_NAME = new Message("manager.gui.shop.set_enabled.name");
-	public static final Message GUI_SHOP_SET_ENABLED_LORE = new Message("manager.gui.shop.set_enabled.lore");
 	public static final Message GUI_SHOP_SET_REMEMBER_PAGE_NAME = new Message("manager.gui.shop.set_remember_page.name");
 	public static final Message GUI_SHOP_SET_REMEMBER_PAGE_LORE = new Message("manager.gui.shop.set_remember_page.lore");
-	public static final Message GUI_SHOP_SET_REMEMBER_MODE_NAME = new Message("manager.gui.shop.set_remember_mode.name");
-	public static final Message GUI_SHOP_SET_REMEMBER_MODE_LORE = new Message("manager.gui.shop.set_remember_mode.lore");
 	public static final Message GUI_SHOP_SET_CONTENT_NAME = new Message("manager.gui.shop.set_content.name");
 	public static final Message GUI_SHOP_SET_CONTENT_LORE = new Message("manager.gui.shop.set_content.lore");
 	public static final Message GUI_SHOP_SET_PREVIEW_NAME = new Message("manager.gui.shop.preview.name");
 	public static final Message GUI_SHOP_SET_PREVIEW_LORE = new Message("manager.gui.shop.preview.lore");
-	public static final Message GUI_SHOP_SET_DEFAULT_MODE_NAME = new Message("manager.gui.shop.set_default_mode.name");
-	public static final Message GUI_SHOP_SET_DEFAULT_MODE_LORE = new Message("manager.gui.shop.set_default_mode.lore");
 	public static final Message GUI_SHOP_SET_DEFAULT_PAGE_NAME = new Message("manager.gui.shop.set_default_page.name");
 	public static final Message GUI_SHOP_SET_DEFAULT_PAGE_LORE = new Message("manager.gui.shop.set_default_page.lore");
 	public static final Message GUI_SHOP_SET_ROWS_NAME = new Message("manager.gui.shop.set_rows.name");
@@ -216,7 +205,6 @@ public class Message {
 	public static final Message GUI_DISCOUNT_START_DELETE_CONFIRM = new Message("manager.gui.discount.start.confirm_delete");
 
 	public static final Message GUI_SHOP_ENTRY = new Message("manager.gui.shop_entry.title");
-	public static final Message GUI_TEMPLATES = new Message("manager.gui.templates.title");
 	public static final Message GUI_TEMPLATES_CHOOSE = new Message("manager.gui.templates.choose_title");
 	public static final Message GUI_TEMPLATES_APPLY = new Message("manager.gui.templates.apply_title");
 	public static final Message GUI_TEMPLATES_NEW = new Message("manager.gui.templates.new_title");

@@ -1,10 +1,14 @@
 package de.bossascrew.shops.statshops.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.bossascrew.shops.general.*;
+import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.PaginatedShop;
+import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.general.TransactionBalanceMessenger;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
+import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.general.util.ItemStackUtils;
@@ -12,9 +16,9 @@ import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.events.ShopCloseEvent;
 import de.bossascrew.shops.statshops.events.ShopOpenEvent;
 import de.bossascrew.shops.statshops.events.ShopTurnPageEvent;
-import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.menu.ChestShopEditor;
 import de.bossascrew.shops.statshops.menu.ChestShopMenu;
 import lombok.Getter;
@@ -32,7 +36,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedShop {
+public class ChestMenuShop implements PaginatedShop {
 
 	private final UUID uuid;
 	private String nameFormat;
@@ -52,15 +56,13 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 	private int rows = 3;
 
 	private boolean isPageRemembered = false;
-	private boolean isModeRemembered = false;
 	private int defaultPage = 0;
-	private ShopMode defaultShopMode = null;
 	@JsonIgnore
 	private @Nullable Player editor = null;
 
 	@JsonIgnore
 	private final Map<UUID, ShopEntry> uuidEntryMap;
-	private final Map<ShopMode, TreeMap<Integer, ShopEntry>> modeEntryMap;
+	private final TreeMap<Integer, ShopEntry> entryMap;
 	/**
 	 * contains all entries that were removed via editor. When later on an item with the uuid tag of this entry was added, it can be restored from cache.
 	 */
@@ -83,7 +85,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 		this.uuid = uuid;
 
 		this.uuidEntryMap = new HashMap<>();
-		this.modeEntryMap = new HashMap<>();
+		this.entryMap = new TreeMap<>();
 		this.unusedEntryCache = new HashMap<>();
 		this.activeCustomers = new ArrayList<>();
 		this.menuMap = new HashMap<>();
@@ -100,25 +102,18 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 
 	@Override
 	public int getPageCount() {
-		int highest = 0;
-		for (TreeMap<Integer, ShopEntry> map : modeEntryMap.values()) {
-			int h = map.lastKey();
-			if (h > highest) {
-				highest = h;
-			}
-		}
 		//important to divide with largest inventory size so entries dont move to other pages when changing the row size
-		return highest / RowedOpenableMenu.LARGEST_INV_SIZE + 1;
+		return entryMap.lastKey() / RowedOpenableMenu.LARGEST_INV_SIZE + 1;
 	}
 
 	public @Nullable
-	ShopEntry getEntry(ShopMode shopMode, int slot) {
-		return modeEntryMap.getOrDefault(shopMode, new TreeMap<>()).getOrDefault(slot, null);
+	ShopEntry getEntry(int slot) {
+		return entryMap.getOrDefault(slot, null);
 	}
 
 	@Override
 	public boolean removeEntry(ShopEntry shopEntry) {
-		return modeEntryMap.getOrDefault(shopEntry.getShopMode(), new TreeMap<>()).remove(shopEntry.getSlot(), shopEntry);
+		return entryMap.remove(shopEntry.getSlot(), shopEntry);
 	}
 
 	@Override
@@ -132,60 +127,48 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 	}
 
 	@Override
-	public List<ShopEntry> getEntries(ShopMode shopMode, int shopPage) {
+	public List<ShopEntry> getEntries(int shopPage) {
 		int lowerBound = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE;
 		int upperBound = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + rows * RowedOpenableMenu.ROW_SIZE;
 
-		List<ShopEntry> entries;
-		Map<Integer, ShopEntry> inner = modeEntryMap.get(shopMode);
-		if (inner != null) {
-			entries = inner.entrySet().stream()
-					.filter(e -> e.getKey() >= lowerBound && e.getKey() < upperBound)
-					.map(Map.Entry::getValue)
-					.collect(Collectors.toList());
-		} else {
-			entries = new ArrayList<>();
-		}
-		return entries;
+		return entryMap.entrySet().stream()
+				.filter(e -> e.getKey() >= lowerBound && e.getKey() < upperBound)
+				.map(Map.Entry::getValue)
+				.collect(Collectors.toList());
 	}
 
 	@Override
-	public ShopEntry createEntry(ItemStack displayItem, ShopMode shopMode, int slot) {
-		ShopEntry entry = StatShops.getInstance().getDatabase().createEntry(UUID.randomUUID(), this, displayItem, shopMode, slot);
-		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.getOrDefault(shopMode, new TreeMap<>());
-		innerMap.put(slot, entry);
-		modeEntryMap.put(shopMode, innerMap);
+	public ShopEntry createEntry(ItemStack displayItem, int slot) {
+		ShopEntry entry = StatShops.getInstance().getDatabase().createEntry(UUID.randomUUID(), this, displayItem, slot);
+		entryMap.put(slot, entry);
 		uuidEntryMap.put(entry.getUUID(), entry);
 		return entry;
 	}
 
-	public ShopEntry addEntry(ShopMode shopMode, int slot, ShopEntry entry) {
-		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.getOrDefault(shopMode, new TreeMap<>());
-		innerMap.put(slot, entry);
-		modeEntryMap.put(shopMode, innerMap);
+	public ShopEntry addEntry(ShopEntry entry, int slot) {
+		entryMap.put(slot, entry);
 		uuidEntryMap.put(entry.getUUID(), entry);
 		unusedEntryCache.remove(entry.getUUID());
 		return entry;
 	}
 
 	@Override
-	public boolean moveEntry(ShopEntry entry, ShopMode shopMode, int slot) {
+	public boolean moveEntry(ShopEntry entry, int slot) {
 		if (getEntry(entry.getUUID()) == null) {
 			StatShops.getInstance().log(LoggingPolicy.ERROR, "Tried to move an entry that was not contained in this shop.");
 			return false;
 		}
 		removeEntry(entry);
 
-		boolean override = getEntry(shopMode, slot) != null;
-		entry.setShopMode(shopMode);
+		boolean override = getEntry(slot) != null;
 		entry.setSlot(slot);
-		addEntry(shopMode, slot, entry);
+		addEntry(entry, slot);
 		return override;
 	}
 
 	@Override
-	public boolean deleteEntry(ShopMode shopMode, int slot) {
-		return deleteEntry(getEntry(shopMode, slot));
+	public boolean deleteEntry(int slot) {
+		return deleteEntry(getEntry(slot));
 	}
 
 	@Override
@@ -195,21 +178,13 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 		}
 		uuidEntryMap.remove(entry.getUUID());
 		StatShops.getInstance().getDatabase().deleteEntry(entry);
-		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.get(entry.getShopMode());
-		if (innerMap == null) {
-			return false;
-		}
-		return innerMap.remove(entry.getSlot(), entry);
+		return entryMap.remove(entry.getSlot(), entry);
 	}
 
 	@Override
 	public boolean setEntryUnused(ShopEntry entry) {
-		TreeMap<Integer, ShopEntry> innerMap = modeEntryMap.get(entry.getShopMode());
-		if (innerMap == null) {
-			return false;
-		}
 		unusedEntryCache.put(entry.getUUID(), entry);
-		return innerMap.remove(entry.getSlot(), entry);
+		return entryMap.remove(entry.getSlot(), entry);
 	}
 
 	@Override
@@ -227,21 +202,6 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 	}
 
 	@Override
-	public void setModeRemembered(boolean rememberMode) {
-		this.isModeRemembered = rememberMode;
-	}
-
-	@Override
-	public ShopMode getDefaultShopMode() {
-		return defaultShopMode;
-	}
-
-	@Override
-	public void setDefaultShopMode(ShopMode shopMode) {
-		this.defaultShopMode = shopMode;
-	}
-
-	@Override
 	public int getDefaultShopPage() {
 		return defaultPage;
 	}
@@ -251,65 +211,30 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 		this.defaultPage = page;
 	}
 
-	@Override
-	public void applyTemplate(EntryTemplate template, int shopPage) {
-
-	}
-
-	public @Nullable
-	ShopMode getPreferredShopMode(Customer customer) {
-		ShopMode mode = isModeRemembered ? customer.getShopMode(this, defaultShopMode) : defaultShopMode;
-		if (mode == null) {
-			StatShops.getInstance().log(LoggingPolicy.WARN, "Default ShopMode was null, using first registered mode.");
-			return ShopHandler.getInstance().getShopModes().get(0);
-		}
-		return mode;
-	}
-
-	@Override
-	public void applyTemplate(EntryTemplate template, ShopMode shopMode) {
-		//TODO
-	}
-
 	public boolean open(Customer customer) {
-		return open(customer, getPreferredOpenPage(customer), getPreferredShopMode(customer));
+		return open(customer, getPreferredOpenPage(customer));
 	}
 
 	@Override
-	public boolean open(Customer customer, ContextConsumer<BackContext> backHandler) {
-		return open(customer, getPreferredOpenPage(customer), getPreferredShopMode(customer), backHandler);
+	public boolean open(Customer customer, ContextConsumer<CloseContext> closeHandler) {
+		return open(customer, getPreferredOpenPage(customer), closeHandler);
 	}
 
 	public boolean open(Customer customer, int page) {
-		return open(customer, page, getPreferredShopMode(customer));
+		return open(customer, page, null);
 	}
 
 	@Override
-	public boolean open(Customer customer, int page, ContextConsumer<BackContext> backHandler) {
-		return open(customer, page, getPreferredShopMode(customer), backHandler);
-	}
-
-	public boolean open(Customer customer, ShopMode mode) {
-		return open(customer, getPreferredOpenPage(customer), mode);
-	}
-
-	@Override
-	public boolean open(Customer customer, ShopMode shopMode, ContextConsumer<BackContext> backHandler) {
-		return open(customer, getPreferredOpenPage(customer), shopMode, backHandler);
-	}
-
-	public boolean open(Customer customer, int page, ShopMode mode) {
-		return open(customer, page, mode, null);
-	}
-
-	@Override
-	public boolean open(Customer customer, int page, ShopMode shopMode, @Nullable ContextConsumer<BackContext> backHandler) {
+	public boolean open(Customer customer, int page, @Nullable ContextConsumer<CloseContext> closeHandler) {
 		if (editor != null && !editor.getUniqueId().equals(customer.getUuid())) {
 			customer.sendMessage(Message.SHOP_NOT_ENABLED);
 			return false;
 		}
 		if (permission != null && !customer.getPlayer().hasPermission(permission)) {
 			customer.sendMessage(Message.SHOP_NO_PERMISSION);
+			return false;
+		}
+		if (!(page >= 0 && page < getPageCount())) {
 			return false;
 		}
 		if (pageTurningPlayers.contains(customer.getUuid())) {
@@ -322,19 +247,27 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 				return false;
 			}
 		}
+		if (closeHandler == null && menuMap.containsKey(customer)) {
+			closeHandler = menuMap.get(customer).getCloseHandler();
+		}
+		@Nullable ContextConsumer<CloseContext> finalCloseHandler = closeHandler;
 
-		ChestShopMenu menu = new ChestShopMenu(this, backHandler);
+		ChestShopMenu menu = new ChestShopMenu(this, null);
 		menu.setCloseHandler(closeContext -> {
 			if (!pageTurningPlayers.contains(customer.getUuid())) {
-				if (handleShopClose(customer)) ;
+				if (finalCloseHandler == null) {
+					if (!handleShopClose(customer)) {
+						open(customer, page, null);
+					}
+				} else {
+					finalCloseHandler.accept(closeContext);
+				}
 			}
 		});
-		menu.openInventorySync(customer.getPlayer(), null, shopMode, page);
+		menu.openInventorySync(customer.getPlayer(), null, page);
 		menuMap.put(customer, menu);
 
-		if (customer.getActiveShop() == null || !customer.getActiveShop().equals(this)) {
-			activeCustomers.add(customer);
-		}
+		activeCustomers.add(customer);
 		customer.setActiveShop(this);
 
 		return true;
@@ -347,9 +280,15 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 	}
 
 	private boolean handleShopClose(Customer customer) {
-		//TODO call event
-		balanceMessenger.handleShopClose(customer.getPlayer());
-		return true;
+		ShopCloseEvent event = new ShopCloseEvent(this, 0); //TODo page
+		Bukkit.getPluginManager().callEvent(event);
+
+		if (!event.isCancelled()) {
+			balanceMessenger.handleShopClose(customer.getPlayer());
+			activeCustomers.remove(customer);
+			return true;
+		}
+		return false;
 	}
 
 	private boolean handleShopTurnPage(Customer customer, int page) {
@@ -374,6 +313,7 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 			}
 			menuMap.remove(customer);
 		}
+		customer.setActiveShop(null);
 		return activeCustomers.remove(customer);
 	}
 
@@ -385,19 +325,16 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 
 	@Override
 	public void openEditorMenu(Player player, ContextConsumer<BackContext> backHandler) {
-		new ChestShopEditor(this, backHandler).openInventory(player, getDefaultShopMode(), getDefaultShopPage());
+		new ChestShopEditor(this, backHandler).openInventory(player, getDefaultShopPage());
 	}
 
-	public EntryInteractionResult interact(Customer customer, ShopMode shopMode, int slot, EntryInteractionType interactionType) {
+	public EntryInteractionResult interact(Customer customer, int slot, EntryInteractionType interactionType) {
 		if (editor != null && !customer.getUuid().equals(editor.getUniqueId())) {
 			return EntryInteractionResult.FAIL_SHOP_DISABLED;
 		}
-		ShopEntry entry = getEntry(shopMode, slot);
+		ShopEntry entry = getEntry(slot);
 		if (entry == null) {
 			return EntryInteractionResult.FAIL_NO_ENTRY;
-		}
-		if (!entry.hasPermission(customer)) {
-			return EntryInteractionResult.FAIL_NO_PERMISSION;
 		}
 		return entry.interact(customer, interactionType);
 	}
@@ -417,11 +354,6 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 
 	public void setPermission(String permission) {
 		this.permission = permission != null ? permission.equalsIgnoreCase("null") ? null : permission : null;
-	}
-
-	@Override
-	public void newEntry(int slot, ShopEntry entry) {
-		//TODO
 	}
 
 	@Override
@@ -452,19 +384,34 @@ public class ChestMenuShop implements ModedShop, PaginatedShop, PaginatedModedSh
 	}
 
 	@Override
-	public void applyTemplate(EntryTemplate template, ShopMode shopMode, int shopPage) {
-		for (int page = 0; page < shopPage; page++) {
-			if (getEntries(shopMode, page).size() > 0) {
+	public void applyTemplate(EntryTemplate template, int shopPage) {
+		for (ShopEntry entry : template.getEntries(rows).values()) {
+			int shopSlot = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + entry.getSlot();
+			ShopEntry newEntry = entry.duplicate();
+			newEntry.setSlot(shopSlot);
+			newEntry.setShop(this);
+			newEntry.saveToDatabase();
+			addEntry(newEntry, shopSlot);
+		}
+	}
+
+	@Override
+	public void applyDefaultTemplate(EntryTemplate template, int shopPage) {
+		for (int page = 0; page <= shopPage; page++) {
+			// Only override entries on actual page and not on any page before
+			if (page != shopPage && getEntries(page).size() > 0) {
 				continue;
 			}
 			for (ShopEntry entry : template.getEntries(rows).values()) {
 				int shopSlot = page * RowedOpenableMenu.LARGEST_INV_SIZE + entry.getSlot();
+				if (getEntry(shopSlot) != null) {
+					continue;
+				}
 				ShopEntry newEntry = entry.duplicate();
-				newEntry.setShopMode(shopMode);
 				newEntry.setSlot(shopSlot);
 				newEntry.setShop(this);
 				newEntry.saveToDatabase();
-				addEntry(shopMode, shopSlot, newEntry);
+				addEntry(newEntry, shopSlot);
 			}
 		}
 	}

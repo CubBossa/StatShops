@@ -6,7 +6,6 @@ import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.menu.ChestMenu;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
-import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
@@ -20,7 +19,6 @@ import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
-import de.bossascrew.shops.statshops.shop.ShopMode;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,8 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -49,12 +45,17 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	}
 
 	public ChestShopMenu(ChestMenuShop shop, @Nullable ContextConsumer<BackContext> backHandler) {
-		super(shop.getName(), shop.getRows(), 0, null, closeContext -> Customer.wrap(closeContext.getPlayer()).setActiveShop(null));
+		super(shop.getName(), shop.getRows(), 0, null, null);
 		this.shop = shop;
 		this.customBackHandler = backHandler;
 		this.interactionCooldown = new HashMap<>();
 		this.cooldown = StatShops.getInstance().getShopsConfig().getCooldown();
 		this.showCooldownMessage = StatShops.getInstance().getShopsConfig().isShowCooldownMessage();
+
+		setCloseHandler(closeContext -> {
+			unsubscribeToDisplayUpdates();
+			Customer.wrap(closeContext.getPlayer()).setActiveShop(null);
+		});
 	}
 
 	@Override
@@ -74,8 +75,7 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
 		Preconditions.checkNotNull(customer, "customer");
 
-		return StatShops.getInstance().callTaskSync(() -> openInventorySync(customer.getPlayer(), null,
-				shop.getPreferredShopMode(customer), shop.getPreferredOpenPage(customer)));
+		return StatShops.getInstance().callTaskSync(() -> openInventorySync(customer.getPlayer(), null, shop.getPreferredOpenPage(customer)));
 	}
 
 	@Override
@@ -90,24 +90,23 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
 	@Override
 	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer) {
-		return openInventorySync(player, inventoryPreparer, shop.getDefaultShopMode(), shop.getDefaultShopPage());
+		return openInventorySync(player, inventoryPreparer, shop.getDefaultShopPage());
 	}
 
-	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer, ShopMode shopMode, int page) {
+	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer, int page) {
 		Inventory inventory = Bukkit.createInventory(null, slots.length, Message.SHOP_GUI_TITLE.getLegacyTranslation(
 				Template.of("name", shop.getName()),
 				Template.of("page", "" + (page + 1)),
-				Template.of("pages", "" + shop.getPageCount()),
-				Template.of("mode", shopMode.getDisplayName())));
-		return openInventorySync(player, inventory, inventoryPreparer, shopMode, page);
+				Template.of("pages", "" + shop.getPageCount())));
+		return openInventorySync(player, inventory, inventoryPreparer, page);
 	}
 
 	@Override
 	public InventoryView openInventorySync(@NotNull Player player, Inventory inventory, Consumer<Inventory> inventoryPreparer) {
-		return openInventorySync(player, inventory, inventoryPreparer, shop.getDefaultShopMode(), shop.getDefaultShopPage());
+		return openInventorySync(player, inventory, inventoryPreparer, shop.getDefaultShopPage());
 	}
 
-	public InventoryView openInventorySync(@NotNull Player player, Inventory inventory, Consumer<Inventory> inventoryPreparer, ShopMode shopMode, int page) {
+	public InventoryView openInventorySync(@NotNull Player player, Inventory inventory, Consumer<Inventory> inventoryPreparer, int page) {
 		this.inventory = inventory;
 
 		if (inventory == null) {
@@ -128,18 +127,7 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
 		fillMenu(DefaultSpecialItem.EMPTY_LIGHT_RP);
 
-		Map<Integer, ShopEntry> entries = shop.getModeEntryMap().getOrDefault(shopMode, new TreeMap<>());
-		int pageSlots = shop.getRows() * RowedOpenableMenu.ROW_SIZE;
-
-		for (int i = LARGEST_INV_SIZE * page; i < LARGEST_INV_SIZE * page + pageSlots; i++) {
-			if (!entries.containsKey(i)) {
-				continue;
-			}
-			ShopEntry entry = entries.get(i);
-			if (entry == null) {
-				StatShops.getInstance().log(LoggingPolicy.ERROR, "Entry is null but contained in map at slot " + i);
-				continue;
-			}
+		for (ShopEntry entry : shop.getEntries(page)) {
 			updateEntry(entry);
 
 			//Subscribe to limits and discounts so changes can be displayed live
@@ -154,7 +142,6 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
 		Customer customer = Customer.wrap(player);
 		customer.setPage(shop, page);
-		customer.setMode(shop, shopMode);
 
 		UUID playerId = player.getUniqueId();
 		InventoryHandler.getInstance().handleMenuOpen(player, this);
@@ -165,9 +152,13 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
 	@Override
 	public boolean closeInventory(Player player) {
+		unsubscribeToDisplayUpdates();
+		return super.closeInventory(player);
+	}
+
+	public void unsubscribeToDisplayUpdates() {
 		DiscountHandler.getInstance().unsubscribeToDisplayUpdates(this);
 		LimitsHandler.getInstance().unsubscribeToDisplayUpdates(this);
-		return super.closeInventory(player);
 	}
 
 	public void setEntry(ShopEntry entry) {

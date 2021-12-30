@@ -12,7 +12,6 @@ import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.tr7zw.nbtapi.NBTItem;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -25,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,10 +41,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 	private final ContextConsumer<BackContext> backHandler;
 
 	public ChestShopPageEditor(ChestMenuShop shop, int shopPage, ContextConsumer<BackContext> backHandler, ChestShopEditor shopEditor) {
-		super(Message.SHOP_GUI_TITLE.getTranslation(
-				Template.of("name", shop.getName()),
-				Template.of("page", "" + (shopPage + 1)),
-				Template.of("pages", "" + Integer.max(shop.getPageCount(), shopPage + 1))), shop.getRows(), 1);
+		super(Component.empty(), shop.getRows(), 1);
 		this.shop = shop;
 		this.shopPage = shopPage;
 		this.shopEditor = shopEditor;
@@ -59,6 +54,15 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 				handleFreeze();
 			}
 		};
+		this.refreshTitle();
+	}
+
+	private void refreshTitle() {
+		super.setTitle(Message.SHOP_GUI_TITLE.getTranslation(
+				Template.of("name", shop.getName()),
+				Template.of("page-title", shop.getPageTitle(shopPage)),
+				Template.of("page", "" + (shopPage + 1)),
+				Template.of("pages", "" + Integer.max(shop.getPageCount(), shopPage + 1))));
 	}
 
 	private void prepareMenu() {
@@ -122,6 +126,20 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 			setItemBottom(0, 4, ItemStackUtils.createButtonItemStack(!shopEditor.isFreezeItems(), Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
 					Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE));
 			refresh(clickContext.getPlayer(), 4 + INDEX_DIFFERENCE + ROW_SIZE);
+		});
+		setItemAndClickHandlerBottom(0, 6, ItemStackUtils.createItemStack(Material.ANVIL, Message.GUI_SHOP_EDITOR_PAGE_TITLE_NAME.getTranslation(),
+				Message.GUI_SHOP_EDITOR_PAGE_TITLE_LORE.getTranslations(Template.of("current", shop.getPageTitle(shopPage)))), clickContext -> {
+			new AnvilGUI.Builder()
+					.plugin(StatShops.getInstance())
+					.text(shop.getPageTitleFormat(shopPage))
+					.title(Message.GUI_SHOP_EDITOR_PAGE_TITLE_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> openInventory(p), 1L))
+					.onComplete((p, s) -> {
+						shop.setPageTitle(shopPage, s);
+						refreshTitle();
+						openInventory(p);
+						return AnvilGUI.Response.close();
+					}).open(clickContext.getPlayer());
 		});
 		setItemAndClickHandlerBottom(0, 7, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TEMPLATE,
 				Message.GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME, Message.GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE), clickContext -> {

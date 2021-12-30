@@ -85,8 +85,8 @@ shop:
     sell_stack: "Sell Stack"
 
   gui:
-    # The title of a shop, possible placeholders are: <name>, <page>, <pages>
-    title: "<name> - Page <page>/<pages>"
+    # The title of a shop, possible placeholders are: <name>, <page-title>, <page>, <pages>
+    title: "<name> <page-title> - Page <page>/<pages>"
     # The lore of items that are displayed in a shop.
     item:
       lore:
@@ -215,6 +215,10 @@ manager:
           lore: "<gray>» <yellow>left-click: <gray>Sets the default Template\n<gray>or resets if already set."
 
     shop_editor:
+      page_title:
+        title: "Enter a page title"
+        name: "<white>Change the page title"
+        lore: "<gray>Current: <current>\n<gray>Change the display title\n<gray>for the actual page.\n<gray>If not set, an empty string\n<gray>will be inserted."
       template:
         name: "<white>Apply Templates to this Page"
         lore: "<gray>You can speed up your\n<gray>work by using shop templates.\n<gray>You can create custom templates\n<gray>and apply them easily to\n<gray>your shop page.\n\n<gray>» <yellow>left-click: <gray>load template\n<gray>» <yellow>right-click: <gray>save page as template"

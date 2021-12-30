@@ -4,6 +4,7 @@ import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
+import net.kyori.adventure.text.Component;
 
 import java.util.List;
 
@@ -33,6 +34,10 @@ public interface PaginatedShop extends Shop {
 	int getDefaultShopPage();
 
 	void setDefaultShopPage(int page);
+
+	Component getPageTitle(int page);
+
+	void setPageTitle(int page, String titleFormat);
 
 	List<ShopEntry> getEntries(int page);
 

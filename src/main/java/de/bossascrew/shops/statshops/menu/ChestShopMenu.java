@@ -130,6 +130,7 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer, int page) {
 		Inventory inventory = Bukkit.createInventory(null, slots.length, Message.SHOP_GUI_TITLE.getLegacyTranslation(
 				Template.of("name", shop.getName()),
+				Template.of("page-title", shop.getPageTitle(page)),
 				Template.of("page", "" + (page + 1)),
 				Template.of("pages", "" + shop.getPageCount())));
 		return openInventorySync(player, inventory, inventoryPreparer, page);

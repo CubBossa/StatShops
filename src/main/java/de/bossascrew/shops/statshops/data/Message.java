@@ -148,6 +148,9 @@ public class Message {
 	public static final Message GENERAL_GUI_TAGS_INFO_LORE = new Message("manager.gui.tags.info.lore");
 	public static final Message GENERAL_GUI_TAGS_REMOVE_TAG = new Message("manager.gui.tags.remove_tag");
 
+	public static final Message GUI_SHOP_EDITOR_PAGE_TITLE_TITLE = new Message("manager.gui.shop_editor.page_title.title");
+	public static final Message GUI_SHOP_EDITOR_PAGE_TITLE_NAME = new Message("manager.gui.shop_editor.page_title.name");
+	public static final Message GUI_SHOP_EDITOR_PAGE_TITLE_LORE = new Message("manager.gui.shop_editor.page_title.lore");
 	public static final Message GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME = new Message("manager.gui.shop_editor.template.name");
 	public static final Message GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE = new Message("manager.gui.shop_editor.template.lore");
 	public static final Message GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME = new Message("manager.gui.shop_editor.freeze.name");

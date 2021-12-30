@@ -90,6 +90,11 @@ public class VillagerShop implements Shop {
 	}
 
 	@Override
+	public Map<Integer, ShopEntry> getEntries() {
+		return slotEntryMap;
+	}
+
+	@Override
 	public ShopEntry createEntry(ItemStack displayItem, int slot) {
 		return null;
 	}

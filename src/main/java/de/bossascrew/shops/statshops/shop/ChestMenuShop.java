@@ -72,10 +72,9 @@ public class ChestMenuShop implements PaginatedShop {
 
 	@JsonIgnore
 	private final List<Customer> activeCustomers;
-
 	private final Map<Customer, ChestShopMenu> menuMap;
-
 	private final List<String> tags;
+	private final Map<Integer, String> pageTitles;
 
 	public ChestMenuShop(String nameFormat) {
 		this(nameFormat, UUID.randomUUID());
@@ -93,6 +92,7 @@ public class ChestMenuShop implements PaginatedShop {
 		this.tags = new ArrayList<>();
 		this.balanceMessenger = new SimpleBalanceMessenger(StatShops.getInstance().getShopsConfig().getTradeMessageFeedback());
 		this.pageTurningPlayers = new ArrayList<>();
+		this.pageTitles = new HashMap<>(); //TODO db
 	}
 
 	public void setNameFormat(String nameFormat) {
@@ -210,6 +210,23 @@ public class ChestMenuShop implements PaginatedShop {
 	@Override
 	public void setDefaultShopPage(int page) {
 		this.defaultPage = page;
+	}
+
+	@Override
+	public Component getPageTitle(int page) {
+		if (!pageTitles.containsKey(page)) {
+			return Component.empty();
+		}
+		return StatShops.getInstance().getMiniMessage().parse(pageTitles.get(page));
+	}
+
+	public String getPageTitleFormat(int page) {
+		return pageTitles.getOrDefault(page, "");
+	}
+
+	@Override
+	public void setPageTitle(int page, String titleFormat) {
+		pageTitles.put(page, titleFormat);
 	}
 
 	public boolean open(Customer customer) {
@@ -356,6 +373,11 @@ public class ChestMenuShop implements PaginatedShop {
 
 	public void setPermission(String permission) {
 		this.permission = permission != null ? permission.equalsIgnoreCase("null") ? null : permission : null;
+	}
+
+	@Override
+	public Map<Integer, ShopEntry> getEntries() {
+		return entryMap;
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package de.bossascrew.shops.general.entry;
 
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.Duplicable;
 import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.data.LogEntry;
@@ -29,7 +30,7 @@ public interface EntryModule extends Duplicable<EntryModule> {
 
 	void saveData();
 
-	EntryInteractionResult perform(Customer customer, EntryInteractionType interactionType);
+	EntryInteractionResult perform(Customer customer, ShopMenu menu, EntryInteractionType interactionType);
 
 	@Nullable LogEntry createLogEntry(Customer customer, EntryInteractionResult result);
 }

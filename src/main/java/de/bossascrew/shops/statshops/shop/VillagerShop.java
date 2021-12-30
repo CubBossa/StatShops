@@ -2,17 +2,17 @@ package de.bossascrew.shops.statshops.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.menu.contexts.CloseContext;
-import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.VillagerMenu;
+import de.bossascrew.shops.general.menu.contexts.BackContext;
+import de.bossascrew.shops.general.menu.contexts.CloseContext;
+import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
+import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.general.util.TextUtils;
+import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.menu.VillagerShopEditor;
 import de.bossascrew.shops.statshops.menu.VillagerShopMenu;
-import de.bossascrew.shops.general.menu.contexts.BackContext;
-import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.util.TextUtils;
-import de.bossascrew.shops.general.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -154,7 +154,7 @@ public class VillagerShop implements Shop {
 
 	@Override
 	public boolean open(Customer customer, @Nullable ContextConsumer<CloseContext> closeHandler) {
-		return new VillagerShopMenu(this).openInventory(customer.getPlayer()) != null;
+		return new VillagerShopMenu(this, customer).openInventory(customer.getPlayer()) != null;
 	}
 
 	public boolean close(Customer customer) {

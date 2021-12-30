@@ -48,7 +48,8 @@ public class ShopTrait extends Trait {
 	@EventHandler
 	public void click(NPCRightClickEvent event) {
 		if (shop == null) {
-			StatShops.getInstance().log(LoggingPolicy.WARN, "Shoptrait assigned to #" + npc.getId() + " but shop is null.");
+			StatShops.getInstance().log(LoggingPolicy.WARN, "Shoptrait assigned to " + npc.getName() + " (#" + npc.getId() + ") but shop is null. Use \"/npc select " +
+					npc.getId() + "\" and \"/trait remove statshop\"");
 			return;
 		}
 		if (event.getNPC() == this.getNPC()) {

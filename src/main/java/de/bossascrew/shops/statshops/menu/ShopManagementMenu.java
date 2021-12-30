@@ -11,7 +11,10 @@ import de.bossascrew.shops.general.util.TagUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.statshops.handler.*;
+import de.bossascrew.shops.statshops.handler.DiscountHandler;
+import de.bossascrew.shops.statshops.handler.LimitsHandler;
+import de.bossascrew.shops.statshops.handler.ShopHandler;
+import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
@@ -24,6 +27,7 @@ import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -166,7 +170,7 @@ public class ShopManagementMenu {
 
 		//Open Limits menu
 		List<Component> limitsLore = new ArrayList<>();
-		Pair<Limit, Limit> limits = LimitsHandler.getInstance().getMinimalLimitsWithMatchingTags(shop);
+		Pair<Limit, Limit> limits = LimitsHandler.getInstance().getMinimalLimitsWithMatchingTags(null, shop);
 		ItemStackUtils.addLoreLimits(limitsLore, limits.getLeft(), limits.getRight(), 0);
 		if (limitsLore.size() > 0) {
 			limitsLore.add(Message.SHOP_ITEM_LORE_SPACER.getTranslation());
@@ -178,7 +182,7 @@ public class ShopManagementMenu {
 
 		//Open Discounts menu
 		List<Component> discountLore = new ArrayList<>();
-		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(shop);
+		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(player, shop);
 		ItemStackUtils.addLoreDiscount(discountLore, discounts);
 		if (discountLore.size() > 0) {
 			discountLore.add(Message.SHOP_ITEM_LORE_SPACER.getTranslation());
@@ -197,8 +201,13 @@ public class ShopManagementMenu {
 		//Assign Shop to NPC
 		if (StatShops.getInstance().isCitizensInstalled()) {
 
+			List<String> assigned = StatShops.getInstance().getCitizensHook().getAssignedNPCs(shop);
 			chestMenu.setItemAndClickHandler(0, 8, ItemStackUtils.createItemStack(Material.PLAYER_HEAD,
-					Message.GUI_SHOP_SET_NPC_NAME, Message.GUI_SHOP_SET_NPC_LORE), clickContext -> {
+					Message.GUI_SHOP_SET_NPC_NAME.getTranslation(), Message.GUI_SHOP_SET_NPC_LORE.getTranslations(
+							Template.of("current", assigned.isEmpty() ?
+									"none" :
+									String.join("<gray>, </gray>", assigned))
+					)), clickContext -> {
 				StatShops.getInstance().getCitizensHook().addAssigningPlayer(player, shop);
 				player.closeInventory();
 				Customer.wrap(player).sendMessage(Message.CITIZENS_CLICK_TO_ASSIGN);
@@ -256,7 +265,6 @@ public class ShopManagementMenu {
 		chestMenu.setCloseHandler(closeContext -> {
 			shop.setEditor(null);
 		});
-		System.out.println("Open shop menu");
 		chestMenu.openInventory(player);
 	}
 
@@ -363,7 +371,7 @@ public class ShopManagementMenu {
 			new AnvilGUI.Builder()
 					.plugin(StatShops.getInstance())
 					.text("shops.limit." + limit.getNamePlain().toLowerCase() + ".")
-					.title(Message.GUI_SHOP_SET_PERMISSION_TITLE.getLegacyTranslation())
+					.title(Message.GUI_LIMIT_SET_PERMISSION_TITLE.getLegacyTranslation())
 					.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> openLimitMenu(p, limit, fromPage), 1L))
 					.onComplete((p, s) -> {
 						limit.setPermission(s);
@@ -378,6 +386,37 @@ public class ShopManagementMenu {
 						limit, Message.GUI_TAGS_TITLE.getTranslation(Template.of("name", limit.getName())),
 						Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
 						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openLimitMenu(player, limit, fromPage)).openInventory(player));
+
+
+		chestMenu.setItemAndClickHandler(0, 5, ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_LIMIT_SET_LIMIT_NAME,
+				Message.GUI_LIMIT_SET_LIMIT_LORE), clickContext -> {
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.plugin(StatShops.getInstance())
+					.text("64 ")
+					.title(Message.GUI_LIMIT_SET_LIMIT_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> {
+						chestMenu.refresh(5);
+						chestMenu.openInventory(player);
+					}, 1L))
+					.onComplete((p, s) -> {
+						try {
+							limit.setTransactionLimit(Integer.parseInt(s));
+						} catch (NumberFormatException ignored) {
+							player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, .5f, 1f);
+						}
+						chestMenu.refresh(5);
+						chestMenu.openInventory(player);
+						return AnvilGUI.Response.close();
+					}).open(player);
+		});
+
+		chestMenu.setItemAndClickHandler(0, 6, ItemStackUtils.createButtonItemStack(limit.isGlobal(), Message.GUI_LIMIT_SET_GLOBAL_NAME,
+				Message.GUI_LIMIT_SET_GLOBAL_LORE), clickContext -> {
+			limit.setGlobal(!limit.isGlobal());
+			chestMenu.setItem(6, ItemStackUtils.createButtonItemStack(limit.isGlobal(), Message.GUI_LIMIT_SET_GLOBAL_NAME, Message.GUI_LIMIT_SET_GLOBAL_LORE));
+			chestMenu.refresh(6);
+		});
 
 
 		chestMenu.openInventory(player);

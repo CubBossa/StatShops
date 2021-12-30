@@ -11,5 +11,6 @@ public enum EntryInteractionResult {
 	FAIL_NO_PERMISSION,
 	FAIL_CANT_AFFORD,
 	FAIL_CANT_REWARD,
+	FAIL_LIMIT_REACHED,
 	SUCCESS
 }

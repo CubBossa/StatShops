@@ -10,6 +10,8 @@ import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -146,17 +148,18 @@ public class DiscountHandler implements
 		return invert ? (discountValue - 1) * -1 + 1 : discountValue;
 	}
 
-	public double combineDiscountsWithMatchingTags(boolean invert, Taggable... taggables) {
-		List<Discount> discounts = getDiscountsWithMatchingTags(taggables);
+	public double combineDiscountsWithMatchingTags(@Nullable Player player, boolean invert, Taggable... taggables) {
+		List<Discount> discounts = getDiscountsWithMatchingTags(player, taggables);
 		return combineDiscounts(discounts, invert);
 	}
 
-	public List<Discount> getDiscountsWithMatchingTags(Taggable... taggables) {
+	public List<Discount> getDiscountsWithMatchingTags(@Nullable Player player, Taggable... taggables) {
 		Collection<Discount> discounts = new LinkedHashSet<>();
 		for (Taggable taggable : taggables) {
 			for (String tag : taggable.getTags()) {
 				if (tagMap.containsKey(tag)) {
-					discounts.addAll(tagMap.get(tag));
+					discounts.addAll(tagMap.get(tag).stream().filter(discount -> player == null || discount.getPermission() == null || player.hasPermission(discount.getPermission()))
+							.collect(Collectors.toList()));
 				}
 			}
 		}

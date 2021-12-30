@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Taggable;
+import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.util.Duplicable;
 import de.bossascrew.shops.general.util.Editable;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -65,14 +67,6 @@ public class Limit implements
 		this.namePlain = TextUtils.toPlain(name);
 	}
 
-	/**
-	 * @param customer the customer to look for if the limit is not global
-	 * @return the global usage for this limit if this limit is global, otherwise the player usage count.
-	 */
-	public int getUses(Customer customer) {
-		return 3;
-	}
-
 	@Override
 	public boolean addTag(String tag) {
 		if (hasTag(tag)) {
@@ -86,7 +80,7 @@ public class Limit implements
 	@Override
 	public boolean removeTag(String tag) {
 		tags.remove(tag);
-		LimitsHandler.getInstance().handleLimitTagRemoved(this, tag);
+		LimitsHandler.getInstance().handleLimitTagRemoved(this,   tag);
 		return true;
 	}
 

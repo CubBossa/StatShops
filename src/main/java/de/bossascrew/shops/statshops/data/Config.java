@@ -42,7 +42,6 @@ public class Config extends AnnotationConfig {
 	public boolean showCooldownMessage = true;
 	@ConfigEntry(path = "shops.shop-size")
 	public int defaultShopSize = 3;
-	//TODO Shopmode
 
 	@ConfigEntry(path = "shops.keybinding.buy")
 	public List<String> buyKeyBinding = List.of(ClickType.LEFT.toString());

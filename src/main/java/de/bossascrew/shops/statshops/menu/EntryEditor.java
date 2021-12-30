@@ -55,7 +55,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 		this.closeHandler = closeContext -> setEditor(null);
 	}
 
-	private void prepareMenu() {
+	private void prepareMenu(Player targetPlayer) {
 		fillMenu(null, DefaultSpecialItem.EMPTY_LIGHT_RP);
 		setBackHandlerAction(backHandler);
 		//Set deco lore
@@ -129,7 +129,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 
 			//Open Limits menu
 			List<Component> limitsLore = new ArrayList<>();
-			Pair<Limit, Limit> limits = LimitsHandler.getInstance().getMinimalLimitsWithMatchingTags(entry, entry.getShop());
+			Pair<Limit, Limit> limits = LimitsHandler.getInstance().getMinimalLimitsWithMatchingTags(targetPlayer, entry, entry.getShop());
 			ItemStackUtils.addLoreLimits(limitsLore, limits.getLeft(), limits.getRight(), 0);
 			if (limitsLore.size() > 0) {
 				limitsLore.add(Message.SHOP_ITEM_LORE_SPACER.getTranslation());
@@ -141,7 +141,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 
 			//Open Discounts menu
 			List<Component> discountLore = new ArrayList<>();
-			List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(entry, entry.getShop());
+			List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(targetPlayer, entry, entry.getShop());
 			ItemStackUtils.addLoreDiscount(discountLore, discounts);
 			if (discountLore.size() > 0) {
 				discountLore.add(Message.SHOP_ITEM_LORE_SPACER.getTranslation());
@@ -187,7 +187,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 	@Override
 	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer) {
 		setEditor(player);
-		prepareMenu();
+		prepareMenu(player);
 		return super.openInventorySync(player, inventoryPreparer);
 	}
 

@@ -116,20 +116,43 @@ public class DtlTradersConverter implements Converter {
 			// lost: close after purchase
 			// lost: confirmation window enabled
 
+			//TODO buy-items section
+
 			int largestPageInRows = 1;
 			// for each page
+			List<Page> pages = new ArrayList<>(); //TODO die page information in den shop einarbeiten
 			for (ConfigurationSection page : cfg.getConfigurationSection("pages").getKeys(false).stream().map(cfg::getConfigurationSection).collect(Collectors.toList())) {
 				int size = page.getInt("size");
 				if (size / 9 > largestPageInRows) {
 					largestPageInRows = size / 9;
 				}
-				//lost: page-name
-				//lost: page-permission (TODO setup next page entry with permission)
+				int index = Integer.parseInt(page.getName().replace("page-", ""));
+				String pageName = page.getString("page-name");
+				String pagePermission = page.getString("page-permission");
+				Page pageObject = new Page(index, pagePermission, pageName);
+				pages.add(pageObject);
 
 				// for each buy item
-				for (ConfigurationSection item : page.getKeys(false).stream().map(page::getConfigurationSection).collect(Collectors.toList())) {
-					BaseEntry entry = parseBuyEntry(shopBuy, item);
-					shopBuy.addEntry(entry, entry.getSlot());
+				ConfigurationSection buySection = page.getConfigurationSection("buy-items");
+				if (shopBuy != null && buySection != null) {
+					for (ConfigurationSection item : page.getKeys(false).stream().map(page::getConfigurationSection).collect(Collectors.toList())) {
+						BaseEntry entry = parseBuyEntry(shopBuy, pageObject, item);
+						shopBuy.addEntry(entry, entry.getSlot());
+					}
+				}
+				ConfigurationSection sellSection = page.getConfigurationSection("sell-items");
+				if (shopSell != null && sellSection != null) {
+					for (ConfigurationSection item : page.getKeys(false).stream().map(page::getConfigurationSection).collect(Collectors.toList())) {
+						BaseEntry entry = parseBuyEntry(shopBuy, pageObject, item); //TODO parseSell
+						shopSell.addEntry(entry, entry.getSlot());
+					}
+				}
+				ConfigurationSection tradeSection = page.getConfigurationSection("trade-items");
+				if (shopTrade != null && tradeSection != null) {
+					for (ConfigurationSection item : page.getKeys(false).stream().map(page::getConfigurationSection).collect(Collectors.toList())) {
+						BaseEntry entry = parseBuyEntry(shopBuy, pageObject, item); //TODO parse trade
+						shopTrade.addEntry(entry, entry.getSlot());
+					}
 				}
 			}
 
@@ -138,7 +161,7 @@ public class DtlTradersConverter implements Converter {
 		}
 	}
 
-	private BaseEntry parseBuyEntry(Shop shop, ConfigurationSection entrySection) {
+	private BaseEntry parseBuyEntry(Shop shop, Page page, ConfigurationSection entrySection) {
 		//TODO currency = vault
 
 
@@ -227,5 +250,9 @@ public class DtlTradersConverter implements Converter {
 			ShopEntry entry = shopTrade.createEntry(modeBuy, modeSlot);
 			entry.setModule(EntryModuleHandler.openShop(entry, isBuy ? shopBuy : shopSell));
 		}
+	}
+
+	public record Page(int page, String permission, String title) {
+
 	}
 }

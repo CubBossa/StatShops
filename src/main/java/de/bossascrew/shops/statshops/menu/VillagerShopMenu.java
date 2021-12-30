@@ -32,16 +32,18 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 	private final static ClickType[] IGNORED = {ClickType.UNKNOWN, ClickType.WINDOW_BORDER_LEFT, ClickType.WINDOW_BORDER_RIGHT};
 
 	private final VillagerShop villagerShop;
+	private final Customer targetCustomer;
 	private final SimpleBalanceMessenger balanceMessenger;
 	private final Map<ShopEntry, Integer> recipeMap;
 	private final Map<Integer, ShopEntry> entryMap;
 
-	public VillagerShopMenu(VillagerShop villagerShop) {
+	public VillagerShopMenu(VillagerShop villagerShop, Customer customer) {
 		super(villagerShop.getName(), null);
 		this.villagerShop = villagerShop;
 		this.recipeMap = new HashMap<>();
 		this.entryMap = new HashMap<>();
 		this.balanceMessenger = new SimpleBalanceMessenger(StatShops.getInstance().getShopsConfig().getTradeMessageFeedback());
+		this.targetCustomer = customer;
 
 		setTradeHandler(targetContext -> {
 			if (Arrays.stream(IGNORED).anyMatch(clickType -> targetContext.getAction().equals(clickType))) {
@@ -51,7 +53,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 			if (StatShops.getInstance().getShopsConfig().getTradeMessageFeedback() != TradeMessageType.NONE) {
 				TradeModule tradeModule = (TradeModule) entry.getModule();
 
-				List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(entry, entry.getShop());
+				List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(customer.getPlayer(), entry, entry.getShop());
 				double discount = DiscountHandler.getInstance().combineDiscounts(discounts, false);
 
 				Price<?> pay = tradeModule.getPayPrice(true).duplicate();
@@ -86,7 +88,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 				placeEntry(e);
 
 				DiscountHandler.getInstance().subscribeToDisplayUpdates(this, e);
-				LimitsHandler.getInstance().subscribeToDisplayUpdates(this, e);
+				LimitsHandler.getInstance().subscribeToDisplayUpdates(this, player, e);
 
 				setMerchantOffer(entry.getKey(), recipe);
 			}
@@ -114,12 +116,30 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 		}
 		MerchantRecipe recipe = super.getMerchant().getRecipe(index);
 		//Limits
-		Pair<Limit, Limit> limits = LimitsHandler.getInstance().getMinimalLimitsWithMatchingTags(entry, entry.getShop());
-		recipe.setUses(0);
-		recipe.setMaxUses(Integer.min(recipe.getMaxUses(), Integer.MAX_VALUE)); //TODO limits
+		Pair<Limit, Limit> limits = LimitsHandler.getInstance().getMinimalLimitsWithMatchingTags(targetCustomer.getPlayer(), entry, entry.getShop());
+		Limit a = limits.getLeft();
+		Limit b = limits.getRight();
+
+		if (a != null || b != null) {
+			long since;
+			int limit;
+			if (a != null && b != null) {
+				since = System.currentTimeMillis() - Long.min(a.getRecover().toMillis(), b.getRecover().toMillis());
+				limit = Integer.min(a.getTransactionLimit(), b.getTransactionLimit());
+			} else if (a != null) {
+				since = System.currentTimeMillis() - a.getRecover().toMillis();
+				limit = a.getTransactionLimit();
+			} else {
+				since = System.currentTimeMillis() - b.getRecover().toMillis();
+				limit = b.getTransactionLimit();
+			}
+			recipe.setUses(LimitsHandler.getInstance().getLimitUserCount(targetCustomer.getUuid(), entry.getUUID(), since, b != null));
+			recipe.setMaxUses(limit);
+		}
+
 
 		//Discounts
-		double discount = DiscountHandler.getInstance().combineDiscountsWithMatchingTags(false, entry, entry.getShop());
+		double discount = DiscountHandler.getInstance().combineDiscountsWithMatchingTags(targetCustomer.getPlayer(), false, entry, entry.getShop());
 		recipe.setPriceMultiplier((float) discount);
 		//TODO debug
 		recipe.setMaxUses(discount < 1 ? 0 : 1);

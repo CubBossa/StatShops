@@ -17,7 +17,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CitizensHook implements Listener {
@@ -34,6 +36,23 @@ public class CitizensHook implements Listener {
 		confirmingPlayers = new HashMap<>();
 
 		Bukkit.getPluginManager().registerEvents(this, shopPlugin);
+	}
+
+	public List<String> getAssignedNPCs(Shop shop) {
+		List<String> result = new ArrayList<>();
+		for (NPC npc : CitizensAPI.getNPCRegistry()) {
+			if (!npc.hasTrait(ShopTrait.class)) {
+				continue;
+			}
+			ShopTrait shopTrait = npc.getTrait(ShopTrait.class);
+			if (shopTrait.getShop() == null) {
+				continue;
+			}
+			if (shopTrait.getShop().getUUID().equals(shop.getUUID())) {
+				result.add(npc.getName() + " (#" + npc.getId() + ")");
+			}
+		}
+		return result;
 	}
 
 	@EventHandler

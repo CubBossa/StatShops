@@ -5,6 +5,7 @@ import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.general.util.TagUtils;
 import de.bossascrew.shops.statshops.StatShops;
@@ -77,7 +78,7 @@ public class BaseEntry implements ShopEntry {
 		return null;
 	}
 
-	public EntryInteractionResult interact(Customer customer, EntryInteractionType interactionType) {
+	public EntryInteractionResult interact(Customer customer, ShopMenu menu, EntryInteractionType interactionType) {
 		ShopEntryInteractEvent entryInteractEvent = new ShopEntryInteractEvent(this, customer, interactionType);
 		Bukkit.getPluginManager().callEvent(entryInteractEvent);
 		if (entryInteractEvent.isCancelled()) {
@@ -89,7 +90,7 @@ public class BaseEntry implements ShopEntry {
 		if (!hasPermission(customer)) {
 			return EntryInteractionResult.FAIL_NO_PERMISSION;
 		}
-		EntryInteractionResult result = module.perform(customer, interactionType);
+		EntryInteractionResult result = module.perform(customer, menu, interactionType);
 		StatShops.getInstance().getLogDatabase().logToDatabase(module.createLogEntry(customer, result));
 
 		ShopEntryInteractedEvent event = new ShopEntryInteractedEvent(this, customer, interactionType, result);

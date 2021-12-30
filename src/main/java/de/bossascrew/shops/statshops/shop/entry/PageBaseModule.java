@@ -6,6 +6,7 @@ import de.bossascrew.shops.general.entry.PageModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.Consumer3;
 import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.data.LogEntry;
@@ -45,7 +46,6 @@ public class PageBaseModule extends BaseModule implements PageModule {
 			throw new IllegalArgumentException("The relative page cannot be 0.");
 		}
 		this.mode.setData(Math.abs(pageCount) / pageCount);
-		System.out.println("mode: " + mode.getData().intValue());
 		this.page.setData(Math.abs(pageCount));
 	}
 
@@ -56,7 +56,6 @@ public class PageBaseModule extends BaseModule implements PageModule {
 
 	@Override
 	public void loadData() {
-		System.out.println("load data");
 		page = shopEntry.getData(DataSlot.NumberSlot.class, "page", () -> {
 			return new DataSlot.NumberSlot("page", 1., Message.GUI_ENTRY_FUNCTION_PAGE_NAME, Message.GUI_ENTRY_FUNCTION_PAGE_LORE);
 		});
@@ -77,7 +76,7 @@ public class PageBaseModule extends BaseModule implements PageModule {
 	}
 
 	@Override
-	public EntryInteractionResult perform(Customer customer, EntryInteractionType interactionType) {
+	public EntryInteractionResult perform(Customer customer, ShopMenu menu, EntryInteractionType interactionType) {
 		openPage(customer);
 		return EntryInteractionResult.SUCCESS;
 	}
@@ -87,12 +86,9 @@ public class PageBaseModule extends BaseModule implements PageModule {
 		if (shopEntry.getShop() instanceof ChestMenuShop cms) {
 			cms.announceTurnPage(customer); //TODO verallgmeeinern
 		}
-		System.out.println(mode.getData());
-		System.out.println(page.getData());
 		int newPage = mode.getData().intValue() == 0 ?
 				page.getData().intValue() - 1 :
 				shopEntry.getSlot() / RowedOpenableMenu.LARGEST_INV_SIZE + page.getData().intValue() * mode.getData().intValue();
-		System.out.println(newPage);
 		this.openPageHandler.accept(customer, shopEntry, newPage);
 	}
 

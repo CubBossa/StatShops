@@ -1,7 +1,6 @@
 package de.bossascrew.shops.statshops.commands;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.CommandHelpFormatter;
 import co.aikar.commands.annotation.*;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.PaginatedShop;
@@ -30,6 +29,19 @@ public class ShopCommand extends BaseCommand {
 		}
 		new ShopManagementMenu().openBaseMenu(player);
 	}
+
+	@Subcommand("edit")
+	@Syntax("<Shop>")
+	@CommandPermission(StatShops.PERM_CMD_EDITOR)
+	@CommandCompletion(StatShops.COMPLETION_SHOPS)
+	public void onEdit(Player player, Shop shop) {
+		if (StatShops.busy()) {
+			Customer.wrap(player).sendMessage(Message.GENERAL_PLUGIN_LOADING);
+			return;
+		}
+		new ShopManagementMenu().openShopMenu(player, shop, 0);
+	}
+
 
 	@Subcommand("reload config")
 	@CommandPermission(StatShops.PERM_CMD_RELOAD)

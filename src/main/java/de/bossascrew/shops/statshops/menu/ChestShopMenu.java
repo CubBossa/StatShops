@@ -36,21 +36,26 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	private final ChestMenuShop shop;
 	private @Nullable ContextConsumer<BackContext> customBackHandler;
 
+	/**
+	 * Limits will set for targetCustomer
+	 */
+	private final Customer targetCustomer;
 	private final int cooldown;
 	private final boolean showCooldownMessage;
 	private final HashMap<Player, Long> interactionCooldown;
 
-	public ChestShopMenu(ChestMenuShop shop) {
-		this(shop, null);
+	public ChestShopMenu(ChestMenuShop shop, Customer customer) {
+		this(shop, customer, null);
 	}
 
-	public ChestShopMenu(ChestMenuShop shop, @Nullable ContextConsumer<BackContext> backHandler) {
+	public ChestShopMenu(ChestMenuShop shop, Customer customer, @Nullable ContextConsumer<BackContext> backHandler) {
 		super(shop.getName(), shop.getRows(), 0, null, null);
 		this.shop = shop;
 		this.customBackHandler = backHandler;
 		this.interactionCooldown = new HashMap<>();
 		this.cooldown = StatShops.getInstance().getShopsConfig().getCooldown();
 		this.showCooldownMessage = StatShops.getInstance().getShopsConfig().isShowCooldownMessage();
+		this.targetCustomer = customer;
 
 		setCloseHandler(closeContext -> {
 			unsubscribeToDisplayUpdates();
@@ -132,7 +137,7 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
 			//Subscribe to limits and discounts so changes can be displayed live
 			DiscountHandler.getInstance().subscribeToDisplayUpdates(this, entry);
-			LimitsHandler.getInstance().subscribeToDisplayUpdates(this, entry);
+			LimitsHandler.getInstance().subscribeToDisplayUpdates(this, player, entry);
 		}
 
 		InventoryView view = player.openInventory(inventory);
@@ -164,9 +169,9 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	public void setEntry(ShopEntry entry) {
 
 		int slot = entry.getSlot() % LARGEST_INV_SIZE;
-		setItemAndClickHandler(slot, ItemStackUtils.createEntryItemStack(entry), clickContext -> {
+		setItemAndClickHandler(slot, ItemStackUtils.createEntryItemStack(entry, targetCustomer), clickContext -> {
 			Player player = clickContext.getPlayer();
-			Customer customer = Customer.wrap(player);
+			Customer c = Customer.wrap(player);
 
 			long now = System.currentTimeMillis();
 			Long last = interactionCooldown.get(player);
@@ -174,14 +179,14 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 				long dif = now - last;
 				if (dif < cooldown) {
 					if (showCooldownMessage) {
-						customer.sendMessage(Message.SHOP_COOLDOWN);
+						c.sendMessage(Message.SHOP_COOLDOWN);
 					}
 					return;
 				}
 			}
-			EntryInteractionResult result = entry.interact(customer, EntryInteractionType.fromClickType(clickContext.getAction()));
+			EntryInteractionResult result = entry.interact(targetCustomer, this, EntryInteractionType.fromClickType(clickContext.getAction()));
 			if (result == EntryInteractionResult.SUCCESS && entry.getModule() != null && entry.getModule() instanceof TradeModule tm) {
-				shop.getBalanceMessenger().handleTransaction(tm.getLastTransaction(customer));
+				shop.getBalanceMessenger().handleTransaction(tm.getLastTransaction(targetCustomer));
 			}
 			interactionCooldown.put(player, now);
 		});

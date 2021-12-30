@@ -4,6 +4,7 @@ import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
@@ -29,7 +30,7 @@ public class CloseModule extends BaseModule implements EntryModule {
 	}
 
 	@Override
-	public EntryInteractionResult perform(Customer customer, EntryInteractionType interactionType) {
+	public EntryInteractionResult perform(Customer customer, ShopMenu menu, EntryInteractionType interactionType) {
 		customer.getPlayer().closeInventory();
 		return EntryInteractionResult.SUCCESS;
 	}

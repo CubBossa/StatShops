@@ -169,6 +169,11 @@ public class Message {
 	public static final Message GUI_LIMIT_SET_PERMISSION_TITLE = new Message("manager.gui.limit.set_permission.title");
 	public static final Message GUI_LIMIT_SET_PERMISSION_NAME = new Message("manager.gui.limit.set_permission.name");
 	public static final Message GUI_LIMIT_SET_PERMISSION_LORE = new Message("manager.gui.limit.set_permission.lore");
+	public static final Message GUI_LIMIT_SET_LIMIT_TITLE = new Message("manager.gui.limit.set_limit.title");
+	public static final Message GUI_LIMIT_SET_LIMIT_NAME = new Message("manager.gui.limit.set_limit.name");
+	public static final Message GUI_LIMIT_SET_LIMIT_LORE = new Message("manager.gui.limit.set_limit.lore");
+	public static final Message GUI_LIMIT_SET_GLOBAL_NAME = new Message("manager.gui.limit.set_global.name");
+	public static final Message GUI_LIMIT_SET_GLOBAL_LORE = new Message("manager.gui.limit.set_global.lore");
 
 	public static final Message GUI_DISCOUNTS = new Message("manager.gui.discounts.title");
 	public static final Message GUI_DISCOUNTS_DELETE_CONFIRM = new Message("manager.gui.discounts.confirm_delete");

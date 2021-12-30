@@ -3,6 +3,7 @@ package de.bossascrew.shops.general.util;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
@@ -216,11 +217,11 @@ public class ItemStackUtils {
 				lore.getTranslations(Template.of("value", val + "")));
 	}
 
-	public ItemStack createEntryItemStack(ShopEntry entry) {
+	public ItemStack createEntryItemStack(ShopEntry entry, Customer customer) {
 		ItemStack itemStack = entry.getDisplayItem().clone();
 
-		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(entry, entry.getShop());
-		;
+		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(customer.getPlayer(), entry, entry.getShop());
+
 		double discount = DiscountHandler.getInstance().combineDiscounts(discounts, false);
 		List<Component> additionalLore = new ArrayList<>();
 
@@ -239,7 +240,7 @@ public class ItemStackUtils {
 						addLoreDiscount(additionalLore, discounts);
 					}
 					case "limits" -> {
-						LimitsHandler.getInstance().addLimitsLore(entry, additionalLore);
+						LimitsHandler.getInstance().addLimitsLore(entry, additionalLore, customer.getPlayer());
 					}
 					case "info" -> {
 						if (entry.getInfoLoreFormat() != null) {

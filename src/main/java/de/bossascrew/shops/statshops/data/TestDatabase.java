@@ -50,6 +50,7 @@ public class TestDatabase implements Database, LogDatabase {
 		s1.addTag("swords");
 		s1.addTag("rainbow");
 		s1.setDefaultTemplate(TemplateHandler.getInstance().getDefaultTemplate());
+		s1.applyDefaultTemplate(TemplateHandler.getInstance().getDefaultTemplate(), 5);
 
 		ShopEntry entry1 = createEntry(UUID.randomUUID(), s1, new ItemStack(Material.MINECART), 0);
 		ItemStack article = new ItemStack(Material.MINECART);

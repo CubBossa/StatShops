@@ -6,10 +6,12 @@ import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
+import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import de.bossascrew.shops.statshops.shop.Transaction;
@@ -133,7 +135,7 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 	}
 
 	@Override
-	public EntryInteractionResult perform(Customer customer, EntryInteractionType interactionType) {
+	public EntryInteractionResult perform(Customer customer, ShopMenu menu, EntryInteractionType interactionType) {
 
 		if (interactionType.isBuy() && !isPurchasable()) {
 			return EntryInteractionResult.FAIL_NOT_PURCHASABLE;
@@ -144,7 +146,7 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 		Price<?> pay = (interactionType.isBuy() ? costs.getBuyPrice() : article.getPrice()).toSimplePrice();
 		Price<?> gain = (interactionType.isBuy() ? article.getPrice() : costs.getSellPrice()).toSimplePrice();
 
-		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(shopEntry, shopEntry.getShop());
+		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(customer.getPlayer(), shopEntry, shopEntry.getShop());
 		double discount = DiscountHandler.getInstance().combineDiscounts(discounts, interactionType.isSell());
 
 		if (interactionType.isBuy()) {
@@ -160,6 +162,11 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 
 		if (!gain.canGain(customer)) {
 			return EntryInteractionResult.FAIL_CANT_REWARD;
+		}
+		if (pay.canPay(customer, discount)) {
+			if (!LimitsHandler.getInstance().handleLimitInteraction(shopEntry, customer.getPlayer(), menu)) {
+				return EntryInteractionResult.FAIL_LIMIT_REACHED;
+			}
 		}
 		EntryInteractionResult result = pay.pay(customer);
 		if (result.equals(EntryInteractionResult.SUCCESS)) {

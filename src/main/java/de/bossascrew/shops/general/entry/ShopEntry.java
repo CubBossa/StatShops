@@ -3,6 +3,7 @@ package de.bossascrew.shops.general.entry;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.Taggable;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.Duplicable;
 import de.bossascrew.shops.general.util.Editable;
 import de.bossascrew.shops.general.util.EntryInteractionType;
@@ -48,5 +49,5 @@ public interface ShopEntry extends Taggable, Duplicable<ShopEntry>, DatabaseObje
 
 	void setModule(EntryModule module);
 
-	EntryInteractionResult interact(Customer customer, EntryInteractionType interactionType);
+	EntryInteractionResult interact(Customer customer, ShopMenu menu, EntryInteractionType interactionType);
 }

@@ -85,8 +85,8 @@ shop:
     sell_stack: "Sell Stack"
 
   gui:
-    # The title of a shop, possible placeholders are: <name>, <page>, <mode>, <pages>
-    title: "<name> - Page <page>/<pages> - <mode>"
+    # The title of a shop, possible placeholders are: <name>, <page>, <pages>
+    title: "<name> - Page <page>/<pages>"
     # The lore of items that are displayed in a shop.
     item:
       lore:
@@ -179,7 +179,7 @@ manager:
       set_citizens:
         name: "<white>Citizens NPC Binding"
         # Valid placeholders: <current>
-        lore: "<gray>This Shop is bound to <white><current>\n\n<gray>Unbind with <white><italic>/trait remove statshop"
+        lore: "<gray>Click to bind this shop\n<gray>to a Citizens NPC.\n\n<gray>Unbind with \n<white><italic>/npc select <#ID></italic></white> <gray>and\n<white><italic>/trait remove statshop\n\n<gray>This Shop is bound to: \n<gray>» <gold><current>"
       set_content:
         name: "<white>Setup Shop Entries"
         lore: "<gray>Opens the editor for the actual\n<gray>shop pages. Put all the items you\n<gray>want to trade in your lower\n<gray>inventory to have them available\n<gray>in the editor."

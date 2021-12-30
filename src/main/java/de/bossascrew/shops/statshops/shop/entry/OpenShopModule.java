@@ -5,6 +5,7 @@ import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
@@ -44,9 +45,8 @@ public class OpenShopModule extends BaseModule implements EntryModule {
 	}
 
 	@Override
-	public EntryInteractionResult perform(Customer customer, EntryInteractionType interactionType) {
+	public EntryInteractionResult perform(Customer customer, ShopMenu menu, EntryInteractionType interactionType) {
 		if (shop == null) {
-			System.out.println("Fail unknown");
 			return EntryInteractionResult.FAIL_UNKNOWN;
 		}
 		shop.open(customer);

@@ -7,6 +7,7 @@ import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.TransactionBalanceMessenger;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
+import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
@@ -103,7 +104,7 @@ public class ChestMenuShop implements PaginatedShop {
 	@Override
 	public int getPageCount() {
 		//important to divide with largest inventory size so entries dont move to other pages when changing the row size
-		return entryMap.lastKey() / RowedOpenableMenu.LARGEST_INV_SIZE + 1;
+		return entryMap.isEmpty() ? 1 : entryMap.lastKey() / RowedOpenableMenu.LARGEST_INV_SIZE + 1;
 	}
 
 	public @Nullable
@@ -252,7 +253,7 @@ public class ChestMenuShop implements PaginatedShop {
 		}
 		@Nullable ContextConsumer<CloseContext> finalCloseHandler = closeHandler;
 
-		ChestShopMenu menu = new ChestShopMenu(this, null);
+		ChestShopMenu menu = new ChestShopMenu(this, customer, null);
 		menu.setCloseHandler(closeContext -> {
 			if (!pageTurningPlayers.contains(customer.getUuid())) {
 				if (finalCloseHandler == null) {
@@ -336,7 +337,8 @@ public class ChestMenuShop implements PaginatedShop {
 		if (entry == null) {
 			return EntryInteractionResult.FAIL_NO_ENTRY;
 		}
-		return entry.interact(customer, interactionType);
+		ShopMenu menu = menuMap.get(customer);
+		return entry.interact(customer, menu, interactionType);
 	}
 
 	public void setRows(int rows) {

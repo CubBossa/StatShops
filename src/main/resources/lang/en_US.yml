@@ -104,10 +104,10 @@ shop:
         # Valid placeholders: <discount>
         discount_positive: "<red>+<discount>"
         discount_negative: "<green><discount>"
-        # Valid placeholders: <transactioncount>, <userlimit>, <globallimit>
-        limit_both: "<gray><red><transactioncount></red>/<dark_red><userlimit></dark_red> personal limit</gray>\n<gray><red><transactioncount></red>/<dark_red><globallimit></dark_red> global limit"
-        limit_personal: "<gray><red><transactioncount></red>/<dark_red><userlimit></dark_red> personal limit</gray>"
-        limit_global: "<gray><red><transactioncount></red>/<dark_red><globallimit></dark_red> global limit"
+        # Valid placeholders: <transactioncount>, <userlimit>, <globallimit>, <next_recovery>, <recovery_duration>
+        limit_both: "<gray><red><transactioncount></red>/<dark_red><userlimit></dark_red> personal limit</gray>\n<gray><red><transactioncount></red>/<dark_red><globallimit></dark_red> global limit\n<gray>Recover: <yellow><recovery_duration>"
+        limit_personal: "<gray><red><transactioncount></red>/<dark_red><userlimit></dark_red> personal limit</gray>\n<gray>Recover: <yellow><recovery_duration>"
+        limit_global: "<gray><red><transactioncount></red>/<dark_red><globallimit></dark_red> global limit\n<gray>Recover: <yellow><recovery_duration>"
 
 villager_shop:
   gui:

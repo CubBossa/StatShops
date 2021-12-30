@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, ListMenuElement, DatabaseObject {
@@ -56,6 +57,8 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	@Nullable String getPermission();
 
 	void setPermission(@Nullable String permission);
+
+	Map<Integer, ShopEntry> getEntries();
 
 	ShopEntry createEntry(ItemStack displayItem, int slot);
 

@@ -38,15 +38,6 @@ public class LimitsHandler implements
 		subscribers = new HashMap<>();
 		tagMap = new HashMap<>();
 		limitMap = StatShops.getInstance().getDatabase().loadLimits();
-		for (Limit limit : limitMap.values()) {
-			for (String tag : limit.getTags()) {
-				Collection<Limit> limits = tagMap.getOrDefault(tag, new ArrayList<>());
-				if (!limits.contains(limit)) {
-					limits.add(limit);
-					tagMap.put(tag, limits);
-				}
-			}
-		}
 		recoveries = loadExpiringLimits();
 	}
 
@@ -109,12 +100,10 @@ public class LimitsHandler implements
 	public Collection<EntryInteraction> getExpiringInteractions(UUID entryUuid) {
 		long now = System.currentTimeMillis();
 		Collection<EntryInteraction> result = new HashSet<>();
-		recoveries.forEach((aLong, entryInteractions) -> {
-			if (aLong <= now) {
-				return;
-			}
-			result.addAll(entryInteractions.stream().filter(entryInteraction -> entryInteraction.entryUuid.equals(entryUuid)).collect(Collectors.toList()));
-		});
+		recoveries.forEach((expire, entryInteractions) -> result.addAll(entryInteractions.stream()
+				.filter(entryInteraction -> entryInteraction.timeStamp + entryInteraction.duration > now)
+				.filter(entryInteraction -> entryInteraction.entryUuid.equals(entryUuid))
+				.collect(Collectors.toList())));
 		return result;
 	}
 

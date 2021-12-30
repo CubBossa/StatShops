@@ -1,16 +1,20 @@
 package de.bossascrew.shops.statshops.handler;
 
 import de.bossascrew.shops.general.PaginatedShop;
+import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Database;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ShopHandler implements
@@ -92,16 +96,18 @@ public class ShopHandler implements
 		Shop shop = createShop(element.getNameFormat());
 		shop.setDisplayMaterial(element.getDisplayMaterial());
 		shop.setPermission(element.getPermission());
-		if (element instanceof PaginatedShop ps) { //TODO natürlich sollte das eignetlich jeder shop typ liefern
+		if (element instanceof PaginatedShop ps) { //TODO pro shop einen copy constructor -> via reflection aufrufen
 			ps.setDefaultShopPage(ps.getDefaultShopPage());
 			ps.setPageRemembered(ps.isPageRemembered());
 		}
 		for (String tag : element.getTags()) {
 			shop.addTag(tag);
 		}
-		//TODO clone all entries
+		for (Map.Entry<Integer, ShopEntry> entry : element.getEntries().entrySet()) {
+			shop.addEntry(entry.getValue().duplicate(), entry.getKey());
+		}
 		StatShops.getInstance().getDatabase().saveShop(shop);
-		return null;
+		return shop;
 	}
 
 	@Override

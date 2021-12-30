@@ -38,6 +38,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -180,10 +181,15 @@ public class ItemStackUtils {
 		Message message = userLimit == null ? Message.SHOP_ITEM_LORE_LIMIT_GLOBAL :
 				globalLimit == null ? Message.SHOP_ITEM_LORE_LIMIT_PERSONAL :
 						Message.SHOP_ITEM_LORE_LIMIT;
+		Duration recovery = userLimit == null ? globalLimit.getRecover() :
+				globalLimit == null ? userLimit.getRecover() :
+						(globalLimit.getRecover().minus(userLimit.getRecover()).isNegative() ? globalLimit.getRecover() : userLimit.getRecover());
 		existingLore.addAll(message.getTranslations(
 				Template.of("transactioncount", bought + ""),
 				Template.of("userlimit", userLimit == null ? "-" : userLimit.getTransactionLimit() + ""),
-				Template.of("globallimit", globalLimit == null ? "-" : globalLimit.getTransactionLimit() + "")
+				Template.of("globallimit", globalLimit == null ? "-" : globalLimit.getTransactionLimit() + ""),
+				Template.of("next_recovery", "not implemented"), //TODO
+				Template.of("recovery_duration", TextUtils.formatDuration(recovery))
 		));
 	}
 

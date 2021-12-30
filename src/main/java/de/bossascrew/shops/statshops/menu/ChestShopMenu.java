@@ -182,10 +182,13 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 		InventoryHandler.getInstance().handleMenuOpen(player, this);
 		openInventories.put(playerId, inventory);
 
+		long now = System.currentTimeMillis();
 		for (ShopEntry entry : entries) {
+			if (!(entry.getModule() instanceof TradeModule)) {
+				continue;
+			}
 			for (LimitsHandler.EntryInteraction interaction : LimitsHandler.getInstance().getExpiringInteractions(entry.getUUID())) {
-				System.out.println("duration: " + interaction.duration());
-				handleLimitRecoverInit(entry, interaction.duration());
+				handleLimitRecoverInit(entry, interaction.timeStamp() + interaction.duration() - now);
 			}
 		}
 		return view;

@@ -37,15 +37,6 @@ public class DiscountHandler implements
 		subscribers = new HashMap<>();
 		tagMap = new HashMap<>();
 		discountMap = StatShops.getInstance().getDatabase().loadDiscounts();
-		for (Discount discount : discountMap.values()) {
-			for (String tag : discount.getTags()) {
-				List<Discount> discounts = tagMap.getOrDefault(tag, new ArrayList<>());
-				if(!discounts.contains(discount)) {
-					discounts.add(discount);
-					tagMap.put(tag, discounts);
-				}
-			}
-		}
 	}
 
 	public List<Discount> getDiscounts() {

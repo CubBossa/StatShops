@@ -31,6 +31,8 @@ public class TemplateHandler implements
 	public static final UUID UUID_BOTTOM_PREV = UUID.fromString("00000000-0000-0000-0000-000000000002");
 	public static final UUID UUID_BOTTOM_NEXT = UUID.fromString("00000000-0000-0000-0000-000000000003");
 	public static final UUID UUID_BOTTOM_PREV_NEXT = UUID.fromString("00000000-0000-0000-0000-000000000004");
+	public static final UUID[] DEFAULT_TEMPLATES = {UUID_BOTTOM, UUID_BOTTOM_PREV, UUID_BOTTOM_NEXT, UUID_BOTTOM_PREV_NEXT};
+
 
 	@Getter
 	private static TemplateHandler instance;
@@ -44,6 +46,14 @@ public class TemplateHandler implements
 	public TemplateHandler() {
 		instance = this;
 		templateMap = StatShops.getInstance().getDatabase().loadTemplates();
+	}
+
+	public List<EntryTemplate> getTemplates() {
+		return new ArrayList<>(templateMap.values());
+	}
+
+	public EntryTemplate getTemplate(UUID uuid) {
+		return templateMap.get(uuid);
 	}
 
 	@Override
@@ -62,6 +72,7 @@ public class TemplateHandler implements
 	@Override
 	public EntryTemplate createNew(String input) {
 		EntryTemplate template = new EntryTemplate(UUID.randomUUID(), input);
+		StatShops.getInstance().getDatabase().saveTemplate(template);
 		templateMap.put(template.getUuid(), template);
 		return template;
 	}
@@ -116,18 +127,18 @@ public class TemplateHandler implements
 		EntryTemplate bottomLine = new EntryTemplate(uuid, nameFormat);
 		for (int i = 0; i < 9; i++) {
 			int _i = i;
-			bottomLine.put(row -> (row - 1) * 9 + _i, new BaseEntry(UUID.randomUUID(), null,
+			bottomLine.put("(<row> - 1) * 9 + " + _i, new BaseEntry(UUID.randomUUID(), null,
 					DefaultSpecialItem.EMPTY_DARK_SIMPLE.createSpecialItem(), null, i));
 		}
 		if(prevPage) {
 			BaseEntry entryPrev1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.PREV_PAGE.createSpecialItem(), null, 0);
 			entryPrev1.setModule(EntryModuleHandler.openPrevPage(entryPrev1, 1));
-			bottomLine.put(row -> (row - 1) * 9, entryPrev1);
+			bottomLine.put("(<row> - 1) * 9", entryPrev1);
 		}
 		if(nextPage) {
 			BaseEntry entryNext1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.NEXT_PAGE.createSpecialItem(), null, 1);
 			entryNext1.setModule(EntryModuleHandler.openNextPage(entryNext1, 1));
-			bottomLine.put(row -> (row - 1) * 9 + 1, entryNext1);
+			bottomLine.put("(<row> - 1) * 9 + 1", entryNext1);
 		}
 		bottomLine.setDiscIndex((short) (1 + (nextPage ? 1 : 0) + (prevPage ? 1 : 0)));
 		return bottomLine;

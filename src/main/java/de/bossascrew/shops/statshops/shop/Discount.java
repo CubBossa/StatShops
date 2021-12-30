@@ -167,6 +167,11 @@ public class Discount implements
 	}
 
 	@Override
+	public List<String> getTags(boolean generated) {
+		return new ArrayList<>(tags);
+	}
+
+	@Override
 	public boolean addTag(String tag) {
 		if (hasTag(tag)) {
 			return false;

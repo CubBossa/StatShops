@@ -14,6 +14,8 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -240,8 +242,9 @@ public class LimitsHandler implements
 
 	@Override
 	public Limit createNew(String input) {
-		Limit limit = StatShops.getInstance().getDatabase().createLimit(input);
+		Limit limit = new Limit(input, Duration.of(1, ChronoUnit.DAYS), customer -> true, 16);
 		limitMap.put(limit.getUuid(), limit);
+		StatShops.getInstance().getDatabase().saveLimit(limit);
 		return limit;
 	}
 

@@ -162,8 +162,8 @@ public class StatShops extends JavaPlugin {
 		this.translationHandler = new TranslationHandler("en_US");
 
 		// Setup Database
-		this.database = new TestDatabase(); //TODO databasehandler ...
-		this.logDatabase = (LogDatabase) this.database;
+		this.database = new FlatFileDatabase(getDataFolder()); //TODO databasehandler ...
+		this.logDatabase = new TestDatabase();
 
 		// Register dynamic pricing
 		this.dynamicPricingHandler = new DynamicPricingHandler();
@@ -251,6 +251,14 @@ public class StatShops extends JavaPlugin {
 	public void onDisable() {
 
 		InventoryHandler.getInstance().closeAllMenus(true);
+		ShopHandler.getInstance().getShops().forEach(shop -> database.saveShop(shop));
+		LimitsHandler.getInstance().getLimits().forEach(limit -> database.saveLimit(limit));
+		DiscountHandler.getInstance().getDiscounts().forEach(discount -> database.saveDiscount(discount));
+		TemplateHandler.getInstance().getTemplates().forEach(template -> {
+			if (Arrays.stream(TemplateHandler.DEFAULT_TEMPLATES).noneMatch(uuid -> uuid.equals(template.getUuid()))) {
+				database.saveTemplate(template);
+			}
+		});
 
 		if (this.bukkitAudiences != null) {
 			this.bukkitAudiences.close();

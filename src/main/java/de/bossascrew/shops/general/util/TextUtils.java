@@ -43,8 +43,8 @@ public class TextUtils {
 
 	public static final String DATE_TIME_FORMAT_SHORT = "dd.MM.yy HH:mm";
 	public static final String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm";
-	private static final DateTimeFormatter DATE_TIME_FORMATTER_SHORT = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT_SHORT);
-	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+	public static final DateTimeFormatter DATE_TIME_FORMATTER_SHORT = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT_SHORT);
+	public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
 	/**
 	 * Format: §x§1§2§3§4§5§6

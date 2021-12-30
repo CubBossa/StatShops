@@ -1,23 +1,21 @@
 package de.bossascrew.shops.statshops.shop;
 
 import com.google.common.base.Preconditions;
-import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.general.util.Duplicable;
 import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.general.util.Pair;
+import de.bossascrew.shops.general.util.TextUtils;
+import de.bossascrew.shops.statshops.StatShops;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Function;
+import java.util.*;
 
 public class EntryTemplate implements ListMenuElement, Duplicable<EntryTemplate> {
 
@@ -33,13 +31,16 @@ public class EntryTemplate implements ListMenuElement, Duplicable<EntryTemplate>
 	private String namePlain;
 	@Getter
 	private Component name;
-	private final HashMap<Function<Integer, Integer>, ShopEntry> map;
+	/**
+	 * Shopentries
+	 */
+	private final List<Pair<ShopEntry, String>> entries;
 
 	public EntryTemplate(UUID uuid, String nameFormat) {
 		super();
 		this.uuid = uuid;
 		setNameFormat(nameFormat);
-		this.map = new LinkedHashMap<>();
+		this.entries = new ArrayList<>();
 	}
 
 	public void setNameFormat(String nameFormat) {
@@ -53,35 +54,42 @@ public class EntryTemplate implements ListMenuElement, Duplicable<EntryTemplate>
 		return ItemStackUtils.createTemplatesItemStack(this);
 	}
 
-	public ShopEntry put(Integer key, ShopEntry value) {
-		Preconditions.checkNotNull(key);
-		Preconditions.checkArgument(key >= 0 && key < RowedOpenableMenu.LARGEST_INV_SIZE, "slot \"%d\" needs to be \"0 <= slot < 6 * 9\" ", key);
-		return map.put(rows -> key, value);
+	public ShopEntry put(Integer slot, ShopEntry entry) {
+		Preconditions.checkNotNull(slot);
+		Preconditions.checkArgument(slot >= 0 && slot < RowedOpenableMenu.LARGEST_INV_SIZE, "slot \"%d\" needs to be \"0 <= slot < 6 * 9\" ", slot);
+		entries.add(new Pair<>(entry, "" + slot));
+		return entry;
 	}
 
-	public ShopEntry put(Function<Integer, Integer> key, ShopEntry value) {
-		return map.put(key, value);
+	public ShopEntry put(String function, ShopEntry entry) {
+		entries.add(new Pair<>(entry, function));
+		return entry;
+	}
+
+	public List<Pair<ShopEntry, String>> getEntries() {
+		return entries;
 	}
 
 	public Map<Integer, ShopEntry> getEntries(int rows) {
 		Map<Integer, ShopEntry> mapped = new HashMap<>();
-		for (Map.Entry<Function<Integer, Integer>, ShopEntry> mapEntry : map.entrySet()) {
-			int slot = mapEntry.getKey().apply(rows);
-			mapEntry.getValue().setSlot(slot);
-			mapped.put(slot, mapEntry.getValue());
+		for (Pair<ShopEntry, String> entry : entries) {
+			int slot = (int) new ExpressionBuilder(entry.getRight().replace("<rows>", rows + "")
+					.replace("<row>", rows + "")).build().evaluate();
+			entry.getLeft().setSlot(slot);
+			mapped.put(slot, entry.getLeft());
 		}
 		return mapped;
 	}
 
 	public int size() {
-		return map.size();
+		return entries.size();
 	}
 
 	@Override
 	public EntryTemplate duplicate() {
 		EntryTemplate duplicate = new EntryTemplate(UUID.randomUUID(), nameFormat);
-		for (Map.Entry<Function<Integer, Integer>, ShopEntry> entry : map.entrySet()) {
-			duplicate.put(entry.getKey(), entry.getValue().duplicate());
+		for (Pair<ShopEntry, String> entry : entries) {
+			duplicate.put(entry.getRight(), entry.getLeft().duplicate());
 		}
 		return duplicate;
 	}

@@ -49,6 +49,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 		//Save all changed items before closing menu
 		this.closeHandler = closeContext -> {
 			setEditor(null);
+			shop.saveToDatabase();
 			if (!shopEditor.isFreezeItems()) {
 				shopEditor.setFreezeItems(true);
 				handleFreeze();

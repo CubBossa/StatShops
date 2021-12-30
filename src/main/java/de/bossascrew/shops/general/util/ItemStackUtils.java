@@ -376,7 +376,7 @@ public class ItemStackUtils {
 		if (shop == null) {
 			return DefaultSpecialItem.ERROR.createSpecialItem();
 		}
-		return createItemStack(shop.getDisplayMaterial() == null ? MATERIAL_SHOP : shop.getDisplayMaterial(),
+		return createItemStack(shop.getDisplayItem() == null ? new ItemStack(MATERIAL_SHOP) : shop.getDisplayItem(),
 				Message.GUI_SHOPS_NAME.getTranslation(
 						Template.of("name", shop.getName())),
 				Message.GUI_SHOPS_LORE.getTranslations(

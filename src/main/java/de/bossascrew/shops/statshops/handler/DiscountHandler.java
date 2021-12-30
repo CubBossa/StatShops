@@ -50,11 +50,12 @@ public class DiscountHandler implements
 	}
 
 	public Discount createDiscount(String nameFormat, SortedSet<LocalDateTime> start, Duration duration, double percent, String... tags) {
-		Discount discount = StatShops.getInstance().getDatabase().createDiscount(nameFormat, start, duration, percent, tags);
+		Discount discount = new Discount(UUID.randomUUID(), nameFormat, start, duration, percent, null, tags);
+		StatShops.getInstance().getDatabase().saveDiscount(discount);
 		discountMap.put(discount.getUuid(), discount);
 		for (String tag : tags) {
 			List<Discount> discounts = tagMap.getOrDefault(tag, new ArrayList<>());
-			if(!discounts.contains(discount)) {
+			if (!discounts.contains(discount)) {
 				discounts.add(discount);
 				tagMap.put(tag, discounts);
 			}
@@ -179,7 +180,7 @@ public class DiscountHandler implements
 
 	@Override
 	public Discount createNew(String input) {
-		return createDiscount(input, LocalDateTime.now(), Duration.of(10, ChronoUnit.DAYS), 10);
+		return createDiscount(input, LocalDateTime.now(), Duration.of(1, ChronoUnit.DAYS), 10);
 	}
 
 	@Override

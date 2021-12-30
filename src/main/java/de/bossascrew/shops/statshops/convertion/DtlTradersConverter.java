@@ -216,7 +216,7 @@ public class DtlTradersConverter implements Converter {
 			boolean bottom = position.equalsIgnoreCase("bottom");
 			ShopEntry shopEntry = new BaseEntry(UUID.randomUUID(), null, stack, null, slot);
 			shopEntry.setModule(moduleFunction.apply(shopEntry));
-			template.put(row -> bottom ? (row - 1) * 9 + slot : slot, shopEntry);
+			template.put(bottom ? "(<row> - 1) * 9 + " + slot : "" + slot, shopEntry);
 		}
 	}
 

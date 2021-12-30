@@ -7,12 +7,13 @@ import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.handler.TemplateHandler;
 import de.bossascrew.shops.general.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
-import de.bossascrew.shops.statshops.handler.ShopHandler;
-import de.bossascrew.shops.statshops.shop.*;
+import de.bossascrew.shops.statshops.shop.ChestMenuShop;
+import de.bossascrew.shops.statshops.shop.Discount;
+import de.bossascrew.shops.statshops.shop.EntryTemplate;
+import de.bossascrew.shops.statshops.shop.Limit;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -38,7 +39,6 @@ public class TestDatabase implements Database, LogDatabase {
 
 	}
 
-	@Override
 	public Shop createShop(String nameFormat, UUID uuid) {
 		return new ChestMenuShop(nameFormat, uuid);
 	}
@@ -99,13 +99,12 @@ public class TestDatabase implements Database, LogDatabase {
 
 	}
 
-	@Override
 	public ShopEntry createEntry(UUID uuid, Shop shop, ItemStack displayItem, int slot) {
 		return new BaseEntry(uuid, shop, displayItem, null, slot);
 	}
 
 	@Override
-	public Map<UUID, Shop> loadEntries(Shop shop) {
+	public Map<UUID, ShopEntry> loadEntries(Shop shop) {
 		return new HashMap<>();
 	}
 
@@ -119,7 +118,6 @@ public class TestDatabase implements Database, LogDatabase {
 
 	}
 
-	@Override
 	public Discount createDiscount(String nameFormat, SortedSet<LocalDateTime> start, Duration duration, double percent, String... tags) {
 		return new Discount(UUID.randomUUID(), nameFormat, start, duration, percent, null, tags);
 	}
@@ -143,7 +141,6 @@ public class TestDatabase implements Database, LogDatabase {
 
 	}
 
-	@Override
 	public Limit createLimit(String name) {
 		return new Limit(name, Duration.of(3, ChronoUnit.DAYS), customer -> true, 32);
 	}
@@ -171,7 +168,6 @@ public class TestDatabase implements Database, LogDatabase {
 
 	}
 
-	@Override
 	public EntryTemplate createTemplate(String name) {
 		return new EntryTemplate(UUID.randomUUID(), "<aqua>new-template");
 	}
@@ -181,8 +177,8 @@ public class TestDatabase implements Database, LogDatabase {
 		EntryTemplate template = new EntryTemplate(UUID.randomUUID(), "<gradient:dark_green:green:dark_green>Default Template");
 		for (int i = 0; i < 9; i++) {
 			int finalI = i;
-			template.put(rows -> (rows - 1) * 9 + finalI, new BaseEntry(UUID.randomUUID(), null, ItemStackUtils.createItemStack(Material.DIAMOND,
-					"lol", ""), 	null, i));
+			template.put("(<rows> - 1) * 9 + " + finalI, new BaseEntry(UUID.randomUUID(), null, ItemStackUtils.createItemStack(Material.DIAMOND,
+					"lol", ""), null, i));
 		}
 		Map<UUID, EntryTemplate> map = new LinkedHashMap<>();
 		map.put(template.getUuid(), template);
@@ -196,16 +192,6 @@ public class TestDatabase implements Database, LogDatabase {
 
 	@Override
 	public void deleteTemplate(EntryTemplate template) {
-
-	}
-
-	@Override
-	public Map<Location, UUID> loadShopBlockMapping() {
-		return null;
-	}
-
-	@Override
-	public void mapShopToBlock(Shop shop, Location location) {
 
 	}
 

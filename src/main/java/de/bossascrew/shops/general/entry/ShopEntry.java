@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -50,4 +51,6 @@ public interface ShopEntry extends Taggable, Duplicable<ShopEntry>, DatabaseObje
 	void setModule(EntryModule module);
 
 	EntryInteractionResult interact(Customer customer, ShopMenu menu, EntryInteractionType interactionType);
+
+	List<String> getTags(boolean generated);
 }

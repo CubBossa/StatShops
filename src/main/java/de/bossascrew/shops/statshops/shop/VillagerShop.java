@@ -16,7 +16,6 @@ import de.bossascrew.shops.statshops.menu.VillagerShopMenu;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,7 @@ public class VillagerShop implements Shop {
 	private boolean enabled = true;
 
 	@JsonIgnore
-	private Material displayMaterial;
+	private ItemStack displayItem;
 	private @Nullable String permission = null;
 	private @Nullable EntryTemplate defaultTemplate = null;
 
@@ -202,6 +201,11 @@ public class VillagerShop implements Shop {
 		list.add(StatShops.TAG_GLOBAL);
 		list.sort(String::compareTo);
 		return list;
+	}
+
+	@Override
+	public List<String> getTags(boolean generated) {
+		return generated ? getTags() : new ArrayList<>(tags);
 	}
 
 	@Override

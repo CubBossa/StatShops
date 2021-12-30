@@ -47,9 +47,9 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	 */
 	String getNamePlain();
 
-	Material getDisplayMaterial();
+	ItemStack getDisplayItem();
 
-	void setDisplayMaterial(Material material);
+	void setDisplayItem(ItemStack stack);
 
 	/**
 	 * @return The permission node that allows customers to use this shop or null if no permission is set

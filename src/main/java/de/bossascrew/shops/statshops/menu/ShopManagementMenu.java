@@ -124,13 +124,13 @@ public class ShopManagementMenu {
 		ChestMenu chestMenu = new ChestMenu(shop.getName(), 3);
 		chestMenu.fillMenu();
 		//Set name
-		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(shop.getDisplayMaterial() == null ?
-						ItemStackUtils.MATERIAL_SHOP : shop.getDisplayMaterial(),
+		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(shop.getDisplayItem() == null ?
+						new ItemStack(ItemStackUtils.MATERIAL_SHOP) : shop.getDisplayItem(),
 				Message.GUI_SHOP_SET_NAME_NAME, Message.GUI_SHOP_SET_NAME_LORE), clickContext -> {
 			if (clickContext.getPlayer().getItemOnCursor().getType() != Material.AIR) {
-				shop.setDisplayMaterial(clickContext.getPlayer().getItemOnCursor().getType());
+				shop.setDisplayItem(clickContext.getPlayer().getItemOnCursor().clone());
 				StatShops.getInstance().getDatabase().saveShop(shop);
-				clickContext.setItemStack(ItemStackUtils.createItemStack(shop.getDisplayMaterial(), Message.GUI_SHOP_SET_NAME_NAME, Message.GUI_SHOP_SET_NAME_LORE));
+				clickContext.setItemStack(ItemStackUtils.createItemStack(shop.getDisplayItem(), Message.GUI_SHOP_SET_NAME_NAME, Message.GUI_SHOP_SET_NAME_LORE));
 				return;
 			}
 			player.closeInventory();
@@ -265,6 +265,7 @@ public class ShopManagementMenu {
 			openShopsMenu(player, fromPage);
 		});
 		chestMenu.setCloseHandler(closeContext -> {
+			shop.saveToDatabase();
 			shop.setEditor(null);
 		});
 		chestMenu.openInventory(player);
@@ -348,7 +349,10 @@ public class ShopManagementMenu {
 	public void openLimitMenu(Player player, Limit limit, int fromPage) {
 		limit.setEditor(player);
 		ChestMenu chestMenu = new ChestMenu(limit.getName(), 3);
-		chestMenu.setCloseHandler(closeContext -> limit.setEditor(null));
+		chestMenu.setCloseHandler(closeContext -> {
+			limit.setEditor(null);
+			limit.saveToDatabase();
+		});
 		chestMenu.setBackHandlerAction(backContext -> openLimitsMenu(player, fromPage));
 		//Set name
 		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT, Message.GUI_LIMIT_SET_NAME_NAME, Message.GUI_LIMIT_SET_NAME_LORE), clickContext -> {
@@ -464,7 +468,10 @@ public class ShopManagementMenu {
 		discount.setEditor(player);
 		ChestMenu chestMenu = new ChestMenu(Message.GUI_DISCOUNT, 3);
 		chestMenu.setBackHandlerAction(backContext -> openDiscountsMenu(player, fromPage));
-		chestMenu.setCloseHandler(closeContext -> discount.setEditor(null));
+		chestMenu.setCloseHandler(closeContext -> {
+			discount.setEditor(null);
+			discount.saveToDatabase();
+		});
 
 		//Set name
 		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT, Message.GUI_DISCOUNT_SET_NAME_NAME, Message.GUI_DISCOUNT_SET_NAME_LORE), clickContext -> {

@@ -99,6 +99,10 @@ public class BaseEntry implements ShopEntry {
 		return result;
 	}
 
+	public List<String> getTags(boolean generated) {
+		return generated ? getTags() : new ArrayList<>(tags);
+	}
+
 	public List<String> getTags() {
 		// Don't add shop tags as they will always be processed twice in TagUtils
 		List<String> tags = new ArrayList<>();

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Taggable;
-import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.util.Duplicable;
 import de.bossascrew.shops.general.util.Editable;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -53,7 +52,11 @@ public class Limit implements
 	private Player editor;
 
 	public Limit(String nameFormat, Duration recover, Predicate<Customer> appliesToCustomer, int limit, String... tags) {
-		this.uuid = UUID.randomUUID();
+		this(UUID.randomUUID(), nameFormat, recover, appliesToCustomer, limit, tags);
+	}
+
+	public Limit(UUID uuid, String nameFormat, Duration recover, Predicate<Customer> appliesToCustomer, int limit, String... tags) {
+		this.uuid = uuid;
 		setNameFormat(nameFormat);
 		this.recover = recover;
 		this.appliesToCustomer = appliesToCustomer;
@@ -65,6 +68,11 @@ public class Limit implements
 		this.nameFormat = nameFormat;
 		this.name = StatShops.getInstance().getMiniMessage().parse(nameFormat);
 		this.namePlain = TextUtils.toPlain(name);
+	}
+
+
+	public List<String> getTags(boolean generated) {
+		return new ArrayList<>(tags);
 	}
 
 	@Override

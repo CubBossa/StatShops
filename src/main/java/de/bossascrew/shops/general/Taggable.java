@@ -9,9 +9,15 @@ import java.util.List;
 public interface Taggable {
 
 	/**
-	 * @return a List of all tags
+	 * @return a copied List of all tags, including generated tags;
 	 */
 	List<String> getTags();
+
+	/**
+	 * @param generated defines, if generated tags like uuid tags or tags from auto-tagging should be included
+	 * @return a copied List of all tags.
+	 */
+	List<String> getTags(boolean generated);
 
 	/**
 	 * @param tag the tag to add

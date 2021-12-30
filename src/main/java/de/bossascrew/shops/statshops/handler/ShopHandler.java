@@ -47,13 +47,9 @@ public class ShopHandler implements
 
 	public @Nullable
 	Shop createShop(String nameFormat) {
-		Shop shop = StatShops.getInstance().getDatabase().createShop(nameFormat, UUID.randomUUID());
-		if (shop == null) {
-			return null;
-		}
-		if (shop instanceof ChestMenuShop chestMenuShop) {
-			chestMenuShop.setRows(StatShops.getInstance().getShopsConfig().getDefaultShopSize());
-		}
+		ChestMenuShop shop = new ChestMenuShop(nameFormat, UUID.randomUUID()); //TODO typen registrieren
+		shop.setRows(StatShops.getInstance().getShopsConfig().getDefaultShopSize());
+		StatShops.getInstance().getDatabase().saveShop(shop);
 		addShop(shop);
 		return shop;
 	}
@@ -94,7 +90,7 @@ public class ShopHandler implements
 	@Override
 	public Shop createDuplicate(Shop element) {
 		Shop shop = createShop(element.getNameFormat());
-		shop.setDisplayMaterial(element.getDisplayMaterial());
+		shop.setDisplayItem(element.getDisplayItem());
 		shop.setPermission(element.getPermission());
 		if (element instanceof PaginatedShop ps) { //TODO pro shop einen copy constructor -> via reflection aufrufen
 			ps.setDefaultShopPage(ps.getDefaultShopPage());

@@ -100,7 +100,7 @@ public class CitizensHook implements Listener {
 	public void removeAllAssignments(Shop shop) {
 		for (NPC npc : CitizensAPI.getNPCRegistry()) {
 			ShopTrait t = npc.getTrait(ShopTrait.class);
-			if(t != null && t.getShop().getUUID().equals(shop.getUUID())) {
+			if(t != null && t.getShop() != null && t.getShop().getUUID().equals(shop.getUUID())) {
 				npc.removeTrait(ShopTrait.class);
 			}
 		}

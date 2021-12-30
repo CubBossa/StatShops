@@ -22,11 +22,11 @@ import de.bossascrew.shops.statshops.events.ShopOpenEvent;
 import de.bossascrew.shops.statshops.events.ShopTurnPageEvent;
 import de.bossascrew.shops.statshops.menu.ChestShopEditor;
 import de.bossascrew.shops.statshops.menu.ChestShopMenu;
+import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +48,7 @@ public class ChestMenuShop implements PaginatedShop {
 	private String namePlain;
 
 	@JsonIgnore
-	private Material displayMaterial;
+	private ItemStack displayItem;
 	private @Nullable String permission = null;
 	private @Nullable EntryTemplate defaultTemplate = null;
 	private TransactionBalanceMessenger balanceMessenger;
@@ -92,7 +92,7 @@ public class ChestMenuShop implements PaginatedShop {
 		this.tags = new ArrayList<>();
 		this.balanceMessenger = new SimpleBalanceMessenger(StatShops.getInstance().getShopsConfig().getTradeMessageFeedback());
 		this.pageTurningPlayers = new ArrayList<>();
-		this.pageTitles = new HashMap<>(); //TODO db
+		this.pageTitles = new HashMap<>();
 	}
 
 	public void setNameFormat(String nameFormat) {
@@ -140,7 +140,8 @@ public class ChestMenuShop implements PaginatedShop {
 
 	@Override
 	public ShopEntry createEntry(ItemStack displayItem, int slot) {
-		ShopEntry entry = StatShops.getInstance().getDatabase().createEntry(UUID.randomUUID(), this, displayItem, slot);
+		ShopEntry entry = new BaseEntry(UUID.randomUUID(), this, displayItem, null, slot);
+		StatShops.getInstance().getDatabase().saveEntry(entry);
 		entryMap.put(slot, entry);
 		uuidEntryMap.put(entry.getUUID(), entry);
 		return entry;
@@ -380,7 +381,10 @@ public class ChestMenuShop implements PaginatedShop {
 		return entryMap;
 	}
 
-	@Override
+	public List<String> getTags(boolean generated) {
+		return generated ? getTags() : new ArrayList<>(tags);
+	}
+
 	public List<String> getTags() {
 		List<String> list = new ArrayList<>(tags);
 		list.add(uuid.toString());
@@ -445,6 +449,10 @@ public class ChestMenuShop implements PaginatedShop {
 		return namePlain.compareTo(o.getNamePlain());
 	}
 
+	public ItemStack getDisplayItem() {
+		return displayItem == null ? null : displayItem.clone();
+	}
+
 	@Override
 	@JsonIgnore
 	public ItemStack getListDisplayItem() {
@@ -453,6 +461,6 @@ public class ChestMenuShop implements PaginatedShop {
 
 	@Override
 	public void saveToDatabase() {
-		StatShops.getInstance().getDatabase().saveShop(this);
+		StatShops.getInstance().runAsync(() -> StatShops.getInstance().getDatabase().saveShop(this));
 	}
 }

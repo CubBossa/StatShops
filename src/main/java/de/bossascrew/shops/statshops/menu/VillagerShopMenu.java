@@ -157,4 +157,9 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 			}
 		}
 	}
+
+	@Override
+	public void handleLimitRecoverInit(ShopEntry shopEntry, long recoverDuration) {
+		//TODO
+	}
 }

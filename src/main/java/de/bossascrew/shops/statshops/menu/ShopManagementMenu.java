@@ -32,9 +32,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class ShopManagementMenu {
 
@@ -387,16 +389,42 @@ public class ShopManagementMenu {
 						Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
 						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openLimitMenu(player, limit, fromPage)).openInventory(player));
 
+		Supplier<ItemStack> durationStack = () -> ItemStackUtils.createItemStack(Material.COMPASS, Message.GUI_LIMIT_SET_DURATION_NAME.getTranslation(),
+				Message.GUI_LIMIT_SET_DURATION_LORE.getTranslations(Template.of("current", TextUtils.formatDuration(limit.getRecover()))));
+		chestMenu.setItemAndClickHandler(0, 5, durationStack.get(), clickContext -> {
+			player.closeInventory();
+			new AnvilGUI.Builder()
+					.plugin(StatShops.getInstance())
+					.text(TextUtils.DURATION_FORMAT)
+					.title(Message.GUI_LIMIT_SET_DURATION_TITLE.getLegacyTranslation())
+					.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> {
+						chestMenu.refresh(5);
+						chestMenu.openInventory(player);
+					}, 1L))
+					.onComplete((p, s) -> {
+						Duration duration = TextUtils.parseDuration(s);
+						if (duration != null) {
+							limit.setRecover(duration);
+						} else {
+							player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, .5f, 1f);
+						}
+						chestMenu.setItem(5, durationStack.get());
+						chestMenu.refresh(5);
+						chestMenu.openInventory(player);
+						return AnvilGUI.Response.close();
+					}).open(player);
+		});
 
-		chestMenu.setItemAndClickHandler(0, 5, ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_LIMIT_SET_LIMIT_NAME,
-				Message.GUI_LIMIT_SET_LIMIT_LORE), clickContext -> {
+		Supplier<ItemStack> limitStack = () -> ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_LIMIT_SET_LIMIT_NAME.getTranslation(),
+				Message.GUI_LIMIT_SET_LIMIT_LORE.getTranslations(Template.of("current", limit.getTransactionLimit() + "")));
+		chestMenu.setItemAndClickHandler(0, 6, limitStack.get(), clickContext -> {
 			player.closeInventory();
 			new AnvilGUI.Builder()
 					.plugin(StatShops.getInstance())
 					.text("64 ")
 					.title(Message.GUI_LIMIT_SET_LIMIT_TITLE.getLegacyTranslation())
 					.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> {
-						chestMenu.refresh(5);
+						chestMenu.refresh(6);
 						chestMenu.openInventory(player);
 					}, 1L))
 					.onComplete((p, s) -> {
@@ -405,17 +433,19 @@ public class ShopManagementMenu {
 						} catch (NumberFormatException ignored) {
 							player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, .5f, 1f);
 						}
-						chestMenu.refresh(5);
+						chestMenu.setItem(6, limitStack.get());
+						chestMenu.refresh(6);
 						chestMenu.openInventory(player);
 						return AnvilGUI.Response.close();
 					}).open(player);
 		});
 
-		chestMenu.setItemAndClickHandler(0, 6, ItemStackUtils.createButtonItemStack(limit.isGlobal(), Message.GUI_LIMIT_SET_GLOBAL_NAME,
-				Message.GUI_LIMIT_SET_GLOBAL_LORE), clickContext -> {
+		Supplier<ItemStack> globalStack = () -> ItemStackUtils.createButtonItemStack(limit.isGlobal(), Message.GUI_LIMIT_SET_GLOBAL_NAME,
+				Message.GUI_LIMIT_SET_GLOBAL_LORE);
+		chestMenu.setItemAndClickHandler(0, 7, globalStack.get(), clickContext -> {
 			limit.setGlobal(!limit.isGlobal());
-			chestMenu.setItem(6, ItemStackUtils.createButtonItemStack(limit.isGlobal(), Message.GUI_LIMIT_SET_GLOBAL_NAME, Message.GUI_LIMIT_SET_GLOBAL_LORE));
-			chestMenu.refresh(6);
+			chestMenu.setItem(7, globalStack.get());
+			chestMenu.refresh(7);
 		});
 
 

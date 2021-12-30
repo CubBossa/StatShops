@@ -385,7 +385,20 @@ manager:
       set_tags:
         name: "<white>Open Tag Menu"
         lore: "<gray>Discounts and Limits can be \n<gray>applied to all Shops and Shopentries \n<gray>that have certain tags.\n\n<gray>Use the tags menu to configure\n<gray>tags for this limit."
-
+      set_limit:
+        title: "Define a transaction limit"
+        name: "<white>Transaction Limit"
+        # Valid placeholders: <current>
+        lore: "<gray>Current:<gold> <current>\n<gray>Define a transaction limit.\n\n<gray>Customers cannot buy more than\n<gray>the smallest limit of all\n<gray>applied limits."
+      set_duration:
+        title: "Define a cooldown"
+        name: "<white>Cooldown"
+        # Valid placeholders: <current>
+        lore: "<gray>Current:<gold> <current>\n<gray>Every time a customer interacts,\n<gray>the user limit will be increased.\n<gray>After the provided cooldown the\n<gray>customers limit will be\n<gray>decreased."
+      set_global:
+        name: "<white>Global"
+        # Valid placeholders: <value>
+        lore: "<gray>Current: <gold><value>\n<gray>If set to true, all players with\n<gray>the limit permission will share\n<gray>this limit.\n<gray>-> One player can buy all stock\n<gray>items for all players."
 
     discounts:
       title: "Create and manage shop discounts"

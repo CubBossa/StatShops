@@ -40,8 +40,10 @@ public class DiscountHandler implements
 		for (Discount discount : discountMap.values()) {
 			for (String tag : discount.getTags()) {
 				List<Discount> discounts = tagMap.getOrDefault(tag, new ArrayList<>());
-				discounts.add(discount);
-				tagMap.put(tag, discounts);
+				if(!discounts.contains(discount)) {
+					discounts.add(discount);
+					tagMap.put(tag, discounts);
+				}
 			}
 		}
 	}
@@ -61,8 +63,10 @@ public class DiscountHandler implements
 		discountMap.put(discount.getUuid(), discount);
 		for (String tag : tags) {
 			List<Discount> discounts = tagMap.getOrDefault(tag, new ArrayList<>());
-			discounts.add(discount);
-			tagMap.put(tag, discounts);
+			if(!discounts.contains(discount)) {
+				discounts.add(discount);
+				tagMap.put(tag, discounts);
+			}
 		}
 		//Refresh all open inventories that are
 		if (discount.isCurrentlyActive()) {

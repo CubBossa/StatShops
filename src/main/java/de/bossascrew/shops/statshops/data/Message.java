@@ -172,6 +172,9 @@ public class Message {
 	public static final Message GUI_LIMIT_SET_LIMIT_TITLE = new Message("manager.gui.limit.set_limit.title");
 	public static final Message GUI_LIMIT_SET_LIMIT_NAME = new Message("manager.gui.limit.set_limit.name");
 	public static final Message GUI_LIMIT_SET_LIMIT_LORE = new Message("manager.gui.limit.set_limit.lore");
+	public static final Message GUI_LIMIT_SET_DURATION_TITLE = new Message("manager.gui.limit.set_duration.title");
+	public static final Message GUI_LIMIT_SET_DURATION_NAME = new Message("manager.gui.limit.set_duration.name");
+	public static final Message GUI_LIMIT_SET_DURATION_LORE = new Message("manager.gui.limit.set_duration.lore");
 	public static final Message GUI_LIMIT_SET_GLOBAL_NAME = new Message("manager.gui.limit.set_global.name");
 	public static final Message GUI_LIMIT_SET_GLOBAL_LORE = new Message("manager.gui.limit.set_global.lore");
 

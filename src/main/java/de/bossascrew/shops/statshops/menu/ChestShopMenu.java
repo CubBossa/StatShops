@@ -24,12 +24,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
@@ -44,6 +48,8 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	private final boolean showCooldownMessage;
 	private final HashMap<Player, Long> interactionCooldown;
 
+	private final List<BukkitTask> schedulers;
+
 	public ChestShopMenu(ChestMenuShop shop, Customer customer) {
 		this(shop, customer, null);
 	}
@@ -56,11 +62,34 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 		this.cooldown = StatShops.getInstance().getShopsConfig().getCooldown();
 		this.showCooldownMessage = StatShops.getInstance().getShopsConfig().isShowCooldownMessage();
 		this.targetCustomer = customer;
+		this.schedulers = new ArrayList<>();
 
 		setCloseHandler(closeContext -> {
 			unsubscribeToDisplayUpdates();
 			Customer.wrap(closeContext.getPlayer()).setActiveShop(null);
 		});
+	}
+
+	private void setupLimitRecoveryScheduler(ShopEntry shopEntry, int durationInTicks) {
+		BukkitTask task = Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> {
+			updateEntry(shopEntry);
+			cleanupRecoveryScheduler();
+		}, durationInTicks + 2);
+		schedulers.add(task);
+	}
+
+	private void cleanupRecoveryScheduler() {
+		List<BukkitTask> remove = schedulers.stream().filter(BukkitTask::isCancelled).collect(Collectors.toList());
+		schedulers.removeAll(remove);
+	}
+
+	private void cancelLimitRecoveryTasks() {
+		schedulers.forEach(BukkitTask::cancel);
+		schedulers.clear();
+	}
+
+	public void handleLimitRecoverInit(ShopEntry shopEntry, long recoverDuration) {
+		setupLimitRecoveryScheduler(shopEntry, (int) (recoverDuration / 50));
 	}
 
 	@Override
@@ -132,7 +161,8 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
 		fillMenu(DefaultSpecialItem.EMPTY_LIGHT_RP);
 
-		for (ShopEntry entry : shop.getEntries(page)) {
+		List<ShopEntry> entries = shop.getEntries(page);
+		for (ShopEntry entry : entries) {
 			updateEntry(entry);
 
 			//Subscribe to limits and discounts so changes can be displayed live
@@ -152,12 +182,19 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 		InventoryHandler.getInstance().handleMenuOpen(player, this);
 		openInventories.put(playerId, inventory);
 
+		for (ShopEntry entry : entries) {
+			for (LimitsHandler.EntryInteraction interaction : LimitsHandler.getInstance().getExpiringInteractions(entry.getUUID())) {
+				System.out.println("duration: " + interaction.duration());
+				handleLimitRecoverInit(entry, interaction.duration());
+			}
+		}
 		return view;
 	}
 
 	@Override
 	public boolean closeInventory(Player player) {
 		unsubscribeToDisplayUpdates();
+		cancelLimitRecoveryTasks();
 		return super.closeInventory(player);
 	}
 

@@ -41,8 +41,10 @@ public class LimitsHandler implements
 		for (Limit limit : limitMap.values()) {
 			for (String tag : limit.getTags()) {
 				Collection<Limit> limits = tagMap.getOrDefault(tag, new ArrayList<>());
-				limits.add(limit);
-				tagMap.put(tag, limits);
+				if (!limits.contains(limit)) {
+					limits.add(limit);
+					tagMap.put(tag, limits);
+				}
 			}
 		}
 		recoveries = loadExpiringLimits();
@@ -75,8 +77,11 @@ public class LimitsHandler implements
 			duration = b.getRecover().toMillis();
 			limit = b.getTransactionLimit();
 		} else {
-			insertRecovery(player.getUniqueId(), entry.getUUID());
+			//People that dont have a limit also increase the global limit
+			//TODO config option?
+			/*insertRecovery(player.getUniqueId(), entry, shopMenu, null);
 			updateSubscribersGlobalLimit(entry);
+			*/
 			return true;
 		}
 		int count = getLimitUserCount(player.getUniqueId(), entry.getUUID(), System.currentTimeMillis() - duration, b != null);
@@ -84,17 +89,33 @@ public class LimitsHandler implements
 		if (count >= limit) {
 			return false;
 		}
-		insertRecovery(player.getUniqueId(), entry.getUUID());
+		insertRecovery(player.getUniqueId(), entry, shopMenu, duration);
 		updateSubscribersGlobalLimit(entry);
 		shopMenu.updateEntry(entry);
 		return true;
 	}
 
-	private void insertRecovery(UUID playerUuid, UUID entryUuid) {
+	private void insertRecovery(UUID playerUuid, ShopEntry entry, ShopMenu menu, @Nullable Long recoveryDuration) {
 		long now = System.currentTimeMillis();
 		Collection<EntryInteraction> innerRecoveries = recoveries.getOrDefault(now, new HashSet<>());
-		innerRecoveries.add(new EntryInteraction(entryUuid, playerUuid, now));
+		innerRecoveries.add(new EntryInteraction(entry.getUUID(), playerUuid, now, recoveryDuration == null ? 0 : recoveryDuration));
 		recoveries.put(now, innerRecoveries);
+
+		if (recoveryDuration != null) {
+			menu.handleLimitRecoverInit(entry, recoveryDuration);
+		}
+	}
+
+	public Collection<EntryInteraction> getExpiringInteractions(UUID entryUuid) {
+		long now = System.currentTimeMillis();
+		Collection<EntryInteraction> result = new HashSet<>();
+		recoveries.forEach((aLong, entryInteractions) -> {
+			if (aLong <= now) {
+				return;
+			}
+			result.addAll(entryInteractions.stream().filter(entryInteraction -> entryInteraction.entryUuid.equals(entryUuid)).collect(Collectors.toList()));
+		});
+		return result;
 	}
 
 	public int getLimitUserCount(UUID playerId, UUID entryId, long since, boolean global) {
@@ -117,13 +138,19 @@ public class LimitsHandler implements
 
 	public void handleLimitTagAdded(Limit limit, String tag) {
 		Collection<Limit> limits = tagMap.getOrDefault(tag, new ArrayList<>());
-		limits.add(limit);
-		tagMap.put(tag, limits);
+		if (!limits.contains(limit)) {
+			limits.add(limit);
+			tagMap.put(tag, limits);
+		}
 		updateAllSubscribers(limit);
 	}
 
 	public void handleLimitTagRemoved(Limit limit, String tag) {
+		System.out.println("before: " + tagMap.get(tag).size());
+		System.out.println(tagMap.get(tag).stream().map(Limit::getUuid).map(UUID::toString).collect(Collectors.joining(", ")));
 		tagMap.get(tag).remove(limit);
+		System.out.println("after: " + tagMap.get(tag).size());
+		System.out.println(tagMap.get(tag).stream().map(Limit::getUuid).map(UUID::toString).collect(Collectors.joining(", ")));
 		updateAllSubscribers(limit);
 	}
 
@@ -173,7 +200,8 @@ public class LimitsHandler implements
 		} else {
 			return;
 		}
-		ItemStackUtils.addLoreLimits(existingLore, pair.getLeft(), pair.getRight(), getLimitUserCount(player.getUniqueId(), shopEntry.getUUID(), duration, pair.getRight() != null));
+		ItemStackUtils.addLoreLimits(existingLore, pair.getLeft(), pair.getRight(),
+				getLimitUserCount(player.getUniqueId(), shopEntry.getUUID(), System.currentTimeMillis() - duration, pair.getRight() != null));
 	}
 
 	public Pair<Limit, Limit> getMinimalLimitsWithMatchingTags(@Nullable Player player, Taggable... taggables) {
@@ -240,14 +268,15 @@ public class LimitsHandler implements
 	@Override
 	public boolean delete(Limit limit) {
 		// Automatically updates all guis. Doesn't matter because limit is deleted anyways
-		limit.getTags().forEach(limit::removeTag);
+		new ArrayList<>(limit.getTags()).forEach(limit::removeTag);
 
 		StatShops.getInstance().getDatabase().deleteLimit(limit);
+		subscribers.remove(limit);
 		limitMap.remove(limit.getUuid());
-		return false;
+		return true;
 	}
 
-	public record EntryInteraction(UUID entryUuid, UUID playerUuid, long timeStamp) {
+	public record EntryInteraction(UUID entryUuid, UUID playerUuid, long timeStamp, long duration) {
 
 	}
 }

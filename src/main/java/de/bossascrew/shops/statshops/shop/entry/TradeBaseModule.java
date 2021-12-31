@@ -8,6 +8,8 @@ import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.general.util.LoggingPolicy;
+import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
@@ -20,6 +22,7 @@ import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
@@ -98,36 +101,22 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 
 	@Override
 	public void loadData() {
+
 		purchasable = shopEntry.getData(DataSlot.BooleanSlot.class, "purchasable", () -> {
-			return new DataSlot.BooleanSlot("purchasable", true,
-					Message.GUI_ENTRY_FUNCTION_PURCHASABLE_NAME, Message.GUI_ENTRY_FUNCTION_PURCHASABLE_LORE);
+			return new DataSlot.BooleanSlot(true);
 		});
 		sellable = shopEntry.getData(DataSlot.BooleanSlot.class, "sellable", () -> {
-			return new DataSlot.BooleanSlot("sellable", false,
-					Message.GUI_ENTRY_FUNCTION_SELLABLE_NAME, Message.GUI_ENTRY_FUNCTION_SELLABLE_LORE);
+			return new DataSlot.BooleanSlot(false);
 		});
 		purchasableStacked = shopEntry.getData(DataSlot.BooleanSlot.class, "purchasable_stacked", () -> {
-			return new DataSlot.BooleanSlot("purchasable_stacked", false,
-					Message.GUI_ENTRY_FUNCTION_PURCHASABLE_STACKED_NAME, Message.GUI_ENTRY_FUNCTION_PURCHASABLE_STACKED_LORE);
+			return new DataSlot.BooleanSlot(false);
 		});
 		sellableStacked = shopEntry.getData(DataSlot.BooleanSlot.class, "sellable_stacked", () -> {
-			return new DataSlot.BooleanSlot("sellable_stacked", false,
-					Message.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_NAME, Message.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_LORE);
+			return new DataSlot.BooleanSlot(false);
 		});
 
 		article.loadDataSlots(shopEntry);
 		costs.loadDataSlots(shopEntry);
-	}
-
-	@Override
-	public void saveData() {
-		shopEntry.storeData(purchasable);
-		shopEntry.storeData(sellable);
-		shopEntry.storeData(purchasableStacked);
-		shopEntry.storeData(sellableStacked);
-
-		article.saveDataSlots(shopEntry);
-		costs.saveDataSlots(shopEntry);
 	}
 
 	@Override

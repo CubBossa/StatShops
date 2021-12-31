@@ -5,11 +5,11 @@ import de.bossascrew.shops.general.menu.ListMenu;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.menu.contexts.TargetContext;
 import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -17,26 +17,49 @@ import net.kyori.adventure.text.minimessage.Template;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-@RequiredArgsConstructor
 @Getter
 @Setter
-public abstract class DataSlot<T> {
+public abstract class DataSlot<T> implements ConfigurationSerializable {
 
-	private final String storageKey;
+	public static final Map<String, Pair<Message, Message>> DATA_MESSAGE_MAP = new HashMap<>();
+
+	static {
+		DATA_MESSAGE_MAP.put("sell_pay_price_amount", new Pair<>(Message.GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_LORE));
+		DATA_MESSAGE_MAP.put("buy_pay_price_amount", new Pair<>(Message.GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_LORE));
+		DATA_MESSAGE_MAP.put("buy_pay_price_equation", new Pair<>(Message.GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_LORE));
+		DATA_MESSAGE_MAP.put("sell_pay_price_equation", new Pair<>(Message.GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_LORE));
+		DATA_MESSAGE_MAP.put("buy_pay_price_item", new Pair<>(Message.GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_LORE));
+		DATA_MESSAGE_MAP.put("sell_pay_price_item", new Pair<>(Message.GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_LORE));
+		DATA_MESSAGE_MAP.put("pagination_page", new Pair<>(Message.GUI_ENTRY_FUNCTION_PAGE_NAME, Message.GUI_ENTRY_FUNCTION_PAGE_LORE));
+		DATA_MESSAGE_MAP.put("pagination_mode", new Pair<>(Message.NONE, Message.NONE));
+		DATA_MESSAGE_MAP.put("open_shop", new Pair<>(Message.GUI_ENTRY_FUNCTION_OPENED_SHOP_NAME, Message.GUI_ENTRY_FUNCTION_OPENED_SHOP_LORE));
+		DATA_MESSAGE_MAP.put("purchasable", new Pair<>(Message.GUI_ENTRY_FUNCTION_PURCHASABLE_NAME, Message.GUI_ENTRY_FUNCTION_PURCHASABLE_LORE));
+		DATA_MESSAGE_MAP.put("sellable", new Pair<>(Message.GUI_ENTRY_FUNCTION_SELLABLE_NAME, Message.GUI_ENTRY_FUNCTION_SELLABLE_LORE));
+		DATA_MESSAGE_MAP.put("purchasable_stacked", new Pair<>(Message.GUI_ENTRY_FUNCTION_PURCHASABLE_STACKED_NAME, Message.GUI_ENTRY_FUNCTION_PURCHASABLE_STACKED_LORE));
+		DATA_MESSAGE_MAP.put("sellable_stacked", new Pair<>(Message.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_NAME, Message.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_LORE));
+		DATA_MESSAGE_MAP.put("gain_price_item", new Pair<>(Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_LORE));
+		DATA_MESSAGE_MAP.put("gain_price_amount", new Pair<>(Message.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_LORE));
+	}
+
+
 	private ItemStack displayItem = new ItemStack(Material.BARRIER);
 	private final Message typeMessage;
-	private Message name;
-	private Message lore;
+	private Message name = null;
+	private Message lore = null;
 	private ContextConsumer<TargetContext<ClickType, Runnable>> clickHandler = c -> {
 	};
 	private @Nullable T data;
@@ -44,11 +67,8 @@ public abstract class DataSlot<T> {
 	};
 	private Function<T, Component> dataFormatter = t -> Component.text("" + t);
 
-	public DataSlot(String storageKey, Message typeMessage, Message name, Message lore) {
-		this.storageKey = storageKey;
+	public DataSlot(Message typeMessage) {
 		this.typeMessage = typeMessage;
-		this.name = name;
-		this.lore = lore;
 	}
 
 	public void runUpdateHandler() {
@@ -66,21 +86,24 @@ public abstract class DataSlot<T> {
 	}
 
 	public ItemStack getDisplayItem() {
+		if (name == null || lore == null) {
+			return null;
+		}
 		return ItemStackUtils.setNameAndLore(displayItem, typeMessage.getTranslation(Template.of("name", name.getTranslation())),
 				lore.getTranslations(Template.of("current", dataFormatter.apply(data))));
 	}
 
 	public static class EquationSlot extends DataSlot<String> {
 
-		public EquationSlot(String storageKey, String data, Message name, Message lore) {
-			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION, name, lore);
+		public EquationSlot(String data) {
+			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION);
 			super.setClickHandler(clickContext -> {
 				Player player = clickContext.getPlayer();
 				player.closeInventory();
 				new AnvilGUI.Builder()
 						.plugin(StatShops.getInstance())
 						.text("" + getData())
-						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.getLegacyTranslation(Template.of("name", name.getTranslation())))
+						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.getLegacyTranslation(Template.of("name", getName().getTranslation())))
 						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> clickContext.getTarget().run(), 1L))
 						.onComplete((p, s) -> {
 							setData(s);
@@ -91,12 +114,23 @@ public abstract class DataSlot<T> {
 			super.setData(data);
 			super.setDisplayItem(new ItemStack(Material.COMMAND_BLOCK));
 		}
+
+		@NotNull
+		@Override
+		public Map<String, Object> serialize() {
+			return Map.of("data", getData());
+		}
+
+		public static EquationSlot deserialize(Map<String, Object> values) {
+			return new EquationSlot((String) values.get("data"));
+
+		}
 	}
 
 	public static class ItemStackSlot extends DataSlot<ItemStack> {
 
-		public ItemStackSlot(String storageKey, ItemStack data, Message name, Message lore) {
-			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK, name, lore);
+		public ItemStackSlot(ItemStack data) {
+			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK);
 			super.setClickHandler(clickContext -> {
 				ItemStack hand = clickContext.getPlayer().getItemOnCursor();
 				if (hand != null && !hand.getType().equals(Material.AIR)) {
@@ -108,12 +142,24 @@ public abstract class DataSlot<T> {
 			super.setData(data);
 			super.setDisplayItem(data.clone());
 		}
+
+		@NotNull
+		@Override
+		public Map<String, Object> serialize() {
+			Map<String, Object> map = new HashMap<>();
+			map.put("data", getData());
+			return map;
+		}
+
+		public static ItemStackSlot deserialize(Map<String, Object> values) {
+			return new ItemStackSlot((ItemStack) values.get("data"));
+		}
 	}
 
 	public static class BooleanSlot extends DataSlot<Boolean> {
 
-		public BooleanSlot(String storageKey, boolean data, Message name, Message lore) {
-			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL, name, lore);
+		public BooleanSlot(boolean data) {
+			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL);
 			setData(data);
 			super.setClickHandler(clickContext -> {
 				setData(Boolean.FALSE.equals(getData()));
@@ -121,19 +167,32 @@ public abstract class DataSlot<T> {
 			});
 			super.setDisplayItem(ItemStackUtils.createButtonItemStack(data, Message.NONE, Message.NONE));
 		}
+
+		@NotNull
+		@Override
+		public Map<String, Object> serialize() {
+			Map<String, Object> map = new HashMap<>();
+			map.put("data", getData());
+			return map;
+		}
+
+		public static BooleanSlot deserialize(Map<String, Object> values) {
+			return new BooleanSlot((Boolean) values.get("data"));
+
+		}
 	}
 
 	public static class NumberSlot extends DataSlot<Double> {
 
-		public NumberSlot(String storageKey, Double data, Message name, Message lore) {
-			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER, name, lore);
+		public NumberSlot(Double data) {
+			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER);
 			super.setClickHandler(clickContext -> {
 				Player player = clickContext.getPlayer();
 				player.closeInventory();
 				new AnvilGUI.Builder()
 						.plugin(StatShops.getInstance())
 						.text("" + getData())
-						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.getLegacyTranslation(Template.of("name", name.getTranslation())))
+						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.getLegacyTranslation(Template.of("name", getName().getTranslation())))
 						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> clickContext.getTarget().run(), 1L))
 						.onComplete((p, s) -> {
 							try {
@@ -153,12 +212,25 @@ public abstract class DataSlot<T> {
 		public void setData(int data) {
 			super.setData((double) data);
 		}
+
+		@NotNull
+		@Override
+		public Map<String, Object> serialize() {
+			Map<String, Object> map = new HashMap<>();
+			map.put("data", getData());
+			return map;
+		}
+
+		public static NumberSlot deserialize(Map<String, Object> values) {
+			return new NumberSlot((Double) values.get("data"));
+
+		}
 	}
 
 	public static class ShopSlot extends DataSlot<UUID> {
 
-		public ShopSlot(String storageKey, Message name, Message lore, @Nullable Shop shop) {
-			super(storageKey, Message.GUI_ENTRY_FUNCTION_DATA_TYPE_SHOP, name, lore);
+		public ShopSlot(@Nullable Shop shop) {
+			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_SHOP);
 			super.setData(shop == null ? null : shop.getUUID());
 			super.setClickHandler(clickContext -> {
 				int shops = ShopHandler.getInstance().getShops().size();
@@ -179,6 +251,24 @@ public abstract class DataSlot<T> {
 
 		public void setData(Shop shop) {
 			super.setData(shop.getUUID());
+		}
+
+		@NotNull
+		@Override
+		public Map<String, Object> serialize() {
+			Map<String, Object> map = new HashMap<>();
+			map.put("shop", getData() == null ? null : getData().toString());
+			return map;
+		}
+
+		public static ShopSlot deserialize(Map<String, Object> values) {
+			String uuidString = (String) values.get("shop");
+			UUID uuid = null;
+			try {
+				uuid = UUID.fromString(uuidString);
+			} catch (Exception ignored) {
+			}
+			return new ShopSlot(uuid == null ? null : ShopHandler.getInstance().getShop(uuid));
 		}
 	}
 }

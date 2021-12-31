@@ -275,8 +275,8 @@ public class Message {
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_SHOP = new Message("manager.gui.entry.function.type.shop");
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK = new Message("manager.gui.entry.function.type.itemstack");
 
-	public static final Message GUI_ENTRY_FUNCTION_OPENED_SHOP_NAME = new Message("manager.gui.entry.function.data.page.name");
-	public static final Message GUI_ENTRY_FUNCTION_OPENED_SHOP_LORE = new Message("manager.gui.entry.function.data.page.lore");
+	public static final Message GUI_ENTRY_FUNCTION_OPENED_SHOP_NAME = new Message("manager.gui.entry.function.data.open_shop.name");
+	public static final Message GUI_ENTRY_FUNCTION_OPENED_SHOP_LORE = new Message("manager.gui.entry.function.data.open_shop.lore");
 	public static final Message GUI_ENTRY_FUNCTION_PAGE_NAME = new Message("manager.gui.entry.function.data.page.name");
 	public static final Message GUI_ENTRY_FUNCTION_PAGE_LORE = new Message("manager.gui.entry.function.data.page.lore");
 	public static final Message GUI_ENTRY_FUNCTION_PURCHASABLE_NAME = new Message("manager.gui.entry.function.data.purchasable.name");
@@ -329,12 +329,12 @@ public class Message {
 		if (!this.equals(Message.PREFIX)) {
 			t.add(Template.of("prefix", Message.PREFIX.getTranslation()));
 		}
-		String format = TranslationHandler.getInstance().getMessage(key);
+		String format = TranslationHandler.getInstance().getTranslation(key);
 		return StatShops.getInstance().getMiniMessage().parse(format, t);
 	}
 
 	public List<Component> getTranslations(Template...templates) {
-		String[] toFormat = TranslationHandler.getInstance().getMessage(key).split("\n");
+		String[] toFormat = TranslationHandler.getInstance().getTranslation(key).split("\n");
 		List<Component> result = new ArrayList<>();
 		MiniMessage miniMessage = StatShops.getInstance().getMiniMessage();
 		for (String string : toFormat) {

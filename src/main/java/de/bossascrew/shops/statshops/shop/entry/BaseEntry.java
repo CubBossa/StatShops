@@ -7,9 +7,11 @@ import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.general.util.TagUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Config;
+import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.events.ShopEntryInteractEvent;
 import de.bossascrew.shops.statshops.events.ShopEntryInteractedEvent;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
@@ -20,9 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -39,6 +39,7 @@ public class BaseEntry implements ShopEntry {
 	private String infoLoreFormat;
 	private final List<String> tags;
 	private @Nullable EntryModule module = null;
+	private final Map<String, DataSlot<?>> dataSlots;
 	private int slot;
 
 	public BaseEntry(UUID uuid, Shop shop, ItemStack displayItem, @Nullable String permission, int slot) {
@@ -47,6 +48,7 @@ public class BaseEntry implements ShopEntry {
 		this.displayItem = displayItem;
 		this.permission = permission;
 		this.tags = new ArrayList<>();
+		this.dataSlots = new HashMap<>();
 
 		this.slot = slot;
 	}
@@ -68,14 +70,25 @@ public class BaseEntry implements ShopEntry {
 	}
 
 	@Override
-	public <T extends DataSlot<?>> T getData(Class<T> clazz, String key, Supplier<T> fallbackValue) {
-		//TODO load data
-		return fallbackValue.get();
+	public Map<String, DataSlot<?>> getData() {
+		return dataSlots;
 	}
 
 	@Override
-	public <T> T storeData(DataSlot<T> dataSlot) {
-		return null;
+	public <T extends DataSlot<?>> T getData(Class<T> clazz, String key, Supplier<T> fallbackValue) {
+		DataSlot<?> dataSlot = dataSlots.get(key);
+		if (dataSlot == null) {
+			dataSlot = fallbackValue.get();
+			dataSlots.put(key, dataSlot);
+		}
+		Pair<Message, Message> messagePair = DataSlot.DATA_MESSAGE_MAP.get(key);
+		if (messagePair != null && dataSlot.getName() == null) {
+			dataSlot.setName(messagePair.getLeft());
+		}
+		if (messagePair != null && dataSlot.getLore() == null) {
+			dataSlot.setLore(messagePair.getRight());
+		}
+		return (T) dataSlot;
 	}
 
 	public EntryInteractionResult interact(Customer customer, ShopMenu menu, EntryInteractionType interactionType) {

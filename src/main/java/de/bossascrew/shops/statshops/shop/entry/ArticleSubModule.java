@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.CurrencyHandler;
 import de.bossascrew.shops.general.handler.SubModulesHandler;
+import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
@@ -35,14 +36,9 @@ public class ArticleSubModule<T> implements SubModule {
 
 	public void loadDataSlots(ShopEntry shopEntry) {
 		gainPriceAmount = shopEntry.getData(DataSlot.NumberSlot.class, "gain_price_amount", () -> {
-			return new DataSlot.NumberSlot("gain_price_amount", getPrice().getAmount(),
-					Message.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_LORE);
+			return new DataSlot.NumberSlot(getPrice().getAmount());
 		});
 		gainPriceAmount.setUpdateHandler(integer -> getPrice().setAmount(integer));
-	}
-
-	public void saveDataSlots(ShopEntry shopEntry) {
-		shopEntry.storeData(gainPriceAmount);
 	}
 
 	public static class ItemArticle extends ArticleSubModule<ItemStack> {
@@ -63,19 +59,11 @@ public class ArticleSubModule<T> implements SubModule {
 		@Override
 		public void loadDataSlots(ShopEntry shopEntry) {
 			super.loadDataSlots(shopEntry);
-
 			gainPriceItem = shopEntry.getData(DataSlot.ItemStackSlot.class, "gain_price_item", () -> {
-				return new DataSlot.ItemStackSlot("gain_price_item", shopEntry.getDisplayItem(),
-						Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_LORE);
+				return new DataSlot.ItemStackSlot(shopEntry.getDisplayItem());
 			});
 			gainPriceItem.setUpdateHandler(itemStack -> getPrice().setObject(itemStack));
 			gainPriceItem.getUpdateHandler().accept(shopEntry.getDisplayItem());
-		}
-
-		@Override
-		public void saveDataSlots(ShopEntry shopEntry) {
-			super.saveDataSlots(shopEntry);
-			shopEntry.storeData(gainPriceItem);
 		}
 	}
 

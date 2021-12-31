@@ -5,6 +5,8 @@ import co.aikar.commands.annotation.*;
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.PaginatedShop;
 import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.general.util.YamlUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.InventoryHandler;
@@ -12,12 +14,34 @@ import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import de.bossascrew.shops.statshops.menu.ShopManagementMenu;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 @CommandAlias("statshop|statshops|shop|shops")
 public class ShopCommand extends BaseCommand {
+
+	@Subcommand("test")
+	public void test(Player player) {
+		ItemStack playerHead = ItemStackUtils.createCustomHead(ItemStackUtils.HEAD_URL_ARROW_NEXT);
+
+		File testFile = new File(StatShops.getInstance().getDataFolder(), "test.yml");
+		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(testFile);
+		YamlUtils.saveSkull(cfg, "test", playerHead);
+		try {
+			cfg.save(testFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		cfg = YamlConfiguration.loadConfiguration(testFile);
+
+		player.getInventory().addItem(YamlUtils.loadSkull(cfg, "test"));
+	}
 
 	@Default
 	@Subcommand("editor")

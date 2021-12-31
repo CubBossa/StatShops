@@ -3,6 +3,7 @@ package de.bossascrew.shops.statshops.shop.entry;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.CurrencyHandler;
 import de.bossascrew.shops.general.handler.SubModulesHandler;
+import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.currency.Price;
@@ -59,34 +60,22 @@ public class CostsSubModule<T> implements SubModule {
 	public void loadDataSlots(ShopEntry shopEntry) {
 
 		buyPayPriceAmount = shopEntry.getData(DataSlot.NumberSlot.class, "buy_pay_price_amount", () -> {
-			return new DataSlot.NumberSlot("buy_pay_price_amount", 10.,
-					Message.GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_LORE);
+			return new DataSlot.NumberSlot(10.);
 		});
 		buyPayPriceAmount.setUpdateHandler(integer -> getBuyPrice().setAmount(integer));
 		sellPayPriceAmount = shopEntry.getData(DataSlot.NumberSlot.class, "sell_pay_price_amount", () -> {
-			return new DataSlot.NumberSlot("sell_pay_price_amount", 5.,
-					Message.GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_LORE);
+			return new DataSlot.NumberSlot(5.);
 		});
 		sellPayPriceAmount.setUpdateHandler(integer -> getSellPrice().setAmount(integer));
 
 		buyPayEquation = shopEntry.getData(DataSlot.EquationSlot.class, "buy_pay_price_equation", () -> {
-			return new DataSlot.EquationSlot("buy_pay_price_equation", "5+5",
-					Message.GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_LORE);
+			return new DataSlot.EquationSlot("5+5");
 		});
 		buyPayEquation.setUpdateHandler(s -> getBuyPrice().setDynamicPriceString(s));
 		sellPayEquation = shopEntry.getData(DataSlot.EquationSlot.class, "sell_pay_price_equation", () -> {
-			return new DataSlot.EquationSlot("sell_pay_price_equation", "3+2",
-					Message.GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_LORE);
+			return new DataSlot.EquationSlot("3+2");
 		});
 		buyPayEquation.setUpdateHandler(s -> getSellPrice().setDynamicPriceString(s));
-	}
-
-	public void saveDataSlots(ShopEntry shopEntry) {
-
-		shopEntry.storeData(buyPayPriceAmount);
-		shopEntry.storeData(sellPayPriceAmount);
-		shopEntry.storeData(buyPayEquation);
-		shopEntry.storeData(sellPayEquation);
 	}
 
 	public static class ItemCosts extends CostsSubModule<ItemStack> {
@@ -112,22 +101,13 @@ public class CostsSubModule<T> implements SubModule {
 			super.loadDataSlots(shopEntry);
 
 			buyPayPriceItem = shopEntry.getData(DataSlot.ItemStackSlot.class, "buy_pay_price_item", () -> {
-				return new DataSlot.ItemStackSlot("buy_pay_price_item", getBuyPrice().getObject(),
-						Message.GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_LORE);
+				return new DataSlot.ItemStackSlot(getBuyPrice().getObject());
 			});
 			buyPayPriceItem.setUpdateHandler(itemStack -> getBuyPrice().setObject(itemStack));
 			sellPayPriceItem = shopEntry.getData(DataSlot.ItemStackSlot.class, "sell_pay_price_item", () -> {
-				return new DataSlot.ItemStackSlot("sell_pay_price_item", getSellPrice().getObject(),
-						Message.GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_LORE);
+				return new DataSlot.ItemStackSlot(getSellPrice().getObject());
 			});
 			sellPayPriceItem.setUpdateHandler(itemStack -> getSellPrice().setObject(itemStack));
-		}
-
-		@Override
-		public void saveDataSlots(ShopEntry shopEntry) {
-			super.saveDataSlots(shopEntry);
-			shopEntry.storeData(buyPayPriceItem);
-			shopEntry.storeData(sellPayPriceItem);
 		}
 	}
 

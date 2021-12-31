@@ -29,10 +29,6 @@ public class CloseModule extends BaseModule implements EntryModule {
 	}
 
 	@Override
-	public void saveData() {
-	}
-
-	@Override
 	public EntryInteractionResult perform(Customer customer, ShopMenu menu, EntryInteractionType interactionType) {
 		customer.getPlayer().closeInventory();
 		return EntryInteractionResult.SUCCESS;

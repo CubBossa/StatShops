@@ -4,16 +4,15 @@ import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.TemplateHandler;
-import de.bossascrew.shops.general.util.DurationParser;
-import de.bossascrew.shops.general.util.LoggingPolicy;
-import de.bossascrew.shops.general.util.Pair;
-import de.bossascrew.shops.general.util.TextUtils;
+import de.bossascrew.shops.general.util.*;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.shop.*;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
+import de.bossascrew.shops.statshops.shop.entry.DataSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +53,12 @@ public class FlatFileDatabase implements Database {
 		if (!dirTemplate.exists()) {
 			dirTemplate.mkdir();
 		}
+
+		ConfigurationSerialization.registerClass(DataSlot.EquationSlot.class);
+		ConfigurationSerialization.registerClass(DataSlot.ItemStackSlot.class);
+		ConfigurationSerialization.registerClass(DataSlot.BooleanSlot.class);
+		ConfigurationSerialization.registerClass(DataSlot.NumberSlot.class);
+		ConfigurationSerialization.registerClass(DataSlot.ShopSlot.class);
 	}
 
 	@Override
@@ -89,7 +94,7 @@ public class FlatFileDatabase implements Database {
 			permission = permission.isEmpty() ? null : permission;
 
 			String defaultTemplateUuidString = cfg.getString("default-template");
-			ItemStack displayItem = cfg.getItemStack("display-item");
+			ItemStack displayItem = YamlUtils.loadSkull(cfg, "display-item");
 
 			List<String> tags = cfg.getStringList("tags");
 			Map<Integer, String> pageTitles = new HashMap<>();
@@ -168,7 +173,7 @@ public class FlatFileDatabase implements Database {
 		cfg.set("name-format", shop.getNameFormat());
 		cfg.set("permission", shop.getPermission() == null ? "" : shop.getPermission());
 		cfg.set("default-template", shop.getDefaultTemplate() == null ? "" : shop.getDefaultTemplate().getUuid().toString());
-		cfg.set("display-item", shop.getDisplayItem());
+		YamlUtils.saveSkull(cfg, "display-item", shop.getDisplayItem());
 
 		if (type.equals(SHOP_TYPE_CHEST)) {
 			ChestMenuShop cShop = (ChestMenuShop) shop;
@@ -220,19 +225,28 @@ public class FlatFileDatabase implements Database {
 	private ShopEntry loadEntry(ConfigurationSection section, @Nullable Shop shop) {
 		UUID uuid = UUID.fromString(section.getName());
 		int slot = section.getInt("slot");
-		ItemStack displayItem = section.getItemStack("display-item");
+		ItemStack displayItem = YamlUtils.loadSkull(section, "display-item");
 		String infoLoreFormat = section.getString("info-lore");
 		String permission = section.getString("permission", "");
 		permission = permission.isEmpty() ? null : permission;
 
 		List<String> tags = section.getStringList("tags");
 
-		//TODO module type
-		//TODO dataslots
-
+		//EntryModule module = section.getObject("module", EntryModule.class);
+		Map<String, DataSlot<?>> dataMap = new HashMap<>();
+		ConfigurationSection dataSection = section.getConfigurationSection("data-slots");
+		if (dataSection != null) {
+			for (String key : dataSection.getKeys(false)) {
+				DataSlot<?> dataSlot = (DataSlot<?>) dataSection.get(key, DataSlot.class);
+				dataMap.put(key, dataSlot);
+			}
+		}
 		ShopEntry entry = new BaseEntry(uuid, shop, displayItem, permission, slot);
 		tags.forEach(entry::addTag);
 		entry.setInfoLoreFormat(infoLoreFormat);
+		if (!dataMap.isEmpty()) {
+			entry.getData().putAll(dataMap);
+		}
 		return entry;
 	}
 
@@ -259,10 +273,19 @@ public class FlatFileDatabase implements Database {
 			s = entrySection.createSection(shopEntry.getUUID() + "");
 		}
 		s.set("slot", shopEntry.getSlot());
-		s.set("display-item", shopEntry.getDisplayItem());
+		YamlUtils.saveSkull(s, "display-item", shopEntry.getDisplayItem());
 		s.set("info-lore", shopEntry.getInfoLoreFormat());
 		s.set("permission", shopEntry.getPermission());
 		s.set("tags", shopEntry.getTags(false));
+
+		//s.set("module", shopEntry.getModule());
+		ConfigurationSection dataSlots = s.getConfigurationSection("data-slots");
+		if (dataSlots == null) {
+			dataSlots = s.createSection("data-slots");
+		}
+		for (Map.Entry<String, DataSlot<?>> dataSlot : shopEntry.getData().entrySet()) {
+			dataSlots.set(dataSlot.getKey(), dataSlot.getValue());
+		}
 	}
 
 	@Override

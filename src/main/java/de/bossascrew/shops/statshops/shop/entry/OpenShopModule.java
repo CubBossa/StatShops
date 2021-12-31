@@ -7,6 +7,7 @@ import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
@@ -35,16 +36,8 @@ public class OpenShopModule extends BaseModule implements EntryModule {
 
 	@Override
 	public void loadData() {
-		shopSlot = shopEntry.getData(DataSlot.ShopSlot.class, "open_shop", () -> {
-			return new DataSlot.ShopSlot("open_shop", Message.GUI_ENTRY_FUNCTION_OPENED_SHOP_NAME,
-					Message.GUI_ENTRY_FUNCTION_OPENED_SHOP_LORE, shop);
-		});
+		shopSlot = shopEntry.getData(DataSlot.ShopSlot.class, "open_shop", () -> new DataSlot.ShopSlot(shop));
 		shopSlot.setUpdateHandler(uuid -> shop = ShopHandler.getInstance().getShop(uuid));
-	}
-
-	@Override
-	public void saveData() {
-		shopEntry.storeData(shopSlot);
 	}
 
 	@Override

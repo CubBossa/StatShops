@@ -94,6 +94,10 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 		entryModules = new LinkedHashMap<>();
 	}
 
+	public EntryModuleProvider getProvider(String name) {
+		return entryModules.get(name);
+	}
+
 	public EntryModule getModule(ShopEntry shopEntry, String name) {
 		return entryModules.get(name).getModule(shopEntry);
 	}

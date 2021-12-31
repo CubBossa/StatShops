@@ -1,9 +1,9 @@
 package de.bossascrew.shops.statshops.handler;
 
+import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LoadedMessage;
 import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class TranslationHandler implements WebAccessable<LoadedMessage> {
 
@@ -22,11 +23,13 @@ public class TranslationHandler implements WebAccessable<LoadedMessage> {
 	private static TranslationHandler instance;
 
 	private String activeLanguage = "none";
+	private final Map<String, Message> messageMap;
 	private final Map<String, String> messageFormats;
 	private final Map<String, String> fallbackLanguage;
 
 	public TranslationHandler(String startlanguage) {
 		instance = this;
+		messageMap = Message.values().stream().collect(Collectors.toMap(Message::getKey, message -> message));
 		messageFormats = new HashMap<>();
 		loadLanguage("en_US");
 		fallbackLanguage = new HashMap<>(messageFormats);
@@ -60,7 +63,11 @@ public class TranslationHandler implements WebAccessable<LoadedMessage> {
 		});
 	}
 
-	public String getMessage(String key) {
+	public Message getMessage(String key) {
+		return messageMap.getOrDefault(key, Message.NONE);
+	}
+
+	public String getTranslation(String key) {
 		if (StatShops.getInstance().getShopsConfig().isLanguageUseFallback()) {
 			return messageFormats.getOrDefault(key, fallbackLanguage.getOrDefault(key, activeLanguage + "-missing:" + key));
 		}
@@ -71,7 +78,7 @@ public class TranslationHandler implements WebAccessable<LoadedMessage> {
 	public List<LoadedMessage> getWebData() {
 		List<LoadedMessage> messages = new ArrayList<>();
 		for (Message message : Message.values()) {
-			messages.add(new LoadedMessage(activeLanguage, message.getKey(), getMessage(message.getKey()), message.getComment(), message.getExamplePlaceholders()));
+			messages.add(new LoadedMessage(activeLanguage, message.getKey(), getTranslation(message.getKey()), message.getComment(), message.getExamplePlaceholders()));
 		}
 		return messages;
 	}

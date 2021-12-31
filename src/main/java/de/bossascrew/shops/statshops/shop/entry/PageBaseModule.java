@@ -9,6 +9,7 @@ import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.Consumer3;
 import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
@@ -59,18 +60,12 @@ public class PageBaseModule extends BaseModule implements PageModule {
 
 	@Override
 	public void loadData() {
-		page = shopEntry.getData(DataSlot.NumberSlot.class, "page", () -> {
-			return new DataSlot.NumberSlot("page", 1., Message.GUI_ENTRY_FUNCTION_PAGE_NAME, Message.GUI_ENTRY_FUNCTION_PAGE_LORE);
+		page = shopEntry.getData(DataSlot.NumberSlot.class, "pagination_page", () -> {
+			return new DataSlot.NumberSlot(1.);
 		});
-		mode = shopEntry.getData(DataSlot.NumberSlot.class, "mode", () -> {
-			return new DataSlot.NumberSlot("mode", 1., Message.NONE, Message.NONE);
+		mode = shopEntry.getData(DataSlot.NumberSlot.class, "pagination_mode", () -> {
+			return new DataSlot.NumberSlot(1.);
 		});
-	}
-
-	@Override
-	public void saveData() {
-		shopEntry.storeData(page);
-		shopEntry.storeData(mode);
 	}
 
 	@Override

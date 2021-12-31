@@ -16,16 +16,15 @@ import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TemplateHandler implements
 		WebAccessable<EntryTemplate>,
 		ListManagementMenuElementHolder<EntryTemplate> {
 
-	public static final Material[] DISCS = Tag.ITEMS_CREEPER_DROP_MUSIC_DISCS.getValues().toArray(new Material[0]);
+	public static final Material[] DISCS = Tag.ITEMS_CREEPER_DROP_MUSIC_DISCS.getValues().stream().
+			sorted(Comparator.comparing(Material::toString)).collect(Collectors.toList()).toArray(new Material[0]);
 
 	public static final UUID UUID_BOTTOM = UUID.fromString("00000000-0000-0000-0000-000000000001");
 	public static final UUID UUID_BOTTOM_PREV = UUID.fromString("00000000-0000-0000-0000-000000000002");

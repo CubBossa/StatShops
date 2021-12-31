@@ -91,7 +91,7 @@ public class BaseEntry implements ShopEntry {
 			return EntryInteractionResult.FAIL_NO_PERMISSION;
 		}
 		EntryInteractionResult result = module.perform(customer, menu, interactionType);
-		StatShops.getInstance().getLogDatabase().logToDatabase(module.createLogEntry(customer, result));
+		StatShops.getInstance().getLogDatabase().logToDatabase(module.createLogEntry(customer, result), shop);
 
 		ShopEntryInteractedEvent event = new ShopEntryInteractedEvent(this, customer, interactionType, result);
 		Bukkit.getPluginManager().callEvent(event);

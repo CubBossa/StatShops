@@ -11,6 +11,7 @@ import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.shop.*;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -57,7 +58,7 @@ public class FlatFileDatabase implements Database {
 
 	@Override
 	public Customer loadCustomer(UUID uuid) {
-		return null;
+		return new Customer(Bukkit.getPlayer(uuid), new HashMap<>());
 	}
 
 	@Override

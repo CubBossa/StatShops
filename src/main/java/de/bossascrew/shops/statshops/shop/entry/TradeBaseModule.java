@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -130,8 +131,19 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 
 	@Override
 	public @Nullable LogEntry createLogEntry(Customer customer, EntryInteractionResult result) {
-		//TODO log
-		return new LogEntry();
+		Transaction t = lastTransactions.get(customer.getUuid());
+		if (t != null && result == EntryInteractionResult.SUCCESS) {
+			return new LogEntry(customer.getUuid().toString(),
+					t.getShopEntry().getUUID().toString(),
+					t.getInteractionType().toString().toLowerCase(),
+					t.getPayPrice().toString(),
+					t.getGainPrice().toString(),
+					t.getLocalDateTime().toString(),
+					t.getDiscount() + "",
+					'{' + String.join(",", t.getAccountedDiscounts().stream().map(discount -> discount.getUuid().toString()).collect(Collectors.toList())) + '}',
+					"not implemented"); //TODO
+		}
+		return null;
 	}
 
 	@Override

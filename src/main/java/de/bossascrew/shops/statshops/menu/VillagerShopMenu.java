@@ -64,7 +64,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 						pay, gain, LocalDateTime.now(), discount, discounts));
 			}
 			if (entry.getModule() != null) {
-				StatShops.getInstance().getLogDatabase().logToDatabase(entry.getModule().createLogEntry(Customer.wrap(targetContext.getPlayer()), EntryInteractionResult.SUCCESS));
+				StatShops.getInstance().getLogDatabase().logToDatabase(entry.getModule().createLogEntry(Customer.wrap(targetContext.getPlayer()), EntryInteractionResult.SUCCESS), this.villagerShop);
 			}
 		});
 	}

@@ -196,7 +196,12 @@ public class TestDatabase implements Database, LogDatabase {
 	}
 
 	@Override
-	public void logToDatabase(LogEntry entry) {
+	public void logToDatabase(LogEntry entry, Shop shop) {
 
+	}
+
+	@Override
+	public List<LogEntry> loadLogsFromDatabase(LocalDateTime since) {
+		return new ArrayList<>();
 	}
 }

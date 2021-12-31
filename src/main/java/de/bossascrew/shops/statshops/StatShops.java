@@ -163,7 +163,9 @@ public class StatShops extends JavaPlugin {
 
 		// Setup Database
 		this.database = new FlatFileDatabase(getDataFolder()); //TODO databasehandler ...
-		this.logDatabase = new TestDatabase();
+		File logs = new File(getDataFolder(), "logs");
+		logs.mkdir();
+		this.logDatabase = new FlatFileLogDatabase(logs, true, true); //TODO aus config
 
 		// Register dynamic pricing
 		this.dynamicPricingHandler = new DynamicPricingHandler();

@@ -237,7 +237,7 @@ public class FlatFileDatabase implements Database {
 	}
 
 	@Override
-	public void saveEntry(ShopEntry shopEntry) {
+	public void saveEntry(ShopEntry shopEntry) { //TODO sometimes creates two entries on same slot?
 
 		File shopFile = new File(dirShops, shopEntry.getShop().getUUID() + ".yml");
 		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(shopFile);

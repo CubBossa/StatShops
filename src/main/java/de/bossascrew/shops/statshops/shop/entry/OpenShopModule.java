@@ -7,11 +7,14 @@ import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import org.jetbrains.annotations.Nullable;
+
+import java.time.LocalDateTime;
 
 public class OpenShopModule extends BaseModule implements EntryModule {
 
@@ -55,7 +58,16 @@ public class OpenShopModule extends BaseModule implements EntryModule {
 
 	@Override
 	public @Nullable LogEntry createLogEntry(Customer customer, EntryInteractionResult result) {
-		return null;
+		if (!StatShops.getInstance().getShopsConfig().isLogModuleOpenOtherShop()) {
+			return null;
+		}
+		if (result != EntryInteractionResult.SUCCESS) {
+			return null;
+		}
+		return new LogEntry("customer: '" + customer.getUuid().toString() +
+				"', entry: '" + shopEntry.getUUID().toString() +
+				"', type: 'open shop', time: '" + LocalDateTime.now() +
+				"', shop: '" + shop.getUUID().toString() + "'");
 	}
 
 	@Override

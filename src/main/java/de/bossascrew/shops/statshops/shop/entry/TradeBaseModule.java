@@ -8,6 +8,7 @@ import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
@@ -131,17 +132,20 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 
 	@Override
 	public @Nullable LogEntry createLogEntry(Customer customer, EntryInteractionResult result) {
+		if(!StatShops.getInstance().getShopsConfig().isLogModuleTrade()) {
+			return null;
+		}
 		Transaction t = lastTransactions.get(customer.getUuid());
 		if (t != null && result == EntryInteractionResult.SUCCESS) {
-			return new LogEntry(customer.getUuid().toString(),
-					t.getShopEntry().getUUID().toString(),
-					t.getInteractionType().toString().toLowerCase(),
-					t.getPayPrice().toString(),
-					t.getGainPrice().toString(),
-					t.getLocalDateTime().toString(),
-					t.getDiscount() + "",
-					'{' + String.join(",", t.getAccountedDiscounts().stream().map(discount -> discount.getUuid().toString()).collect(Collectors.toList())) + '}',
-					"not implemented"); //TODO
+			return new LogEntry("customer: '" + customer.getUuid().toString() +
+					"', entry: '" + t.getShopEntry().getUUID().toString() +
+					"', type: '" + t.getInteractionType().toString().toLowerCase() +
+					"', pay: {" + t.getPayPrice().toString() +
+					"}, gain: {" + t.getGainPrice().toString() +
+					"}, time: '" + t.getLocalDateTime().toString() +
+					"', discount: '" + t.getDiscount() +
+					"', discounts: {" + t.getAccountedDiscounts().stream().map(discount -> discount.getUuid().toString()).collect(Collectors.joining(",")) +
+					"}, limits: not implemented"); //TODO
 		}
 		return null;
 	}

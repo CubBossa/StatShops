@@ -97,6 +97,25 @@ public class Config extends AnnotationConfig {
 	@ConfigEntry(path = "tags.auto-tagging-attributes")
 	public boolean autoTaggingAttributes = false;
 
+	//DATA
+	@ConfigEntry(path = "database.logs.file-per-shop")
+	public boolean logFilePerShop = true;
+	@ConfigEntry(path = "database.logs.directory-per-shop")
+	public boolean logDirPerShop = false;
+	@ConfigEntry(path = "database.logs.file-per-day")
+	public boolean logFilePerDay = false;
+	@ConfigEntry(path = "database.logs.directory-per-day")
+	public boolean logDirPerDay = false;
+
+	@ConfigEntry(path = "database.logs.log-module-trade")
+	public boolean logModuleTrade = true;
+	@ConfigEntry(path = "database.logs.log-module-pagination")
+	public boolean logModulePagination = true;
+	@ConfigEntry(path = "database.logs.log-module-open-shop")
+	public boolean logModuleOpenOtherShop = true;
+	@ConfigEntry(path = "database.logs.log-module-close")
+	public boolean logModuleClose = false;
+
 
 	public Config(String path) {
 		super(path);

@@ -9,11 +9,14 @@ import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.Consumer3;
 import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import org.jetbrains.annotations.Nullable;
+
+import java.time.LocalDateTime;
 
 public class PageBaseModule extends BaseModule implements PageModule {
 
@@ -72,7 +75,22 @@ public class PageBaseModule extends BaseModule implements PageModule {
 
 	@Override
 	public @Nullable LogEntry createLogEntry(Customer customer, EntryInteractionResult result) {
-		return null;
+		if (!StatShops.getInstance().getShopsConfig().isLogModulePagination()) {
+			return null;
+		}
+		if (result != EntryInteractionResult.SUCCESS) {
+			return null;
+		}
+		String type = switch (mode.getData().intValue()) {
+			case -1 -> "previous page (" + page.getData() + " pages)";
+			case 0 -> "exact page (" + page.getData() + ")";
+			case 1 -> "next page (" + page.getData() + " pages)";
+			default -> "unknown";
+		};
+		return new LogEntry("customer: '" + customer.getUuid().toString() +
+				"', entry: '" + shopEntry.getUUID().toString() +
+				"', type: '" + type +
+				"', time: '" + LocalDateTime.now() + "'");
 	}
 
 	@Override

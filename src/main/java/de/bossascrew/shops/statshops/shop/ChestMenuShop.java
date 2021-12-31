@@ -418,8 +418,8 @@ public class ChestMenuShop implements PaginatedShop {
 			ShopEntry newEntry = entry.duplicate();
 			newEntry.setSlot(shopSlot);
 			newEntry.setShop(this);
-			newEntry.saveToDatabase();
 			addEntry(newEntry, shopSlot);
+			newEntry.saveToDatabase();
 		}
 	}
 

@@ -19,14 +19,26 @@ public class FlatFileLogDatabase implements LogDatabase {
 	private final Function<Shop, File> fileProvider;
 	private Function<Shop, String> shopPrefix = shop -> "";
 
-	public FlatFileLogDatabase(File directory, boolean filePerShop, boolean filePerDay) {
+	public FlatFileLogDatabase(File directory, boolean filePerShop, boolean directoryPerShop, boolean filePerDay, boolean directoryPerDay) {
 		if (!filePerShop) {
 			shopPrefix = shop -> "shop: '" + shop.getUUID() + "', ";
 		}
 		fileProvider = shop -> {
-			String fileName = filePerShop ? shop.getUUID().toString() : COMMON_FILE_NAME;
-			fileName = filePerDay ? fileName + " - " + LocalDate.now() : "";
-			File file = new File(directory, fileName + ".txt");
+			File dir = directoryPerShop ? new File(directory, shop.getUUID().toString()) : directory;
+			dir.mkdir();
+			dir = directoryPerDay ? new File(dir, LocalDate.now().toString()) : dir;
+			dir.mkdir();
+
+			String first = COMMON_FILE_NAME;
+			String second = "";
+
+			if (!directoryPerDay && filePerDay) {
+				second = " - " + LocalDate.now();
+			}
+			if (!directoryPerShop && filePerShop) {
+				first = shop.getUUID().toString();
+			}
+			File file = new File(dir, first + second + ".txt");
 			if (!file.exists()) {
 				try {
 					file.createNewFile();
@@ -40,9 +52,12 @@ public class FlatFileLogDatabase implements LogDatabase {
 
 	@Override
 	public void logToDatabase(LogEntry entry, Shop shop) {
+		if (entry == null) {
+			return;
+		}
 		File file = fileProvider.apply(shop);
 		try (BufferedWriter buffer = new BufferedWriter(new FileWriter(file, true))) {
-			buffer.append(shopPrefix.apply(shop)).append(entry.toString());
+			buffer.append(shopPrefix.apply(shop)).append(entry.getData());
 			buffer.newLine();
 
 		} catch (IOException e) {

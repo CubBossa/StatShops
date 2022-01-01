@@ -36,6 +36,7 @@ public class YamlUtils {
 			section.set(key, stack);
 			return;
 		}
+		stack = stack.clone();
 		ItemMeta itemMeta = stack.getItemMeta();
 		if (itemMeta instanceof SkullMeta meta) {
 			try {

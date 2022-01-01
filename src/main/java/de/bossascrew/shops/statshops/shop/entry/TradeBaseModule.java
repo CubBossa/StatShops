@@ -8,11 +8,8 @@ import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
-import de.bossascrew.shops.general.util.LoggingPolicy;
-import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
-import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.Discount;
@@ -52,7 +49,14 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 		this.costs = costs;
 		this.lastTransactions = new HashMap<>();
 
-		loadData();
+		if (entry != null) {
+			loadData();
+		}
+	}
+
+	public TradeBaseModule(Map<String, Object> values) {
+		this(null, EntryModuleHandler.getInstance().getProvider((String) values.get("provider")),
+				(ArticleSubModule<?>) values.get("article"), (CostsSubModule<?>) values.get("costs"));
 	}
 
 	public void setArticle(ArticleSubModule<?> article) {
@@ -225,5 +229,11 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 	@Override
 	public void setSellableStacked(boolean sellableStacked) {
 		this.sellableStacked.setData(sellableStacked);
+	}
+
+	@NotNull
+	@Override
+	public Map<String, Object> serialize() {
+		return Map.of("provider", provider.getKey(), "article", article, "costs", costs);
 	}
 }

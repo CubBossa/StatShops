@@ -114,6 +114,7 @@ public class ChestMenuShop implements PaginatedShop {
 
 	@Override
 	public boolean removeEntry(ShopEntry shopEntry) {
+		StatShops.getInstance().getDatabase().deleteEntry(shopEntry);
 		return entryMap.remove(shopEntry.getSlot(), shopEntry);
 	}
 
@@ -141,14 +142,20 @@ public class ChestMenuShop implements PaginatedShop {
 	@Override
 	public ShopEntry createEntry(ItemStack displayItem, int slot) {
 		ShopEntry entry = new BaseEntry(UUID.randomUUID(), this, displayItem, null, slot);
+		ShopEntry oldEntry = entryMap.put(slot, entry);
+		if (oldEntry != null) {
+			StatShops.getInstance().getDatabase().deleteEntry(oldEntry);
+		}
 		StatShops.getInstance().getDatabase().saveEntry(entry);
-		entryMap.put(slot, entry);
 		uuidEntryMap.put(entry.getUUID(), entry);
 		return entry;
 	}
 
 	public ShopEntry addEntry(ShopEntry entry, int slot) {
-		entryMap.put(slot, entry);
+		ShopEntry oldEntry = entryMap.put(slot, entry);
+		if (oldEntry != null) {
+			StatShops.getInstance().getDatabase().deleteEntry(oldEntry);
+		}
 		uuidEntryMap.put(entry.getUUID(), entry);
 		unusedEntryCache.remove(entry.getUUID());
 		return entry;
@@ -160,9 +167,15 @@ public class ChestMenuShop implements PaginatedShop {
 			StatShops.getInstance().log(LoggingPolicy.ERROR, "Tried to move an entry that was not contained in this shop.");
 			return false;
 		}
-		removeEntry(entry);
-
-		boolean override = getEntry(slot) != null;
+		boolean override = false;
+		ShopEntry oldEntry = getEntry(slot);
+		if (oldEntry != null) {
+			if (oldEntry.equals(entry)) {
+				return false;
+			}
+			setEntryUnused(oldEntry);
+			override = true;
+		}
 		entry.setSlot(slot);
 		addEntry(entry, slot);
 		return override;
@@ -185,13 +198,14 @@ public class ChestMenuShop implements PaginatedShop {
 
 	@Override
 	public boolean setEntryUnused(ShopEntry entry) {
+		StatShops.getInstance().getDatabase().deleteEntry(entry);
 		unusedEntryCache.put(entry.getUUID(), entry);
 		return entryMap.remove(entry.getSlot(), entry);
 	}
 
 	@Override
 	public void applyTemplate(EntryTemplate template) {
-
+		throw new UnsupportedOperationException("Use applyTemplate(EntryTemplate t, int page) with page parameter to apply template to pagination");
 	}
 
 	@Override

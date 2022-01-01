@@ -3,16 +3,16 @@ package de.bossascrew.shops.statshops.shop.entry;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.CurrencyHandler;
 import de.bossascrew.shops.general.handler.SubModulesHandler;
-import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CostsSubModule<T> implements SubModule {
 
@@ -33,6 +33,11 @@ public class CostsSubModule<T> implements SubModule {
 		this.provider = provider;
 		this.buyPrice = buyPrice;
 		this.sellPrice = sellPrice;
+	}
+
+	public CostsSubModule(Map<String, Object> values) throws ClassCastException {
+		this((SubModulesHandler.CostsSubModuleProvider<T>) SubModulesHandler.getInstance().getCostsProvider((String) values.get("provider")),
+				(Price<T>) values.get("buy-price"), (Price<T>) values.get("sell-price"));
 	}
 
 	public List<DataSlot<?>> getDataSlots() {
@@ -76,6 +81,12 @@ public class CostsSubModule<T> implements SubModule {
 			return new DataSlot.EquationSlot("3+2");
 		});
 		buyPayEquation.setUpdateHandler(s -> getSellPrice().setDynamicPriceString(s));
+	}
+
+	@NotNull
+	@Override
+	public Map<String, Object> serialize() {
+		return Map.of("provider", provider.getKey(), "sell-price", sellPrice, "buy-price", buyPrice);
 	}
 
 	public static class ItemCosts extends CostsSubModule<ItemStack> {

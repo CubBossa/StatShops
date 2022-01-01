@@ -52,7 +52,10 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 		super(Message.GUI_SHOP_ENTRY, 3);
 		this.entry = entry;
 		this.backHandler = backHandler;
-		this.closeHandler = closeContext -> setEditor(null);
+		this.closeHandler = closeContext -> {
+			entry.saveToDatabase();
+			setEditor(null);
+		};
 	}
 
 	private void prepareMenu(Player targetPlayer) {

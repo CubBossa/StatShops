@@ -4,17 +4,15 @@ import com.google.common.collect.Lists;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.CurrencyHandler;
 import de.bossascrew.shops.general.handler.SubModulesHandler;
-import de.bossascrew.shops.general.util.Pair;
-import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ArticleSubModule<T> implements SubModule {
 
@@ -30,6 +28,11 @@ public class ArticleSubModule<T> implements SubModule {
 		this.price = price;
 	}
 
+	public ArticleSubModule(Map<String, Object> values) throws ClassCastException {
+		this((SubModulesHandler.ArticleSubModuleProvider<T>) SubModulesHandler.getInstance().getArticleProvider((String) values.get("provider")),
+				(Price<T>) values.get("price"));
+	}
+
 	public List<DataSlot<?>> getDataSlots() {
 		return Lists.newArrayList(gainPriceAmount);
 	}
@@ -39,6 +42,12 @@ public class ArticleSubModule<T> implements SubModule {
 			return new DataSlot.NumberSlot(getPrice().getAmount());
 		});
 		gainPriceAmount.setUpdateHandler(integer -> getPrice().setAmount(integer));
+	}
+
+	@NotNull
+	@Override
+	public Map<String, Object> serialize() {
+		return Map.of("provider", provider, "price", price);
 	}
 
 	public static class ItemArticle extends ArticleSubModule<ItemStack> {

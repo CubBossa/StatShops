@@ -1,5 +1,6 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
+import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 @Getter
 @Setter
-public class BaseModule {
+public abstract class BaseModule {
 
 	protected EntryModuleHandler.EntryModuleProvider provider;
 	protected ShopEntry shopEntry;
@@ -21,6 +22,9 @@ public class BaseModule {
 
 	public void setShopEntry(ShopEntry shopEntry) {
 		this.shopEntry = shopEntry;
+		if (this instanceof EntryModule module) {
+			module.loadData();
+		}
 	}
 
 	public Component getDisplayName() {

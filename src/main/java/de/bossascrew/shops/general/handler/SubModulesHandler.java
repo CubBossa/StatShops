@@ -45,6 +45,13 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 		costsSubModules = new LinkedHashMap<>();
 	}
 
+	public CostsSubModuleProvider<?> getCostsProvider(String key) {
+		return costsSubModules.get(key);
+	}
+
+	public ArticleSubModuleProvider<?> getArticleProvider(String key) {
+		return articleSubModules.get(key);
+	}
 
 	public void registerDefaults() {
 

@@ -1,19 +1,22 @@
 package de.bossascrew.shops.statshops.shop.currency;
 
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.handler.CurrencyHandler;
 import de.bossascrew.shops.general.handler.DynamicPricingHandler;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.Objects;
 
 @Getter
 @Setter
-public class Price<T> implements Comparable<Price<?>> {
+public class Price<T> implements Comparable<Price<?>>, ConfigurationSerializable {
 
 	private final Currency<T> currency;
 	private double amount;
@@ -32,6 +35,16 @@ public class Price<T> implements Comparable<Price<?>> {
 		this.object = object;
 		setDynamicPriceString(dynamicPriceString);
 	}
+
+	/**
+	 * deserialize constructor
+	 */
+	public Price(Map<String, Object> values) throws ClassCastException {
+		this.amount = (double) values.get("amount");
+		this.currency = (Currency<T>) CurrencyHandler.getInstance().getCurrency((String) values.get("currency"));
+		this.object = (T) values.get("object");
+	}
+
 
 	public void setDynamicPriceString(String dynamicPriceString) {
 		this.dynamicPriceString = dynamicPriceString;
@@ -154,5 +167,11 @@ public class Price<T> implements Comparable<Price<?>> {
 	@Override
 	public int compareTo(@NotNull Price<?> o) {
 		return Double.compare(amount, o.getAmount());
+	}
+
+	@NotNull
+	@Override
+	public Map<String, Object> serialize() {
+		return null;
 	}
 }

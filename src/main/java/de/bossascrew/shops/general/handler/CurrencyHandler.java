@@ -12,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -178,6 +179,10 @@ public class CurrencyHandler {
 		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
 			extension.registerCurrencies(this);
 		}
+	}
+
+	public @Nullable Currency<?> getCurrency(String key) {
+		return currencies.get(key);
 	}
 
 	public <T> void registerCurrency(Currency<T> currency) {

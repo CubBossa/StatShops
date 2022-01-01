@@ -1,6 +1,7 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.PaginatedShop;
 import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.PageModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
@@ -9,15 +10,15 @@ import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.Consumer3;
 import de.bossascrew.shops.general.util.EntryInteractionType;
-import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
-import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public class PageBaseModule extends BaseModule implements PageModule {
 
@@ -30,6 +31,20 @@ public class PageBaseModule extends BaseModule implements PageModule {
 		super(provider, shopEntry);
 		this.openPageHandler = openPageHandler;
 		loadData();
+	}
+
+	/**
+	 * deserialize constructor. Provide shop entry afterwards!
+	 */
+	public PageBaseModule(Map<String, Object> values) {
+		super(EntryModuleHandler.getInstance().getProvider((String) values.get("provider")), null);
+		openPageHandler = (customer, entry, integer) -> {
+			if (entry.getShop() instanceof PaginatedShop pShop) {
+				pShop.open(customer, integer);
+				return;
+			}
+			entry.getShop().open(customer);
+		};
 	}
 
 	/**
@@ -111,5 +126,11 @@ public class PageBaseModule extends BaseModule implements PageModule {
 		module.mode.setData(mode.getData());
 		module.page.setData(page.getData());
 		return module;
+	}
+
+	@NotNull
+	@Override
+	public Map<String, Object> serialize() {
+		return Map.of("provider", provider.getKey());
 	}
 }

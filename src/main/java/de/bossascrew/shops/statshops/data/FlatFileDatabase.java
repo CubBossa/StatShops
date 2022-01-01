@@ -2,13 +2,14 @@ package de.bossascrew.shops.statshops.data;
 
 import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.general.entry.EntryModule;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.TemplateHandler;
 import de.bossascrew.shops.general.util.*;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.shop.*;
-import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
-import de.bossascrew.shops.statshops.shop.entry.DataSlot;
+import de.bossascrew.shops.statshops.shop.currency.Price;
+import de.bossascrew.shops.statshops.shop.entry.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -59,6 +60,13 @@ public class FlatFileDatabase implements Database {
 		ConfigurationSerialization.registerClass(DataSlot.BooleanSlot.class);
 		ConfigurationSerialization.registerClass(DataSlot.NumberSlot.class);
 		ConfigurationSerialization.registerClass(DataSlot.ShopSlot.class);
+		ConfigurationSerialization.registerClass(Price.class);
+		ConfigurationSerialization.registerClass(CloseModule.class);
+		ConfigurationSerialization.registerClass(OpenShopModule.class);
+		ConfigurationSerialization.registerClass(PageBaseModule.class);
+		ConfigurationSerialization.registerClass(TradeBaseModule.class);
+		ConfigurationSerialization.registerClass(CostsSubModule.class);
+		ConfigurationSerialization.registerClass(ArticleSubModule.class);
 	}
 
 	@Override
@@ -232,7 +240,8 @@ public class FlatFileDatabase implements Database {
 
 		List<String> tags = section.getStringList("tags");
 
-		//EntryModule module = section.getObject("module", EntryModule.class);
+		EntryModule module = section.getObject("module", EntryModule.class);
+
 		Map<String, DataSlot<?>> dataMap = new HashMap<>();
 		ConfigurationSection dataSection = section.getConfigurationSection("data-slots");
 		if (dataSection != null) {
@@ -244,6 +253,12 @@ public class FlatFileDatabase implements Database {
 		ShopEntry entry = new BaseEntry(uuid, shop, displayItem, permission, slot);
 		tags.forEach(entry::addTag);
 		entry.setInfoLoreFormat(infoLoreFormat);
+
+		if (module != null) {
+			module.setShopEntry(entry);
+			entry.setModule(module);
+		}
+
 		if (!dataMap.isEmpty()) {
 			entry.getData().putAll(dataMap);
 		}
@@ -278,7 +293,7 @@ public class FlatFileDatabase implements Database {
 		s.set("permission", shopEntry.getPermission());
 		s.set("tags", shopEntry.getTags(false));
 
-		//s.set("module", shopEntry.getModule());
+		s.set("module", shopEntry.getModule());
 		ConfigurationSection dataSlots = s.getConfigurationSection("data-slots");
 		if (dataSlots == null) {
 			dataSlots = s.createSection("data-slots");
@@ -296,7 +311,16 @@ public class FlatFileDatabase implements Database {
 		if (entrySection == null) {
 			return;
 		}
-		entrySection.set(shopEntry.getUUID().toString(), null);
+		deleteEntry(entrySection, shopEntry);
+		try {
+			cfg.save(shopFile);
+		} catch (IOException e) {
+			StatShops.getInstance().log(LoggingPolicy.ERROR, "An error occurred while deleting shop entry: " + shopEntry.getUUID(), e);
+		}
+	}
+
+	private void deleteEntry(ConfigurationSection entries, ShopEntry shopEntry) {
+		entries.set(shopEntry.getUUID().toString(), null);
 	}
 
 	@Override

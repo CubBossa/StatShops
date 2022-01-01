@@ -185,7 +185,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 			// Set uuid tag from entry
 			NBTItem nbtItem = new NBTItem(stack);
 			Boolean ignore = nbtItem.getBoolean(IGNORE_TAG_KEY);
-			if (ignore) {
+			if (ignore) { //TODO slot als tag setzen, wenn slot bleibt, dann continue
 				continue;
 			}
 			nbtItem.setUUID(UUID_TAG_KEY, entry.getUUID());

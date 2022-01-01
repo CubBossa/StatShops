@@ -1,4 +1,6 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
-public interface SubModule {
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
+public interface SubModule extends ConfigurationSerializable {
 }

@@ -7,15 +7,16 @@ import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
-import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
-import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.UUID;
 
 public class OpenShopModule extends BaseModule implements EntryModule {
 
@@ -29,9 +30,17 @@ public class OpenShopModule extends BaseModule implements EntryModule {
 		loadData();
 	}
 
+	/**
+	 * deserialize constructor. Provide shop entry afterwards!
+	 */
+	public OpenShopModule(Map<String, Object> values) {
+		this(EntryModuleHandler.getInstance().getProvider((String) values.get("provider")), null,
+				ShopHandler.getInstance().getShop(UUID.fromString((String) values.get("shop-uuid"))));
+	}
+
 	@Override
 	public DataSlot<?>[] getDataSlots() {
-		return new DataSlot[] {shopSlot};
+		return new DataSlot[]{shopSlot};
 	}
 
 	@Override
@@ -66,5 +75,12 @@ public class OpenShopModule extends BaseModule implements EntryModule {
 	@Override
 	public EntryModule duplicate() {
 		return new OpenShopModule(provider, shopEntry, shop);
+	}
+
+	@NotNull
+	@Override
+	public Map<String, Object> serialize() {
+		return Map.of("provider", provider.getKey(),
+				"shop-uuid", shop.getUUID().toString());
 	}
 }

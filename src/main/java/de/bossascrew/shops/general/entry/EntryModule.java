@@ -13,7 +13,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface EntryModule extends Duplicable<EntryModule> {
+public interface EntryModule extends Duplicable<EntryModule>, ConfigurationSerializable {
 
 	ShopEntry getShopEntry();
 

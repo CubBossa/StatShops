@@ -28,11 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMenu<Player> {
 
 	public static final String UUID_TAG_KEY = "shops-entry-uuid";
 	public static final String IGNORE_TAG_KEY = "shops-entry-ignore";
+	public static final String SLOT_TAG_KEY = "shops-entry-slot";
 
 	private final ChestMenuShop shop;
 	private final int shopPage;
@@ -67,17 +69,9 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 	}
 
 	private void prepareMenu() {
-		boolean applyTemplatePreview = true;
-		for (ShopEntry entry : shop.getEntries(shopPage)) {
 
-			ItemStack stack = ItemStackUtils.prepareEditorEntryItemStack(entry);
-			NBTItem item = new NBTItem(stack);
-			item.setUUID(UUID_TAG_KEY, entry.getUUID());
-			stack = item.getItem();
-			setItem(entry.getSlot() - shopPage * RowedOpenableMenu.LARGEST_INV_SIZE, stack);
-			applyTemplatePreview = false;
-		}
-		if (applyTemplatePreview) {
+		insertFrozenEntries();
+		if (getSpecialItems().size() == 0) {
 			EntryTemplate template = shop.getDefaultTemplate();
 			if (template != null) {
 				for (Map.Entry<Integer, ShopEntry> entry : template.getEntries(shop.getRows()).entrySet()) {
@@ -86,6 +80,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 						ItemStack newItem = entry.getValue().getDisplayItem();
 						NBTItem nbtItem = new NBTItem(newItem);
 						nbtItem.setBoolean(IGNORE_TAG_KEY, true);
+						nbtItem.setInteger(SLOT_TAG_KEY, entry.getKey());
 						setItem(entry.getKey(), nbtItem.getItem());
 					}
 				}
@@ -114,13 +109,24 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 		setItemAndClickHandlerBottom(0, 1, DefaultSpecialItem.NEXT_PAGE_RP, clickContext -> {
 			shopEditor.openInventory(clickContext.getPlayer(), shopPage + 1);
 		});
+
+		int templateSlot = 7;
+		ItemStack templateStack = ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TEMPLATE,
+				Message.GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME, Message.GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE);
+
 		setItemAndClickHandlerBottom(0, 4, ItemStackUtils.createButtonItemStack(!shopEditor.isFreezeItems(), Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
 				Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE), clickContext -> {
 
 			if (shopEditor.isFreezeItems()) {
 				handleUnfreeze();
+				setItemBottom(templateSlot, DefaultSpecialItem.EMPTY_DARK.createSpecialItem());
+				refresh(clickContext.getPlayer(), templateSlot);
+
 			} else {
 				handleFreeze();
+				insertFrozenEntries();
+				setItemBottom(templateSlot, templateStack); //TODO klappt noch nicht
+				refresh(clickContext.getPlayer(), templateSlot);
 			}
 
 			shopEditor.setFreezeItems(!shopEditor.isFreezeItems());
@@ -142,8 +148,10 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 						return AnvilGUI.Response.close();
 					}).open(clickContext.getPlayer());
 		});
-		setItemAndClickHandlerBottom(0, 7, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TEMPLATE,
-				Message.GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME, Message.GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE), clickContext -> {
+		setItemAndClickHandlerBottom(0, templateSlot, templateStack, clickContext -> {
+			if (!shopEditor.isFreezeItems()) {
+				return;
+			}
 			if (clickContext.getAction().isRightClick()) {
 				clickContext.getPlayer().closeInventory();
 				new AnvilGUI.Builder()
@@ -166,39 +174,22 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 	}
 
 	private void handleUnfreeze() {
-		for (int slot : getSlots()) {
-			// Only process items in upper inventory
-			if (slot >= INDEX_DIFFERENCE) {
-				continue;
-			}
-			// Only process not empty stacks
-			ItemStack stack = getItemStack(slot);
-			if (stack == null || stack.getType() == Material.AIR) {
-				continue;
-			}
-			// Get entry from this slot
-			ShopEntry entry = shop.getEntry(slot + LARGEST_INV_SIZE * shopPage);
-			if (entry == null) {
-				// Must be a template entry
-				continue;
-			}
+		for (int i = 0; i < getRowCount() * 9; i++) {
+			setItem(i, null);
+		}
+		for (ShopEntry entry : shop.getEntries(shopPage)) {
 			// Set uuid tag from entry
-			NBTItem nbtItem = new NBTItem(stack);
-			Boolean ignore = nbtItem.getBoolean(IGNORE_TAG_KEY);
-			if (ignore) { //TODO slot als tag setzen, wenn slot bleibt, dann continue
-				continue;
-			}
+			NBTItem nbtItem = new NBTItem(entry.getDisplayItem().clone());
 			nbtItem.setUUID(UUID_TAG_KEY, entry.getUUID());
+			nbtItem.setInteger(SLOT_TAG_KEY, entry.getSlot());
 
 			//Put item in unfrozen inventory
-			setItem(slot, nbtItem.getItem());
-			refresh(slot);
+			setItem(entry.getSlot(), nbtItem.getItem());
 		}
+		refresh(IntStream.range(0, getRowCount() * 9).toArray());
 	}
 
-	//TODO wenn template applied während nicht freeze -> alle items werden zurückgesetzt
-	private void handleFreeze() { //TODO alle items mit price, limit/lore anzeigen
-		System.out.println("handle freeze");
+	private void handleFreeze() {
 		List<ShopEntry> containedEntries = shop.getEntries(shopPage);
 
 		boolean wasEmpty = containedEntries.isEmpty();
@@ -208,14 +199,15 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 			if (slot >= INDEX_DIFFERENCE) {
 				continue;
 			}
-			int shopSlot = shopPage * LARGEST_INV_SIZE + slot;
+			int rawSlot = shopPage * LARGEST_INV_SIZE + slot;
 			// Only process not empty stacks
 			ItemStack stack = getItemStack(slot);
 			if (stack == null || stack.getType() == Material.AIR) {
 				continue;
 			}
 			NBTItem nbtItem = new NBTItem(stack);
-			if (nbtItem.getBoolean(IGNORE_TAG_KEY)) {
+			Integer taggedSlot = nbtItem.getInteger(SLOT_TAG_KEY);
+			if (nbtItem.getBoolean(IGNORE_TAG_KEY) && taggedSlot != null && taggedSlot == slot) {
 				continue;
 			}
 
@@ -224,7 +216,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 				uuid = nbtItem.getUUID(UUID_TAG_KEY);
 			}
 			if (uuid == null) {
-				shop.createEntry(stack, shopSlot);
+				shop.createEntry(stack, rawSlot);
 			} else {
 				UUID finalUuid = uuid;
 				ShopEntry entry = containedEntries.stream().filter(e -> e.getUUID().equals(finalUuid)).findFirst().orElse(null);
@@ -232,11 +224,11 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 					ShopEntry unusedEntry = shop.getUnusedEntry(uuid);
 					if (unusedEntry != null) {
 
-						unusedEntry.setSlot(shopSlot);
-						shop.addEntry(unusedEntry, shopSlot);
+						unusedEntry.setSlot(rawSlot);
+						shop.addEntry(unusedEntry, rawSlot);
 					}
 				} else {
-					shop.moveEntry(entry, shopSlot);
+					shop.moveEntry(entry, rawSlot);
 					containedEntries.remove(entry);
 				}
 			}
@@ -246,6 +238,16 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 			shop.applyDefaultTemplate(shop.getDefaultTemplate(), shopPage);
 		}
 		containedEntries.forEach(shop::setEntryUnused);
+	}
+
+	private void insertFrozenEntries() {
+		for (int i = 0; i < getRowCount() * 9; i++) {
+			setItem(i, null);
+		}
+		for (ShopEntry entry : shop.getEntries(shopPage)) {
+			setItem(entry.getSlot(), ItemStackUtils.createEntryItemStack(entry, null));
+		}
+		refresh(IntStream.range(0, getRowCount() * 9).toArray());
 	}
 
 	@Override

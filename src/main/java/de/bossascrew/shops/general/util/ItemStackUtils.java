@@ -223,10 +223,10 @@ public class ItemStackUtils {
 				lore.getTranslations(Template.of("value", val + "")));
 	}
 
-	public ItemStack createEntryItemStack(ShopEntry entry, Customer customer) {
+	public ItemStack createEntryItemStack(ShopEntry entry, @Nullable Customer customer) {
 		ItemStack itemStack = entry.getDisplayItem().clone();
 
-		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(customer.getPlayer(), entry, entry.getShop());
+		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(customer == null ? null : customer.getPlayer(), entry, entry.getShop());
 
 		double discount = DiscountHandler.getInstance().combineDiscounts(discounts, false);
 		List<Component> additionalLore = new ArrayList<>();
@@ -246,7 +246,7 @@ public class ItemStackUtils {
 						addLoreDiscount(additionalLore, discounts);
 					}
 					case "limits" -> {
-						LimitsHandler.getInstance().addLimitsLore(entry, additionalLore, customer.getPlayer());
+						LimitsHandler.getInstance().addLimitsLore(entry, additionalLore, customer == null ? null : customer.getPlayer());
 					}
 					case "info" -> {
 						if (entry.getInfoLoreFormat() != null) {
@@ -273,10 +273,6 @@ public class ItemStackUtils {
 		additionalLore.addAll(Message.SHOP_ITEM_LORE_KEYBIND.getTranslations(
 				Template.of("keybind", key.toLowerCase(Locale.ROOT).replace("_", "-") + "-click"),
 				Template.of("action", action.getTranslation())));
-	}
-
-	public ItemStack prepareEditorEntryItemStack(ShopEntry entry) {
-		return entry.getDisplayItem();
 	}
 
 	public ItemStack createItemStack(Material material, int customModelData) {

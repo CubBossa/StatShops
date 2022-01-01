@@ -45,6 +45,7 @@ public class Message {
 	public static final Message GENERAL_WEBINTERFACE_LINK = new Message("general.webinterface.link");
 	public static final Message GENERAL_WEBINTERFACE_ERROR = new Message("general.webinterface.error");
 	public static final Message GENERAL_EDITABLE_CURRENTLY_EDITED = new Message("general.editable_edited");
+	public static final Message GENERAL_CHEST_PARSED = new Message("general.chest_content_parsed");
 
 	public static final Message CITIZENS_ASSIGNED = new Message("citizens.assign.success");
 	public static final Message CITIZENS_CONFIRM_OVERRIDE = new Message("citizens.assign.confirm");

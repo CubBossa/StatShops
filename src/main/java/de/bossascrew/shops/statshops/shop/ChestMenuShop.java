@@ -169,15 +169,12 @@ public class ChestMenuShop implements PaginatedShop {
 		}
 		boolean override = false;
 		ShopEntry oldEntry = getEntry(slot);
-		if (oldEntry != null) {
-			if (oldEntry.equals(entry)) {
-				return false;
-			}
+		if (oldEntry != null && !oldEntry.equals(entry)) {
 			setEntryUnused(oldEntry);
 			override = true;
 		}
 		entry.setSlot(slot);
-		addEntry(entry, slot);
+		entryMap.put(slot, entry);
 		return override;
 	}
 

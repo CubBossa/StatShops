@@ -27,6 +27,15 @@ import java.util.concurrent.CompletableFuture;
 @CommandAlias("statshop|statshops|shop|shops")
 public class ShopCommand extends BaseCommand {
 
+	@Subcommand("debug")
+	public class Debug extends BaseCommand {
+		@Subcommand("entries")
+		@CommandCompletion(StatShops.COMPLETION_SHOPS)
+		public void onEntries(CommandSender sender, Shop shop) {
+			shop.getEntries().forEach((integer, entry) -> System.out.println(integer + " -> " + entry.getDisplayItem().getType()));
+		}
+	}
+
 	@Default
 	@Subcommand("editor")
 	@CommandPermission(StatShops.PERM_CMD_EDITOR)
@@ -134,20 +143,26 @@ public class ShopCommand extends BaseCommand {
 			if (container.getInventory().getHolder() instanceof DoubleChest doubleChest) {
 				inv = doubleChest.getLeftSide().getInventory();
 			}
-			parseInventory(shop, page * RowedOpenableMenu.LARGEST_INV_SIZE, inv);
+			int count = parseInventory(shop, page * RowedOpenableMenu.LARGEST_INV_SIZE, inv);
+
+			Customer.wrap(player).sendMessage(Message.GENERAL_CHEST_PARSED.getKey(),
+					Message.GENERAL_CHEST_PARSED.getTranslation(Template.of("amount", count + ""), Template.of("shop", shop.getName())));
 		} else {
 			player.sendMessage("Kein container");
 			//TODO
 		}
 	}
 
-	private void parseInventory(Shop shop, int offset, Inventory inv) {
+	private int parseInventory(Shop shop, int offset, Inventory inv) {
+		int count = 0;
 		for (int i = 0; i < inv.getSize(); i++) {
 			ItemStack stack = inv.getItem(i);
 			if (stack == null || stack.getType() == Material.AIR) {
 				continue;
 			}
 			shop.createEntry(stack, offset + i);
+			count++;
 		}
+		return count;
 	}
 }

@@ -16,6 +16,8 @@ general:
   language_error: "<prefix><red>Could not reload the language file."
   # Valid placeholders: <player>
   editable_edited: "<prefix><red>This object is currently edited by <editor>"
+  # Valid placeholders: <amount>, <shop>
+  chest_content_parsed: "<prefix> <amount> items were found and added to <shop>."
 
   clicktype:
     right: "right-click"

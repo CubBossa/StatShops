@@ -11,6 +11,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,7 +43,8 @@ public class Price<T> implements Comparable<Price<?>>, ConfigurationSerializable
 	public Price(Map<String, Object> values) throws ClassCastException {
 		this.amount = (double) values.get("amount");
 		this.currency = (Currency<T>) CurrencyHandler.getInstance().getCurrency((String) values.get("currency"));
-		this.object = (T) values.get("object");
+		var val = values.get("object");
+		this.object = val == null ? null : (T) val;
 	}
 
 
@@ -172,6 +174,10 @@ public class Price<T> implements Comparable<Price<?>>, ConfigurationSerializable
 	@NotNull
 	@Override
 	public Map<String, Object> serialize() {
-		return null;
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("currency", currency.getKey());
+		map.put("amount", amount);
+		map.put("object", object);
+		return map;
 	}
 }

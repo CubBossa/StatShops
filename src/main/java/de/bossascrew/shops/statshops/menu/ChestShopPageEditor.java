@@ -196,7 +196,9 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 		}
 	}
 
-	private void handleFreeze() {
+	//TODO wenn template applied während nicht freeze -> alle items werden zurückgesetzt
+	private void handleFreeze() { //TODO alle items mit price, limit/lore anzeigen
+		System.out.println("handle freeze");
 		List<ShopEntry> containedEntries = shop.getEntries(shopPage);
 
 		boolean wasEmpty = containedEntries.isEmpty();

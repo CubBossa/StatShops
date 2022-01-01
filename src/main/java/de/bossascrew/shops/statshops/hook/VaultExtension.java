@@ -17,6 +17,8 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.util.Map;
+
 @RequiredArgsConstructor
 public class VaultExtension extends StatShopsExtension {
 
@@ -88,6 +90,10 @@ public class VaultExtension extends StatShopsExtension {
 		public MoneyCosts(SubModulesHandler.CostsSubModuleProvider<Void> provider) {
 			super(provider, new Price<>(CURRENCY_VAULT, 100, null),
 					new Price<>(CURRENCY_VAULT, 50, null));
+		}
+
+		public MoneyCosts(Map<String, Object> values) {
+			super(values);
 		}
 	}
 }

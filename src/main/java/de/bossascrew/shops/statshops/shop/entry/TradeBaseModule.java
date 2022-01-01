@@ -8,6 +8,7 @@ import de.bossascrew.shops.general.entry.TradeModule;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.menu.ShopMenu;
 import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
@@ -55,8 +56,10 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 	}
 
 	public TradeBaseModule(Map<String, Object> values) {
-		this(null, EntryModuleHandler.getInstance().getProvider((String) values.get("provider")),
-				(ArticleSubModule<?>) values.get("article"), (CostsSubModule<?>) values.get("costs"));
+		super(EntryModuleHandler.getInstance().getProvider((String) values.get("provider")), null);
+		this.article = (ArticleSubModule<?>) values.get("article");
+		this.costs = (CostsSubModule<?>) values.get("costs");
+		this.lastTransactions = new HashMap<>();
 	}
 
 	public void setArticle(ArticleSubModule<?> article) {
@@ -119,8 +122,16 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 			return new DataSlot.BooleanSlot(false);
 		});
 
-		article.loadDataSlots(shopEntry);
-		costs.loadDataSlots(shopEntry);
+		if (article != null) {
+			article.loadDataSlots(shopEntry);
+		} else {
+			StatShops.getInstance().log(LoggingPolicy.ERROR, "Tried to load article but article was null");
+		}
+		if (costs != null) {
+			costs.loadDataSlots(shopEntry);
+		} else {
+			StatShops.getInstance().log(LoggingPolicy.ERROR, "Tried to load costs but costs was null");
+		}
 	}
 
 	@Override
@@ -234,6 +245,10 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 	@NotNull
 	@Override
 	public Map<String, Object> serialize() {
-		return Map.of("provider", provider.getKey(), "article", article, "costs", costs);
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("provider", provider.getKey());
+		map.put("article", article);
+		map.put("costs", costs);
+		return map;
 	}
 }

@@ -137,11 +137,7 @@ public class LimitsHandler implements
 	}
 
 	public void handleLimitTagRemoved(Limit limit, String tag) {
-		System.out.println("before: " + tagMap.get(tag).size());
-		System.out.println(tagMap.get(tag).stream().map(Limit::getUuid).map(UUID::toString).collect(Collectors.joining(", ")));
 		tagMap.get(tag).remove(limit);
-		System.out.println("after: " + tagMap.get(tag).size());
-		System.out.println(tagMap.get(tag).stream().map(Limit::getUuid).map(UUID::toString).collect(Collectors.joining(", ")));
 		updateAllSubscribers(limit);
 	}
 

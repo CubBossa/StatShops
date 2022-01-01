@@ -141,7 +141,7 @@ public class ChestMenuShop implements PaginatedShop {
 
 	@Override
 	public ShopEntry createEntry(ItemStack displayItem, int slot) {
-		ShopEntry entry = new BaseEntry(UUID.randomUUID(), this, displayItem, null, slot);
+		ShopEntry entry = new BaseEntry(UUID.randomUUID(), this, displayItem.clone(), null, slot);
 		ShopEntry oldEntry = entryMap.put(slot, entry);
 		if (oldEntry != null) {
 			StatShops.getInstance().getDatabase().deleteEntry(oldEntry);

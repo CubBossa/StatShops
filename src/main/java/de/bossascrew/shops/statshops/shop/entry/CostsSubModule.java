@@ -99,6 +99,10 @@ public class CostsSubModule<T> implements SubModule {
 					new Price<>(CurrencyHandler.CURRENCY_ITEM, 3, new ItemStack(Material.EMERALD)));
 		}
 
+		public ItemCosts(Map<String, Object> values) {
+			super(values);
+		}
+
 		@Override
 		public List<DataSlot<?>> getDataSlots() {
 			List<DataSlot<?>> data = super.getDataSlots();
@@ -127,6 +131,10 @@ public class CostsSubModule<T> implements SubModule {
 		public ExpCosts(SubModulesHandler.CostsSubModuleProvider<Void> provider) {
 			super(provider, new Price<>(CurrencyHandler.CURRENCY_EXP, 100, null),
 					new Price<>(CurrencyHandler.CURRENCY_EXP, 80, null));
+		}
+
+		public ExpCosts(Map<String, Object> values) {
+			super(values);
 		}
 	}
 }

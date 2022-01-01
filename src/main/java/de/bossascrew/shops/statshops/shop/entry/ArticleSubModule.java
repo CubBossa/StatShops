@@ -28,9 +28,9 @@ public class ArticleSubModule<T> implements SubModule {
 		this.price = price;
 	}
 
-	public ArticleSubModule(Map<String, Object> values) throws ClassCastException {
-		this((SubModulesHandler.ArticleSubModuleProvider<T>) SubModulesHandler.getInstance().getArticleProvider((String) values.get("provider")),
-				(Price<T>) values.get("price"));
+	public ArticleSubModule(Map<String, Object> values) {
+		this.provider = (SubModulesHandler.ArticleSubModuleProvider<T>) SubModulesHandler.getInstance().getArticleProvider((String) values.get("provider"));
+		this.price = (Price<T>) values.get("price");
 	}
 
 	public List<DataSlot<?>> getDataSlots() {
@@ -47,7 +47,7 @@ public class ArticleSubModule<T> implements SubModule {
 	@NotNull
 	@Override
 	public Map<String, Object> serialize() {
-		return Map.of("provider", provider, "price", price);
+		return Map.of("provider", provider.getKey(), "price", price);
 	}
 
 	public static class ItemArticle extends ArticleSubModule<ItemStack> {
@@ -55,7 +55,11 @@ public class ArticleSubModule<T> implements SubModule {
 		DataSlot.ItemStackSlot gainPriceItem;
 
 		public ItemArticle(SubModulesHandler.ArticleSubModuleProvider<ItemStack> provider) {
-			super(provider, new Price<>(CurrencyHandler.CURRENCY_ITEM, 5., new ItemStack(Material.DIRT, 1))); //TODO zu viele default values hew
+			super(provider, new Price<>(CurrencyHandler.CURRENCY_ITEM, 1., new ItemStack(Material.DIRT, 1))); //TODO zu viele default values hew
+		}
+
+		public ItemArticle(Map<String, Object> values) {
+			super(values);
 		}
 
 		@Override
@@ -81,12 +85,20 @@ public class ArticleSubModule<T> implements SubModule {
 		public CommandArticle(SubModulesHandler.ArticleSubModuleProvider<String> provider) { //TODO command dataslot
 			super(provider, new Price<>(CurrencyHandler.CURRENCY_COMMAND, 1, "help"));
 		}
+
+		public CommandArticle(Map<String, Object> values) {
+			super(values);
+		}
 	}
 
 	public static class ConsoleCommandArticle extends ArticleSubModule<String> {
 
 		public ConsoleCommandArticle(SubModulesHandler.ArticleSubModuleProvider<String> provider) { //TODO command dataslot
 			super(provider, new Price<>(CurrencyHandler.CURRENCY_CONSOLE_COMMAND, 1, "help"));
+		}
+
+		public ConsoleCommandArticle(Map<String, Object> values) {
+			super(values);
 		}
 	}
 }

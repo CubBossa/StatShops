@@ -7,6 +7,7 @@ import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.handler.TemplateHandler;
 import de.bossascrew.shops.general.util.*;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.hook.VaultExtension;
 import de.bossascrew.shops.statshops.shop.*;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import de.bossascrew.shops.statshops.shop.entry.*;
@@ -65,8 +66,12 @@ public class FlatFileDatabase implements Database {
 		ConfigurationSerialization.registerClass(OpenShopModule.class);
 		ConfigurationSerialization.registerClass(PageBaseModule.class);
 		ConfigurationSerialization.registerClass(TradeBaseModule.class);
-		ConfigurationSerialization.registerClass(CostsSubModule.class);
-		ConfigurationSerialization.registerClass(ArticleSubModule.class);
+		ConfigurationSerialization.registerClass(CostsSubModule.ItemCosts.class);
+		ConfigurationSerialization.registerClass(CostsSubModule.ExpCosts.class);
+		ConfigurationSerialization.registerClass(VaultExtension.MoneyCosts.class);
+		ConfigurationSerialization.registerClass(ArticleSubModule.ItemArticle.class);
+		ConfigurationSerialization.registerClass(ArticleSubModule.CommandArticle.class);
+		ConfigurationSerialization.registerClass(ArticleSubModule.ConsoleCommandArticle.class);
 	}
 
 	@Override
@@ -240,7 +245,6 @@ public class FlatFileDatabase implements Database {
 
 		List<String> tags = section.getStringList("tags");
 
-		EntryModule module = section.getObject("module", EntryModule.class);
 
 		Map<String, DataSlot<?>> dataMap = new HashMap<>();
 		ConfigurationSection dataSection = section.getConfigurationSection("data-slots");
@@ -250,6 +254,8 @@ public class FlatFileDatabase implements Database {
 				dataMap.put(key, dataSlot);
 			}
 		}
+		EntryModule module = section.getObject("module", EntryModule.class);
+
 		ShopEntry entry = new BaseEntry(uuid, shop, displayItem, permission, slot);
 		tags.forEach(entry::addTag);
 		entry.setInfoLoreFormat(infoLoreFormat);

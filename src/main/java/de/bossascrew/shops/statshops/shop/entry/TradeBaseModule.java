@@ -82,15 +82,15 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 	}
 
 	@Override
-	public Component getPriceDisplay(boolean buy) {
-		return getPriceDisplay(buy, 1.);
+	public Component getPriceDisplay(@Nullable Customer customer, boolean buy) {
+		return getPriceDisplay(customer, buy, 1.);
 	}
 
-	public Component getPriceDisplay(boolean buy, double discount) {
+	public Component getPriceDisplay(@Nullable Customer customer, boolean buy, double discount) {
 		if (buy) {
-			return costs.getBuyPrice().getPriceComponent(discount);
+			return costs.getBuyPrice().toSimplePrice(customer).getPriceComponent(discount);
 		}
-		return costs.getSellPrice().getPriceComponent((discount - 1) * -1 + 1);
+		return costs.getSellPrice().toSimplePrice(customer).getPriceComponent((discount - 1) * -1 + 1);
 	}
 
 	@Override
@@ -163,8 +163,8 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 			return EntryInteractionResult.FAIL_NOT_SELLABLE;
 		}
 
-		Price<?> pay = (interactionType.isBuy() ? costs.getBuyPrice() : article.getPrice()).toSimplePrice();
-		Price<?> gain = (interactionType.isBuy() ? article.getPrice() : costs.getSellPrice()).toSimplePrice();
+		Price<?> pay = (interactionType.isBuy() ? costs.getBuyPrice() : article.getPrice()).toSimplePrice(customer);
+		Price<?> gain = (interactionType.isBuy() ? article.getPrice() : costs.getSellPrice()).toSimplePrice(customer);
 
 		List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(customer.getPlayer(), shopEntry, shopEntry.getShop());
 		double discount = DiscountHandler.getInstance().combineDiscounts(discounts, interactionType.isSell());

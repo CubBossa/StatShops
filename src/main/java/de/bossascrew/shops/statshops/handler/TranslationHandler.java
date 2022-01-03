@@ -2,6 +2,7 @@ package de.bossascrew.shops.statshops.handler;
 
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.StatShopsExtension;
 import de.bossascrew.shops.statshops.data.LoadedMessage;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.web.WebAccessable;
@@ -10,10 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -29,11 +27,20 @@ public class TranslationHandler implements WebAccessable<LoadedMessage> {
 
 	public TranslationHandler(String startlanguage) {
 		instance = this;
-		messageMap = Message.values().stream().collect(Collectors.toMap(Message::getKey, message -> message));
+		messageMap = new HashMap<>();
+		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
+			extension.registerMessages(this);
+		}
+		messageMap.putAll(Message.values().stream().collect(Collectors.toMap(Message::getKey, message -> message)));
 		messageFormats = new HashMap<>();
 		loadLanguage("en_US");
 		fallbackLanguage = new HashMap<>(messageFormats);
 		loadLanguage(startlanguage);
+
+	}
+
+	public void registerMessages(Message... messages) {
+		messageMap.putAll(Arrays.stream(messages).collect(Collectors.toMap(Message::getKey, message -> message)));
 	}
 
 	public CompletableFuture<Boolean> loadLanguage(String languageKey) {

@@ -5,13 +5,23 @@ import de.bossascrew.shops.general.handler.DynamicPricingHandler;
 import de.bossascrew.shops.general.handler.EntryModuleHandler;
 import de.bossascrew.shops.general.handler.SubModulesHandler;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
+import lombok.Getter;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A class that allows to add currencies, trade submodules and database types to StatShops.
  * Since the extension is registered before StatShops will be enabled, StatShops will load all currencies etc.
  * in the right order. <br>This prevents loaded data which refers to e.g. a currency that has not been registered at that point.
  */
-public class StatShopsExtension {
+public abstract class StatShopsExtension {
+
+	@Getter
+	private final @Nullable JavaPlugin plugin;
+
+	public StatShopsExtension(JavaPlugin plugin) {
+		this.plugin = plugin;
+	}
 
 	/**
 	 * Register the currencies for your extension. See {@link de.bossascrew.shops.statshops.shop.currency.Currency} for
@@ -24,9 +34,15 @@ public class StatShopsExtension {
 	}
 
 	/**
-	 * TODO
+	 * Register all messages that are supposed to be loaded from the language.yml.
+	 * A {@link de.bossascrew.shops.statshops.data.Message} requires a key that also servers as path in the yml. You may want to choose keys that
+	 * start with your plugin name (like my-gem-plugin.[...]). The language.yml will then read all messages
+	 * from this configuration section.
+	 * <p>
+	 * If you don't want to use translatable messages and have hardcoded messages, you can ignore this method.
 	 *
-	 * @param translationHandler
+	 * @param translationHandler The TranslationHandler instance to register the messages at.
+	 *                           <p>Use {@code translationHandler.registerMessages(Message... messages);}
 	 */
 	public void registerMessages(TranslationHandler translationHandler) {
 

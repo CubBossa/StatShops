@@ -1,5 +1,6 @@
 package de.bossascrew.shops.general.handler;
 
+import de.bossascrew.shops.general.Customer;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.StatShopsExtension;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -53,7 +55,7 @@ public class DynamicPricingHandler {
 	 * @param templates  All templates that are supposed to be parsed before calculating the equation
 	 * @return the result of the equation or null if it was not possible to parse as double
 	 */
-	public @Nullable Double getPrice(String priceInput, Template... templates) {
+	public @Nullable Double getPrice(Customer customer, String priceInput, Template... templates) {
 		if (!StatShops.getInstance().getShopsConfig().isDynamicPricingEnabled()) {
 			try {
 				return Double.parseDouble(priceInput);
@@ -65,7 +67,7 @@ public class DynamicPricingHandler {
 		List<Template> templateList = new ArrayList<>(defaultTemplates);
 		templateList.addAll(List.of(templates));
 		for (Template template : templateList) {
-			priceInput = priceInput.replace(template.placeholder(), template.value() + "");
+			priceInput = priceInput.replace(template.placeholder(), template.value().apply(new DynamicPricingContext(customer)) + "");
 		}
 
 		while (priceInput.contains("<db:")) {
@@ -106,8 +108,12 @@ public class DynamicPricingHandler {
 		this.defaultPricing.putAll(map);
 	}
 
-	public Template registerTemplate(String placeholder, double value) {
-		Template template = new Template(placeholder, value);
+	public Template registerTemplate(StatShopsExtension extension, String placeholder, double value) {
+		return registerTemplate(extension, placeholder, dynamicPricingContext -> value);
+	}
+
+	public Template registerTemplate(StatShopsExtension extension, String placeholder, Function<DynamicPricingContext, Double> value) {
+		Template template = new Template(extension.getPlugin().getName() + ":" + placeholder, value);
 		defaultTemplates.add(template);
 		return template;
 	}
@@ -116,6 +122,9 @@ public class DynamicPricingHandler {
 		defaultTemplates.remove(template);
 	}
 
-	public record Template(String placeholder, double value) {
+	public record Template(String placeholder, Function<DynamicPricingContext, Double> value) {
+	}
+
+	public record DynamicPricingContext(@Nullable Customer customer) {
 	}
 }

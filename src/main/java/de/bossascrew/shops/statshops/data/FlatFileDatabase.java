@@ -262,14 +262,15 @@ public class FlatFileDatabase implements Database {
 		tags.forEach(entry::addTag);
 		entry.setInfoLoreFormat(infoLoreFormat);
 
-		if (module != null) {
-			module.setShopEntry(entry);
-			entry.setModule(module);
-		}
-
 		if (!dataMap.isEmpty()) {
 			entry.getData().putAll(dataMap);
 		}
+		if (module != null) {
+			module.setShopEntry(entry);
+			module.loadData();
+			entry.setModule(module);
+		}
+
 		return entry;
 	}
 

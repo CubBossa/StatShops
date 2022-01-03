@@ -29,15 +29,20 @@ public abstract class Currency<T> {
 	private final String key;
 	private final String format;
 	private final String formatDiscounted;
+
+	private double lowerBounds = Integer.MIN_VALUE;
+	private double threshold = 0;
+	private double upperBounds = Integer.MAX_VALUE;
+
 	private final Function<Double, String> countFormatter;
 	private final BiFunction<Double, T, Component> currencyFormatter;
 
 	/**
 	 * @param key               An individual key to recognize the currency
-	 * @param currencyFormatter It provides the component for the currency. If the currency is itemstack, for example, the function could return
 	 * @param format            the way to display the currency in minimessage format. Valid placeholders are "amount" and "currency"
+	 * @param currencyFormatter It provides the component for the currency. If the currency is itemstack, for example, the function could return
 	 */
-	public Currency(String key, String formatDiscounted, BiFunction<Double, T, Component> currencyFormatter, String format) {
+	public Currency(String key, String format, String formatDiscounted, BiFunction<Double, T, Component> currencyFormatter) {
 		this(key, format, formatDiscounted, d -> String.format("%.2f", d), currencyFormatter);
 	}
 
@@ -78,7 +83,7 @@ public abstract class Currency<T> {
 	}
 
 	public boolean hasAmount(Customer customer, double amount, T object) {
-		return getAmount(customer, object) >= amount;
+		return getAmount(customer, object) - threshold >= amount;
 	}
 
 	public abstract double applyDiscount(double amount, double discount);

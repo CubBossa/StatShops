@@ -35,19 +35,19 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 		}
 
 		Customer customer = transaction.getCustomer();
-		Price<?> gain = transaction.getGainPrice().toSimplePrice();
-		Price<?> pay = transaction.getPayPrice().toSimplePrice();
+		Price<?> gain = transaction.getGainPrice().toSimplePrice(customer);
+		Price<?> pay = transaction.getPayPrice().toSimplePrice(customer);
 		pay.setAmount(pay.getAmount() * -1);
 
 		List<Price<?>> prices = tradeCache.getOrDefault(customer.getUuid(), new ArrayList<>());
 
-		Price<?> cachedGain = prices.stream().filter(price -> price.equals(gain)).findAny().orElse(null);
+		Price<?> cachedGain = prices.stream().filter(price -> price.summable(gain)).findAny().orElse(null);
 		if (cachedGain == null) {
 			prices.add(gain);
 		} else {
 			cachedGain.setAmount(cachedGain.getAmount() + gain.getAmount());
 		}
-		Price<?> cachedPay = prices.stream().filter(price -> price.equals(pay)).findAny().orElse(null);
+		Price<?> cachedPay = prices.stream().filter(price -> price.summable(pay)).findAny().orElse(null);
 		if (cachedPay == null) {
 			prices.add(pay);
 		} else {

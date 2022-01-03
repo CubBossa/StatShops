@@ -10,18 +10,20 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 @Getter
-@Setter
 public class Price<T> implements Comparable<Price<?>>, ConfigurationSerializable {
 
 	private final Currency<T> currency;
+	@Setter
 	private double amount;
 	private String dynamicPriceString;
+	@Setter
 	private T object;
 
 	public Price(Currency<T> currency, double amount, T object) {
@@ -31,10 +33,10 @@ public class Price<T> implements Comparable<Price<?>>, ConfigurationSerializable
 		this.dynamicPriceString = null;
 	}
 
-	public Price(Currency<T> currency, String dynamicPriceString, T object) {
+	public Price(Currency<T> currency, String dynamicPriceString, double fallback, T object) {
 		this.currency = currency;
 		this.object = object;
-		setDynamicPriceString(dynamicPriceString);
+		setDynamicPriceString(dynamicPriceString, fallback);
 	}
 
 	/**
@@ -48,22 +50,22 @@ public class Price<T> implements Comparable<Price<?>>, ConfigurationSerializable
 	}
 
 
-	public void setDynamicPriceString(String dynamicPriceString) {
+	public void setDynamicPriceString(String dynamicPriceString, double fallback) {
 		this.dynamicPriceString = dynamicPriceString;
-		bakeDynamicPricing();
+		bakeDynamicPricing(null, fallback);
 	}
 
-	public void bakeDynamicPricing() {
-		this.amount = loadAmount();
+	public void bakeDynamicPricing(@Nullable Customer customer, double fallback) {
+		this.amount = loadAmount(null, fallback);
 	}
 
-	public double loadAmount() {
+	public double loadAmount(@Nullable Customer customer, double fallback) {
 		if (this.dynamicPriceString == null) {
 			return amount;
 		}
-		Double d = DynamicPricingHandler.getInstance().getPrice(dynamicPriceString);
+		Double d = DynamicPricingHandler.getInstance().getPrice(customer, dynamicPriceString);
 		if (d == null) {
-			return 10.;
+			return fallback;
 		}
 		return d;
 	}
@@ -85,12 +87,12 @@ public class Price<T> implements Comparable<Price<?>>, ConfigurationSerializable
 
 
 	public boolean canGain(Customer customer) {
-		return true; //TODO in currency ein lower limit, ein upper limit und eine transaction schwelle (0$ zb) definieren
+		return canGain(customer, 1.);
 	}
 
 
 	public boolean canGain(Customer customer, double discount) {
-		return true;
+		return currency.getAmount(customer, object) + currency.applyDiscount(amount, discount) <= currency.getUpperBounds();
 	}
 
 
@@ -137,9 +139,20 @@ public class Price<T> implements Comparable<Price<?>>, ConfigurationSerializable
 	}
 
 
+	public boolean summable(Price<?> object) {
+		return compareEquals(object, false);
+	}
+
 	public boolean equals(Price<?> object) {
+		return compareEquals(object, true);
+	}
+
+	private boolean compareEquals(Price<?> object, boolean considerAmount) {
 		if (this == object) {
 			return true;
+		}
+		if(considerAmount && this.amount != object.amount) {
+			return false;
 		}
 		if (this.object != null && this.object instanceof ItemStack isa && object.getObject() instanceof ItemStack isb) {
 			if (isa.isSimilar(isb)) {
@@ -151,17 +164,16 @@ public class Price<T> implements Comparable<Price<?>>, ConfigurationSerializable
 		return Objects.equals(this.object, object.getObject()) && this.currency.equals(object.getCurrency());
 	}
 
-
 	public Price<T> duplicate() {
 		if (dynamicPriceString == null) {
 			return new Price<>(currency, amount, object);
 		}
-		return new Price<>(currency, dynamicPriceString, object);
+		return new Price<>(currency, dynamicPriceString, amount, object);
 	}
 
-	public Price<T> toSimplePrice() {
+	public Price<T> toSimplePrice(Customer customer) {
 		if (dynamicPriceString != null) {
-			bakeDynamicPricing();
+			bakeDynamicPricing(customer, amount);
 		}
 		return new Price<>(currency, amount, object);
 	}

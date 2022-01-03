@@ -6,6 +6,7 @@ import de.bossascrew.shops.statshops.shop.currency.Price;
 import de.bossascrew.shops.statshops.shop.entry.ArticleSubModule;
 import de.bossascrew.shops.statshops.shop.entry.CostsSubModule;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
 
 public interface TradeModule extends EntryModule {
 
@@ -33,9 +34,9 @@ public interface TradeModule extends EntryModule {
 
 	void setSellableStacked(boolean sellableStacked);
 
-	Component getPriceDisplay(boolean buy);
+	Component getPriceDisplay(@Nullable Customer customer, boolean buy);
 
-	Component getPriceDisplay(boolean buy, double discount);
+	Component getPriceDisplay(@Nullable Customer customer, boolean buy, double discount);
 
 	Transaction getLastTransaction(Customer customer);
 

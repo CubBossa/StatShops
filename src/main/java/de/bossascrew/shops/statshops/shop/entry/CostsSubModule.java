@@ -76,11 +76,11 @@ public class CostsSubModule<T> implements SubModule {
 		buyPayEquation = shopEntry.getData(DataSlot.EquationSlot.class, "buy_pay_price_equation", () -> {
 			return new DataSlot.EquationSlot("5+5");
 		});
-		buyPayEquation.setUpdateHandler(s -> getBuyPrice().setDynamicPriceString(s));
+		buyPayEquation.setUpdateHandler(s -> getBuyPrice().setDynamicPriceString(s, buyPayPriceAmount.getData()));
 		sellPayEquation = shopEntry.getData(DataSlot.EquationSlot.class, "sell_pay_price_equation", () -> {
 			return new DataSlot.EquationSlot("3+2");
 		});
-		buyPayEquation.setUpdateHandler(s -> getSellPrice().setDynamicPriceString(s));
+		sellPayEquation.setUpdateHandler(s -> getSellPrice().setDynamicPriceString(s, sellPayPriceAmount.getData()));
 	}
 
 	@NotNull

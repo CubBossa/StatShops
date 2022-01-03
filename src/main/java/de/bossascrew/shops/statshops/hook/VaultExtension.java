@@ -11,7 +11,6 @@ import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import de.bossascrew.shops.statshops.shop.currency.Currency;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import de.bossascrew.shops.statshops.shop.entry.CostsSubModule;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
@@ -19,21 +18,29 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.Map;
 
-@RequiredArgsConstructor
 public class VaultExtension extends StatShopsExtension {
 
-	private final StatShops shopPlugin;
 	private static Economy economy = null;
 
 	public static Currency<Void> CURRENCY_VAULT;
 	public static SubModulesHandler.CostsSubModuleProvider<Void> COSTS_VAULT_PROVIDER;
+
+	public static final Message GUI_ENTRY_FUNCTION_COSTS_VAULT_NAME = new Message("manager.gui.entry.defaults.costs_vault.name");
+	public static final Message GUI_ENTRY_FUNCTION_COSTS_VAULT_LORE = new Message("manager.gui.entry.defaults.costs_vault.lore");
+
+	public VaultExtension(StatShops shopPlugin) {
+		super(shopPlugin);
+	}
 
 	@Override
 	public void registerCurrencies(CurrencyHandler currencyHandler) {
 		super.registerCurrencies(currencyHandler);
 
 		CURRENCY_VAULT = new Currency<>(
-				"money", StatShops.getInstance().getShopsConfig().getCurrencyVaultFormattingDiscounted(), (integer, unused) -> Component.text(integer == 1 ? economy.currencyNameSingular() : economy.currencyNamePlural()), StatShops.getInstance().getShopsConfig().getCurrencyVaultFormatting()
+				"money",
+				StatShops.getInstance().getShopsConfig().getCurrencyVaultFormatting(),
+				StatShops.getInstance().getShopsConfig().getCurrencyVaultFormattingDiscounted(),
+				(integer, unused) -> Component.text(integer == 1 ? economy.currencyNameSingular() : economy.currencyNamePlural())
 		) {
 			@Override
 			public double applyDiscount(double amount, double discount) {
@@ -62,7 +69,7 @@ public class VaultExtension extends StatShopsExtension {
 	public void registerMessages(TranslationHandler translationHandler) {
 		super.registerMessages(translationHandler);
 
-		//TODO vault spezifische messages hier registrieren
+		translationHandler.registerMessages(GUI_ENTRY_FUNCTION_COSTS_VAULT_NAME, GUI_ENTRY_FUNCTION_COSTS_VAULT_LORE);
 	}
 
 	@Override
@@ -70,14 +77,14 @@ public class VaultExtension extends StatShopsExtension {
 		super.registerTradeSubModules(subModulesHandler);
 
 		COSTS_VAULT_PROVIDER = subModulesHandler.registerCostsSubModule("vault", StatShops.PERM_COSTS_VAULT, ItemStackUtils.createItemStack(Material.GOLD_INGOT, 7122000),
-				Message.GUI_ENTRY_FUNCTION_COSTS_VAULT_NAME, Message.GUI_ENTRY_FUNCTION_COSTS_VAULT_LORE, (provider, shopEntry) -> new MoneyCosts(provider));
+				GUI_ENTRY_FUNCTION_COSTS_VAULT_NAME, GUI_ENTRY_FUNCTION_COSTS_VAULT_LORE, (provider, shopEntry) -> new MoneyCosts(provider));
 	}
 
 	public boolean setupEconomy() {
-		if (shopPlugin.getServer().getPluginManager().getPlugin("Vault") == null) {
+		if (getPlugin().getServer().getPluginManager().getPlugin("Vault") == null) {
 			return false;
 		}
-		RegisteredServiceProvider<Economy> rsp = shopPlugin.getServer().getServicesManager().getRegistration(Economy.class);
+		RegisteredServiceProvider<Economy> rsp = getPlugin().getServer().getServicesManager().getRegistration(Economy.class);
 		if (rsp == null) {
 			return false;
 		}

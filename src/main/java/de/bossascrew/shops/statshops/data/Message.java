@@ -272,8 +272,6 @@ public class Message {
 	public static final Message GUI_ENTRY_FUNCTION_COSTS_ITEM_LORE = new Message("manager.gui.entry.defaults.costs_item.lore");
 	public static final Message GUI_ENTRY_FUNCTION_COSTS_XP_NAME = new Message("manager.gui.entry.defaults.costs_xp.name");
 	public static final Message GUI_ENTRY_FUNCTION_COSTS_XP_LORE = new Message("manager.gui.entry.defaults.costs_xp.lore");
-	public static final Message GUI_ENTRY_FUNCTION_COSTS_VAULT_NAME = new Message("manager.gui.entry.defaults.costs_vault.name");
-	public static final Message GUI_ENTRY_FUNCTION_COSTS_VAULT_LORE = new Message("manager.gui.entry.defaults.costs_vault.lore");
 
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL = new Message("manager.gui.entry.function.type.bool");
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER = new Message("manager.gui.entry.function.type.int");

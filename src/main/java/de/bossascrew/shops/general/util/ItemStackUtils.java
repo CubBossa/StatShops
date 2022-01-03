@@ -17,6 +17,7 @@ import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.Limit;
+import de.bossascrew.shops.statshops.shop.currency.Price;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.experimental.UtilityClass;
@@ -146,17 +147,22 @@ public class ItemStackUtils {
 		return itemStack;
 	}
 
-	public void addLorePrice(List<Component> existingLore, TradeModule tradeModule, double discount) {
-		if (tradeModule.isPurchasable() && tradeModule.isSellable() && tradeModule.getPayPrice(true).equals(tradeModule.getPayPrice(false)) && discount == 1) {
-			existingLore.addAll(Message.SHOP_ITEM_LORE_BOTH_PRICE.getTranslations(Template.of("price", tradeModule.getPriceDisplay(true, discount))));
+	public void addLorePrice(@Nullable Customer customer, List<Component> existingLore, TradeModule tradeModule, double discount) {
+		Price<?> buy = tradeModule.getPayPrice(true).toSimplePrice(customer);
+		Price<?> sell = tradeModule.getPayPrice(false).toSimplePrice(customer);
+		buy.applyDiscount(discount);
+		sell.applyDiscount(discount);
+
+		if (tradeModule.isPurchasable() && tradeModule.isSellable() && buy.equals(sell)) {
+			existingLore.addAll(Message.SHOP_ITEM_LORE_BOTH_PRICE.getTranslations(Template.of("price", tradeModule.getPriceDisplay(customer, true, discount))));
 		} else {
 			if (tradeModule.isPurchasable()) {
 				existingLore.addAll(Message.SHOP_ITEM_LORE_BUY_PRICE.getTranslations(
-						Template.of("price", tradeModule.getPriceDisplay(true, discount))));
+						Template.of("price", tradeModule.getPriceDisplay(customer, true, discount))));
 			}
 			if (tradeModule.isSellable()) {
 				existingLore.addAll(Message.SHOP_ITEM_LORE_SELL_PRICE.getTranslations(
-						Template.of("price", tradeModule.getPriceDisplay(false, discount))));
+						Template.of("price", tradeModule.getPriceDisplay(customer, false, discount))));
 			}
 		}
 	}
@@ -239,7 +245,7 @@ public class ItemStackUtils {
 				// Place segments in order that is provided via config
 				switch (segment) {
 					case "price" -> {
-						addLorePrice(additionalLore, tradeEntry, discount);
+						addLorePrice(customer, additionalLore, tradeEntry, discount);
 					}
 					case "actions" -> addLoreActions(additionalLore, tradeEntry);
 					case "discounts" -> {

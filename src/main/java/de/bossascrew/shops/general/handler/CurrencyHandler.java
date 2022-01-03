@@ -84,7 +84,7 @@ public class CurrencyHandler {
 			return true;
 		}
 	};
-	public static Currency<String> CURRENCY_COMMAND = new Currency<>("command", "Command: <currency>", (aDouble, s) -> Component.text(s), "Command: <currency>") {
+	public static Currency<String> CURRENCY_COMMAND = new Currency<>("command", "Command: <currency>", "Command: <currency>", (aDouble, s) -> Component.text(s)) {
 		@Override
 		public double applyDiscount(double amount, double discount) {
 			return (int) (amount * discount);
@@ -108,7 +108,7 @@ public class CurrencyHandler {
 			return false;
 		}
 	};
-	public static Currency<String> CURRENCY_CONSOLE_COMMAND = new Currency<>("console_command", "<amount>x Command: <currency>", (aDouble, s) -> Component.text(s), "<amount>x Command: <currency>") {
+	public static Currency<String> CURRENCY_CONSOLE_COMMAND = new Currency<>("console_command", "<amount>x Command: <currency>", "<amount>x Command: <currency>", (aDouble, s) -> Component.text(s)) {
 		@Override
 		public double applyDiscount(double amount, double discount) {
 			return (int) (amount * discount);

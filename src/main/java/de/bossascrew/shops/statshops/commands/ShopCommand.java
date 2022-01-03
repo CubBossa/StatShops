@@ -3,15 +3,21 @@ package de.bossascrew.shops.statshops.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.NamedObject;
 import de.bossascrew.shops.general.PaginatedShop;
 import de.bossascrew.shops.general.Shop;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
+import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.convertion.DataPreset;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import de.bossascrew.shops.statshops.menu.ShopManagementMenu;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -22,10 +28,45 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @CommandAlias("statshop|statshops|shop|shops")
 public class ShopCommand extends BaseCommand {
+
+	private final UUID consoleUuid = UUID.randomUUID();
+	private final Map<UUID, Runnable> confirmingPlayers;
+
+	public ShopCommand() {
+		confirmingPlayers = new HashMap<>();
+	}
+
+	@Subcommand("accept")
+	public void accept(CommandSender sender) {
+		Runnable r;
+		if (sender instanceof Player player) {
+			r = confirmingPlayers.get(player.getUniqueId());
+		} else {
+			r = confirmingPlayers.get(consoleUuid);
+		}
+		if (r != null) {
+			r.run();
+		}
+	}
+
+	@Subcommand("decline")
+	public void decline(CommandSender sender) {
+		if (sender instanceof Player player) {
+			confirmingPlayers.remove(player.getUniqueId());
+		} else {
+			confirmingPlayers.remove(consoleUuid);
+		}
+	}
 
 	@Subcommand("debug")
 	public class Debug extends BaseCommand {
@@ -34,6 +75,61 @@ public class ShopCommand extends BaseCommand {
 		public void onEntries(CommandSender sender, Shop shop) {
 			shop.getEntries().forEach((integer, entry) -> System.out.println(integer + " -> " + entry.getDisplayItem().getType()));
 		}
+	}
+
+	@Subcommand("export")
+	public void onExport(CommandSender sender, String name) {
+		CompletableFuture.supplyAsync(() ->  {
+			DataPreset dataPreset = new DataPreset(name, "CubBossa", StatShops.getInstance().getDescription().getVersion(), LocalDateTime.now());
+			dataPreset.loadFromCacheByTags();
+			return dataPreset;
+
+		}).thenAccept(dataPreset -> {
+			StatShops.getInstance().sendMessage(sender, Message.DATA_PRESET_EXPORT_CONFIRM.getTranslation(
+					Template.of("shops", listElements(dataPreset.getShops(), new Pair<>("Shop", "Shops"))),
+					Template.of("discounts", listElements(dataPreset.getDiscounts(), new Pair<>("Discount", "Discounts"))),
+					Template.of("limits", listElements(dataPreset.getLimits(), new Pair<>("Limit", "Limits"))),
+					Template.of("templates", listElements(dataPreset.getTemplates(), new Pair<>("Template", "Templates"))),
+					Template.of("name", dataPreset.getName())
+			));
+			UUID uuid = sender instanceof Player player ? player.getUniqueId() : consoleUuid;
+			confirmingPlayers.put(uuid, () -> {
+				dataPreset.toFile();
+				StatShops.getInstance().sendMessage(sender, Message.DATA_PRESET_EXPORT_SUCCESS.getTranslation(Template.of("name", dataPreset.getName())));
+				confirmingPlayers.remove(uuid);
+			});
+		});
+	}
+
+	@Subcommand("import")
+	@CommandCompletion(StatShops.COMPLETION_DATA_TEMPLATES)
+	public void onImport(CommandSender sender, String fileName) {
+		CompletableFuture.supplyAsync(() -> {
+			return new DataPreset(new File(StatShops.getInstance().getDataFolder(), "presets/" + fileName));
+
+		}).thenAccept(dataPreset -> {
+			StatShops.getInstance().sendMessage(sender, Message.DATA_PRESET_IMPORT_CONFIRM.getTranslation(
+					Template.of("shops", listElements(dataPreset.getShops(), new Pair<>("Shop", "Shops"))),
+					Template.of("discounts", listElements(dataPreset.getDiscounts(), new Pair<>("Discount", "Discounts"))),
+					Template.of("limits", listElements(dataPreset.getLimits(), new Pair<>("Limit", "Limits"))),
+					Template.of("templates", listElements(dataPreset.getTemplates(), new Pair<>("Template", "Templates"))),
+					Template.of("name", dataPreset.getName() + " (author: " + dataPreset.getAuthor() + ")")
+			));
+			UUID uuid = sender instanceof Player player ? player.getUniqueId() : consoleUuid;
+			confirmingPlayers.put(uuid, () -> {
+				dataPreset.apply();
+				StatShops.getInstance().sendMessage(sender, Message.DATA_PRESET_IMPORT_SUCCESS.getTranslation(Template.of("name", dataPreset.getName())));
+				confirmingPlayers.remove(uuid);
+			});
+		});
+	}
+
+	private Component listElements(Collection<? extends NamedObject> objects, Pair<String, String> name) {
+		Component c = Component.empty();
+		for (var o : objects) {
+			c = c.append(o.getName()).append(Component.text(", ", NamedTextColor.GRAY));
+		}
+		return Component.text(objects.size() + " " + (objects.size() == 1 ? name.getLeft() : name.getRight())).hoverEvent(HoverEvent.showText(c));
 	}
 
 	@Default

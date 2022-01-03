@@ -47,6 +47,12 @@ public class Message {
 	public static final Message GENERAL_EDITABLE_CURRENTLY_EDITED = new Message("general.editable_edited");
 	public static final Message GENERAL_CHEST_PARSED = new Message("general.chest_content_parsed");
 
+	public static final Message DATA_PRESET_EXPORT_SUCCESS = new Message("general.data_presets.export_success");
+	public static final Message DATA_PRESET_EXPORT_CONFIRM = new Message("general.data_presets.export_confirmation");
+	public static final Message DATA_PRESET_IMPORT_SUCCESS = new Message("general.data_presets.import_success");
+	public static final Message DATA_PRESET_IMPORT_CONFIRM = new Message("general.data_presets.import_confirmation");
+	public static final Message DATA_PRESET_NOT_A_FILE = new Message("general.data_presets.import_not_a_file");
+
 	public static final Message CITIZENS_ASSIGNED = new Message("citizens.assign.success");
 	public static final Message CITIZENS_CONFIRM_OVERRIDE = new Message("citizens.assign.confirm");
 	public static final Message CITIZENS_CLICK_TO_ASSIGN = new Message("citizens.assign.info");

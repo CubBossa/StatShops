@@ -236,11 +236,22 @@ public class LimitsHandler implements
 		return getLimits();
 	}
 
+	public void addLimit(Limit limit) {
+		limitMap.put(limit.getUuid(), limit);
+		for (String tag : limit.getTags()) {
+			Collection<Limit> limits = tagMap.getOrDefault(tag, new ArrayList<>());
+			if (!limits.contains(limit)) {
+				limits.add(limit);
+				tagMap.put(tag, limits);
+			}
+		}
+		StatShops.getInstance().getDatabase().saveLimit(limit);
+	}
+
 	@Override
 	public Limit createNew(String input) {
 		Limit limit = new Limit(input, Duration.of(1, ChronoUnit.DAYS), customer -> true, 16);
-		limitMap.put(limit.getUuid(), limit);
-		StatShops.getInstance().getDatabase().saveLimit(limit);
+		addLimit(limit);
 		return limit;
 	}
 

@@ -18,34 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, ListMenuElement, DatabaseObject {
+public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, ListMenuElement, DatabaseObject, NamedObject {
 
 	/**
 	 * @return The unique id for this shop. It also servers as a tag for the Taggable interface and allows to apply limits and discounts to all shopentries of this shop
 	 */
 	UUID getUUID();
-
-	/**
-	 * @return The name format in minimessage style
-	 */
-	String getNameFormat();
-
-	/**
-	 * Allows to change the name format. The default implementation of this interface likewise sets the name component and the plain text string.
-	 *
-	 * @param nameFormat The name format in minimessage style.
-	 */
-	void setNameFormat(String nameFormat);
-
-	/**
-	 * @return The name as styled kyori component
-	 */
-	Component getName();
-
-	/**
-	 * @return The bare text name without formats and colors
-	 */
-	String getNamePlain();
 
 	ItemStack getDisplayItem();
 

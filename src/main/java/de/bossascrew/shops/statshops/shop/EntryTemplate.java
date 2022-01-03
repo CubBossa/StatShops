@@ -1,6 +1,7 @@
 package de.bossascrew.shops.statshops.shop;
 
 import com.google.common.base.Preconditions;
+import de.bossascrew.shops.general.NamedObject;
 import de.bossascrew.shops.general.entry.ShopEntry;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
@@ -17,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class EntryTemplate implements ListMenuElement, Duplicable<EntryTemplate> {
+public class EntryTemplate implements ListMenuElement, Duplicable<EntryTemplate>, NamedObject {
 
 	@Getter
 	private final UUID uuid;

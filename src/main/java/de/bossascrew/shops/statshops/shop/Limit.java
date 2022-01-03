@@ -3,6 +3,7 @@ package de.bossascrew.shops.statshops.shop;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.general.NamedObject;
 import de.bossascrew.shops.general.Taggable;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.util.Duplicable;
@@ -32,7 +33,8 @@ public class Limit implements
 		Editable<Player>,
 		ListMenuElement,
 		DatabaseObject,
-		Duplicable<Limit> {
+		Duplicable<Limit>,
+		NamedObject {
 
 	private final UUID uuid;
 	private String nameFormat;

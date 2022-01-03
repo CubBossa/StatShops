@@ -43,17 +43,9 @@ public class DiscountHandler implements
 		return new ArrayList<>(discountMap.values());
 	}
 
-	public Discount createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags) {
-		TreeSet<LocalDateTime> startTimes = new TreeSet<>();
-		startTimes.add(start);
-		return createDiscount(nameFormat, startTimes, duration, percent, tags);
-	}
-
-	public Discount createDiscount(String nameFormat, SortedSet<LocalDateTime> start, Duration duration, double percent, String... tags) {
-		Discount discount = new Discount(UUID.randomUUID(), nameFormat, start, duration, percent, null, tags);
-		StatShops.getInstance().getDatabase().saveDiscount(discount);
+	public void addDiscount(Discount discount) {
 		discountMap.put(discount.getUuid(), discount);
-		for (String tag : tags) {
+		for (String tag : discount.getTags()) {
 			List<Discount> discounts = tagMap.getOrDefault(tag, new ArrayList<>());
 			if (!discounts.contains(discount)) {
 				discounts.add(discount);
@@ -73,6 +65,19 @@ public class DiscountHandler implements
 				}, LocalDateTime.now().until(nextStart, ChronoUnit.MILLIS) / 50);
 			}
 		}
+		StatShops.getInstance().getDatabase().saveDiscount(discount);
+	}
+
+	public Discount createDiscount(String nameFormat, LocalDateTime start, Duration duration, double percent, String... tags) {
+		TreeSet<LocalDateTime> startTimes = new TreeSet<>();
+		startTimes.add(start);
+		return createDiscount(nameFormat, startTimes, duration, percent, tags);
+	}
+
+	public Discount createDiscount(String nameFormat, SortedSet<LocalDateTime> start, Duration duration, double percent, String... tags) {
+		Discount discount = new Discount(UUID.randomUUID(), nameFormat, start, duration, percent, null, tags);
+
+		addDiscount(discount);
 		return discount;
 	}
 

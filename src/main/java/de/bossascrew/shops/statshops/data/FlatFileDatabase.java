@@ -11,6 +11,7 @@ import de.bossascrew.shops.statshops.hook.VaultExtension;
 import de.bossascrew.shops.statshops.shop.*;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import de.bossascrew.shops.statshops.shop.entry.*;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Getter
 public class FlatFileDatabase implements Database {
 
 	public static final String SHOP_TYPE_CHEST = "chest_menu_shop";

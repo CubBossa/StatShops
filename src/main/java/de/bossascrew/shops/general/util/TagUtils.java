@@ -29,6 +29,15 @@ public class TagUtils {
 		return tags;
 	}
 
+	public boolean hasCommonTags(Taggable a, Collection<String> list) {
+		for (String s : a.getTags()) {
+			if (list.contains(s)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean hasCommonTags(Taggable a, Taggable b) {
 		for (String s : a.getTags()) {
 			if (b.hasTag(s)) {

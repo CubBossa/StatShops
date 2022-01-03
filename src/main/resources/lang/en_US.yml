@@ -17,7 +17,13 @@ general:
   # Valid placeholders: <player>
   editable_edited: "<prefix><red>This object is currently edited by <editor>"
   # Valid placeholders: <amount>, <shop>
-  chest_content_parsed: "<prefix> <amount> items were found and added to <shop>."
+  chest_content_parsed: "<prefix><gray><amount> items were found and added to <shop>."
+  data_presets:
+    export_success: "<prefix><gray>Data Preset successfully saved as <white><name>"
+    export_confirmation: "<prefix><gray>Export <shops>, <discounts>, <limits> and <templates> as <white><name></white>? [<green><click:run_command:/statshops accept>accept</click></green>] [<red><click:run_command:/statshops decline>decline</click></red>]"
+    import_success: "<prefix><gray>Data Preset successfully imported."
+    import_confirmation: "<prefix><gray>Import <shops>, <discounts>, <limits> and <templates> from <white><name></white>? [<green><click:run_command:/statshops accept>accept</click></green>] [<red><click:run_command:/statshops decline>decline</click></red>]"
+    import_not_a_file: "<prefix><red><name> is not a valid file."
 
   clicktype:
     right: "right-click"

@@ -2,6 +2,7 @@ package de.bossascrew.shops.statshops.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
+import de.bossascrew.shops.general.NamedObject;
 import de.bossascrew.shops.general.Taggable;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.util.*;
@@ -31,7 +32,8 @@ public class Discount implements
 		Editable<Player>,
 		ListMenuElement,
 		DatabaseObject,
-		Duplicable<Discount> {
+		Duplicable<Discount>,
+		NamedObject {
 
 	private final UUID uuid;
 	private String nameFormat;

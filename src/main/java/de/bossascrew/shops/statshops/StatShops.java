@@ -10,12 +10,12 @@ import de.bossascrew.shops.general.util.ItemFlags;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.itemeditor.ItemEditorCommand;
 import de.bossascrew.shops.statshops.commands.ShopCommand;
+import de.bossascrew.shops.statshops.convertion.DataPreset;
 import de.bossascrew.shops.statshops.data.*;
 import de.bossascrew.shops.statshops.handler.*;
 import de.bossascrew.shops.statshops.hook.CitizensHook;
 import de.bossascrew.shops.statshops.hook.VaultExtension;
 import de.bossascrew.shops.statshops.listener.PlayerListener;
-import de.bossascrew.shops.statshops.shop.entry.DataSlot;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.audience.Audience;
@@ -27,7 +27,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -73,6 +72,7 @@ public class StatShops extends JavaPlugin {
 	public static final String COMPLETION_ENCHANTMENTS = "@enchantments";
 	public static final String COMPLETION_ENCHANTMENTS_CONTAINED = "@enchantments_on_item";
 	public static final String COMPLETION_ITEM_FLAGS = "@commandflags";
+	public static final String COMPLETION_DATA_TEMPLATES = "@data_templates";
 
 	@Getter
 	private static StatShops instance;
@@ -164,7 +164,9 @@ public class StatShops extends JavaPlugin {
 		this.translationHandler = new TranslationHandler("en_US");
 
 		// Setup Database
-		this.database = new FlatFileDatabase(getDataFolder()); //TODO databasehandler ...
+		File data = new File(getDataFolder(), "data");
+		data.mkdir();
+		this.database = new FlatFileDatabase(data); //TODO databasehandler ...
 		File logs = new File(getDataFolder(), "logs");
 		logs.mkdir();
 		this.logDatabase = new FlatFileLogDatabase(logs, shopsConfig.logFilePerShop, shopsConfig.logDirPerShop,
@@ -372,6 +374,12 @@ public class StatShops extends JavaPlugin {
 					.collect(Collectors.toList());
 			completions.add("*");
 			return completions;
+		});
+		commandManager.getCommandCompletions().registerCompletion(COMPLETION_DATA_TEMPLATES, context -> {
+			return Arrays.stream(Objects.requireNonNull(new File(getDataFolder(), "presets/").listFiles()))
+					.map(File::getName)
+					.filter(name -> name.endsWith(DataPreset.FILE_ENDING))
+					.collect(Collectors.toList());
 		});
 	}
 

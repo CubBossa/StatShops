@@ -1,0 +1,16 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/gold_ingot"
+  },
+  "overrides": [
+    {
+      "predicate": { "custom_model_data": 7122000 },
+      "model": "minecraft:item/money_ingot"
+    },
+    {
+      "predicate": { "custom_model_data": 7122001 },
+      "model": "minecraft:item/gold_ingot"
+    }
+  ]
+}

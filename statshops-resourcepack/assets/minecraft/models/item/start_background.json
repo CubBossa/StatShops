@@ -1,0 +1,6 @@
+{
+  "parent":  "minecraft:item/inventory_background",
+  "textures": {
+    "layer0": "minecraft:item/start_background"
+  }
+}

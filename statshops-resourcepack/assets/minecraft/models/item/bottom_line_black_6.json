@@ -1,0 +1,13 @@
+{
+  "parent": "minecraft:item/inventory_background",
+  "textures": {
+    "layer0": "minecraft:item/black_bottom_line_6"
+  },
+  "gui_light": "front",
+  "display": {
+    "gui": {
+      "translation": [ -4, -64, -8 ],
+      "scale": [ 3.99, 3.99, 1 ]
+    }
+  }
+}

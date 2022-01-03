@@ -1,0 +1,28 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:block/black_stained_glass"
+  },
+  "overrides": [
+    {
+      "predicate": { "custom_model_data": 7122000 },
+      "model": "minecraft:item/invisible"
+    },
+    {
+      "predicate": { "custom_model_data": 7122001 },
+      "model": "minecraft:item/bottom_line_black_6"
+    },
+    {
+      "predicate": { "custom_model_data": 7122002 },
+      "model": "minecraft:item/module_background"
+    },
+    {
+      "predicate": { "custom_model_data": 7122003 },
+      "model": "minecraft:item/trademodule_background"
+    },
+    {
+      "predicate": { "custom_model_data": 7122004 },
+      "model": "minecraft:item/black_stained_glass_pane"
+    }
+  ]
+}

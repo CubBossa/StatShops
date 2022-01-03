@@ -1,0 +1,36 @@
+{
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"texture_size": [128, 128],
+	"textures": {
+		"layer0": "item/pilot_background",
+		"particle": "item/pilot_background"
+	},
+	"elements": [
+		{
+			"from": [-16, -16, 0],
+			"to": [32, 32, 0],
+			"faces": {
+				"north": {
+					"uv": [ 0, 0, 12, 12 ],
+					"texture": "#layer0"
+				},
+				"east": {"uv": [0, 0, 0, 16], "texture": "#layer0"},
+				"south": {
+					"uv": [ 0, 0, 12, 12 ],
+					"texture": "#layer0"
+				},
+				"west": {"uv": [0, 0, 0, 16], "texture": "#layer0"},
+				"up": {"uv": [0, 0, 16, 0], "texture": "#layer0"},
+				"down": {"uv": [0, 0, 16, 0], "texture": "#layer0"}
+			}
+		}
+	],
+	"gui_light": "front",
+	"display": {
+		"gui": {
+			"translation": [86, -64, -8],
+			"scale": [3.99, 3.99, 1]
+		}
+	}
+}

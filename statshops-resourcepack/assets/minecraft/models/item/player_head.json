@@ -1,0 +1,13 @@
+{
+  "parent": "minecraft:item/template_skull",
+  "overrides": [
+    {
+      "predicate": { "custom_model_data": 7122000 },
+      "model": "minecraft:item/button_head"
+    },
+    {
+      "predicate": { "custom_model_data": 7122001 },
+      "model": "minecraft:item/template_skull"
+    }
+  ]
+}

@@ -3,7 +3,7 @@ package de.bossascrew.shops.web;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.Limit;
-import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.statshops.api.Shop;
 
 import java.util.ArrayList;
 import java.util.List;

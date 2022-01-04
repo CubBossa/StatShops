@@ -1,21 +1,21 @@
 package de.bossascrew.shops.statshops.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.PaginatedShop;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.TransactionBalanceMessenger;
-import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
-import de.bossascrew.shops.general.menu.ShopMenu;
+import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
-import de.bossascrew.shops.general.util.EntryInteractionType;
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.EntryInteractionType;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.PaginatedShop;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.api.TransactionBalanceMessenger;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.events.ShopCloseEvent;
 import de.bossascrew.shops.statshops.events.ShopOpenEvent;
@@ -113,7 +113,7 @@ public class ChestMenuShop implements PaginatedShop {
 	}
 
 	@Override
-	public boolean removeEntry(ShopEntry shopEntry) {
+	public boolean removeEntry(ShopEntry shopEntry) { //TODO implement interface docs
 		StatShops.getInstance().getDatabase().deleteEntry(shopEntry);
 		return entryMap.remove(shopEntry.getSlot(), shopEntry);
 	}
@@ -191,6 +191,11 @@ public class ChestMenuShop implements PaginatedShop {
 		uuidEntryMap.remove(entry.getUUID());
 		StatShops.getInstance().getDatabase().deleteEntry(entry);
 		return entryMap.remove(entry.getSlot(), entry);
+	}
+
+	@Override
+	public Collection<ShopEntry> getUnusedEntries() {
+		return unusedEntryCache.values();
 	}
 
 	@Override

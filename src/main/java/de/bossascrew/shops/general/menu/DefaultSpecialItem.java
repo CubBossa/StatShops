@@ -1,6 +1,6 @@
 package de.bossascrew.shops.general.menu;
 
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.data.Message;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

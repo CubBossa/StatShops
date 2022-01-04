@@ -1,9 +1,9 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.entry.MultiTradeModule;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.handler.EntryModuleHandler;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.api.module.MultiTradeModule;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
 import de.bossascrew.shops.statshops.shop.Transaction;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import net.kyori.adventure.text.Component;

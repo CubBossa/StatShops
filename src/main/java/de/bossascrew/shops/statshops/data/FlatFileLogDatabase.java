@@ -1,8 +1,9 @@
 package de.bossascrew.shops.statshops.data;
 
-import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.data.LogDatabase;
 
 import java.io.BufferedWriter;
 import java.io.File;

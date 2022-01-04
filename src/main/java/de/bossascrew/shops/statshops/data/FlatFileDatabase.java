@@ -1,18 +1,20 @@
 package de.bossascrew.shops.statshops.data;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.entry.EntryModule;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.handler.TemplateHandler;
 import de.bossascrew.shops.general.util.*;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.api.TemplatableShop;
+import de.bossascrew.shops.statshops.api.data.Database;
+import de.bossascrew.shops.statshops.api.module.EntryModule;
+import de.bossascrew.shops.statshops.handler.TemplateHandler;
 import de.bossascrew.shops.statshops.hook.VaultExtension;
 import de.bossascrew.shops.statshops.shop.*;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import de.bossascrew.shops.statshops.shop.entry.*;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -36,6 +38,7 @@ public class FlatFileDatabase implements Database {
 	private final File dirLimits;
 	private final File dirDiscounts;
 	private final File dirTemplate;
+	private final File dirCustomers;
 
 	public FlatFileDatabase(File directory) {
 		if (!directory.isDirectory()) {
@@ -56,6 +59,10 @@ public class FlatFileDatabase implements Database {
 		dirTemplate = new File(directory, "template/");
 		if (!dirTemplate.exists()) {
 			dirTemplate.mkdir();
+		}
+		dirCustomers = new File(directory, "customers/");
+		if (!dirCustomers.exists()) {
+			dirCustomers.mkdir();
 		}
 
 		ConfigurationSerialization.registerClass(DataSlot.EquationSlot.class);
@@ -78,12 +85,46 @@ public class FlatFileDatabase implements Database {
 
 	@Override
 	public Customer loadCustomer(UUID uuid) {
-		return new Customer(Bukkit.getPlayer(uuid), new HashMap<>());
+		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+
+		File customerFile = new File(dirCustomers, uuid + ".yml");
+		if (!customerFile.exists()) {
+			try {
+				customerFile.createNewFile();
+			} catch (IOException e) {
+				StatShops.getInstance().log(LoggingPolicy.ERROR, "Could not create customer file for " + uuid, e);
+			}
+			return new Customer(player, new HashMap<>());
+		}
+		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(customerFile);
+		ConfigurationSection pages = cfg.getConfigurationSection("memorized-pages");
+		HashMap<UUID, Integer> map = new HashMap<>();
+		if (pages != null) {
+			for (String key : pages.getKeys(false)) {
+				UUID shopUuid = UUID.fromString(key);
+				int page = pages.getInt(key);
+				map.put(shopUuid, page);
+			}
+		}
+		return new Customer(player, map);
 	}
 
 	@Override
 	public void saveCustomer(Customer customer) {
-
+		File customerFile = new File(dirCustomers, customer.getUuid() + ".yml");
+		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(customerFile);
+		ConfigurationSection pages = cfg.getConfigurationSection("memorized-pages");
+		if (pages == null) {
+			cfg.createSection("memorized-pages");
+		}
+		for (Map.Entry<UUID, Integer> entry : customer.getRememberedShopPages().entrySet()) {
+			pages.set(entry.getKey().toString(), entry.getValue());
+		}
+		try {
+			cfg.save(dirCustomers);
+		} catch (IOException e) {
+			StatShops.getInstance().log(LoggingPolicy.ERROR, "Error occurred while saving Customer: " + customer.getUuid(), e);
+		}
 	}
 
 	@Override
@@ -146,16 +187,18 @@ public class FlatFileDatabase implements Database {
 			tags.forEach(shop::addTag);
 			shop.setDisplayItem(displayItem);
 
-			//load before template so template does not get applied to empty shop page when adding first entry
-			loadEntries(shop).forEach((uuid1, entry) -> shop.addEntry(entry, entry.getSlot()));
-
-			if (defaultTemplateUuidString != null && !defaultTemplateUuidString.isEmpty()) {
-				UUID defaultTemplateUuid = UUID.fromString(defaultTemplateUuidString);
-				EntryTemplate template = TemplateHandler.getInstance().getTemplate(defaultTemplateUuid);
-				shop.setDefaultTemplate(template);
+			if (shop instanceof TemplatableShop tShop) {
+				if (defaultTemplateUuidString != null && !defaultTemplateUuidString.isEmpty()) {
+					UUID defaultTemplateUuid = UUID.fromString(defaultTemplateUuidString);
+					EntryTemplate template = TemplateHandler.getInstance().getTemplate(defaultTemplateUuid);
+					tShop.setDefaultTemplate(template);
+				}
 			}
 
 			result.put(uuid, shop);
+		}
+		for (Shop shop : result.values()) {
+			loadEntries(shop).forEach((uuid1, entry) -> shop.addEntry(entry, entry.getSlot()));
 		}
 		if (result.size() > 0) {
 			StatShops.getInstance().log(LoggingPolicy.INFO, "Successfully loaded " + result.size() + " shops.");
@@ -187,7 +230,9 @@ public class FlatFileDatabase implements Database {
 		cfg.set("type", type);
 		cfg.set("name-format", shop.getNameFormat());
 		cfg.set("permission", shop.getPermission() == null ? "" : shop.getPermission());
-		cfg.set("default-template", shop.getDefaultTemplate() == null ? "" : shop.getDefaultTemplate().getUuid().toString());
+		if (shop instanceof TemplatableShop tShop) {
+			cfg.set("default-template", tShop.getDefaultTemplate() == null ? "" : tShop.getDefaultTemplate().getUuid().toString());
+		}
 		YamlUtils.saveSkull(cfg, "display-item", shop.getDisplayItem());
 
 		if (type.equals(SHOP_TYPE_CHEST)) {

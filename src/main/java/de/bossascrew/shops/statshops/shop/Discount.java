@@ -2,14 +2,15 @@ package de.bossascrew.shops.statshops.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
-import de.bossascrew.shops.general.NamedObject;
-import de.bossascrew.shops.general.Taggable;
+import de.bossascrew.shops.statshops.api.data.NamedObject;
+import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.util.*;
 import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.DatabaseObject;
+import de.bossascrew.shops.statshops.api.data.DatabaseObject;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;

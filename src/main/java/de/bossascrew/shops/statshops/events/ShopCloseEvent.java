@@ -1,6 +1,6 @@
 package de.bossascrew.shops.statshops.events;
 
-import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.statshops.api.Shop;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Cancellable;

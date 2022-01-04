@@ -1,14 +1,14 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.entry.EntryModule;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.entry.TradeModule;
-import de.bossascrew.shops.general.menu.ShopMenu;
-import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.module.EntryModule;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.api.module.TradeModule;
+import de.bossascrew.shops.statshops.api.ShopMenu;
+import de.bossascrew.shops.statshops.util.EntryInteractionType;
 import de.bossascrew.shops.general.util.Pair;
-import de.bossascrew.shops.general.util.TagUtils;
+import de.bossascrew.shops.statshops.util.TagUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Config;
 import de.bossascrew.shops.statshops.data.Message;

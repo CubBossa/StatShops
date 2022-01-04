@@ -1,6 +1,6 @@
 package de.bossascrew.shops.statshops.handler;
 
-import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;

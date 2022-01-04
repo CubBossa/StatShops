@@ -1,41 +1,49 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.entry.EntryModule;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.handler.EntryModuleHandler;
-import de.bossascrew.shops.general.menu.ShopMenu;
-import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.module.EntryModule;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
+import de.bossascrew.shops.statshops.api.ShopMenu;
+import de.bossascrew.shops.statshops.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class OpenShopModule extends BaseModule implements EntryModule {
 
-	private Shop shop;
+	@Setter
+	private UUID uuid = null;
 	private DataSlot.ShopSlot shopSlot;
 
-	public OpenShopModule(EntryModuleHandler.EntryModuleProvider provider, ShopEntry shopEntry, Shop shop) {
-		super(provider, shopEntry);
-		this.shop = shop;
 
-		loadData();
+	public OpenShopModule(EntryModuleHandler.EntryModuleProvider provider, ShopEntry shopEntry) {
+		this(provider, shopEntry, null);
+	}
+
+	public OpenShopModule(EntryModuleHandler.EntryModuleProvider provider, ShopEntry shopEntry, @Nullable Shop shop) {
+		super(provider, shopEntry);
+
+		if (shopEntry != null) {
+			loadData();
+		}
 	}
 
 	/**
 	 * deserialize constructor. Provide shop entry afterwards!
 	 */
 	public OpenShopModule(Map<String, Object> values) {
-		this(EntryModuleHandler.getInstance().getProvider((String) values.get("provider")), null,
-				ShopHandler.getInstance().getShop(UUID.fromString((String) values.get("shop-uuid"))));
+		this(EntryModuleHandler.getInstance().getProvider((String) values.get("provider")), null);
 	}
 
 	@Override
@@ -45,12 +53,14 @@ public class OpenShopModule extends BaseModule implements EntryModule {
 
 	@Override
 	public void loadData() {
-		shopSlot = shopEntry.getData(DataSlot.ShopSlot.class, "open_shop", () -> new DataSlot.ShopSlot(shop));
-		shopSlot.setUpdateHandler(uuid -> shop = ShopHandler.getInstance().getShop(uuid));
+		shopSlot = shopEntry.getData(DataSlot.ShopSlot.class, "open_shop", () -> new DataSlot.ShopSlot(uuid));
+		shopSlot.setUpdateHandler(uuid -> this.uuid = uuid);
+		this.uuid = shopSlot.getData();
 	}
 
 	@Override
 	public EntryInteractionResult perform(Customer customer, ShopMenu menu, EntryInteractionType interactionType) {
+		Shop shop = ShopHandler.getInstance().getShop(uuid);
 		if (shop == null) {
 			return EntryInteractionResult.FAIL_UNKNOWN;
 		}
@@ -69,18 +79,24 @@ public class OpenShopModule extends BaseModule implements EntryModule {
 		return new LogEntry("customer: '" + customer.getUuid().toString() +
 				"', entry: '" + shopEntry.getUUID().toString() +
 				"', type: 'open shop', time: '" + LocalDateTime.now() +
-				"', shop: '" + shop.getUUID().toString() + "'");
+				"', shop: '" + uuid + "'");
 	}
 
 	@Override
 	public EntryModule duplicate() {
-		return new OpenShopModule(provider, shopEntry, shop);
+		OpenShopModule shopModule = new OpenShopModule(provider, shopEntry);
+		shopModule.setUuid(uuid);
+		return shopModule;
 	}
 
 	@NotNull
 	@Override
 	public Map<String, Object> serialize() {
-		return Map.of("provider", provider.getKey(),
-				"shop-uuid", shop.getUUID().toString());
+		Map<String, Object> map = new HashMap<>();
+		map.put("provider", provider.getKey());
+		if (uuid != null) {
+			map.put("shop-uuid", uuid.toString());
+		}
+		return map;
 	}
 }

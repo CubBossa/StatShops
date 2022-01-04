@@ -1,9 +1,9 @@
 package de.bossascrew.shops.statshops.hook;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.handler.CurrencyHandler;
-import de.bossascrew.shops.general.handler.SubModulesHandler;
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.handler.CurrencyHandler;
+import de.bossascrew.shops.statshops.handler.SubModulesHandler;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.StatShopsExtension;
 import de.bossascrew.shops.statshops.data.Message;

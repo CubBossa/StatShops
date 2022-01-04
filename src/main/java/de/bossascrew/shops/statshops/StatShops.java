@@ -3,15 +3,17 @@ package de.bossascrew.shops.statshops;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.handler.*;
-import de.bossascrew.shops.general.util.ItemFlags;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.general.util.LoggingPolicy;
-import de.bossascrew.shops.itemeditor.ItemEditorCommand;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.data.Database;
+import de.bossascrew.shops.statshops.api.data.LogDatabase;
 import de.bossascrew.shops.statshops.commands.ShopCommand;
 import de.bossascrew.shops.statshops.convertion.DataPreset;
-import de.bossascrew.shops.statshops.data.*;
+import de.bossascrew.shops.statshops.data.Config;
+import de.bossascrew.shops.statshops.data.FlatFileDatabase;
+import de.bossascrew.shops.statshops.data.FlatFileLogDatabase;
+import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.*;
 import de.bossascrew.shops.statshops.hook.CitizensHook;
 import de.bossascrew.shops.statshops.hook.VaultExtension;
@@ -63,15 +65,7 @@ public class StatShops extends JavaPlugin {
 	public static final String PERM_CMD_RELOAD = "statshops.command.reload";
 
 	public static final String TAG_GLOBAL = "global";
-	public static final String CONDITION_ITEM_IN_HAND = "item_in_hand";
-	public static final String CONDITION_ITEM_HAS_META = "item_has_meta";
-	public static final String CONDITION_ITEM_SPAWNABLE = "item_spawnable";
-	public static final String CONDITION_ITEM_COLORABLE = "item_colorable";
-	public static final String CONDITION_ITEM_DAMAGABLE = "item_damagable";
 	public static final String COMPLETION_SHOPS = "@shops";
-	public static final String COMPLETION_ENCHANTMENTS = "@enchantments";
-	public static final String COMPLETION_ENCHANTMENTS_CONTAINED = "@enchantments_on_item";
-	public static final String COMPLETION_ITEM_FLAGS = "@commandflags";
 	public static final String COMPLETION_DATA_TEMPLATES = "@data_templates";
 
 	@Getter
@@ -226,10 +220,8 @@ public class StatShops extends JavaPlugin {
 		commandManager = new BukkitCommandManager(this);
 		commandManager.addSupportedLanguage(Locale.ENGLISH);
 		registerContexts();
-		registerConditions();
 
 		commandManager.registerCommand(new ShopCommand());
-		commandManager.registerCommand(new ItemEditorCommand());
 
 		registerCompletions();
 
@@ -312,13 +304,13 @@ public class StatShops extends JavaPlugin {
 	}
 
 	public void log(LoggingPolicy policy, String message) {
-		if (shopsConfig == null || shopsConfig.getLoggingPolicy().getPriotiry() <= policy.getPriotiry()) {
+		if (shopsConfig == null || shopsConfig.getLoggingPolicy().getPriority() <= policy.getPriority()) {
 			getLogger().log(policy.getLevel(), message);
 		}
 	}
 
 	public void log(LoggingPolicy policy, String message, Throwable exception) {
-		if (shopsConfig == null || shopsConfig.getLoggingPolicy().getPriotiry() <= policy.getPriotiry()) {
+		if (shopsConfig == null || shopsConfig.getLoggingPolicy().getPriority() <= policy.getPriority()) {
 			getLogger().log(policy.getLevel(), message, exception);
 		}
 	}
@@ -350,31 +342,6 @@ public class StatShops extends JavaPlugin {
 					.map(s -> s.replaceAll(" ", "_")).
 					collect(Collectors.toList());
 		});
-		commandManager.getCommandCompletions().registerCompletion(COMPLETION_ENCHANTMENTS, context -> {
-			return Arrays.stream(Enchantment.values()).map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.toList());
-		});
-		commandManager.getCommandCompletions().registerCompletion(COMPLETION_ENCHANTMENTS_CONTAINED, context -> {
-			if (context.getSender() instanceof Player player) {
-				ItemStack hand = player.getInventory().getItemInMainHand();
-				if (hand.hasItemMeta()) {
-					return hand.getItemMeta().getEnchants().keySet().stream()
-							.map(enchantment -> enchantment.getKey().getKey().toLowerCase())
-							.collect(Collectors.toList());
-				}
-			}
-			return null;
-
-		});
-		commandManager.getCommandCompletions().registerCompletion(COMPLETION_ITEM_FLAGS, context -> {
-			String beforeLastComma = context.getInput().substring(0, context.getInput().lastIndexOf(',') + 1);
-			List<String> completions = Arrays.stream(ItemFlag.values())
-					.map(itemFlag -> itemFlag.toString().toLowerCase())
-					.filter(itemFlag -> !beforeLastComma.toLowerCase().contains(itemFlag))
-					.map(itemFlag -> beforeLastComma + itemFlag)
-					.collect(Collectors.toList());
-			completions.add("*");
-			return completions;
-		});
 		commandManager.getCommandCompletions().registerCompletion(COMPLETION_DATA_TEMPLATES, context -> {
 			return Arrays.stream(Objects.requireNonNull(new File(getDataFolder(), "presets/").listFiles()))
 					.map(File::getName)
@@ -395,63 +362,6 @@ public class StatShops extends JavaPlugin {
 				return null;
 			}
 			throw new InvalidCommandArgument("Es existiert kein Shop \"" + search + "\"");
-		});
-		commandManager.getCommandContexts().registerContext(ItemFlags.class, context -> {
-			if (context.getFirstArg().equalsIgnoreCase("*")) {
-				return new ItemFlags(ItemFlag.values());
-			}
-			String[] splits = context.getFirstArg().split(",");
-			ItemFlags flags = new ItemFlags();
-			for (String split : splits) {
-				try {
-					flags.add(ItemFlag.valueOf(split.toUpperCase()));
-				} catch (IllegalArgumentException e) {
-					throw new InvalidCommandArgument("\"" + split + "\" is not a valid command flag.");
-				}
-			}
-			return flags;
-		});
-		commandManager.getCommandContexts().registerContext(Enchantment.class, context -> {
-			String input = context.popFirstArg();
-			Enchantment e = Enchantment.getByKey(NamespacedKey.minecraft(input));
-			if (e == null) {
-				throw new InvalidCommandArgument("There is no enchantment with the name \"" + input + "\".");
-			}
-			return e;
-		});
-	}
-
-	public void registerConditions() {
-		commandManager.getCommandConditions().addCondition(CONDITION_ITEM_IN_HAND, context -> {
-			if (!(context.getIssuer().getIssuer() instanceof Player player) || player.getInventory().getItemInMainHand().getType() == Material.AIR) {
-				throw new ConditionFailedException("You need to hold an Item in your main hand to run this command."); //TODO translations
-			}
-		});
-		commandManager.getCommandConditions().addCondition(CONDITION_ITEM_HAS_META, context -> {
-			if (context.getIssuer().getIssuer() instanceof Player player) {
-				ItemStack hand = player.getInventory().getItemInMainHand();
-				if (!hand.hasItemMeta()) {
-					hand.setItemMeta(Bukkit.getItemFactory().getItemMeta(hand.getType()));
-				}
-			}
-		});
-		commandManager.getCommandConditions().addCondition(CONDITION_ITEM_SPAWNABLE, context -> {
-			ItemStack stack = context.getIssuer().getPlayer().getInventory().getItemInMainHand();
-			if (!(stack.getItemMeta() instanceof SpawnEggMeta)) {
-				throw new ConditionFailedException("The item in your main hand needs to be a spawner or a spawn egg.");
-			}
-		});
-		commandManager.getCommandConditions().addCondition(CONDITION_ITEM_COLORABLE, context -> {
-			ItemStack stack = context.getIssuer().getPlayer().getInventory().getItemInMainHand();
-			if (!(stack.getItemMeta() instanceof Colorable)) {
-				throw new ConditionFailedException("The item in your main hand needs to be a colorable object.");
-			}
-		});
-		commandManager.getCommandConditions().addCondition(CONDITION_ITEM_DAMAGABLE, context -> {
-			ItemStack stack = context.getIssuer().getPlayer().getInventory().getItemInMainHand();
-			if (!(stack.getItemMeta() instanceof Damageable)) {
-				throw new ConditionFailedException("The item in your main hand needs to be a breakable object.");
-			}
 		});
 	}
 }

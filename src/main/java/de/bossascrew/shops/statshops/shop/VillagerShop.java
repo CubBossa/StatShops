@@ -1,14 +1,14 @@
 package de.bossascrew.shops.statshops.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.general.menu.VillagerMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.menu.VillagerShopEditor;
@@ -131,6 +131,11 @@ public class VillagerShop implements Shop {
 	}
 
 	@Override
+	public Collection<ShopEntry> getUnusedEntries() {
+		return unusedEntryCache.values();
+	}
+
+	@Override
 	public boolean removeEntry(ShopEntry entry) {
 		return false;
 	}
@@ -144,11 +149,6 @@ public class VillagerShop implements Shop {
 	public boolean setEntryUnused(ShopEntry entry) {
 		unusedEntryCache.put(entry.getUUID(), entry);
 		return slotEntryMap.remove(entry.getSlot(), entry);
-	}
-
-	@Override
-	public void applyTemplate(EntryTemplate template) {
-
 	}
 
 	@Override

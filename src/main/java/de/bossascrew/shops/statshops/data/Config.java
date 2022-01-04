@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import de.bossascrew.shops.general.config.AnnotationConfig;
 import de.bossascrew.shops.general.config.ConfigEntry;
 import de.bossascrew.shops.general.util.LoggingPolicy;
-import de.bossascrew.shops.general.util.TradeMessageType;
+import de.bossascrew.shops.statshops.util.TradeMessageType;
 import de.bossascrew.shops.statshops.StatShops;
 import lombok.Getter;
 import lombok.Setter;

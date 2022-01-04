@@ -1,11 +1,11 @@
 package de.bossascrew.shops.statshops.handler;
 
-import de.bossascrew.shops.general.PaginatedShop;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.entry.ShopEntry;
+import de.bossascrew.shops.statshops.api.PaginatedShop;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
 import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.Database;
+import de.bossascrew.shops.statshops.api.data.Database;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;

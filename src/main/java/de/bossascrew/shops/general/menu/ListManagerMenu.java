@@ -7,7 +7,7 @@ import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.menu.contexts.TargetContext;
 import de.bossascrew.shops.general.util.Editable;
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.minimessage.Template;

@@ -321,7 +321,7 @@ manager:
         # Valid placeholders in lore: <current>
         data:
           # Open Shop module
-          shop:
+          open_shop:
             name: "Open Shop"
             lore: "<gray>Current: <gold><current>\n<gray>The shop to open when interacted."
           # Page module

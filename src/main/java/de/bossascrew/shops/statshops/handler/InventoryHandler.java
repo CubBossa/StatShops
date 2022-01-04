@@ -1,7 +1,7 @@
 package de.bossascrew.shops.statshops.handler;
 
 import com.google.common.collect.Maps;
-import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.general.menu.EditorMenu;
 import de.bossascrew.shops.general.menu.OpenableMenu;
 import de.bossascrew.shops.general.menu.VillagerMenu;

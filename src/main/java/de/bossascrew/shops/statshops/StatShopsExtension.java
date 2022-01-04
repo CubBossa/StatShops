@@ -1,9 +1,10 @@
 package de.bossascrew.shops.statshops;
 
-import de.bossascrew.shops.general.handler.CurrencyHandler;
-import de.bossascrew.shops.general.handler.DynamicPricingHandler;
-import de.bossascrew.shops.general.handler.EntryModuleHandler;
-import de.bossascrew.shops.general.handler.SubModulesHandler;
+import de.bossascrew.shops.statshops.handler.CurrencyHandler;
+import de.bossascrew.shops.statshops.handler.DynamicPricingHandler;
+import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
+import de.bossascrew.shops.statshops.handler.SubModulesHandler;
+import de.bossascrew.shops.statshops.api.data.DefaultPricingDatabase;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -58,7 +59,7 @@ public abstract class StatShopsExtension {
 	}
 
 	/**
-	 * Allows to provide a default pricing by registering an instance of {@link de.bossascrew.shops.statshops.data.DefaultPricingDatabase}
+	 * Allows to provide a default pricing by registering an instance of {@link DefaultPricingDatabase}
 	 * <br><br>You can do this by calling the method loadDefaultPricing like so: {@code handler.loadDefaultPricing("essentials", new EssentialsWorthReader())}
 	 *
 	 * @param handler the singleton instance of a {@link DynamicPricingHandler}
@@ -82,7 +83,7 @@ public abstract class StatShopsExtension {
 	/**
 	 * You can register multiple {@link SubModulesHandler.ArticleSubModuleProvider} instances, that will automatically be displayed in the admin control panel
 	 * as trade modules. (register a command ArticuleSubModuleProvider and it will show up as a "trade command module" in the modules panel of the gui)
-	 * {@link SubModulesHandler.CostsSubModuleProvider} instead are only displayed when the module of an entry is a {@link de.bossascrew.shops.general.entry.TradeModule}.
+	 * {@link SubModulesHandler.CostsSubModuleProvider} instead are only displayed when the module of an entry is a {@link de.bossascrew.shops.statshops.api.module.TradeModule}.
 	 * The gui will display a seperate button where the user can pick between cost types (pay with items/money/xp/gems/...)
 	 *
 	 * @param subModulesHandler the singleton instance of {@link SubModulesHandler}

@@ -2,10 +2,10 @@ package de.bossascrew.shops.statshops.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.NamedObject;
-import de.bossascrew.shops.general.PaginatedShop;
-import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.api.data.NamedObject;
+import de.bossascrew.shops.statshops.api.PaginatedShop;
+import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;

@@ -13,10 +13,10 @@ public enum LoggingPolicy {
 	ERROR(Level.SEVERE, 3);
 
 	private final Level level;
-	private final int priotiry;
+	private final int priority;
 
 	LoggingPolicy(Level level, int priority) {
 		this.level = level;
-		this.priotiry = priority;
+		this.priority = priority;
 	}
 }

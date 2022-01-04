@@ -1,13 +1,14 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.PaginatedShop;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.handler.TemplateHandler;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.api.PaginatedShop;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.TemplatableShop;
+import de.bossascrew.shops.statshops.handler.TemplateHandler;
 import de.bossascrew.shops.general.menu.*;
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.Pair;
-import de.bossascrew.shops.general.util.TagUtils;
+import de.bossascrew.shops.statshops.util.TagUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
@@ -194,11 +195,13 @@ public class ShopManagementMenu {
 						Message.GUI_SHOP_SET_DISCOUNTS_NAME.getTranslation(), discountLore),
 				clickContext -> openShopDiscountsMenu(player, shop, fromPage, 0));
 
-		//Open Templates menu
-		chestMenu.setItemAndClickHandler(0, 7, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TEMPLATE,
-						Message.GUI_SHOP_SET_TEMPLATE_NAME.getTranslation(), Message.GUI_SHOP_SET_TEMPLATE_LORE.getTranslations(Template.of("template",
-								shop.getDefaultTemplate() == null ? Component.text("none") : shop.getDefaultTemplate().getName()))),
-				clickContext -> openDefaultTemplateMenu(player, shop, fromPage, 0));
+		if(shop instanceof TemplatableShop tShop) {
+			//Open Templates menu
+			chestMenu.setItemAndClickHandler(0, 7, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TEMPLATE,
+							Message.GUI_SHOP_SET_TEMPLATE_NAME.getTranslation(), Message.GUI_SHOP_SET_TEMPLATE_LORE.getTranslations(Template.of("template",
+									tShop.getDefaultTemplate() == null ? Component.text("none") : tShop.getDefaultTemplate().getName()))),
+					clickContext -> openDefaultTemplateMenu(player, tShop, fromPage, 0));
+		}
 
 		//Assign Shop to NPC
 		if (StatShops.getInstance().isCitizensInstalled()) {
@@ -321,7 +324,7 @@ public class ShopManagementMenu {
 		listMenu.openInventory(player, page);
 	}
 
-	public void openDefaultTemplateMenu(Player player, Shop shop, int fromPage, int page) {
+	public void openDefaultTemplateMenu(Player player, TemplatableShop shop, int fromPage, int page) {
 		ListMenu<EntryTemplate> listMenu = new ListMenu<>(3, TemplateHandler.getInstance(), Message.GUI_SHOP_TEMPLATE_TITLE, backContext -> openShopMenu(player, shop, fromPage));
 		listMenu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_TEMPLATE_INFO_NAME, Message.GUI_SHOP_TEMPLATE_INFO_LORE), clickContext -> {
 		});

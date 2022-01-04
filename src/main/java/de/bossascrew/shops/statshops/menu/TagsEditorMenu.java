@@ -1,16 +1,16 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.Taggable;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.general.menu.ConfirmMenu;
 import de.bossascrew.shops.general.menu.EditorMenu;
 import de.bossascrew.shops.general.menu.PagedChestMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.util.Editable;
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.DatabaseObject;
+import de.bossascrew.shops.statshops.api.data.DatabaseObject;
 import de.bossascrew.shops.statshops.data.Message;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

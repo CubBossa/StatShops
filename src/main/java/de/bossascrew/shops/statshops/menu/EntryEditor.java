@@ -1,9 +1,9 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.entry.TradeModule;
-import de.bossascrew.shops.general.handler.EntryModuleHandler;
-import de.bossascrew.shops.general.handler.SubModulesHandler;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.api.module.TradeModule;
+import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
+import de.bossascrew.shops.statshops.handler.SubModulesHandler;
 import de.bossascrew.shops.general.menu.ChestMenu;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.general.menu.EditorMenu;
@@ -11,10 +11,10 @@ import de.bossascrew.shops.general.menu.ListMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.menu.contexts.TargetContext;
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.general.util.Pair;
-import de.bossascrew.shops.general.util.TagUtils;
+import de.bossascrew.shops.statshops.util.TagUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;

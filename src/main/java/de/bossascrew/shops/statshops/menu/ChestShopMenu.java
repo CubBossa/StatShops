@@ -1,16 +1,16 @@
 package de.bossascrew.shops.statshops.menu;
 
 import com.google.common.base.Preconditions;
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.entry.TradeModule;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.api.module.TradeModule;
 import de.bossascrew.shops.general.menu.ChestMenu;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
-import de.bossascrew.shops.general.menu.ShopMenu;
+import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
-import de.bossascrew.shops.general.util.EntryInteractionType;
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.EntryInteractionType;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;

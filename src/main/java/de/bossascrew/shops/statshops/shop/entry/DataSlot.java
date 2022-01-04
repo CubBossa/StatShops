@@ -1,10 +1,10 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
-import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.general.menu.ListMenu;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.menu.contexts.TargetContext;
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
@@ -230,8 +230,12 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 	public static class ShopSlot extends DataSlot<UUID> {
 
 		public ShopSlot(@Nullable Shop shop) {
+			this(shop == null ? null : shop.getUUID());
+		}
+
+		public ShopSlot(@Nullable UUID uuid) {
 			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_SHOP);
-			super.setData(shop == null ? null : shop.getUUID());
+			super.setData(uuid);
 			super.setClickHandler(clickContext -> {
 				int shops = ShopHandler.getInstance().getShops().size();
 				ListMenu<Shop> menu = new ListMenu<>(Integer.max(3, Integer.min(shops % 9, 6)), ShopHandler.getInstance(),
@@ -245,8 +249,8 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 				clickContext.getTarget().run();
 				menu.openInventory(clickContext.getPlayer());
 			});
-			super.setDataFormatter(uuid -> uuid == null ? Component.text("none", NamedTextColor.GRAY) : ShopHandler.getInstance().getShop(uuid).getName());
-			super.setDisplayItem(shop == null ? new ItemStack(Material.VILLAGER_SPAWN_EGG) : shop.getListDisplayItem());
+			super.setDataFormatter(aUuid -> aUuid == null ? Component.text("none", NamedTextColor.GRAY) : ShopHandler.getInstance().getShop(aUuid).getName());
+			super.setDisplayItem(uuid == null ? new ItemStack(Material.VILLAGER_SPAWN_EGG) : ShopHandler.getInstance().getShop(uuid).getListDisplayItem());
 		}
 
 		public void setData(Shop shop) {

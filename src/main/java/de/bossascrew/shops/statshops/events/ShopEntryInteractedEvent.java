@@ -1,8 +1,8 @@
 package de.bossascrew.shops.statshops.events;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.util.EntryInteractionType;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import lombok.Getter;
 

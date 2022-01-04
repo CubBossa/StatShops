@@ -4,7 +4,7 @@ import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.menu.contexts.TargetContext;
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;

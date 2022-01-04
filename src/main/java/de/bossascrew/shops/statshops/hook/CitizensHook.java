@@ -1,7 +1,7 @@
 package de.bossascrew.shops.statshops.hook;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.Shop;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import net.citizensnpcs.api.CitizensAPI;

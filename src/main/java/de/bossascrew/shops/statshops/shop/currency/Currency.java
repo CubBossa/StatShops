@@ -1,6 +1,6 @@
 package de.bossascrew.shops.statshops.shop.currency;
 
-import de.bossascrew.shops.general.Customer;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.StatShops;
 import lombok.Getter;
 import lombok.Setter;

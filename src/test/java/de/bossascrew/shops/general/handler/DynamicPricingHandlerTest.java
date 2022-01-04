@@ -1,11 +1,9 @@
 package de.bossascrew.shops.general.handler;
 
-import de.bossascrew.shops.statshops.data.DefaultPricingDatabase;
+import de.bossascrew.shops.statshops.handler.DynamicPricingHandler;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class DynamicPricingHandlerTest {
 

@@ -1,12 +1,13 @@
 package de.bossascrew.shops.statshops.data;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.handler.EntryModuleHandler;
-import de.bossascrew.shops.general.handler.TemplateHandler;
-import de.bossascrew.shops.general.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
+import de.bossascrew.shops.statshops.handler.TemplateHandler;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
+import de.bossascrew.shops.statshops.api.data.Database;
+import de.bossascrew.shops.statshops.api.data.LogDatabase;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;

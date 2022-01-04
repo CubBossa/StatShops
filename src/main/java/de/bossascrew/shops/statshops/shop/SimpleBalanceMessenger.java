@@ -1,8 +1,8 @@
 package de.bossascrew.shops.statshops.shop;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.TransactionBalanceMessenger;
-import de.bossascrew.shops.general.util.TradeMessageType;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.api.TransactionBalanceMessenger;
+import de.bossascrew.shops.statshops.util.TradeMessageType;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.currency.Price;

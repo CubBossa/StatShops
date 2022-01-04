@@ -1,8 +1,8 @@
 package de.bossascrew.shops.statshops.shop.currency;
 
-import de.bossascrew.shops.general.Customer;
-import de.bossascrew.shops.general.handler.CurrencyHandler;
-import de.bossascrew.shops.general.handler.DynamicPricingHandler;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.handler.CurrencyHandler;
+import de.bossascrew.shops.statshops.handler.DynamicPricingHandler;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import lombok.Getter;
 import lombok.Setter;

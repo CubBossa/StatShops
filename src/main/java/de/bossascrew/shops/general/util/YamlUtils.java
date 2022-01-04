@@ -1,6 +1,7 @@
 package de.bossascrew.shops.general.util;
 
 import com.mojang.authlib.GameProfile;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

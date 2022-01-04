@@ -1,11 +1,11 @@
 package de.bossascrew.shops.statshops.convertion;
 
 import com.google.common.collect.Lists;
-import de.bossascrew.shops.general.Shop;
-import de.bossascrew.shops.general.entry.ShopEntry;
-import de.bossascrew.shops.general.handler.TemplateHandler;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.handler.TemplateHandler;
 import de.bossascrew.shops.general.util.LoggingPolicy;
-import de.bossascrew.shops.general.util.TagUtils;
+import de.bossascrew.shops.statshops.util.TagUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.FlatFileDatabase;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;

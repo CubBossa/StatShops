@@ -1,3 +1,4 @@
+![Banner](images/banner.png)
 # StatShops
 
 Check out the [wiki](https://github.com/CubBossa/StatShops/wiki/Getting-Started) for more information.

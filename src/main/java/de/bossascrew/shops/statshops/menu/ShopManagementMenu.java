@@ -105,7 +105,7 @@ public class ShopManagementMenu {
 
 	public void openShopsMenu(Player player, int page) {
 		int shops = ShopHandler.getInstance().getShops().size();
-		ListManagerMenu<Shop> menu = new ListManagerMenu<>(Integer.max(3, Integer.min(shops % 9, 6)), ShopHandler.getInstance(), StatShops.getInstance().getShopsConfig().isConfirmDeletion(),
+		ListEditorMenu<Shop> menu = new ListEditorMenu<>(Integer.max(3, Integer.min(shops % 9, 6)), ShopHandler.getInstance(), StatShops.getInstance().getShopsConfig().isConfirmDeletion(),
 				Message.GUI_SHOPS_TITLE, Message.GUI_SHOPS_ALREADY_EDITED, Message.GUI_SHOPS_NEW_NAME,
 				Message.GUI_SHOPS_NEW_LORE, Message.GUI_SHOPS_DELETE_CONFIRM, Message.GUI_SHOPS_NEW_TITLE, backContext -> openBaseMenu(player));
 		menu.setLeftClickHandler(targetContext -> openShopMenu(player, targetContext.getTarget(), menu.getCurrentPage()));
@@ -346,7 +346,7 @@ public class ShopManagementMenu {
 	}
 
 	public void openLimitsMenu(Player player, int page) {
-		ListManagerMenu<Limit> menu = new ListManagerMenu<>(3, LimitsHandler.getInstance(), StatShops.getInstance().getShopsConfig().isConfirmDeletion(),
+		ListEditorMenu<Limit> menu = new ListEditorMenu<>(3, LimitsHandler.getInstance(), StatShops.getInstance().getShopsConfig().isConfirmDeletion(),
 				Message.GUI_LIMITS, Message.GUI_LIMITS_ALREADY_EDITED, Message.GUI_LIMITS_NEW_NAME, Message.GUI_LIMITS_NEW_LORE,
 				Message.GUI_LIMITS_DELETE_CONFIRM, Message.GUI_LIMITS_NEW_TITLE, backContext -> openBaseMenu(player));
 		menu.setLeftClickHandler(targetContext -> openLimitMenu(player, targetContext.getTarget(), menu.getCurrentPage()));
@@ -464,7 +464,7 @@ public class ShopManagementMenu {
 	}
 
 	public void openDiscountsMenu(Player player, int page) {
-		ListManagerMenu<Discount> menu = new ListManagerMenu<>(3, DiscountHandler.getInstance(), StatShops.getInstance().getShopsConfig().isConfirmDeletion(),
+		ListEditorMenu<Discount> menu = new ListEditorMenu<>(3, DiscountHandler.getInstance(), StatShops.getInstance().getShopsConfig().isConfirmDeletion(),
 				Message.GUI_DISCOUNTS, Message.GUI_DISCOUNTS_ALREADY_EDITED, Message.GUI_DISCOUNTS_NEW_NAME,
 				Message.GUI_DISCOUNTS_NEW_LORE, Message.GUI_DISCOUNTS_DELETE_CONFIRM, Message.GUI_DISCOUNTS_NEW_TITLE, backContext -> openBaseMenu(player));
 		menu.setLeftClickHandler(targetContext -> openDiscountMenu(player, targetContext.getTarget(), menu.getCurrentPage()));

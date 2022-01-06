@@ -3,20 +3,20 @@ package de.bossascrew.shops.statshops.util;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.general.util.DurationParser;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.general.util.TextUtils;
-import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.module.TradeModule;
-import de.bossascrew.shops.statshops.handler.TemplateHandler;
-import de.bossascrew.shops.general.menu.DefaultSpecialItem;
-import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Config;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
+import de.bossascrew.shops.statshops.handler.TemplateHandler;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.Limit;
@@ -197,7 +197,6 @@ public class ItemStackUtils {
 				Template.of("transactioncount", bought + ""),
 				Template.of("userlimit", userLimit == null ? "-" : userLimit.getTransactionLimit() + ""),
 				Template.of("globallimit", globalLimit == null ? "-" : globalLimit.getTransactionLimit() + ""),
-				Template.of("next_recovery", "not implemented"), //TODO
 				Template.of("recovery_duration", TextUtils.formatDuration(recovery))
 		));
 	}
@@ -228,7 +227,7 @@ public class ItemStackUtils {
 
 	public ItemStack createButtonItemStack(boolean val, Message name, Message lore) {
 		return ItemStackUtils.createItemStack(val ? Material.LIME_DYE : Material.GRAY_DYE,
-				name.getTranslation(Template.of("value", val + "")), //TODO true false translation
+				name.getTranslation(Template.of("value", val + "")),
 				lore.getTranslations(Template.of("value", val + "")));
 	}
 

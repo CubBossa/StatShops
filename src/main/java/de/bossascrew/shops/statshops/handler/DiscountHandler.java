@@ -2,7 +2,7 @@ package de.bossascrew.shops.statshops.handler;
 
 import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.statshops.api.ShopEntry;
-import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
+import de.bossascrew.shops.general.menu.ListEditorMenuElementHolder;
 import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class DiscountHandler implements
 		WebAccessable<Discount>,
-		ListManagementMenuElementHolder<Discount> {
+		ListEditorMenuElementHolder<Discount> {
 
 	@Getter
 	private static DiscountHandler instance;

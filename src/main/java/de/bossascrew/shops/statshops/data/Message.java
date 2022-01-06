@@ -105,9 +105,15 @@ public class Message {
 	public static final Message GUI_SHOPS_NEW_TITLE = new Message("manager.gui.shops.new_shop.title");
 	public static final Message GUI_SHOPS_NEW_NAME = new Message("manager.gui.shops.new_shop.name");
 	public static final Message GUI_SHOPS_NEW_LORE = new Message("manager.gui.shops.new_shop.lore");
+	public static final Message GUI_SHOPS_TYPE_TITLE = new Message("manager.gui.shops.new_shop_type.title");
 	public static final Message GUI_SHOPS_NAME = new Message("manager.gui.shops.entry.name");
 	public static final Message GUI_SHOPS_LORE = new Message("manager.gui.shops.entry.lore");
 	public static final Message GUI_SHOPS_ALREADY_EDITED = new Message("manager.gui.shops.already_edited");
+
+	public static final Message SHOP_TYPE_CHEST_NAME = new Message("manager.shop_types.chest_menu_shop.name");
+	public static final Message SHOP_TYPE_CHEST_LORE = new Message("manager.shop_types.chest_menu_shop.lore");
+	public static final Message SHOP_TYPE_VILLAGER_NAME = new Message("manager.shop_types.villager_shop.name");
+	public static final Message SHOP_TYPE_VILLAGER_LORE = new Message("manager.shop_types.villager_shop.lore");
 
 	public static final Message GUI_SHOP_SET_NAME_TITLE = new Message("manager.gui.shop.set_name.title");
 	public static final Message GUI_SHOP_SET_NAME_NAME = new Message("manager.gui.shop.set_name.name");

@@ -17,7 +17,6 @@ import de.bossascrew.shops.statshops.events.ShopOpenEvent;
 import de.bossascrew.shops.statshops.events.ShopTurnPageEvent;
 import de.bossascrew.shops.statshops.menu.ChestShopEditor;
 import de.bossascrew.shops.statshops.menu.ChestShopMenu;
-import de.bossascrew.shops.statshops.menu.VillagerShopMenu;
 import de.bossascrew.shops.statshops.util.EntryInteractionType;
 import lombok.Getter;
 import lombok.Setter;
@@ -57,6 +56,8 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 		this.balanceMessenger = new SimpleBalanceMessenger(StatShops.getInstance().getShopsConfig().getTradeMessageFeedback());
 		this.pageTurningPlayers = new ArrayList<>();
 		this.pageTitles = new HashMap<>();
+
+		this.rows = StatShops.getInstance().getShopsConfig().getDefaultShopSize();
 	}
 
 	@Override

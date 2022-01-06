@@ -1,13 +1,13 @@
 package de.bossascrew.shops.statshops.handler;
 
-import de.bossascrew.shops.statshops.api.Taggable;
-import de.bossascrew.shops.statshops.api.ShopEntry;
-import de.bossascrew.shops.general.menu.ListManagementMenuElementHolder;
-import de.bossascrew.shops.statshops.api.ShopMenu;
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
+import de.bossascrew.shops.general.menu.ListEditorMenuElementHolder;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.api.ShopMenu;
+import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.statshops.shop.Limit;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Getter
 public class LimitsHandler implements
 		WebAccessable<Limit>,
-		ListManagementMenuElementHolder<Limit> {
+		ListEditorMenuElementHolder<Limit> {
 
 	@Getter
 	private static LimitsHandler instance;

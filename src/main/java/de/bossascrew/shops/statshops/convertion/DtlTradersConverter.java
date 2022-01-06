@@ -6,6 +6,7 @@ import de.bossascrew.shops.statshops.api.module.EntryModule;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.module.TradeModule;
 import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
+import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
@@ -98,9 +99,9 @@ public class DtlTradersConverter implements Converter {
 			String partTitle = shopTitleFormat.replace("%shop-name%", title);
 			partTitle.replace("%page-name%", "");
 
-			Shop shopBuy = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeBuyName));
-			Shop shopSell = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeSellName));
-			Shop shopTrade = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeTradeName));
+			Shop shopBuy = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeBuyName), ChestMenuShop.class);
+			Shop shopSell = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeSellName), ChestMenuShop.class);
+			Shop shopTrade = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeTradeName), ChestMenuShop.class);
 			List<Shop> shops = new ArrayList<>();
 			if (modeBuy) {
 				shops.add(shopBuy);

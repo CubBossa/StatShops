@@ -1,11 +1,7 @@
 package de.bossascrew.shops.statshops;
 
-import de.bossascrew.shops.statshops.handler.CurrencyHandler;
-import de.bossascrew.shops.statshops.handler.DynamicPricingHandler;
-import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
-import de.bossascrew.shops.statshops.handler.SubModulesHandler;
 import de.bossascrew.shops.statshops.api.data.DefaultPricingDatabase;
-import de.bossascrew.shops.statshops.handler.TranslationHandler;
+import de.bossascrew.shops.statshops.handler.*;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -53,8 +49,10 @@ public abstract class StatShopsExtension {
 	 * Allows to provide a different database. If you, for example, want to use a database type that hasn't been implemented
 	 * by StatShops or want to do some changes on the way customers are stored, you can provide a database type here.
 	 * <br>Make sure that you also enable it in the config.
+	 *
+	 * @param databaseHandler the singleton instance of a {@link DatabaseHandler}
 	 */
-	public void provideDatabase() { //TODO databasehandler
+	public void provideDatabase(DatabaseHandler databaseHandler) {
 
 	}
 
@@ -92,5 +90,13 @@ public abstract class StatShopsExtension {
 
 	}
 
-	//TODO other  shoptypes to shophandler
+	/**
+	 * You can register new Shop Types by calling {@link ShopHandler#registerShopType(Class)} and providing the shop class. It will then be displayed in the
+	 * Editor and users can select the shop type.
+	 *
+	 * @param shopHandler the singleton instance of {@link ShopHandler}
+	 */
+	public void registerShopTypes(ShopHandler shopHandler) {
+
+	}
 }

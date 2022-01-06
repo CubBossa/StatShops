@@ -112,7 +112,7 @@ shop:
         # Valid placeholders: <discount>
         discount_positive: "<red>+<discount>"
         discount_negative: "<green><discount>"
-        # Valid placeholders: <transactioncount>, <userlimit>, <globallimit>, <next_recovery>, <recovery_duration>
+        # Valid placeholders: <transactioncount>, <userlimit>, <globallimit>, <recovery_duration>
         limit_both: "<gray><red><transactioncount></red>/<dark_red><userlimit></dark_red> personal limit</gray>\n<gray><red><transactioncount></red>/<dark_red><globallimit></dark_red> global limit\n<gray>Recover: <yellow><recovery_duration>"
         limit_personal: "<gray><red><transactioncount></red>/<dark_red><userlimit></dark_red> personal limit</gray>\n<gray>Recover: <yellow><recovery_duration>"
         limit_global: "<gray><red><transactioncount></red>/<dark_red><globallimit></dark_red> global limit\n<gray>Recover: <yellow><recovery_duration>"
@@ -123,6 +123,13 @@ villager_shop:
     title: "<name>"
 
 manager:
+  shop_types:
+    chest_menu_shop:
+      name: "<white>Chest Menu Shop"
+      lore: "<gray>This shop type is based on a\n<gray>chest inventory and can be\n<gray>modified in row size.\n<gray>» <yellow>Limits & Discounts\n<gray>» <yellow>Pagination\n<gray>» <yellow>Templates"
+    villager_shop:
+      name: "<white>Villager Shop"
+      lore: "<gray>This shop type simulates the\n<gray>trade inventory of a merchant.\n<gray>» <yellow>Limits & Discounts"
   gui:
     main:
       title: "Setup your shop system"
@@ -153,6 +160,8 @@ manager:
         title: "Create a new Shop"
         name: "<green>New Shop"
         lore: "<gray>Click to create a \n<gray>new shop."
+      new_shop_type:
+        title: "Choose a shop type"
       # Defines, how each shop will be displayed in the list
       entry:
         # Valid placeholders: <name>

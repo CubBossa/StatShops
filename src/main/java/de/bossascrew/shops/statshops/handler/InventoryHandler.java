@@ -38,7 +38,6 @@ public class InventoryHandler {
 	public boolean canMenuOpen(Player player, OpenableMenu menu) {
 		if(menu instanceof EditorMenu editorMenu) {
 
-			//TODO jedes plugin muss menü conditions registrieren
 			if (!editorMenu.isEditorSet() || editorMenu.getEditor().equals(player)) {
 				return true;
 			} else {

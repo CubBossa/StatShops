@@ -21,11 +21,8 @@ public class JustPasteIntegration implements PasteServer {
             Response response = client.newCall(request).execute();
             JSONObject jsonDocument = new JSONObject(response.body().string());
 
-            Paste paste = new Paste(jsonDocument.getString("key"), hostname + "/" + jsonDocument.getString("key"), content, new Runnable() {
-                @Override
-                public void run() {
-                    new JustPasteIntegration().deletePaste(jsonDocument.getString("key"), jsonDocument.get("deleteSecret") != null ? (jsonDocument.getString("deleteSecret")) : "");
-                }
+            Paste paste = new Paste(jsonDocument.getString("key"), hostname + "/" + jsonDocument.getString("key"), content, () -> {
+                new JustPasteIntegration().deletePaste(jsonDocument.getString("key"), jsonDocument.get("deleteSecret") != null ? (jsonDocument.getString("deleteSecret")) : "");
             });
 
             return paste;

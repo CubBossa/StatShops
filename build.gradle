@@ -39,6 +39,10 @@ repositories {
         name = 'everything'
         url = 'https://repo.citizensnpcs.co/'
     }
+    maven {
+        name = 'spigot-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -75,6 +79,7 @@ dependencies {
     compileOnly 'com.mojang:authlib:1.5.21'
     shadow 'de.tr7zw:item-nbt-api-plugin:2.8.0'
     compileOnly 'net.citizensnpcs:citizensapi:2.0.26-SNAPSHOT'
+    shadow 'org.bstats:bstats-bukkit:2.2.1'
 }
 
 shadowJar{
@@ -85,6 +90,7 @@ shadowJar{
     relocate 'net.kyori', 'de.bossascrew.shops'
     relocate 'net.wesjd', 'de.bossascrew.shops'
     relocate 'de.tr7zw.changeme.nbtapi', 'de.bossascrew.shops.nbtapi'
+    relocate 'org.bstats', 'de.bossascrew.shops'
 
 }
 

@@ -167,7 +167,7 @@ public class FlatFileDatabase implements Database {
 					boolean pageRemembered = cfg.getBoolean("page-remembered", false);
 					int rows = cfg.getInt("rows");
 
-					shop = new ChestMenuShop(nameFormat, uuid);
+					shop = new ChestMenuShop(uuid, nameFormat);
 					ChestMenuShop cShop = (ChestMenuShop) shop;
 					cShop.setDefaultPage(defaultPage);
 					cShop.setPageRemembered(pageRemembered);
@@ -176,7 +176,7 @@ public class FlatFileDatabase implements Database {
 				}
 				case SHOP_TYPE_VILLAGER -> {
 
-					shop = new VillagerShop(nameFormat, uuid);
+					shop = new VillagerShop(uuid, nameFormat);
 				}
 				default -> {
 					StatShops.getInstance().log(LoggingPolicy.ERROR, "Unknown shop type: " + type);
@@ -198,7 +198,15 @@ public class FlatFileDatabase implements Database {
 			result.put(uuid, shop);
 		}
 		for (Shop shop : result.values()) {
-			loadEntries(shop).forEach((uuid1, entry) -> shop.addEntry(entry, entry.getSlot()));
+			loadEntries(shop).forEach((uuid1, entry) -> {
+				if (entry.getSlot() < 0) {
+					//unused entry
+					shop.addUnusedEntry(entry);
+					System.out.println("loaded unused entry: " + entry.getDisplayItem().getType());
+				} else {
+					shop.addEntry(entry, entry.getSlot());
+				}
+			});
 		}
 		if (result.size() > 0) {
 			StatShops.getInstance().log(LoggingPolicy.INFO, "Successfully loaded " + result.size() + " shops.");
@@ -245,6 +253,7 @@ public class FlatFileDatabase implements Database {
 		}
 		cfg.set("tags", shop.getTags(false));
 
+		shop.getUnusedEntries().forEach(this::saveEntry);
 		shop.getEntries().forEach((integer, entry) -> saveEntry(entry));
 
 		try {
@@ -260,7 +269,6 @@ public class FlatFileDatabase implements Database {
 		if (file.exists()) {
 			file.delete();
 		}
-
 	}
 
 	@Override

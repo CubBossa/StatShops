@@ -7,6 +7,7 @@ import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class CostsSubModule<T> implements SubModule {
+public class CostsSubModule<T> implements ConfigurationSerializable {
 
 	@Getter
 	private SubModulesHandler.CostsSubModuleProvider<T> provider;

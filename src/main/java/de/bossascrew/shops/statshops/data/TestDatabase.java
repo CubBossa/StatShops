@@ -41,7 +41,7 @@ public class TestDatabase implements Database, LogDatabase {
 	}
 
 	public Shop createShop(String nameFormat, UUID uuid) {
-		return new ChestMenuShop(nameFormat, uuid);
+		return new ChestMenuShop(uuid, nameFormat);
 	}
 
 	@Override

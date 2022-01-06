@@ -47,7 +47,7 @@ public class ShopHandler implements
 
 	public @Nullable
 	Shop createShop(String nameFormat) {
-		ChestMenuShop shop = new ChestMenuShop(nameFormat, UUID.randomUUID()); //TODO typen registrieren
+		ChestMenuShop shop = new ChestMenuShop(UUID.randomUUID(), nameFormat); //TODO typen registrieren
 		shop.setRows(StatShops.getInstance().getShopsConfig().getDefaultShopSize());
 		StatShops.getInstance().getDatabase().saveShop(shop);
 		addShop(shop);

@@ -162,6 +162,7 @@ public class Message {
 	public static final Message GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE = new Message("manager.gui.shop_editor.template.lore");
 	public static final Message GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME = new Message("manager.gui.shop_editor.freeze.name");
 	public static final Message GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE = new Message("manager.gui.shop_editor.freeze.lore");
+	public static final Message GUI_SHOP_EDITOR_UNUSED_INFO = new Message("manager.gui.shop_editor.unused_items");
 
 	public static final Message GUI_LIMITS = new Message("manager.gui.limits.title");
 	public static final Message GUI_LIMITS_ALREADY_EDITED = new Message("manager.gui.limits.already_edited");

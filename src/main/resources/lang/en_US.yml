@@ -233,6 +233,8 @@ manager:
       freeze:
         name: "<white>Move items: <value>"
         lore: "<gray>You can toggle between\n<gray>Move and Edit Mode.\n<gray>Freeze your shop to edit\n<gray>price, discounts etc."
+      # Valid placeholders: <amount>
+      unused_items: "<prefix><gray>This shop contains <amount> unused shop entries. Use <white><italic><click:suggest_command:/statshops cleanup >/shops cleanup</click></italic></white> to remove them."
     shop_entry:
       title: "Edit Shop Entry"
 

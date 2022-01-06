@@ -40,6 +40,5 @@ public class CustomerHandler implements WebAccessable<Customer> {
 
 	@Override
 	public void storeWebData(List<Customer> values) {
-		//TODO
 	}
 }

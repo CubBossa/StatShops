@@ -35,7 +35,6 @@ public class Config extends AnnotationConfig {
 
 
 	//SHOPS
-	//TODO keybinding
 	@ConfigEntry(path = "shops.cooldown")
 	public int cooldown = 100;
 	@ConfigEntry(path = "shops.cooldown-message")
@@ -98,13 +97,18 @@ public class Config extends AnnotationConfig {
 	public boolean autoTaggingAttributes = false;
 
 	//DATA
-	@ConfigEntry(path = "database.logs.file-per-shop")
+
+	@ConfigEntry(path = "database.cleanup_unused_entries")
+	public boolean cleanupUnusedEntries = true;
+
+
+	@ConfigEntry(path = "database.logs.flatfile.file-per-shop")
 	public boolean logFilePerShop = true;
-	@ConfigEntry(path = "database.logs.directory-per-shop")
+	@ConfigEntry(path = "database.logs.flatfile.directory-per-shop")
 	public boolean logDirPerShop = false;
-	@ConfigEntry(path = "database.logs.file-per-day")
+	@ConfigEntry(path = "database.logs.flatfile.file-per-day")
 	public boolean logFilePerDay = false;
-	@ConfigEntry(path = "database.logs.directory-per-day")
+	@ConfigEntry(path = "database.logs.flatfile.directory-per-day")
 	public boolean logDirPerDay = false;
 
 	@ConfigEntry(path = "database.logs.log-module-trade")

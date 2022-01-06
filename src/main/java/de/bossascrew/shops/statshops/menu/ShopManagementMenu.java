@@ -1,25 +1,21 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.general.menu.*;
+import de.bossascrew.shops.general.util.Pair;
+import de.bossascrew.shops.general.util.TextUtils;
+import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.PaginatedShop;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.TemplatableShop;
-import de.bossascrew.shops.statshops.handler.TemplateHandler;
-import de.bossascrew.shops.general.menu.*;
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
-import de.bossascrew.shops.general.util.Pair;
-import de.bossascrew.shops.statshops.util.TagUtils;
-import de.bossascrew.shops.general.util.TextUtils;
-import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.statshops.handler.DiscountHandler;
-import de.bossascrew.shops.statshops.handler.LimitsHandler;
-import de.bossascrew.shops.statshops.handler.ShopHandler;
-import de.bossascrew.shops.statshops.handler.TranslationHandler;
+import de.bossascrew.shops.statshops.handler.*;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.Limit;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.TagUtils;
 import de.bossascrew.shops.web.WebSessionUtils;
 import de.bossascrew.shops.web.pasting.Paste;
 import net.kyori.adventure.text.Component;
@@ -225,7 +221,15 @@ public class ShopManagementMenu {
 		});
 		chestMenu.setItemAndClickHandler(1, 2, ItemStackUtils.createItemStack(Material.CHEST,
 				Message.GUI_SHOP_SET_PREVIEW_NAME, Message.GUI_SHOP_SET_PREVIEW_LORE), clickContext -> {
-			shop.open(Customer.wrap(player)); //TODO open shop menu on real close (not page switch)
+
+			if (shop instanceof ChestMenuShop cShop) {
+				BottomTopChestMenu preview = new BottomTopChestMenu(new ChestShopMenu(cShop, Customer.wrap(player)), 1);
+
+
+				preview.openInventory(player);
+			} else {
+				shop.open(Customer.wrap(player));
+			}
 		});
 
 

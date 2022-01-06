@@ -1,10 +1,12 @@
 package de.bossascrew.shops.statshops.menu;
 
+import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.module.TradeModule;
 import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.general.menu.VillagerMenu;
+import de.bossascrew.shops.statshops.handler.CurrencyHandler;
 import de.bossascrew.shops.statshops.util.EntryInteractionType;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.util.TradeMessageType;
@@ -31,13 +33,13 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 
 	private final static ClickType[] IGNORED = {ClickType.UNKNOWN, ClickType.WINDOW_BORDER_LEFT, ClickType.WINDOW_BORDER_RIGHT};
 
-	private final VillagerShop villagerShop;
+	private final Shop villagerShop;
 	private final Customer targetCustomer;
 	private final SimpleBalanceMessenger balanceMessenger;
 	private final Map<ShopEntry, Integer> recipeMap;
 	private final Map<Integer, ShopEntry> entryMap;
 
-	public VillagerShopMenu(VillagerShop villagerShop, Customer customer) {
+	public VillagerShopMenu(Shop villagerShop, Customer customer) {
 		super(villagerShop.getName(), null);
 		this.villagerShop = villagerShop;
 		this.recipeMap = new HashMap<>();
@@ -71,11 +73,11 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 
 	private void prepareInventory(Player player) {
 		int i = 0;
-		for (Map.Entry<Integer, ShopEntry> entry : villagerShop.getSlotEntryMap().entrySet()) {
+		for (Map.Entry<Integer, ShopEntry> entry : villagerShop.getEntries().entrySet()) {
 
 			ShopEntry e = entry.getValue();
 			//Only works with Currency<ItemStack> for now
-			if (e.getModule() != null && e.getModule() instanceof TradeModule tm && tm.getPayPrice(true).getObject() instanceof ItemStack) {
+			if (e.getModule() instanceof TradeModule tm && tm.getCosts().getBuyPrice().getCurrency().equals(CurrencyHandler.CURRENCY_ITEM)) {
 
 				Price<ItemStack> payPrice = (Price<ItemStack>) tm.getPayPrice(true);
 				ItemStack price = payPrice.getObject();
@@ -83,14 +85,14 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 
 				MerchantRecipe recipe = new MerchantRecipe((ItemStack) tm.getGainPrice().getObject(), e.getPermission() == null || player.hasPermission(e.getPermission()) ? Integer.MAX_VALUE : 0);
 				recipeMap.put(e, i);
-				entryMap.put(i++, e);
+				entryMap.put(i, e);
 				recipe.addIngredient(price);
 				placeEntry(e);
 
 				DiscountHandler.getInstance().subscribeToDisplayUpdates(this, e);
 				LimitsHandler.getInstance().subscribeToDisplayUpdates(this, player, e);
 
-				setMerchantOffer(entry.getKey(), recipe);
+				setMerchantOffer(i++, recipe);
 			}
 		}
 	}

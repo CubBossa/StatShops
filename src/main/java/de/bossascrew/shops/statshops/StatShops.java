@@ -1,19 +1,15 @@
 package de.bossascrew.shops.statshops;
 
 import co.aikar.commands.BukkitCommandManager;
-import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
-import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.data.Database;
 import de.bossascrew.shops.statshops.api.data.LogDatabase;
 import de.bossascrew.shops.statshops.commands.ShopCommand;
 import de.bossascrew.shops.statshops.convertion.DataPreset;
-import de.bossascrew.shops.statshops.data.Config;
-import de.bossascrew.shops.statshops.data.FlatFileDatabase;
-import de.bossascrew.shops.statshops.data.FlatFileLogDatabase;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.*;
 import de.bossascrew.shops.statshops.handler.*;
 import de.bossascrew.shops.statshops.hook.CitizensHook;
 import de.bossascrew.shops.statshops.hook.VaultExtension;
@@ -24,18 +20,11 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.SpawnEggMeta;
-import org.bukkit.material.Colorable;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,6 +95,9 @@ public class StatShops extends JavaPlugin {
 	private CurrencyHandler currencyHandler;
 	@Getter
 	private DynamicPricingHandler dynamicPricingHandler;
+
+	@Getter
+	private Metrics metrics;
 
 	private static boolean loading = true;
 
@@ -225,6 +217,10 @@ public class StatShops extends JavaPlugin {
 
 		registerCompletions();
 
+
+		// Register to metrics
+		this.metrics = new Metrics(this, 13842);
+
 		// Allow Transactions
 		loading = false;
 	}
@@ -250,7 +246,14 @@ public class StatShops extends JavaPlugin {
 	public void onDisable() {
 
 		InventoryHandler.getInstance().closeAllMenus(true);
-		ShopHandler.getInstance().getShops().forEach(shop -> database.saveShop(shop));
+		for (Shop shop : ShopHandler.getInstance().getShops()) {
+			database.saveShop(shop);
+			if (shopsConfig.isCleanupUnusedEntries()) {
+				for (ShopEntry shopEntry : shop.getUnusedEntries()) {
+					database.deleteEntry(shopEntry);
+				}
+			}
+		}
 		LimitsHandler.getInstance().getLimits().forEach(limit -> database.saveLimit(limit));
 		DiscountHandler.getInstance().getDiscounts().forEach(discount -> database.saveDiscount(discount));
 		TemplateHandler.getInstance().getTemplates().forEach(template -> {

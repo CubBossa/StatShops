@@ -2,14 +2,14 @@ package de.bossascrew.shops.statshops.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import de.bossascrew.shops.statshops.data.Customer;
-import de.bossascrew.shops.statshops.api.data.NamedObject;
-import de.bossascrew.shops.statshops.api.PaginatedShop;
-import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.PaginatedShop;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.data.NamedObject;
 import de.bossascrew.shops.statshops.convertion.DataPreset;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
@@ -155,6 +155,14 @@ public class ShopCommand extends BaseCommand {
 		new ShopManagementMenu().openShopMenu(player, shop, 0);
 	}
 
+	@Subcommand("cleanup")
+	@Description("Removes unused shop entries from the shop")
+	@Syntax("<Shop>")
+	@CommandCompletion(StatShops.COMPLETION_SHOPS)
+	public void onCleanUp(CommandSender sender, Shop shop) {
+		shop.cleanupUnusedEntries();
+		//TODO feedback und so
+	}
 
 	@Subcommand("reload config")
 	@CommandPermission(StatShops.PERM_CMD_RELOAD)

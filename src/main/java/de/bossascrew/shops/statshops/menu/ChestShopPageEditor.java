@@ -1,15 +1,17 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.statshops.api.ShopEntry;
-import de.bossascrew.shops.statshops.handler.TemplateHandler;
 import de.bossascrew.shops.general.menu.*;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.handler.TemplateHandler;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
+import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.tr7zw.nbtapi.NBTItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.Template;
@@ -24,9 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
@@ -50,6 +50,11 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 		this.backHandler = backHandler;
 		//Save all changed items before closing menu
 		this.closeHandler = closeContext -> {
+			Collection<ShopEntry> unused = shop.getUnusedEntries();
+			if (unused.size() > 0) {
+				Customer.wrap(getEditor()).sendMessage(Message.GUI_SHOP_EDITOR_UNUSED_INFO.getKey(), Message.GUI_SHOP_EDITOR_UNUSED_INFO.getTranslation(
+						Template.of("amount", unused.size() + "")));
+			}
 			setEditor(null);
 			shop.saveToDatabase();
 			if (!shopEditor.isFreezeItems()) {
@@ -191,6 +196,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 
 	private void handleFreeze() {
 		List<ShopEntry> containedEntries = shop.getEntries(shopPage);
+		Map<Integer, BaseEntry> newEntryPositions = new TreeMap<>();
 
 		boolean wasEmpty = containedEntries.isEmpty();
 		boolean isEmpty = true;
@@ -215,24 +221,30 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 			if (nbtItem.hasKey(UUID_TAG_KEY)) {
 				uuid = nbtItem.getUUID(UUID_TAG_KEY);
 			}
-			if (uuid == null) {
-				shop.createEntry(stack, rawSlot);
-			} else {
-				UUID finalUuid = uuid;
-				ShopEntry entry = containedEntries.stream().filter(e -> e.getUUID().equals(finalUuid)).findFirst().orElse(null);
-				if (entry == null) {
-					ShopEntry unusedEntry = shop.getUnusedEntry(uuid);
-					if (unusedEntry != null) {
 
-						unusedEntry.setSlot(rawSlot);
-						shop.addEntry(unusedEntry, rawSlot);
-					}
+			//cleanup item
+			nbtItem.removeKey(UUID_TAG_KEY);
+			nbtItem.removeKey(SLOT_TAG_KEY);
+			stack = nbtItem.getItem();
+
+			if (uuid == null) {
+				// create new but dont store -> might override old entry
+				newEntryPositions.put(rawSlot, new BaseEntry(UUID.randomUUID(), shop, stack, null, rawSlot));
+			} else {
+				ShopEntry entry = shop.getEntry(uuid);
+				if (entry == null) {
+					// create new but dont store -> might override old entry
+					newEntryPositions.put(rawSlot, new BaseEntry(uuid, shop, stack, null, rawSlot));
 				} else {
-					shop.moveEntry(entry, rawSlot);
 					containedEntries.remove(entry);
+					// move entry to position because it cannot override anything
+					shop.moveEntry(entry, rawSlot);
 				}
 			}
 			isEmpty = false;
+		}
+		for (Map.Entry<Integer, BaseEntry> mapEntry : newEntryPositions.entrySet()) {
+			shop.addEntry(mapEntry.getValue(), mapEntry.getKey());
 		}
 		if (wasEmpty && !isEmpty && shop.getDefaultTemplate() != null) {
 			shop.applyDefaultTemplate(shop.getDefaultTemplate(), shopPage);
@@ -245,7 +257,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 			setItem(i, null);
 		}
 		for (ShopEntry entry : shop.getEntries(shopPage)) {
-			setItem(entry.getSlot(), ItemStackUtils.createEntryItemStack(entry, null));
+			setItem(entry.getSlot(), ItemStackUtils.createEntryItemStack(entry, Customer.wrap(getEditor())));
 		}
 		refresh(IntStream.range(0, getRowCount() * 9).toArray());
 	}

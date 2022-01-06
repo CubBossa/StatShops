@@ -1,35 +1,29 @@
 package de.bossascrew.shops.statshops.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
-import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
-import de.bossascrew.shops.statshops.util.EntryInteractionType;
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
-import de.bossascrew.shops.general.util.LoggingPolicy;
-import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.PaginatedShop;
-import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.statshops.api.TransactionBalanceMessenger;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.events.ShopCloseEvent;
 import de.bossascrew.shops.statshops.events.ShopOpenEvent;
 import de.bossascrew.shops.statshops.events.ShopTurnPageEvent;
 import de.bossascrew.shops.statshops.menu.ChestShopEditor;
 import de.bossascrew.shops.statshops.menu.ChestShopMenu;
-import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
+import de.bossascrew.shops.statshops.menu.VillagerShopMenu;
+import de.bossascrew.shops.statshops.util.EntryInteractionType;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -37,19 +31,8 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class ChestMenuShop implements PaginatedShop {
+public class ChestMenuShop extends BaseShop implements PaginatedShop {
 
-	private final UUID uuid;
-	private String nameFormat;
-
-	@JsonIgnore
-	private Component name;
-	@JsonIgnore
-	private String namePlain;
-
-	@JsonIgnore
-	private ItemStack displayItem;
-	private @Nullable String permission = null;
 	private @Nullable EntryTemplate defaultTemplate = null;
 	private TransactionBalanceMessenger balanceMessenger;
 	private final List<UUID> pageTurningPlayers;
@@ -58,74 +41,28 @@ public class ChestMenuShop implements PaginatedShop {
 
 	private boolean isPageRemembered = false;
 	private int defaultPage = 0;
-	@JsonIgnore
-	private @Nullable Player editor = null;
 
 	@JsonIgnore
-	private final Map<UUID, ShopEntry> uuidEntryMap;
-	private final TreeMap<Integer, ShopEntry> entryMap;
-	/**
-	 * contains all entries that were removed via editor. When later on an item with the uuid tag of this entry was added, it can be restored from cache.
-	 */
-	@JsonIgnore
-	private final Map<UUID, ShopEntry> unusedEntryCache;
-
-	@JsonIgnore
-	private final List<Customer> activeCustomers;
-	private final Map<Customer, ChestShopMenu> menuMap;
 	private final List<String> tags;
 	private final Map<Integer, String> pageTitles;
 
 	public ChestMenuShop(String nameFormat) {
-		this(nameFormat, UUID.randomUUID());
+		this(UUID.randomUUID(), nameFormat);
 	}
 
-	public ChestMenuShop(String nameFormat, UUID uuid) {
-		setNameFormat(nameFormat);
-		this.uuid = uuid;
+	public ChestMenuShop(UUID uuid, String nameFormat) {
+		super(uuid, nameFormat);
 
-		this.uuidEntryMap = new HashMap<>();
-		this.entryMap = new TreeMap<>();
-		this.unusedEntryCache = new HashMap<>();
-		this.activeCustomers = new ArrayList<>();
-		this.menuMap = new HashMap<>();
 		this.tags = new ArrayList<>();
 		this.balanceMessenger = new SimpleBalanceMessenger(StatShops.getInstance().getShopsConfig().getTradeMessageFeedback());
 		this.pageTurningPlayers = new ArrayList<>();
 		this.pageTitles = new HashMap<>();
 	}
 
-	public void setNameFormat(String nameFormat) {
-		this.nameFormat = nameFormat;
-		this.name = StatShops.getInstance().getMiniMessage().parse(nameFormat);
-		this.namePlain = TextUtils.toPlain(this.name);
-	}
-
 	@Override
 	public int getPageCount() {
 		//important to divide with largest inventory size so entries dont move to other pages when changing the row size
 		return entryMap.isEmpty() ? 1 : entryMap.lastKey() / RowedOpenableMenu.LARGEST_INV_SIZE + 1;
-	}
-
-	public @Nullable
-	ShopEntry getEntry(int slot) {
-		return entryMap.getOrDefault(slot, null);
-	}
-
-	@Override
-	public boolean removeEntry(ShopEntry shopEntry) { //TODO implement interface docs
-		StatShops.getInstance().getDatabase().deleteEntry(shopEntry);
-		return entryMap.remove(shopEntry.getSlot(), shopEntry);
-	}
-
-	@Override
-	public ShopEntry getEntry(UUID uuid) {
-		return uuidEntryMap.get(uuid);
-	}
-
-	@Override
-	public ShopEntry getUnusedEntry(UUID uuid) {
-		return unusedEntryCache.get(uuid);
 	}
 
 	@Override
@@ -137,72 +74,6 @@ public class ChestMenuShop implements PaginatedShop {
 				.filter(e -> e.getKey() >= lowerBound && e.getKey() < upperBound)
 				.map(Map.Entry::getValue)
 				.collect(Collectors.toList());
-	}
-
-	@Override
-	public ShopEntry createEntry(ItemStack displayItem, int slot) {
-		ShopEntry entry = new BaseEntry(UUID.randomUUID(), this, displayItem.clone(), null, slot);
-		ShopEntry oldEntry = entryMap.put(slot, entry);
-		if (oldEntry != null) {
-			StatShops.getInstance().getDatabase().deleteEntry(oldEntry);
-		}
-		StatShops.getInstance().getDatabase().saveEntry(entry);
-		uuidEntryMap.put(entry.getUUID(), entry);
-		return entry;
-	}
-
-	public ShopEntry addEntry(ShopEntry entry, int slot) {
-		ShopEntry oldEntry = entryMap.put(slot, entry);
-		if (oldEntry != null) {
-			StatShops.getInstance().getDatabase().deleteEntry(oldEntry);
-		}
-		uuidEntryMap.put(entry.getUUID(), entry);
-		unusedEntryCache.remove(entry.getUUID());
-		return entry;
-	}
-
-	@Override
-	public boolean moveEntry(ShopEntry entry, int slot) {
-		if (getEntry(entry.getUUID()) == null) {
-			StatShops.getInstance().log(LoggingPolicy.ERROR, "Tried to move an entry that was not contained in this shop.");
-			return false;
-		}
-		boolean override = false;
-		ShopEntry oldEntry = getEntry(slot);
-		if (oldEntry != null && !oldEntry.equals(entry)) {
-			setEntryUnused(oldEntry);
-			override = true;
-		}
-		entry.setSlot(slot);
-		entryMap.put(slot, entry);
-		return override;
-	}
-
-	@Override
-	public boolean deleteEntry(int slot) {
-		return deleteEntry(getEntry(slot));
-	}
-
-	@Override
-	public boolean deleteEntry(ShopEntry entry) {
-		if (entry == null) {
-			return false;
-		}
-		uuidEntryMap.remove(entry.getUUID());
-		StatShops.getInstance().getDatabase().deleteEntry(entry);
-		return entryMap.remove(entry.getSlot(), entry);
-	}
-
-	@Override
-	public Collection<ShopEntry> getUnusedEntries() {
-		return unusedEntryCache.values();
-	}
-
-	@Override
-	public boolean setEntryUnused(ShopEntry entry) {
-		StatShops.getInstance().getDatabase().deleteEntry(entry);
-		unusedEntryCache.put(entry.getUUID(), entry);
-		return entryMap.remove(entry.getSlot(), entry);
 	}
 
 	@Override
@@ -283,7 +154,7 @@ public class ChestMenuShop implements PaginatedShop {
 			}
 		}
 		if (closeHandler == null && menuMap.containsKey(customer)) {
-			closeHandler = menuMap.get(customer).getCloseHandler();
+			closeHandler = ((ChestShopMenu) menuMap.get(customer)).getCloseHandler();
 		}
 		@Nullable ContextConsumer<CloseContext> finalCloseHandler = closeHandler;
 
@@ -341,7 +212,7 @@ public class ChestMenuShop implements PaginatedShop {
 	}
 
 	public boolean close(Customer customer) {
-		ChestShopMenu menu = menuMap.get(customer);
+		ChestShopMenu menu = (ChestShopMenu) menuMap.get(customer);
 		if (menu != null) {
 			if (customer.getPlayer().getOpenInventory().getTopInventory().equals(menu.getInventory())) {
 				customer.getPlayer().closeInventory();
@@ -350,12 +221,6 @@ public class ChestMenuShop implements PaginatedShop {
 		}
 		customer.setActiveShop(null);
 		return activeCustomers.remove(customer);
-	}
-
-	public void closeAll() {
-		for (Customer customer : activeCustomers) {
-			close(customer);
-		}
 	}
 
 	@Override
@@ -381,50 +246,6 @@ public class ChestMenuShop implements PaginatedShop {
 			this.rows += 6;
 		}
 		//all rows between 1 - 6
-	}
-
-	@Override
-	public UUID getUUID() {
-		return uuid;
-	}
-
-	public void setPermission(String permission) {
-		this.permission = permission != null ? permission.equalsIgnoreCase("null") ? null : permission : null;
-	}
-
-	@Override
-	public Map<Integer, ShopEntry> getEntries() {
-		return entryMap;
-	}
-
-	public List<String> getTags(boolean generated) {
-		return generated ? getTags() : new ArrayList<>(tags);
-	}
-
-	public List<String> getTags() {
-		List<String> list = new ArrayList<>(tags);
-		list.add(uuid.toString());
-		list.add(StatShops.TAG_GLOBAL);
-		list.sort(String::compareTo);
-		return list;
-	}
-
-	@Override
-	public boolean addTag(String tag) {
-		if (tags.contains(tag)) {
-			return false;
-		}
-		return tags.add(tag);
-	}
-
-	@Override
-	public boolean removeTag(String tag) {
-		return tags.remove(tag);
-	}
-
-	@Override
-	public boolean hasTag(String tag) {
-		return getTags().contains(tag);
 	}
 
 	@Override
@@ -458,25 +279,5 @@ public class ChestMenuShop implements PaginatedShop {
 				addEntry(newEntry, shopSlot);
 			}
 		}
-	}
-
-	@Override
-	public int compareTo(@NotNull Shop o) {
-		return namePlain.compareTo(o.getNamePlain());
-	}
-
-	public ItemStack getDisplayItem() {
-		return displayItem == null ? null : displayItem.clone();
-	}
-
-	@Override
-	@JsonIgnore
-	public ItemStack getListDisplayItem() {
-		return ItemStackUtils.createShopItemStack(this);
-	}
-
-	@Override
-	public void saveToDatabase() {
-		StatShops.getInstance().runAsync(() -> StatShops.getInstance().getDatabase().saveShop(this));
 	}
 }

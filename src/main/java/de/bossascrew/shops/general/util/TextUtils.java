@@ -24,7 +24,7 @@ public class TextUtils {
 
 	private static final GsonComponentSerializer GSON_SERIALZIER = GsonComponentSerializer.builder().build();
 
-	private static final LegacyComponentSerializer LEGACY_SERIALIZER_AND = LegacyComponentSerializer.builder()
+	private static final LegacyComponentSerializer LEGACY_SERIALIZER_AMPERSAND = LegacyComponentSerializer.builder()
 			.character('&')
 			.hexColors()
 			.hexCharacter('#')
@@ -57,7 +57,7 @@ public class TextUtils {
 	 * Format: &#123456
 	 */
 	public Component fromChatLegacy(String legacy) {
-		return LEGACY_SERIALIZER_AND.deserialize(legacy);
+		return LEGACY_SERIALIZER_AMPERSAND.deserialize(legacy);
 	}
 
 	public String toLegacy(Component component) {

@@ -1,6 +1,5 @@
 package de.bossascrew.shops.statshops.api;
 
-import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
@@ -9,6 +8,7 @@ import de.bossascrew.shops.general.util.Editable;
 import de.bossascrew.shops.statshops.api.data.DatabaseObject;
 import de.bossascrew.shops.statshops.api.data.DisplayedObject;
 import de.bossascrew.shops.statshops.api.data.NamedObject;
+import de.bossascrew.shops.statshops.data.Customer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -84,15 +84,6 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	boolean moveEntry(ShopEntry entry, int slot);
 
 	/**
-	 * Removes a {@link ShopEntry} and sets its slot to -1, but does not remove it from the UUID mapping.
-	 * This {@link ShopEntry} will still be contained in the {@link #getEntries()} method but will not be rendered.
-	 *
-	 * @param entry the {@link ShopEntry} to remove from the shop.
-	 * @return true, if the {@link ShopEntry} was successfully removed.
-	 */
-	boolean removeEntry(ShopEntry entry);
-
-	/**
 	 * Removes and deletes a {@link ShopEntry} from this shop.
 	 *
 	 * @param slot the slot to get the ShopEntry from.
@@ -125,6 +116,13 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	ShopEntry getUnusedEntry(UUID uuid);
 
 	/**
+	 * Inserts an unused entry without checking if it is also contained in the slot mapping. For database loading purpose only.
+	 *
+	 * @param entry the loaded unused entry to store.
+	 */
+	void addUnusedEntry(ShopEntry entry);
+
+	/**
 	 * Marks a {@link ShopEntry} that is contained in the slot mapping as unused and sets its slot to -1.
 	 * This {@link ShopEntry} is still part of the shop but will not be rendered in a shop menu.
 	 *
@@ -132,6 +130,13 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, List
 	 * @return true if the shop entry existed in the slot mapping and was successfully marked unused. Otherwise false.
 	 */
 	boolean setEntryUnused(ShopEntry entry);
+
+	/**
+	 * Removes all unused entries from this shops cache and database.
+	 *
+	 * @return the amount of successfully removed entries.
+	 */
+	int cleanupUnusedEntries();
 
 	/**
 	 * @return all customers that currently use this shop and have an open shop menu.

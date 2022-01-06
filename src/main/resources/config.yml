@@ -142,7 +142,7 @@ currencies:
     load_essentials_defaults: false
 
     # To load more default pricings, you have to register a DefaultPricingDatabase via API.
-    # More information: TODO link
+    # More information: https://github.com/CubBossa/StatShops/wiki/StatShops-API
 
 tags:
 
@@ -174,13 +174,21 @@ tags:
 
 database:
 
+  # Shop Entries are bound to an item once the item was removed from the shop editor. If you put the item back into the shop
+  # editor, all data and settings bound to the item will reappear and you don't have to recreate the entry.
+  # Of course, the plugin needs to keep track of the unused shop entries. You can define if StatShops should remove all unused
+  # shop entries from database on server restart. Afterwards, itemstacks with the entry uuid tagged will be interpreted as new items
+  # and will simply be static entries again.
+  cleanup_unused_entries: true
+
   logs:
 
-    #TODO nur bei flatfile
-    file-per-shop: true
-    directory-per-shop: false
-    file-per-day: false
-    directory-per-day: false
+    # Settings for filebased logs only.
+    flatfile:
+      file-per-shop: true
+      directory-per-shop: false
+      file-per-day: false
+      directory-per-day: false
 
     # Set to true if you want logs created for every successful interaction with a trade entry
     log-module-trade: true

@@ -175,7 +175,6 @@ public class DiscountHandler implements
 
 	@Override
 	public void storeWebData(List<Discount> values) {
-		//TODO
 	}
 
 	@Override

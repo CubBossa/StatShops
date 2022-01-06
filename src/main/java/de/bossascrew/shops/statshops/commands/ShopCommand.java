@@ -14,7 +14,6 @@ import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import de.bossascrew.shops.statshops.menu.ShopManagementMenu;
-import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -160,8 +159,11 @@ public class ShopCommand extends BaseCommand {
 	@Syntax("<Shop>")
 	@CommandCompletion(StatShops.COMPLETION_SHOPS)
 	public void onCleanUp(CommandSender sender, Shop shop) {
-		shop.cleanupUnusedEntries();
-		//TODO feedback und so
+		StatShops.getInstance().sendMessage(sender, Message.GUI_SHOP_EDITOR_REMOVED_UNUSED.getKey(),
+				Message.GUI_SHOP_EDITOR_REMOVED_UNUSED.getTranslation(
+						Template.of("amount", "" + shop.cleanupUnusedEntries()),
+						Template.of("shop", shop.getName())
+				), 0);
 	}
 
 	@Subcommand("reload config")
@@ -234,13 +236,8 @@ public class ShopCommand extends BaseCommand {
 
 	@Subcommand("parse-chest")
 	public void onParseChest(Player player, Shop shop, @Optional Integer page) {
-		page = page == null ? 0 : page;
+		page = page == null || !(shop instanceof PaginatedShop) ? 0 : page;
 
-		if (!(shop instanceof ChestMenuShop)) {
-			player.sendMessage("Falscher shop");
-			//TODO
-			return;
-		}
 		Block block = player.getTargetBlockExact(10);
 		if (block.getState() instanceof Container container) {
 			Inventory inv = container.getSnapshotInventory();
@@ -252,8 +249,7 @@ public class ShopCommand extends BaseCommand {
 			Customer.wrap(player).sendMessage(Message.GENERAL_CHEST_PARSED.getKey(),
 					Message.GENERAL_CHEST_PARSED.getTranslation(Template.of("amount", count + ""), Template.of("shop", shop.getName())));
 		} else {
-			player.sendMessage("Kein container");
-			//TODO
+			Customer.wrap(player).sendMessage(Message.GENERAL_NO_CHEST);
 		}
 	}
 

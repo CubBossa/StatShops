@@ -1,5 +1,6 @@
 package de.bossascrew.shops.statshops;
 
+import de.bossascrew.shops.general.menu.ListEditorMenuTypedElementHolder;
 import de.bossascrew.shops.statshops.api.data.DefaultPricingDatabase;
 import de.bossascrew.shops.statshops.handler.*;
 import lombok.Getter;
@@ -91,8 +92,9 @@ public abstract class StatShopsExtension {
 	}
 
 	/**
-	 * You can register new Shop Types by calling {@link ShopHandler#registerShopType(Class)} and providing the shop class. It will then be displayed in the
-	 * Editor and users can select the shop type.
+	 * You can register new Shop Types by calling {@link ShopHandler#registerShopType(ListEditorMenuTypedElementHolder.Provider)} and providing the shop class. It will then be displayed in the
+	 * editor and users can select the shop type. The material, name and lore of the {@link ListEditorMenuTypedElementHolder.Provider} define the display item in the
+	 * editor.
 	 *
 	 * @param shopHandler the singleton instance of {@link ShopHandler}
 	 */

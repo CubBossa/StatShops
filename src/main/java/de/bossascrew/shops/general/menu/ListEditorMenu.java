@@ -32,10 +32,17 @@ public class ListEditorMenu<L extends ListMenuElement> extends PagedChestMenu {
 	private final Message newItemLore;
 	private final Message confirmDeleteTitle;
 	private final Message confirmNewTitle;
+	private Message selectTypeTitle;
 
 	public ListEditorMenu(int rowCount, ListEditorMenuElementHolder<L> elementHolder, boolean requireDeleteConfirmation,
 						  Message title, Message alreadyEdited, Message newItemName, Message newItemLore, Message confirmDeleteTitle, Message confirmNewTitle,
 						  ContextConsumer<BackContext> backHandler) {
+		this(rowCount, elementHolder, requireDeleteConfirmation, title, alreadyEdited, newItemName, newItemLore, confirmDeleteTitle, confirmNewTitle, Message.NONE, backHandler);
+	}
+
+	public ListEditorMenu(int rowCount, ListEditorMenuElementHolder<L> elementHolder, boolean requireDeleteConfirmation,
+						  Message title, Message alreadyEdited, Message newItemName, Message newItemLore, Message confirmDeleteTitle, Message confirmNewTitle,
+						  Message selectTypeTitle, ContextConsumer<BackContext> backHandler) {
 		super(title.getTranslation(), rowCount, null, null, backHandler);
 		this.elementHolder = elementHolder;
 		this.requireDeleteConfirmation = requireDeleteConfirmation;
@@ -45,6 +52,7 @@ public class ListEditorMenu<L extends ListMenuElement> extends PagedChestMenu {
 		this.newItemName = newItemName;
 		this.confirmDeleteTitle = confirmDeleteTitle;
 		this.confirmNewTitle = confirmNewTitle;
+		this.selectTypeTitle = selectTypeTitle;
 	}
 
 	@Override
@@ -125,7 +133,7 @@ public class ListEditorMenu<L extends ListMenuElement> extends PagedChestMenu {
 		}
 
 		ListMenu<ListEditorMenuTypedElementHolder.Provider<L>> menu = new ListMenu<>(3, holder::getTypes,
-				Message.NONE, backContext -> openInventory(backContext.getPlayer(), currentPage));
+				selectTypeTitle, backContext -> openInventory(backContext.getPlayer(), currentPage));
 
 		menu.setClickHandler(clickContext -> openNameInput(clickContext.getPlayer(), clickContext.getTarget().type()));
 

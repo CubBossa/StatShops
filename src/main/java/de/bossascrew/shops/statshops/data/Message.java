@@ -46,6 +46,7 @@ public class Message {
 	public static final Message GENERAL_WEBINTERFACE_ERROR = new Message("general.webinterface.error");
 	public static final Message GENERAL_EDITABLE_CURRENTLY_EDITED = new Message("general.editable_edited");
 	public static final Message GENERAL_CHEST_PARSED = new Message("general.chest_content_parsed");
+	public static final Message GENERAL_NO_CHEST = new Message("general.no_chest_found");
 
 	public static final Message DATA_PRESET_EXPORT_SUCCESS = new Message("general.data_presets.export_success");
 	public static final Message DATA_PRESET_EXPORT_CONFIRM = new Message("general.data_presets.export_confirmation");
@@ -169,6 +170,7 @@ public class Message {
 	public static final Message GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME = new Message("manager.gui.shop_editor.freeze.name");
 	public static final Message GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE = new Message("manager.gui.shop_editor.freeze.lore");
 	public static final Message GUI_SHOP_EDITOR_UNUSED_INFO = new Message("manager.gui.shop_editor.unused_items");
+	public static final Message GUI_SHOP_EDITOR_REMOVED_UNUSED = new Message("manager.gui.shop_editor.removed_unused");
 
 	public static final Message GUI_LIMITS = new Message("manager.gui.limits.title");
 	public static final Message GUI_LIMITS_ALREADY_EDITED = new Message("manager.gui.limits.already_edited");

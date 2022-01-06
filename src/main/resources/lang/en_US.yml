@@ -18,6 +18,7 @@ general:
   editable_edited: "<prefix><red>This object is currently edited by <editor>"
   # Valid placeholders: <amount>, <shop>
   chest_content_parsed: "<prefix><gray><amount> items were found and added to <shop>."
+  no_chest_found: "<prefix><red>You have to look at a chest to perform this command."
   data_presets:
     export_success: "<prefix><gray>Data Preset successfully saved as <white><name>"
     export_confirmation: "<prefix><gray>Export <shops>, <discounts>, <limits> and <templates> as <white><name></white>? [<green><click:run_command:/statshops accept>accept</click></green>] [<red><click:run_command:/statshops decline>decline</click></red>]"
@@ -244,6 +245,8 @@ manager:
         lore: "<gray>You can toggle between\n<gray>Move and Edit Mode.\n<gray>Freeze your shop to edit\n<gray>price, discounts etc."
       # Valid placeholders: <amount>
       unused_items: "<prefix><gray>This shop contains <amount> unused shop entries. Use <white><italic><click:suggest_command:/statshops cleanup >/shops cleanup</click></italic></white> to remove them."
+      # Valid placeholders: <amount>
+      removed_unused: "<prefix><gray>Removed <white><amount> </white>unused shop entries from <white><shop></white>."
     shop_entry:
       title: "Edit Shop Entry"
 

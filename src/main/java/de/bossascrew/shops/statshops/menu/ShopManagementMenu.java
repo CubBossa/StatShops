@@ -106,8 +106,8 @@ public class ShopManagementMenu {
 	public void openShopsMenu(Player player, int page) {
 		int shops = ShopHandler.getInstance().getShops().size();
 		ListEditorMenu<Shop> menu = new ListEditorMenu<>(Integer.max(3, Integer.min(shops % 9, 6)), ShopHandler.getInstance(), StatShops.getInstance().getShopsConfig().isConfirmDeletion(),
-				Message.GUI_SHOPS_TITLE, Message.GUI_SHOPS_ALREADY_EDITED, Message.GUI_SHOPS_NEW_NAME,
-				Message.GUI_SHOPS_NEW_LORE, Message.GUI_SHOPS_DELETE_CONFIRM, Message.GUI_SHOPS_NEW_TITLE, backContext -> openBaseMenu(player));
+				Message.GUI_SHOPS_TITLE, Message.GUI_SHOPS_ALREADY_EDITED, Message.GUI_SHOPS_NEW_NAME, Message.GUI_SHOPS_NEW_LORE,
+				Message.GUI_SHOPS_DELETE_CONFIRM, Message.GUI_SHOPS_NEW_TITLE, Message.GUI_SHOPS_TYPE_TITLE, backContext -> openBaseMenu(player));
 		menu.setLeftClickHandler(targetContext -> openShopMenu(player, targetContext.getTarget(), menu.getCurrentPage()));
 		menu.openInventory(player, page);
 	}

@@ -74,6 +74,12 @@ public class ShopCommand extends BaseCommand {
 		public void onEntries(CommandSender sender, Shop shop) {
 			shop.getEntries().forEach((integer, entry) -> System.out.println(integer + " -> " + entry.getDisplayItem().getType()));
 		}
+
+		@Subcommand("tags")
+		@CommandCompletion(StatShops.COMPLETION_SHOPS)
+		public void onTags(CommandSender sender, Shop shop) {
+			shop.getTags(true).forEach(System.out::println);
+		}
 	}
 
 	@Subcommand("export")

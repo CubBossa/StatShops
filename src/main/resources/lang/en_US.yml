@@ -329,7 +329,7 @@ manager:
           bool: "<white>Boolean: <name>"
           int: "<white>Integer: <name>"
           equation: "<white>Term: <name>"
-          string: "<white>String: <name>"
+          string: "<white>Text: <name>"
           itemstack: "<white>Item: <name>"
           shop: "<white>Shop: <name>"
         # Valid placeholders in lore: <current>
@@ -379,6 +379,9 @@ manager:
           sell_price_equation:
             name: "Sell Price Equation"
             lore: "<gray>Current: <gold><current>\n<gray>The amount of sell price items\n<gray>that the customer gets when selling\n<gray>the article.\n\n<gray>You may want to use an external\n<gray>database for prices. Reference\n<gray>entries with <white><db:diamond></white> for example."
+          command:
+            name: "Command"
+            lore: "<gray>Current: <gold><current>\n<gray>The command to execute. Use <player>\n<gray>to reference the customer."
 
     limits:
       title: "Create and manage shop limits"

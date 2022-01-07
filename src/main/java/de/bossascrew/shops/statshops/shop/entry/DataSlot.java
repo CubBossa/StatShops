@@ -1,14 +1,14 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
-import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.general.menu.ListMenu;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.menu.contexts.TargetContext;
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -53,6 +53,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		DATA_MESSAGE_MAP.put("sellable_stacked", new Pair<>(Message.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_NAME, Message.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_LORE));
 		DATA_MESSAGE_MAP.put("gain_price_item", new Pair<>(Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_LORE));
 		DATA_MESSAGE_MAP.put("gain_price_amount", new Pair<>(Message.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_LORE));
+		DATA_MESSAGE_MAP.put("command", new Pair<>(Message.GUI_ENTRY_FUNCTION_COMMAND_NAME, Message.GUI_ENTRY_FUNCTION_COMMAND_LORE));
 	}
 
 
@@ -93,7 +94,41 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 				lore.getTranslations(Template.of("current", dataFormatter.apply(data))));
 	}
 
+	public static class TextSlot extends DataSlot<String> {
+
+		public TextSlot(String data) {
+			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING);
+			super.setClickHandler(clickContext -> {
+				Player player = clickContext.getPlayer();
+				player.closeInventory();
+				new AnvilGUI.Builder()
+						.plugin(StatShops.getInstance())
+						.text("" + getData())
+						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.getLegacyTranslation(Template.of("name", getName().getTranslation())))
+						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> clickContext.getTarget().run(), 1L))
+						.onComplete((p, s) -> {
+							setData(s);
+							clickContext.getTarget().run();
+							return AnvilGUI.Response.close();
+						}).open(player);
+			});
+			super.setData(data);
+			super.setDisplayItem(new ItemStack(Material.COMMAND_BLOCK));
+		}
+
+		@NotNull
+		@Override
+		public Map<String, Object> serialize() {
+			return Map.of("data", getData());
+		}
+
+		public static TextSlot deserialize(Map<String, Object> values) {
+			return new TextSlot((String) values.get("data"));
+		}
+	}
+
 	public static class EquationSlot extends DataSlot<String> {
+
 
 		public EquationSlot(String data) {
 			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION);
@@ -229,12 +264,14 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 	public static class ShopSlot extends DataSlot<UUID> {
 
-		public ShopSlot(@Nullable Shop shop) {
-			this(shop == null ? null : shop.getUUID());
-		}
+		Function<UUID, ItemStack> displayItem = uuid -> {
+			Shop shop = uuid == null ? null : ShopHandler.getInstance().getShop(uuid);
+			return shop == null ? new ItemStack(Material.VILLAGER_SPAWN_EGG) : shop.getListDisplayItem();
+		};
 
-		public ShopSlot(@Nullable UUID uuid) {
+		public ShopSlot(UUID uuid) {
 			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_SHOP);
+
 			super.setData(uuid);
 			super.setClickHandler(clickContext -> {
 				int shops = ShopHandler.getInstance().getShops().size();
@@ -242,19 +279,21 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 						Message.GUI_SHOPS_TITLE, backContext -> clickContext.getTarget().run());
 				menu.setGlowPredicate(s -> Objects.equals(s.getUUID(), getData()));
 				menu.setClickHandler(cc -> {
-					setData(cc.getTarget());
-					setDisplayItem(cc.getTarget().getListDisplayItem());
+					this.setData(cc.getTarget().getUUID());
+					setDisplayItem(cc.getTarget().getListDisplayItem().clone());
 					clickContext.getTarget().run();
 				});
 				clickContext.getTarget().run();
 				menu.openInventory(clickContext.getPlayer());
 			});
 			super.setDataFormatter(aUuid -> aUuid == null ? Component.text("none", NamedTextColor.GRAY) : ShopHandler.getInstance().getShop(aUuid).getName());
-			super.setDisplayItem(uuid == null ? new ItemStack(Material.VILLAGER_SPAWN_EGG) : ShopHandler.getInstance().getShop(uuid).getListDisplayItem());
+			super.setDisplayItem(displayItem.apply(uuid));
 		}
 
-		public void setData(Shop shop) {
-			super.setData(shop.getUUID());
+		@Override
+		public ItemStack getDisplayItem() {
+			setDisplayItem(displayItem.apply(getData()));
+			return super.getDisplayItem();
 		}
 
 		@NotNull
@@ -267,12 +306,16 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 		public static ShopSlot deserialize(Map<String, Object> values) {
 			String uuidString = (String) values.get("shop");
-			UUID uuid = null;
-			try {
-				uuid = UUID.fromString(uuidString);
-			} catch (Exception ignored) {
+			if (uuidString == null) {
+				System.out.println("invalid string: " + uuidString);
+				return null;
 			}
-			return new ShopSlot(uuid == null ? null : ShopHandler.getInstance().getShop(uuid));
+			try {
+				return new ShopSlot(UUID.fromString(uuidString));
+			} catch (Exception ignored) {
+				System.out.println("invalid string: " + uuidString);
+				return null;
+			}
 		}
 	}
 }

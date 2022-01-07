@@ -1,12 +1,12 @@
 package de.bossascrew.shops.statshops.handler;
 
-import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.general.util.ExperienceManager;
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.StatShopsExtension;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.shop.currency.Currency;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -84,7 +84,12 @@ public class CurrencyHandler {
 			return true;
 		}
 	};
-	public static Currency<String> CURRENCY_COMMAND = new Currency<>("command", "Command: <currency>", "Command: <currency>", (aDouble, s) -> Component.text(s)) {
+	public static Currency<String> CURRENCY_COMMAND = new Currency<>(
+			"command",
+			"<amount>x Command: Command: <currency>",
+			"<st><amount></st> <amount>x <currency>",
+			aDouble -> String.format("%.0f", aDouble),
+			(aDouble, s) -> Component.text(s)) {
 		@Override
 		public double applyDiscount(double amount, double discount) {
 			return (int) (amount * discount);
@@ -98,7 +103,7 @@ public class CurrencyHandler {
 		@Override
 		public boolean addAmount(Customer customer, double amount, String object) {
 			for (int i = 0; i < amount; i++) {
-				customer.getPlayer().performCommand(object);
+				customer.getPlayer().performCommand(object.replace("<player>", customer.getPlayer().getName()));
 			}
 			return true;
 		}
@@ -108,7 +113,12 @@ public class CurrencyHandler {
 			return false;
 		}
 	};
-	public static Currency<String> CURRENCY_CONSOLE_COMMAND = new Currency<>("console_command", "<amount>x Command: <currency>", "<amount>x Command: <currency>", (aDouble, s) -> Component.text(s)) {
+	public static Currency<String> CURRENCY_CONSOLE_COMMAND = new Currency<>(
+			"console_command",
+			"<amount>x Command: <currency>",
+			"<st><amount></st> <amount>x Command: <currency>",
+			aDouble -> String.format("%.0f", aDouble),
+			(aDouble, s) -> Component.text(s)) {
 		@Override
 		public double applyDiscount(double amount, double discount) {
 			return (int) (amount * discount);
@@ -122,7 +132,7 @@ public class CurrencyHandler {
 		@Override
 		public boolean addAmount(Customer customer, double amount, String object) {
 			for (int i = 0; i < amount; i++) {
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), object);
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), object.replace("<player>", customer.getPlayer().getName()));
 			}
 			return true;
 		}

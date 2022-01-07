@@ -59,9 +59,11 @@ configurations {
 dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0'
     implementation 'org.junit.jupiter:junit-jupiter:5.8.2'
-    shadow 'com.squareup.okhttp3:okhttp:4.9.3'
-    shadow 'org.json:json:20211205'
-    shadow 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+    //shadow
+    compileOnly 'com.squareup.okhttp3:okhttp:4.9.3'
+    compileOnly 'org.json:json:20211205'
+    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+    //
     compileOnly "org.projectlombok:lombok:1.18.22"
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
     shadow "co.aikar:acf-bukkit:0.5.0-SNAPSHOT"
@@ -77,7 +79,7 @@ dependencies {
     shadow 'com.github.ben-manes.caffeine:caffeine:3.0.5'
     shadow "net.wesjd:anvilgui:1.5.3-SNAPSHOT"
     compileOnly 'com.mojang:authlib:1.5.21'
-    shadow 'de.tr7zw:item-nbt-api-plugin:2.8.0'
+    shadow 'de.tr7zw:item-nbt-api-plugin:2.9.0-SNAPSHOT'
     compileOnly 'net.citizensnpcs:citizensapi:2.0.26-SNAPSHOT'
     shadow 'org.bstats:bstats-bukkit:2.2.1'
 }

@@ -1,19 +1,19 @@
 package de.bossascrew.shops.statshops.handler;
 
-import de.bossascrew.shops.statshops.api.PaginatedShop;
-import de.bossascrew.shops.statshops.api.Shop;
-import de.bossascrew.shops.statshops.api.module.EntryModule;
-import de.bossascrew.shops.statshops.api.module.PageModule;
-import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.menu.ListMenuElementHolder;
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.StatShopsExtension;
+import de.bossascrew.shops.statshops.api.PaginatedShop;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.api.module.EntryModule;
+import de.bossascrew.shops.statshops.api.module.PageModule;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.entry.CloseModule;
 import de.bossascrew.shops.statshops.shop.entry.OpenShopModule;
 import de.bossascrew.shops.statshops.shop.entry.PageBaseModule;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -46,7 +46,7 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 
 	public static OpenShopModule openShop(ShopEntry shopEntry, Shop shop) {
 		OpenShopModule shopModule = new OpenShopModule(OPEN_SHOP_PROVIDER, shopEntry);
-		shopModule.setUuid(shop.getUUID());
+		shopModule.getShopSlot().setData(shop.getUUID());
 		return shopModule;
 	}
 

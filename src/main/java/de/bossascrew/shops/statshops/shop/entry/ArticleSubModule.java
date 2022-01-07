@@ -81,9 +81,37 @@ public class ArticleSubModule<T> implements ConfigurationSerializable {
 		}
 	}
 
-	public static class CommandArticle extends ArticleSubModule<String> {
+	public static abstract class BaseCommandArticle extends ArticleSubModule<String> {
 
-		public CommandArticle(SubModulesHandler.ArticleSubModuleProvider<String> provider) { //TODO command dataslot
+		DataSlot.TextSlot command;
+
+		public BaseCommandArticle(SubModulesHandler.ArticleSubModuleProvider<String> provider, Price<String> price) {
+			super(provider, price);
+		}
+
+		public BaseCommandArticle(Map<String, Object> values) {
+			super(values);
+		}
+
+		@Override
+		public List<DataSlot<?>> getDataSlots() {
+			List<DataSlot<?>> data = new ArrayList<>(super.getDataSlots());
+			data.add(command);
+			return data;
+		}
+
+		@Override
+		public void loadDataSlots(ShopEntry shopEntry) {
+			super.loadDataSlots(shopEntry);
+			command = shopEntry.getData(DataSlot.TextSlot.class, "command", () -> new DataSlot.TextSlot("help"));
+			command.setUpdateHandler(input -> getPrice().setObject(input));
+			command.getUpdateHandler().accept("help");
+		}
+	}
+
+	public static class CommandArticle extends BaseCommandArticle {
+
+		public CommandArticle(SubModulesHandler.ArticleSubModuleProvider<String> provider) {
 			super(provider, new Price<>(CurrencyHandler.CURRENCY_COMMAND, 1, "help"));
 		}
 
@@ -92,9 +120,9 @@ public class ArticleSubModule<T> implements ConfigurationSerializable {
 		}
 	}
 
-	public static class ConsoleCommandArticle extends ArticleSubModule<String> {
+	public static class ConsoleCommandArticle extends BaseCommandArticle {
 
-		public ConsoleCommandArticle(SubModulesHandler.ArticleSubModuleProvider<String> provider) { //TODO command dataslot
+		public ConsoleCommandArticle(SubModulesHandler.ArticleSubModuleProvider<String> provider) {
 			super(provider, new Price<>(CurrencyHandler.CURRENCY_CONSOLE_COMMAND, 1, "help"));
 		}
 

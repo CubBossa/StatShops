@@ -111,6 +111,10 @@ public abstract class InventoryMenu<T, A extends ActionContext<T>, B extends Bac
 		specialItems.put(slot, stack);
 	}
 
+	public @Nullable ItemStack getItem(int slot) {
+		return specialItems.get(slot);
+	}
+
 	/**
 	 * Setzt ein Item in das Inventar, das bei Interaktion den angegebenen Clickhandler ausführt.
 	 *

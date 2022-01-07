@@ -221,17 +221,16 @@ public class ShopManagementMenu {
 		});
 		chestMenu.setItemAndClickHandler(1, 2, ItemStackUtils.createItemStack(Material.CHEST,
 				Message.GUI_SHOP_SET_PREVIEW_NAME, Message.GUI_SHOP_SET_PREVIEW_LORE), clickContext -> {
-
+			shop.open(Customer.wrap(player));
+/* TODO bottom top preview
 			if (shop instanceof ChestMenuShop cShop) {
 				BottomTopChestMenu preview = new BottomTopChestMenu(new ChestShopMenu(cShop, Customer.wrap(player)), 1);
-
 
 				preview.openInventory(player);
 			} else {
 				shop.open(Customer.wrap(player));
-			}
+			}*/
 		});
-
 
 		if (shop instanceof PaginatedShop ps) {
 			chestMenu.setItemAndClickHandler(22, getDefaultPageItem(ps, ps.getDefaultShopPage()), clickContext -> {

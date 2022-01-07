@@ -66,6 +66,7 @@ public class FlatFileDatabase implements Database {
 		}
 
 		ConfigurationSerialization.registerClass(DataSlot.EquationSlot.class);
+		ConfigurationSerialization.registerClass(DataSlot.TextSlot.class);
 		ConfigurationSerialization.registerClass(DataSlot.ItemStackSlot.class);
 		ConfigurationSerialization.registerClass(DataSlot.BooleanSlot.class);
 		ConfigurationSerialization.registerClass(DataSlot.NumberSlot.class);
@@ -216,6 +217,7 @@ public class FlatFileDatabase implements Database {
 
 	@Override
 	public void saveShop(Shop shop) {
+		System.out.println("Save shop");
 		File shopFile = new File(dirShops, shop.getUUID() + ".yml");
 		if (!shopFile.exists()) {
 			try {
@@ -320,7 +322,6 @@ public class FlatFileDatabase implements Database {
 		}
 		if (module != null) {
 			module.setShopEntry(entry);
-			module.loadData();
 			entry.setModule(module);
 		}
 

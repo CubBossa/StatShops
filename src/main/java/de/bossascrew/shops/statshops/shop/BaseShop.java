@@ -116,6 +116,9 @@ public abstract class BaseShop implements Shop {
 		}
 		uuidEntryMap.put(entry.getUUID(), entry);
 		unusedEntryCache.remove(entry.getUUID());
+
+		entry.setSlot(slot);
+		StatShops.getInstance().getDatabase().saveEntry(entry);
 		return entry;
 	}
 

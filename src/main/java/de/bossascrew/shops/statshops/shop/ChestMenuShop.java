@@ -1,6 +1,5 @@
 package de.bossascrew.shops.statshops.shop;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
@@ -41,8 +40,6 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 	private boolean isPageRemembered = false;
 	private int defaultPage = 0;
 
-	@JsonIgnore
-	private final List<String> tags;
 	private final Map<Integer, String> pageTitles;
 
 	public ChestMenuShop(String nameFormat) {
@@ -52,7 +49,6 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 	public ChestMenuShop(UUID uuid, String nameFormat) {
 		super(uuid, nameFormat);
 
-		this.tags = new ArrayList<>();
 		this.balanceMessenger = new SimpleBalanceMessenger(StatShops.getInstance().getShopsConfig().getTradeMessageFeedback());
 		this.pageTurningPlayers = new ArrayList<>();
 		this.pageTitles = new HashMap<>();
@@ -226,7 +222,8 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 
 	@Override
 	public void openEditorMenu(Player player, ContextConsumer<BackContext> backHandler) {
-		new ChestShopEditor(this, backHandler).openInventory(player, getDefaultShopPage());
+		new ChestShopEditor(this, backHandler, closeContext -> {
+		}).openInventory(player, getDefaultShopPage());
 	}
 
 	public EntryInteractionResult interact(Customer customer, int slot, EntryInteractionType interactionType) {

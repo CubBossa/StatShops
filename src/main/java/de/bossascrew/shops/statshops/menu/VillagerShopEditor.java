@@ -22,7 +22,7 @@ public class VillagerShopEditor extends ChestMenu {
 		this.setBackHandlerAction(backHandler);
 	}
 
-	private void prepareInventory() {
+	public void prepareInventory() {
 
 	}
 

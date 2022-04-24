@@ -146,7 +146,7 @@ public class CurrencyHandler {
 			"experience", "<amount> <#B9E45A>E<#39904C>x<#D8E45A>p",
 			"<st><amount></st> <amount_dc> <#B9E45A>E<#39904C>x<#D8E45A>p",
 			d -> d.intValue() + "",
-			(d, unused) -> MiniMessage.get().parse("<#B9E45A>E<#39904C>x<#D8E45A>p")) { //TODO config
+			(d, unused) -> MiniMessage.miniMessage().deserialize("<#B9E45A>E<#39904C>x<#D8E45A>p")) { //TODO config
 
 		@Override
 		public double applyDiscount(double amount, double discount) {

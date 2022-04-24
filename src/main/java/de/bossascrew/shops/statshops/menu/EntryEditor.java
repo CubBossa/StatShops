@@ -1,9 +1,5 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.statshops.api.ShopEntry;
-import de.bossascrew.shops.statshops.api.module.TradeModule;
-import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
-import de.bossascrew.shops.statshops.handler.SubModulesHandler;
 import de.bossascrew.shops.general.menu.ChestMenu;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.general.menu.EditorMenu;
@@ -11,21 +7,26 @@ import de.bossascrew.shops.general.menu.ListMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.menu.contexts.TargetContext;
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.general.util.Pair;
-import de.bossascrew.shops.statshops.util.TagUtils;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.api.module.TradeModule;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
+import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
+import de.bossascrew.shops.statshops.handler.SubModulesHandler;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.Limit;
 import de.bossascrew.shops.statshops.shop.entry.DataSlot;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.TagUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -69,7 +70,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 		//Set permissions
 		setItemAndClickHandler(1, 0, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
 				Message.GUI_ENTRY_SET_PERMISSION_NAME.getTranslation(), Message.GUI_ENTRY_SET_PERMISSION_LORE.getTranslations(
-						Template.of("permission", entry.getPermission() == null ? "X" : entry.getPermission())
+						TagResolver.resolver("permission", Tag.inserting(Component.text(entry.getPermission() == null ? "X" : entry.getPermission())))
 				)), clickContext -> {
 			Player player = clickContext.getPlayer();
 			player.closeInventory();
@@ -91,17 +92,17 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 				clickContext -> {
 					Player player = clickContext.getPlayer();
 					TagsEditorMenu<ShopEntry> menu = new TagsEditorMenu<>(entry,
-							Message.GUI_TAGS_TITLE.getTranslation(Template.of("name", "shop entry")),
+							Message.GUI_TAGS_TITLE.getTranslation(TagResolver.resolver("name", Tag.inserting(Component.text("shop entry")))),
 							Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
 							Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openInventory(player));
 					menu.openInventory(player);
 				});
 
 		setItemAndClickHandler(0, 2, ItemStackUtils.createItemStack(entry.getModule() == null ? new ItemStack(Material.BLACK_STAINED_GLASS) :
-						entry.getModule().getDisplayItem(), Message.GUI_ENTRY_SET_FUNCTION_NAME.getTranslation(Template.of("name", entry.getModule() == null ?
-						Message.GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName())),
-				Message.GUI_ENTRY_SET_FUNCTION_LORE.getTranslations(Template.of("function", entry.getModule() == null ?
-						Message.GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName()))), clickContext -> {
+						entry.getModule().getDisplayItem(), Message.GUI_ENTRY_SET_FUNCTION_NAME.getTranslation(TagResolver.resolver("name", Tag.inserting(entry.getModule() == null ?
+						Message.GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName()))),
+				Message.GUI_ENTRY_SET_FUNCTION_LORE.getTranslations(TagResolver.resolver("function", Tag.inserting(entry.getModule() == null ?
+						Message.GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName())))), clickContext -> {
 
 			ListMenu<EntryModuleHandler.EntryModuleProvider> listMenu = new ListMenu<>(3, EntryModuleHandler.getInstance(),
 					Message.GUI_ENTRY_SET_FUNCTION_TITLE, backContext -> openInventory(clickContext.getPlayer()));

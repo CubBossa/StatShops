@@ -58,7 +58,7 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 	public TradeBaseModule(Map<String, Object> values) {
 		super(EntryModuleHandler.getInstance().getProvider((String) values.get("provider")), null);
 		this.article = (ArticleSubModule<?>) values.get("article");
-		this.costs = (CostsSubModule<?>) values.get("costs");
+		this.costs = (CostsSubModule<?>) values.get("cost");
 		this.lastTransactions = new HashMap<>();
 	}
 
@@ -191,7 +191,8 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 		EntryInteractionResult result = pay.pay(customer);
 		if (result.equals(EntryInteractionResult.SUCCESS)) {
 			gain.gain(customer);
-			Transaction transaction = new Transaction(customer, getShopEntry(), interactionType, pay, gain, LocalDateTime.now(), discount, discounts);
+			Transaction transaction = new Transaction(customer, getShopEntry(), interactionType, Lists.newArrayList(pay),
+					Lists.newArrayList(gain), LocalDateTime.now(), discount, discounts);
 			lastTransactions.put(customer.getUuid(), transaction);
 		}
 		return result;
@@ -248,7 +249,7 @@ public class TradeBaseModule extends BaseModule implements TradeModule {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("provider", provider.getKey());
 		map.put("article", article);
-		map.put("costs", costs);
+		map.put("cost", costs);
 		return map;
 	}
 }

@@ -66,7 +66,7 @@ public class TestDatabase implements Database, LogDatabase {
 		ShopEntry entry2 = createEntry(UUID.randomUUID(), s1, new ItemStack(Material.POTION), 1);
 		ItemStack article2 = new ItemStack(Material.POTION);
 		PotionMeta pmeta = (PotionMeta) article2.getItemMeta();
-		pmeta.setDisplayName(TextUtils.toLegacy(MiniMessage.get().parse("<rainbow>Huiiiiiiiii")));
+		pmeta.setDisplayName(TextUtils.toLegacy(MiniMessage.miniMessage().deserialize("<rainbow>Huiiiiiiiii")));
 		pmeta.setBasePotionData(new PotionData(PotionType.SPEED));
 		article2.setItemMeta(pmeta);
 

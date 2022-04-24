@@ -14,7 +14,8 @@ import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -157,16 +158,16 @@ public class Discount implements
 
 	public void setNameFormat(String nameFormat) {
 		this.nameFormat = nameFormat;
-		this.name = StatShops.getInstance().getMiniMessage().parse(nameFormat);
+		this.name = StatShops.getInstance().getMiniMessage().deserialize(nameFormat);
 		this.namePlain = TextUtils.toPlain(name);
 	}
 
 	@JsonIgnore
 	public Component getFormattedPercent() {
 		if (percent > 0) {
-			return Message.SHOP_ITEM_LORE_DISCOUNT_POSITIVE.getTranslation(Template.of("discount", "" + percent));
+			return Message.SHOP_ITEM_LORE_DISCOUNT_POSITIVE.getTranslation(TagResolver.resolver("discount", Tag.inserting(Component.text("" + percent))));
 		}
-		return Message.SHOP_ITEM_LORE_DISCOUNT_NEGATIVE.getTranslation(Template.of("discount", "" + percent));
+		return Message.SHOP_ITEM_LORE_DISCOUNT_NEGATIVE.getTranslation(TagResolver.resolver("discount", Tag.inserting(Component.text("" + percent))));
 	}
 
 	@Override

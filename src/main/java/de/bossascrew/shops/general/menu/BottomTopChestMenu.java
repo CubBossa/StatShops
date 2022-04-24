@@ -34,6 +34,7 @@ public class BottomTopChestMenu extends ChestMenu {
 	@Getter
 	private final int[] slots;
 
+	private @Nullable ChestMenu chestMenu;
 	private final Map<Player, ItemStack[]> inventories;
 
 	public BottomTopChestMenu(Component title, int rows, int bottomRows) {
@@ -46,6 +47,7 @@ public class BottomTopChestMenu extends ChestMenu {
 
 	public BottomTopChestMenu(ChestMenu chestMenu, int bottomRows) {
 		super(chestMenu.title, chestMenu.getRowCount());
+		this.chestMenu = chestMenu;
 		this.bottomRows = bottomRows;
 		this.slots = getSlotsFromRows(getRowCount(), bottomRows);
 		this.inventories = new HashMap<>();

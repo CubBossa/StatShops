@@ -6,32 +6,47 @@ import de.bossascrew.shops.statshops.shop.currency.Price;
 import de.bossascrew.shops.statshops.shop.entry.ArticleSubModule;
 import de.bossascrew.shops.statshops.shop.entry.CostsSubModule;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface MultiTradeModule {
+public interface MultiTradeModule extends EntryModule {
 
-	List<ArticleSubModule<?>> getArticle();
+	List<ArticleSubModule<?>> getArticles();
 
 	void addArticle(ArticleSubModule<?> article);
 
 	void removeArticle(ArticleSubModule<?> article);
 
-	CostsSubModule<?> getCosts();
+	List<CostsSubModule<?>> getCosts();
 
-	void setCosts(CostsSubModule<?> costs);
+	void addCosts(CostsSubModule<?> costs);
+
+	void removeCosts(CostsSubModule<?> costs);
+
+	boolean isPurchasable();
+
+	void setPurchasable(boolean purchasable);
 
 	boolean isPurchasableStacked();
 
 	void setPurchasableStacked(boolean purchasableStacked);
 
-	Component getPriceDisplay();
+	boolean isSellable();
 
-	Component getPriceDisplay(double discount);
+	void setSellable(boolean sellable);
+
+	boolean isSellableStacked();
+
+	void setSellableStacked(boolean sellableStacked);
+
+	List<Component> getPriceDisplay(@Nullable Customer customer, boolean buy);
+
+	List<Component> getPriceDisplay(@Nullable Customer customer, boolean buy, double discount);
 
 	Transaction getLastTransaction(Customer customer);
 
-	Price<?> getPayPrice();
+	List<Price<?>> getPayPrice(boolean buy);
 
 	List<Price<?>> getGainPrice();
 }

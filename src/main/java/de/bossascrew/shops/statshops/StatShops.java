@@ -131,7 +131,7 @@ public class StatShops extends JavaPlugin {
 
 		// Initialize Kyori Adventure
 		this.bukkitAudiences = BukkitAudiences.create(this);
-		this.miniMessage = MiniMessage.get();
+		this.miniMessage = MiniMessage.miniMessage();
 		this.consoleAudience = bukkitAudiences.sender(Bukkit.getConsoleSender());
 
 		// Initialize and load Config

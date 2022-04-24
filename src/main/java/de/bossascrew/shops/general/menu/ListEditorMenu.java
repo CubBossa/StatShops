@@ -10,7 +10,9 @@ import de.bossascrew.shops.statshops.handler.CustomerHandler;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -78,7 +80,7 @@ public class ListEditorMenu<L extends ListMenuElement> extends PagedChestMenu {
 							name = p.getName();
 						}
 						CustomerHandler.getInstance().getCustomer(clickContext.getPlayer()).sendMessage(alreadyEdited.getKey(), alreadyEdited.getTranslation(
-								Template.of("player", name)));
+								TagResolver.resolver("player", Tag.inserting(Component.text(name)))));
 						return;
 					}
 				}
@@ -86,7 +88,7 @@ public class ListEditorMenu<L extends ListMenuElement> extends PagedChestMenu {
 					//Right click = delete
 					if (requireDeleteConfirmation) {
 						ConfirmMenu confirmMenu = new ConfirmMenu(confirmDeleteTitle.getTranslation(
-								Template.of("name", element.getName())), backContext -> openInventory(player, getCurrentPage()));
+								TagResolver.resolver("name", Tag.inserting(element.getName()))), backContext -> openInventory(player, getCurrentPage()));
 						confirmMenu.setAcceptHandler(clickContext1 -> {
 							elementHolder.delete(element);
 							openInventory(player, getCurrentPage());

@@ -46,7 +46,7 @@ public class EntryTemplate implements ListMenuElement, Duplicable<EntryTemplate>
 
 	public void setNameFormat(String nameFormat) {
 		this.nameFormat = nameFormat;
-		this.name = StatShops.getInstance().getMiniMessage().parse(nameFormat);
+		this.name = StatShops.getInstance().getMiniMessage().deserialize(nameFormat);
 		this.namePlain = TextUtils.toPlain(this.name);
 	}
 

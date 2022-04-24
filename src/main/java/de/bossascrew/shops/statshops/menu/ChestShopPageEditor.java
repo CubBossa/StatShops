@@ -12,9 +12,10 @@ import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -53,7 +54,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 			Collection<ShopEntry> unused = shop.getUnusedEntries();
 			if (unused.size() > 0) {
 				Customer.wrap(getEditor()).sendMessage(Message.GUI_SHOP_EDITOR_UNUSED_INFO.getKey(), Message.GUI_SHOP_EDITOR_UNUSED_INFO.getTranslation(
-						Template.of("amount", unused.size() + "")));
+						TagResolver.resolver("amount", Tag.inserting(Component.text(unused.size() + "")))));
 			}
 			setEditor(null);
 			if (!shopEditor.isFreezeItems()) {
@@ -67,10 +68,10 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 
 	private void refreshTitle() {
 		super.setTitle(Message.SHOP_GUI_TITLE.getTranslation(
-				Template.of("name", shop.getName()),
-				Template.of("page-title", shop.getPageTitle(shopPage)),
-				Template.of("page", "" + (shopPage + 1)),
-				Template.of("pages", "" + Integer.max(shop.getPageCount(), shopPage + 1))));
+				TagResolver.resolver("name", Tag.inserting(shop.getName())),
+				TagResolver.resolver("page-title", Tag.inserting(shop.getPageTitle(shopPage))),
+				TagResolver.resolver("page", Tag.inserting(Component.text("" + (shopPage + 1)))),
+				TagResolver.resolver("pages", Tag.inserting(Component.text(Integer.max(shop.getPageCount(), shopPage + 1))))));
 	}
 
 	private void prepareMenu() {
@@ -127,7 +128,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 			refresh(clickContext.getPlayer(), 4 + INDEX_DIFFERENCE + ROW_SIZE);
 		});
 		setItemAndClickHandlerBottom(0, 6, ItemStackUtils.createItemStack(Material.ANVIL, Message.GUI_SHOP_EDITOR_PAGE_TITLE_NAME.getTranslation(),
-				Message.GUI_SHOP_EDITOR_PAGE_TITLE_LORE.getTranslations(Template.of("current", shop.getPageTitle(shopPage)))), clickContext -> {
+				Message.GUI_SHOP_EDITOR_PAGE_TITLE_LORE.getTranslations(TagResolver.resolver("current", Tag.inserting(shop.getPageTitle(shopPage))))), clickContext -> {
 			new AnvilGUI.Builder()
 					.plugin(StatShops.getInstance())
 					.text(shop.getPageTitleFormat(shopPage))
@@ -317,7 +318,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 	}
 
 	public void openTemplateApplyMenu(Player player, EntryTemplate template) {
-		BottomTopChestMenu menu = new BottomTopChestMenu(Message.GUI_TEMPLATES_APPLY.getTranslation(Template.of("name", template.getName())), shop.getRows(), 1);
+		BottomTopChestMenu menu = new BottomTopChestMenu(Message.GUI_TEMPLATES_APPLY.getTranslation(TagResolver.resolver("name", Tag.inserting(template.getName()))), shop.getRows(), 1);
 		menu.fillMenu(DefaultSpecialItem.EMPTY_LIGHT_RP);
 		menu.fillBottom();
 		int dif = shopPage * INDEX_DIFFERENCE;

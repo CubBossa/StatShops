@@ -1,20 +1,21 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.statshops.api.Shop;
-import de.bossascrew.shops.statshops.data.Customer;
-import de.bossascrew.shops.statshops.api.ShopEntry;
-import de.bossascrew.shops.statshops.api.module.TradeModule;
-import de.bossascrew.shops.statshops.api.ShopMenu;
+import com.google.common.collect.Lists;
 import de.bossascrew.shops.general.menu.VillagerMenu;
-import de.bossascrew.shops.statshops.handler.CurrencyHandler;
-import de.bossascrew.shops.statshops.util.EntryInteractionType;
 import de.bossascrew.shops.general.util.Pair;
-import de.bossascrew.shops.statshops.util.TradeMessageType;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.api.ShopMenu;
+import de.bossascrew.shops.statshops.api.module.TradeModule;
+import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.handler.CurrencyHandler;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.*;
 import de.bossascrew.shops.statshops.shop.currency.Price;
+import de.bossascrew.shops.statshops.util.EntryInteractionType;
+import de.bossascrew.shops.statshops.util.TradeMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -63,7 +64,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 				pay.applyDiscount(discount);
 
 				balanceMessenger.handleTransaction(new Transaction(Customer.wrap(targetContext.getPlayer()), entry, EntryInteractionType.BUY,
-						pay, gain, LocalDateTime.now(), discount, discounts));
+						Lists.newArrayList(pay), Lists.newArrayList(gain), LocalDateTime.now(), discount, discounts));
 			}
 			if (entry.getModule() != null) {
 				StatShops.getInstance().getLogDatabase().logToDatabase(entry.getModule().createLogEntry(Customer.wrap(targetContext.getPlayer()), EntryInteractionResult.SUCCESS), this.villagerShop);

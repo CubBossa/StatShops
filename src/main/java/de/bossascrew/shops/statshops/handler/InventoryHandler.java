@@ -1,14 +1,16 @@
 package de.bossascrew.shops.statshops.handler;
 
 import com.google.common.collect.Maps;
-import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.general.menu.EditorMenu;
 import de.bossascrew.shops.general.menu.OpenableMenu;
 import de.bossascrew.shops.general.menu.VillagerMenu;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.Message;
 import lombok.Getter;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -42,7 +44,8 @@ public class InventoryHandler {
 				return true;
 			} else {
 				Customer.wrap(player).sendMessage(Message.GENERAL_EDITABLE_CURRENTLY_EDITED.getKey(),
-						Message.GENERAL_EDITABLE_CURRENTLY_EDITED.getTranslation(Template.of("editor", ((Player) editorMenu.getEditor()).getName())));
+						Message.GENERAL_EDITABLE_CURRENTLY_EDITED.getTranslation(TagResolver.resolver("editor",
+								Tag.inserting(Component.text(((Player) editorMenu.getEditor()).getName())))));
 				return false;
 			}
 		}

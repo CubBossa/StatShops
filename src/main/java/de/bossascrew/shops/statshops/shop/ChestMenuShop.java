@@ -102,7 +102,7 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 		if (!pageTitles.containsKey(page)) {
 			return Component.empty();
 		}
-		return StatShops.getInstance().getMiniMessage().parse(pageTitles.get(page));
+		return StatShops.getInstance().getMiniMessage().deserialize(pageTitles.get(page));
 	}
 
 	public String getPageTitleFormat(int page) {

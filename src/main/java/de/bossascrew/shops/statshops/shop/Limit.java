@@ -68,7 +68,7 @@ public class Limit implements
 
 	public void setNameFormat(String nameFormat) {
 		this.nameFormat = nameFormat;
-		this.name = StatShops.getInstance().getMiniMessage().parse(nameFormat);
+		this.name = StatShops.getInstance().getMiniMessage().deserialize(nameFormat);
 		this.namePlain = TextUtils.toPlain(name);
 	}
 

@@ -1,6 +1,6 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
-import de.bossascrew.shops.general.menu.ListMenu;
+import de.bossascrew.shops.general.menu.LMenu;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.menu.contexts.TargetContext;
 import de.bossascrew.shops.general.util.Pair;
@@ -13,7 +13,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -90,8 +91,8 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		if (name == null || lore == null) {
 			return null;
 		}
-		return ItemStackUtils.setNameAndLore(displayItem, typeMessage.getTranslation(Template.of("name", name.getTranslation())),
-				lore.getTranslations(Template.of("current", dataFormatter.apply(data))));
+		return ItemStackUtils.setNameAndLore(displayItem, typeMessage.getTranslation(TagResolver.resolver("name", Tag.inserting(name.getTranslation()))),
+				lore.getTranslations(TagResolver.resolver("current", Tag.inserting(dataFormatter.apply(data)))));
 	}
 
 	public static class TextSlot extends DataSlot<String> {
@@ -104,7 +105,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 				new AnvilGUI.Builder()
 						.plugin(StatShops.getInstance())
 						.text("" + getData())
-						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.getLegacyTranslation(Template.of("name", getName().getTranslation())))
+						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.getLegacyTranslation(TagResolver.resolver("name", Tag.inserting(getName().getTranslation()))))
 						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> clickContext.getTarget().run(), 1L))
 						.onComplete((p, s) -> {
 							setData(s);
@@ -138,7 +139,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 				new AnvilGUI.Builder()
 						.plugin(StatShops.getInstance())
 						.text("" + getData())
-						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.getLegacyTranslation(Template.of("name", getName().getTranslation())))
+						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.getLegacyTranslation(TagResolver.resolver("name", Tag.inserting(getName().getTranslation()))))
 						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> clickContext.getTarget().run(), 1L))
 						.onComplete((p, s) -> {
 							setData(s);
@@ -227,7 +228,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 				new AnvilGUI.Builder()
 						.plugin(StatShops.getInstance())
 						.text("" + getData())
-						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.getLegacyTranslation(Template.of("name", getName().getTranslation())))
+						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.getLegacyTranslation(TagResolver.resolver("name", Tag.inserting(getName().getTranslation()))))
 						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> clickContext.getTarget().run(), 1L))
 						.onComplete((p, s) -> {
 							try {
@@ -275,7 +276,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 			super.setData(uuid);
 			super.setClickHandler(clickContext -> {
 				int shops = ShopHandler.getInstance().getShops().size();
-				ListMenu<Shop> menu = new ListMenu<>(Integer.max(3, Integer.min(shops % 9, 6)), ShopHandler.getInstance(),
+				LMenu<Shop> menu = new LMenu<>(Integer.max(3, Integer.min(shops % 9, 6)), ShopHandler.getInstance(),
 						Message.GUI_SHOPS_TITLE, backContext -> clickContext.getTarget().run());
 				menu.setGlowPredicate(s -> Objects.equals(s.getUUID(), getData()));
 				menu.setClickHandler(cc -> {

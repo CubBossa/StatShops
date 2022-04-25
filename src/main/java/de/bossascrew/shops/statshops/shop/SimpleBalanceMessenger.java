@@ -1,15 +1,16 @@
 package de.bossascrew.shops.statshops.shop;
 
-import de.bossascrew.shops.statshops.data.Customer;
-import de.bossascrew.shops.statshops.api.TransactionBalanceMessenger;
-import de.bossascrew.shops.statshops.util.TradeMessageType;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.TransactionBalanceMessenger;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.currency.Price;
+import de.bossascrew.shops.statshops.util.TradeMessageType;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -35,23 +36,30 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 		}
 
 		Customer customer = transaction.getCustomer();
-		Price<?> gain = transaction.getGainPrice().toSimplePrice(customer);
-		Price<?> pay = transaction.getPayPrice().toSimplePrice(customer);
-		pay.setAmount(pay.getAmount() * -1);
+		List<Price<?>> gain = transaction.getGainPrice().stream()
+				.map(price -> price.toSimplePrice(customer)).collect(Collectors.toList());
+		List<Price<?>> pay = transaction.getPayPrice().stream()
+				.map(price -> price.toSimplePrice(customer))
+				.peek(price -> price.setAmount(price.getAmount() * -1))
+				.collect(Collectors.toList());
 
 		List<Price<?>> prices = tradeCache.getOrDefault(customer.getUuid(), new ArrayList<>());
 
-		Price<?> cachedGain = prices.stream().filter(price -> price.summable(gain)).findAny().orElse(null);
-		if (cachedGain == null) {
-			prices.add(gain);
-		} else {
-			cachedGain.setAmount(cachedGain.getAmount() + gain.getAmount());
+		for (Price<?> priceGain : gain) {
+			Price<?> cachedGain = prices.stream().filter(price -> price.summable(priceGain)).findAny().orElse(null);
+			if (cachedGain == null) {
+				prices.addAll(gain);
+			} else {
+				cachedGain.setAmount(cachedGain.getAmount() + cachedGain.getAmount());
+			}
 		}
-		Price<?> cachedPay = prices.stream().filter(price -> price.summable(pay)).findAny().orElse(null);
-		if (cachedPay == null) {
-			prices.add(pay);
-		} else {
-			cachedPay.setAmount(cachedPay.getAmount() + pay.getAmount());
+		for (Price<?> pricePay : pay) {
+			Price<?> cachedPay = prices.stream().filter(price -> price.summable(pricePay)).findAny().orElse(null);
+			if (cachedPay == null) {
+				prices.addAll(pay);
+			} else {
+				cachedPay.setAmount(cachedPay.getAmount() + pricePay.getAmount());
+			}
 		}
 		tradeCache.put(customer.getUuid(), prices);
 
@@ -98,11 +106,11 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 		price = price.duplicate();
 		price.setAmount(Math.abs(price.getAmount()));
 
-		Template[] templates = {
-				Template.of("indicator", actualAmount >= 0 ?
+		TagResolver[] templates = {
+				TagResolver.resolver("indicator", Tag.inserting(actualAmount >= 0 ?
 						Message.SHOP_TRADE_FEEDBACK_GAIN.getTranslation() :
-						Message.SHOP_TRADE_FEEDBACK_PAY.getTranslation()),
-				Template.of("transaction", price.getPriceComponent()),
+						Message.SHOP_TRADE_FEEDBACK_PAY.getTranslation())),
+				TagResolver.resolver("transaction", Tag.inserting(price.getPriceComponent())),
 		};
 		if (tradeMessageType.equals(TradeMessageType.PROMPT)) {
 			return Message.SHOP_TRADE_FEEDBACK_PROMPT_FORMAT.getTranslation(templates);

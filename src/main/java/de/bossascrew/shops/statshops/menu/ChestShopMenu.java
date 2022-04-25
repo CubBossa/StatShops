@@ -19,7 +19,9 @@ import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -129,10 +131,10 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
 	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer, int page) {
 		Inventory inventory = Bukkit.createInventory(null, slots.length, Message.SHOP_GUI_TITLE.getLegacyTranslation(
-				Template.of("name", shop.getName()),
-				Template.of("page-title", shop.getPageTitle(page)),
-				Template.of("page", "" + (page + 1)),
-				Template.of("pages", "" + shop.getPageCount())));
+				TagResolver.resolver("name", Tag.inserting(shop.getName())),
+				TagResolver.resolver("page-title", Tag.inserting(shop.getPageTitle(page))),
+				TagResolver.resolver("page", Tag.inserting(Component.text(page + 1))),
+				TagResolver.resolver("pages", Tag.inserting(Component.text(shop.getPageCount())))));
 		return openInventorySync(player, inventory, inventoryPreparer, page);
 	}
 

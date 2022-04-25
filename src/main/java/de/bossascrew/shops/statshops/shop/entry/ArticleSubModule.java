@@ -17,10 +17,12 @@ import java.util.Map;
 
 public class ArticleSubModule<T> implements ConfigurationSerializable {
 
+	//TODO im moment teilen sich alle command articles zb den gleichen dataslot. Mit index versehen
+
 	@Getter
 	private SubModulesHandler.ArticleSubModuleProvider<T> provider;
 
-	private DataSlot.NumberSlot gainPriceAmount;
+	protected DataSlot.NumberSlot gainPriceAmount;
 	@Getter
 	private final Price<T> price;
 
@@ -63,6 +65,11 @@ public class ArticleSubModule<T> implements ConfigurationSerializable {
 			super(values);
 		}
 
+		public void setGainPrice(ItemStack stack, int amount) {
+			gainPriceItem.setData(stack);
+			gainPriceAmount.setData(amount);
+		}
+
 		@Override
 		public List<DataSlot<?>> getDataSlots() {
 			List<DataSlot<?>> data = new ArrayList<>(super.getDataSlots());
@@ -91,6 +98,10 @@ public class ArticleSubModule<T> implements ConfigurationSerializable {
 
 		public BaseCommandArticle(Map<String, Object> values) {
 			super(values);
+		}
+
+		public void setCommand(String command) {
+			this.command.setData(command);
 		}
 
 		@Override

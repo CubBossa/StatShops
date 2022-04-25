@@ -1,20 +1,21 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.statshops.data.Customer;
-import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.general.menu.ConfirmMenu;
 import de.bossascrew.shops.general.menu.EditorMenu;
-import de.bossascrew.shops.general.menu.PagedChestMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.util.Editable;
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.statshops.api.data.DatabaseObject;
+import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
+import de.cubbossa.guiframework.inventory.implementations.ListMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,7 +23,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-public class TagsEditorMenu<T extends Editable<Player> & Taggable> extends PagedChestMenu implements
+public class TagsEditorMenu<T extends Editable<Player> & Taggable> extends ListMenu implements
 		EditorMenu<Player> {
 
 	private final T taggable;
@@ -73,7 +74,7 @@ public class TagsEditorMenu<T extends Editable<Player> & Taggable> extends Paged
 			addMenuEntry(ItemStackUtils.createItemStack(Material.NAME_TAG, Component.text(tag, NamedTextColor.WHITE), new ArrayList<>()), clickContext -> {
 				if (clickContext.getAction().isRightClick()) {
 					if (StatShops.getInstance().getShopsConfig().isConfirmTagDeletion()) {
-						ConfirmMenu confirmMenu = new ConfirmMenu(confirmRemove.getTranslation(Template.of("name", tag)));
+						ConfirmMenu confirmMenu = new ConfirmMenu(confirmRemove.getTranslation(TagResolver.resolver("name", Tag.inserting(Component.text(tag)))));
 						confirmMenu.setDenyHandler(c -> openInventory(c.getPlayer(), getCurrentPage()));
 						confirmMenu.setCloseHandler(c -> openInventory(c.getPlayer(), getCurrentPage()));
 						confirmMenu.setAcceptHandler(c -> {
@@ -94,7 +95,7 @@ public class TagsEditorMenu<T extends Editable<Player> & Taggable> extends Paged
 	public void openInventory(Player player, int page) {
 		if (isEditorSet() && !getEditor().equals(player)) {
 			Customer.wrap(player).sendMessage(Message.GENERAL_EDITABLE_CURRENTLY_EDITED.getKey(),
-					Message.GENERAL_EDITABLE_CURRENTLY_EDITED.getTranslation(Template.of("editor", getEditor().getName())));
+					Message.GENERAL_EDITABLE_CURRENTLY_EDITED.getTranslation(TagResolver.resolver("editor", Tag.inserting(Component.text(getEditor().getName())))));
 			return;
 		}
 		setEditor(player);

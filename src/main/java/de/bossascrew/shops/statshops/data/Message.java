@@ -3,11 +3,13 @@ package de.bossascrew.shops.statshops.data;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.handler.DynamicPricingHandler;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -341,21 +343,21 @@ public class Message {
 		this.examplePlaceholders = examplePlaceholders;
 	}
 
-	public Component getTranslation(Template... templates) {
-		List<Template> t = new ArrayList<>(List.of(templates));
+	public Component getTranslation(TagResolver... templates) {
+		List<TagResolver> t = new ArrayList<>(List.of(templates));
 		if (!this.equals(Message.PREFIX)) {
-			t.add(Template.of("prefix", Message.PREFIX.getTranslation()));
+			t.add(TagResolver.resolver("prefix", Tag.inserting(Message.PREFIX.getTranslation())));
 		}
 		String format = TranslationHandler.getInstance().getTranslation(key);
-		return StatShops.getInstance().getMiniMessage().parse(format, t);
+		return StatShops.getInstance().getMiniMessage().deserialize(format, t.toArray(TagResolver[]::new));
 	}
 
-	public List<Component> getTranslations(Template...templates) {
+	public List<Component> getTranslations(TagResolver...templates) {
 		String[] toFormat = TranslationHandler.getInstance().getTranslation(key).split("\n");
 		List<Component> result = new ArrayList<>();
 		MiniMessage miniMessage = StatShops.getInstance().getMiniMessage();
 		for (String string : toFormat) {
-			result.add(miniMessage.parse(string, templates));
+			result.add(miniMessage.deserialize(string, templates));
 		}
 		if (result.stream().allMatch(component -> component.equals(Component.text("")))) {
 			return new ArrayList<>();
@@ -363,11 +365,11 @@ public class Message {
 		return result;
 	}
 
-	public String getLegacyTranslation(Template... templates) {
+	public String getLegacyTranslation(TagResolver... templates) {
 		return TextUtils.toLegacy(getTranslation(templates));
 	}
 
-	public List<String> getLegacyTranslations(Template... templates) {
+	public List<String> getLegacyTranslations(TagResolver... templates) {
 		return getTranslations(templates).stream().map(TextUtils::toLegacy).collect(Collectors.toList());
 	}
 

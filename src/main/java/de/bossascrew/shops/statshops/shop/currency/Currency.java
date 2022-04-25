@@ -1,11 +1,12 @@
 package de.bossascrew.shops.statshops.shop.currency;
 
-import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.data.Customer;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiFunction;
@@ -72,10 +73,10 @@ public abstract class Currency<T> {
 	 * @return a component that displays the amount of T objects in a user-friendly way
 	 */
 	public Component format(double amount, @Nullable T object, double discount) {
-		return StatShops.getInstance().getMiniMessage().parse(discount != 1 ? formatDiscounted : format,
-				Template.of("amount", countFormatter.apply(amount)),
-				Template.of("amount_dc", countFormatter.apply(applyDiscount(amount, discount))),
-				Template.of("currency", currencyFormatter.apply(amount, object)));
+		return StatShops.getInstance().getMiniMessage().deserialize(discount != 1 ? formatDiscounted : format,
+				TagResolver.resolver("amount", Tag.inserting(Component.text(countFormatter.apply(amount)))),
+				TagResolver.resolver("amount_dc", Tag.inserting(Component.text(countFormatter.apply(applyDiscount(amount, discount))))),
+				TagResolver.resolver("currency", Tag.inserting(currencyFormatter.apply(amount, object))));
 	}
 
 	public Component getCurrencyComponent(double amount, T object) {

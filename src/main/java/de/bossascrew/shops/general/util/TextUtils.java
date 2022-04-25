@@ -1,7 +1,7 @@
 package de.bossascrew.shops.general.util;
 
 import de.bossascrew.shops.statshops.StatShops;
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.api.BinaryTagHolder;
@@ -73,7 +73,7 @@ public class TextUtils {
 	}
 
 	public String toLegacyFromMiniMessage(String minimessage) {
-		return toLegacy(StatShops.getInstance().getMiniMessage().parse(minimessage));
+		return toLegacy(StatShops.getInstance().getMiniMessage().deserialize(minimessage));
 	}
 
 	public String formatDuration(Duration duration) {
@@ -118,7 +118,7 @@ public class TextUtils {
 				fromLegacy(itemStack.getItemMeta().getDisplayName()) :
 				toTranslatable(itemStack.getType()))
 				.hoverEvent(HoverEvent.showItem(HoverEvent.ShowItem.of(Key.key(itemStack.getType().getKey().toString()),
-						1, BinaryTagHolder.of(new NBTItem(itemStack).toString()))));
+						1, BinaryTagHolder.binaryTagHolder(new NBTItem(itemStack).toString()))));
 	}
 
 	public Component toComponent(ItemStack itemStack) {

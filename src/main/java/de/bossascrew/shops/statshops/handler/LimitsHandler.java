@@ -9,9 +9,11 @@ import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.statshops.shop.Limit;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.web.WebAccessable;
+import de.cubbossa.guiframework.inventory.ListMenuSupplier;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -22,7 +24,8 @@ import java.util.stream.Collectors;
 @Getter
 public class LimitsHandler implements
 		WebAccessable<Limit>,
-		ListEditorMenuElementHolder<Limit> {
+		ListEditorMenuElementHolder<Limit>,
+		ListMenuSupplier<Limit> {
 
 	@Getter
 	private static LimitsHandler instance;
@@ -273,6 +276,16 @@ public class LimitsHandler implements
 		subscribers.remove(limit);
 		limitMap.remove(limit.getUuid());
 		return true;
+	}
+
+	@Override
+	public Collection<Limit> getElements() {
+		return getLimits();
+	}
+
+	@Override
+	public ItemStack getDisplayItem(Limit limit) {
+		return ItemStackUtils.createLimitsItemStack(limit);
 	}
 
 	public record EntryInteraction(UUID entryUuid, UUID playerUuid, long timeStamp, long duration) {

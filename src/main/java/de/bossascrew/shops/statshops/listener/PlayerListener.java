@@ -4,20 +4,15 @@ import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.handler.CustomerHandler;
 import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Material;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.TradeSelectEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.world.StructureGrowEvent;
 
 @RequiredArgsConstructor
 public class PlayerListener implements Listener {

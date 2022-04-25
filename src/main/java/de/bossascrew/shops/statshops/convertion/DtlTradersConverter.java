@@ -1,20 +1,23 @@
 package de.bossascrew.shops.statshops.convertion;
 
 import com.google.common.collect.Lists;
-import de.bossascrew.shops.statshops.api.Shop;
-import de.bossascrew.shops.statshops.api.module.EntryModule;
-import de.bossascrew.shops.statshops.api.ShopEntry;
-import de.bossascrew.shops.statshops.api.module.TradeModule;
-import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
-import de.bossascrew.shops.statshops.shop.ChestMenuShop;
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.Shop;
+import de.bossascrew.shops.statshops.api.ShopEntry;
+import de.bossascrew.shops.statshops.api.module.EntryModule;
+import de.bossascrew.shops.statshops.api.module.MultiTradeModule;
+import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
+import de.bossascrew.shops.statshops.handler.SubModulesHandler;
 import de.bossascrew.shops.statshops.hook.VaultExtension;
+import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
+import de.bossascrew.shops.statshops.shop.entry.ArticleSubModule;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
 import de.bossascrew.shops.statshops.shop.entry.CostsSubModule;
+import de.bossascrew.shops.statshops.shop.entry.MultiTradeBaseModule;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -137,21 +140,21 @@ public class DtlTradersConverter implements Converter {
 				ConfigurationSection buySection = page.getConfigurationSection("buy-items");
 				if (shopBuy != null && buySection != null) {
 					for (ConfigurationSection item : page.getKeys(false).stream().map(page::getConfigurationSection).collect(Collectors.toList())) {
-						BaseEntry entry = parseBuyEntry(shopBuy, pageObject, item);
+						BaseEntry entry = parseBuyEntry(shopBuy, item);
 						shopBuy.addEntry(entry, entry.getSlot());
 					}
 				}
 				ConfigurationSection sellSection = page.getConfigurationSection("sell-items");
 				if (shopSell != null && sellSection != null) {
 					for (ConfigurationSection item : page.getKeys(false).stream().map(page::getConfigurationSection).collect(Collectors.toList())) {
-						BaseEntry entry = parseBuyEntry(shopBuy, pageObject, item); //TODO parseSell
+						BaseEntry entry = parseBuyEntry(shopBuy, item); //TODO parseSell
 						shopSell.addEntry(entry, entry.getSlot());
 					}
 				}
 				ConfigurationSection tradeSection = page.getConfigurationSection("trade-items");
 				if (shopTrade != null && tradeSection != null) {
 					for (ConfigurationSection item : page.getKeys(false).stream().map(page::getConfigurationSection).collect(Collectors.toList())) {
-						BaseEntry entry = parseBuyEntry(shopBuy, pageObject, item); //TODO parse trade
+						BaseEntry entry = parseBuyEntry(shopBuy, item); //TODO parse trade
 						shopTrade.addEntry(entry, entry.getSlot());
 					}
 				}
@@ -162,9 +165,10 @@ public class DtlTradersConverter implements Converter {
 		}
 	}
 
-	private BaseEntry parseBuyEntry(Shop shop, Page page, ConfigurationSection entrySection) {
-		//TODO currency = vault
-
+	/**
+	 * Parses all buy items. All pay currencies are vault
+	 */
+	private BaseEntry parseBuyEntry(Shop shop, ConfigurationSection entrySection) {
 
 		ItemStack displayItem = entrySection.getItemStack("item");
 		String type = entrySection.getString("type");
@@ -175,21 +179,44 @@ public class DtlTradersConverter implements Converter {
 		BaseEntry entry = new BaseEntry(UUID.randomUUID(), shop, displayItem, permission == null || permission.isEmpty() ? null : permission, slot);
 		List<String> displayLore = entrySection.getBoolean("show-description") ? entrySection.getStringList("description") : new ArrayList<>();
 		entry.setInfoLoreFormat(StatShops.getInstance().getMiniMessage().serialize(TextUtils.fromChatLegacy(String.join("\n", displayLore))));
-		// lost: commands on buy //TODO should be implemented
-
-		//TODO implement c@ombined entries -> admins can sell multiple commands and items ...
 
 		boolean trade = type.equalsIgnoreCase("trade");
 		boolean commands = type.equalsIgnoreCase("commands");
 		if (trade || commands) {
-			TradeModule tradeModule = (TradeModule) EntryModuleHandler.getInstance().getModule(entry, trade ? EntryModuleHandler.TRADE_ITEM : EntryModuleHandler.TRADE_CMD);
+			double price = entrySection.getDouble("trade-price");
+			CostsSubModule<?> costs = VaultExtension.COSTS_VAULT_PROVIDER.getModule(entry);
+			costs.setCosts(price, price);
+
+			List<ArticleSubModule<?>> articleSubModules = new ArrayList<>();
+			if (trade) {
+				ArticleSubModule.ItemArticle itemArticle = (ArticleSubModule.ItemArticle) SubModulesHandler.ARTICLE_ITEM_PROVIDER.getModule(entry);
+				ItemStack gain = entrySection.getItemStack("item");
+				gain.setAmount(1);
+				itemArticle.setGainPrice(gain, gain.getAmount());
+				articleSubModules.add(itemArticle);
+			}
+			if (commands) {
+				ConfigurationSection commandsSection = entrySection.getConfigurationSection("commands");
+				if (commandsSection != null) {
+					for (ConfigurationSection commandSection : commandsSection.getKeys(false).stream()
+							.map(commandsSection::getConfigurationSection).collect(Collectors.toList())) {
+						String commandName = commandSection.getString("command");
+						ArticleSubModule.BaseCommandArticle commandArticle;
+						if (commandSection.getString("executor").equals("CONSOLE")) {
+							commandArticle = (ArticleSubModule.CommandArticle) SubModulesHandler.ARTICLE_CMD_PROVIDER.getModule(entry);
+						} else {
+							commandArticle = (ArticleSubModule.BaseCommandArticle) SubModulesHandler.ARTICLE_CONSOLE_CMD_PROVIDER.getModule(entry);
+						}
+						commandArticle.setCommand(commandName);
+					}
+				}
+				ArticleSubModule<String> commandArticle = SubModulesHandler.ARTICLE_CMD_PROVIDER.getModule(entry);
+				articleSubModules.add(commandArticle);
+			}
+			MultiTradeModule tradeModule = new MultiTradeBaseModule(entry, null, articleSubModules, Lists.newArrayList(costs));
 			tradeModule.setPurchasableStacked(true);
 			//only buy items are processed in this method
 			tradeModule.setSellable(false);
-			double price = entrySection.getDouble("trade-price");
-			CostsSubModule<?> subModule = VaultExtension.COSTS_VAULT_PROVIDER.getModule(entry);
-			subModule.setCosts(price, price);
-			tradeModule.setCosts(subModule);
 		}
 		return entry;
 	}

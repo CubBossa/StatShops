@@ -81,6 +81,10 @@ public class Price<T> implements Comparable<Price<?>>, ConfigurationSerializable
 	}
 
 
+	public boolean canPay(Customer customer) {
+		return canPay(customer, 1);
+	}
+
 	public boolean canPay(Customer customer, double discount) {
 		return currency.hasAmount(customer, currency.applyDiscount(amount, discount), object);
 	}

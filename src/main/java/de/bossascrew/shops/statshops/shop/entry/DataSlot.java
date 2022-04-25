@@ -1,6 +1,6 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
-import de.bossascrew.shops.general.menu.ListMenu;
+import de.bossascrew.shops.general.menu.LMenu;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.menu.contexts.TargetContext;
 import de.bossascrew.shops.general.util.Pair;
@@ -276,7 +276,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 			super.setData(uuid);
 			super.setClickHandler(clickContext -> {
 				int shops = ShopHandler.getInstance().getShops().size();
-				ListMenu<Shop> menu = new ListMenu<>(Integer.max(3, Integer.min(shops % 9, 6)), ShopHandler.getInstance(),
+				LMenu<Shop> menu = new LMenu<>(Integer.max(3, Integer.min(shops % 9, 6)), ShopHandler.getInstance(),
 						Message.GUI_SHOPS_TITLE, backContext -> clickContext.getTarget().run());
 				menu.setGlowPredicate(s -> Objects.equals(s.getUUID(), getData()));
 				menu.setClickHandler(cc -> {

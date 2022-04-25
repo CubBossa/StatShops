@@ -2,7 +2,6 @@ package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.general.menu.ConfirmMenu;
 import de.bossascrew.shops.general.menu.EditorMenu;
-import de.bossascrew.shops.general.menu.PagedChestMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.util.Editable;
@@ -12,6 +11,7 @@ import de.bossascrew.shops.statshops.api.data.DatabaseObject;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
+import de.cubbossa.guiframework.inventory.implementations.ListMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-public class TagsEditorMenu<T extends Editable<Player> & Taggable> extends PagedChestMenu implements
+public class TagsEditorMenu<T extends Editable<Player> & Taggable> extends ListMenu implements
 		EditorMenu<Player> {
 
 	private final T taggable;

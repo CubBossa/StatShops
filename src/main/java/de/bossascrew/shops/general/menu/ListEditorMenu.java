@@ -134,7 +134,7 @@ public class ListEditorMenu<L extends ListMenuElement> extends PagedChestMenu {
 			openNameInput(player, holder.getTypes().get(0).type());
 		}
 
-		ListMenu<ListEditorMenuTypedElementHolder.Provider<L>> menu = new ListMenu<>(3, holder::getTypes,
+		LMenu<ListEditorMenuTypedElementHolder.Provider<L>> menu = new LMenu<>(3, holder::getTypes,
 				selectTypeTitle, backContext -> openInventory(backContext.getPlayer(), currentPage));
 
 		menu.setClickHandler(clickContext -> openNameInput(clickContext.getPlayer(), clickContext.getTarget().type()));

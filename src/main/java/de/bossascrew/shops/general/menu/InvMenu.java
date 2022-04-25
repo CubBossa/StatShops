@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * @param <T> entspricht dem Interaktionstypen. Ein Hotbarinventar basiert Beispielsweise auf dem PlayerInteractEvent und hat daher keinen
  *            InventoryAction Wert, auf den reagiert werden kann.
  */
-public abstract class InventoryMenu<T, A extends ActionContext<T>, B extends BackContext, C extends CloseContext> {
+public abstract class InvMenu<T, A extends ActionContext<T>, B extends BackContext, C extends CloseContext> {
 
 	/**
 	 * Alle für dieses Inventar möglichen Actions.
@@ -69,12 +69,12 @@ public abstract class InventoryMenu<T, A extends ActionContext<T>, B extends Bac
 	private final Map<UUID, Inventory> openInventories = Maps.newHashMap();
 
 
-	public InventoryMenu(T[] actions, int[] slots) {
+	public InvMenu(T[] actions, int[] slots) {
 		this(actions, slots, 8, null, null);
 	}
 
-	public InventoryMenu(T[] actions, int[] slots, int backSlot, @Nullable Map<T, ContextConsumer<A>> defaultClickHandler,
-						 @Nullable ContextConsumer<C> closeHandler) {
+	public InvMenu(T[] actions, int[] slots, int backSlot, @Nullable Map<T, ContextConsumer<A>> defaultClickHandler,
+				   @Nullable ContextConsumer<C> closeHandler) {
 
 		this.actions = actions;
 		this.slots = slots;

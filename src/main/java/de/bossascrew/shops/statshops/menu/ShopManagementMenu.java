@@ -18,6 +18,12 @@ import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.util.TagUtils;
 import de.bossascrew.shops.web.WebSessionUtils;
 import de.bossascrew.shops.web.pasting.Paste;
+import de.cubbossa.guiframework.inventory.Action;
+import de.cubbossa.guiframework.inventory.Menu;
+import de.cubbossa.guiframework.inventory.MenuPresets;
+import de.cubbossa.guiframework.inventory.implementations.AnvilMenu;
+import de.cubbossa.guiframework.inventory.implementations.InventoryMenu;
+import de.cubbossa.guiframework.inventory.implementations.ListMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -27,7 +33,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
@@ -39,53 +44,55 @@ import java.util.function.Supplier;
 public class ShopManagementMenu {
 
 	public void openBaseMenu(Player player) {
-		ChestMenu chestMenu = new ChestMenu(Message.GUI_MAIN_TITLE, 3);
-		chestMenu.fillMenu();
+
+		InventoryMenu menu = new InventoryMenu(3, Message.GUI_MAIN_TITLE.getTranslation());
+		menu.addPreset(MenuPresets.fill(MenuPresets.FILLER_LIGHT));
 
 		// Main menu background texture
 		ItemStack glass_rp = DefaultSpecialItem.EMPTY_LIGHT.createSpecialItem();
 		ItemStackUtils.setCustomModelData(glass_rp, 7122001);
-		chestMenu.setItem(1, 0, glass_rp);
+		menu.setItem(1, glass_rp);
 
-		chestMenu.setItemAndClickHandler(1, 2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
-				Message.GUI_MAIN_LIMITS_NAME, Message.GUI_MAIN_LIMITS_LORE), clickContext -> openLimitsMenu(player, 0));
-		chestMenu.setItemAndClickHandler(1, 3, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
-				Message.GUI_MAIN_DISCOUNTS_NAME, Message.GUI_MAIN_DISCOUNTS_LORE), clickContext -> openDiscountsMenu(player, 0));
-		chestMenu.setItemAndClickHandler(1, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_SHOP,
-				Message.GUI_MAIN_SHOPS_NAME, Message.GUI_MAIN_SHOPS_LORE), clickContext -> openShopsMenu(player, 0));
-		chestMenu.setItemAndClickHandler(1, 5, ItemStackUtils.createItemStack(Material.WRITABLE_BOOK,
+		menu.setItemAndClickHandler(11, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
+				Message.GUI_MAIN_LIMITS_NAME, Message.GUI_MAIN_LIMITS_LORE), Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), limitsMenu()));
+		menu.setItemAndClickHandler(12, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
+				Message.GUI_MAIN_DISCOUNTS_NAME, Message.GUI_MAIN_DISCOUNTS_LORE), Action.LEFT, clickContext -> openDiscountsMenu(player, 0));
+		menu.setItemAndClickHandler(13, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_SHOP,
+				Message.GUI_MAIN_SHOPS_NAME, Message.GUI_MAIN_SHOPS_LORE), Action.LEFT, clickContext -> openShopsMenu(player, 0));
+		menu.setItem(14, ItemStackUtils.createItemStack(Material.WRITABLE_BOOK,
 				Message.GUI_MAIN_LANGUAGE_NAME.getTranslation(), Message.GUI_MAIN_LANGUAGE_LORE.getTranslations(TagResolver.resolver("file",
-						Tag.inserting(Component.text(StatShops.getInstance().getShopsConfig().getLanguage() + ".yml"))))), clickContext -> {
-			if (clickContext.getAction().equals(ClickType.RIGHT)) {
-				long ms = System.currentTimeMillis();
-				TranslationHandler.getInstance().loadLanguage(StatShops.getInstance().getShopsConfig().getLanguage()).thenAcceptAsync(success -> {
-					if (success) {
-						Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getKey(),
-								Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getTranslation(TagResolver.resolver("ms", Tag.inserting(Component.text(System.currentTimeMillis() - ms + "")))), 0);
-						openBaseMenu(player);
-						return;
-					}
-					Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOAD_ERROR);
-					chestMenu.setItem(1, 5, DefaultSpecialItem.ERROR.createSpecialItem());
-				});
-			} else if (clickContext.getAction().equals(ClickType.LEFT)) {
-				player.closeInventory();
-				Customer customer = Customer.wrap(player);
-				customer.sendMessage(Message.GENERAL_WEBINTERFACE_LOADING);
-
-				StatShops.getInstance().runAsync(() -> {
-
-					Paste paste = WebSessionUtils.generateWebSession();
-					if (paste == null) {
-						customer.sendMessage(Message.GENERAL_WEBINTERFACE_ERROR);
-						return;
-					}
-					customer.sendMessage(Message.GENERAL_WEBINTERFACE_LINK.getKey(), Message.GENERAL_WEBINTERFACE_LINK.getTranslation(TagResolver.resolver("link", Tag.inserting(Component.text("https://127.0.0.1:8080/" + paste.getId())))));
-				});
-			}
+						Tag.inserting(Component.text(StatShops.getInstance().getShopsConfig().getLanguage() + ".yml"))))));
+		menu.setClickHandler(14, Action.RIGHT, clickContext -> {
+			long ms = System.currentTimeMillis();
+			TranslationHandler.getInstance().loadLanguage(StatShops.getInstance().getShopsConfig().getLanguage()).thenAcceptAsync(success -> {
+				if (success) {
+					Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getKey(),
+							Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getTranslation(TagResolver.resolver("ms", Tag.inserting(Component.text(System.currentTimeMillis() - ms + "")))), 0);
+					openBaseMenu(player);
+					return;
+				}
+				Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOAD_ERROR);
+				menu.setItem(14, DefaultSpecialItem.ERROR.createSpecialItem());
+			});
 		});
-		chestMenu.setItemAndClickHandler(1, 6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_WEBINTERFACE,
-				Message.GUI_MAIN_WEBINTERFACE_NAME, Message.GUI_MAIN_WEBINTERFACE_LORE), clickContext -> {
+		menu.setClickHandler(14, Action.LEFT, clickContext -> {
+			player.closeInventory();
+			Customer customer = Customer.wrap(player);
+			customer.sendMessage(Message.GENERAL_WEBINTERFACE_LOADING);
+
+			StatShops.getInstance().runAsync(() -> {
+
+				Paste paste = WebSessionUtils.generateWebSession();
+				if (paste == null) {
+					customer.sendMessage(Message.GENERAL_WEBINTERFACE_ERROR);
+					return;
+				}
+				customer.sendMessage(Message.GENERAL_WEBINTERFACE_LINK.getKey(), Message.GENERAL_WEBINTERFACE_LINK.getTranslation(TagResolver.resolver("link", Tag.inserting(Component.text("https://127.0.0.1:8080/" + paste.getId())))));
+			});
+		});
+
+		menu.setItemAndClickHandler(15, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_WEBINTERFACE,
+				Message.GUI_MAIN_WEBINTERFACE_NAME, Message.GUI_MAIN_WEBINTERFACE_LORE), Action.LEFT, clickContext -> {
 			player.closeInventory();
 			Customer customer = Customer.wrap(player);
 			customer.sendMessage(Message.GENERAL_WEBINTERFACE_LOADING);
@@ -101,7 +108,7 @@ public class ShopManagementMenu {
 			});
 
 		});
-		chestMenu.openInventory(player);
+		menu.open(player);
 	}
 
 	public void openShopsMenu(Player player, int page) {
@@ -295,7 +302,7 @@ public class ShopManagementMenu {
 	}
 
 	public void openShopLimitsMenu(Player player, Shop shop, int fromPage, int page) {
-		ListMenu<Limit> listMenu = new ListMenu<>(3, LimitsHandler.getInstance(), Message.GUI_SHOP_LIMITS_TITLE, backContext -> openShopMenu(player, shop, fromPage));
+		LMenu<Limit> listMenu = new LMenu<>(3, LimitsHandler.getInstance(), Message.GUI_SHOP_LIMITS_TITLE, backContext -> openShopMenu(player, shop, fromPage));
 		listMenu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_LIMITS_INFO_NAME, Message.GUI_SHOP_LIMITS_INFO_LORE), clickContext -> {
 		});
 		listMenu.setGlowPredicate(limit -> TagUtils.hasCommonTags(shop, limit));
@@ -312,7 +319,7 @@ public class ShopManagementMenu {
 	}
 
 	public void openShopDiscountsMenu(Player player, Shop shop, int fromPage, int page) {
-		ListMenu<Discount> listMenu = new ListMenu<>(3, DiscountHandler.getInstance(), Message.GUI_SHOP_DISCOUNTS_TITLE, backContext -> openShopMenu(player, shop, fromPage));
+		LMenu<Discount> listMenu = new LMenu<>(3, DiscountHandler.getInstance(), Message.GUI_SHOP_DISCOUNTS_TITLE, backContext -> openShopMenu(player, shop, fromPage));
 		listMenu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_DISCOUNTS_INFO_NAME, Message.GUI_SHOP_DISCOUNTS_INFO_LORE), clickContext -> {
 		});
 		listMenu.setGlowPredicate(discount -> TagUtils.hasCommonTags(shop, discount));
@@ -329,7 +336,7 @@ public class ShopManagementMenu {
 	}
 
 	public void openDefaultTemplateMenu(Player player, TemplatableShop shop, int fromPage, int page) {
-		ListMenu<EntryTemplate> listMenu = new ListMenu<>(3, TemplateHandler.getInstance(), Message.GUI_SHOP_TEMPLATE_TITLE, backContext -> openShopMenu(player, shop, fromPage));
+		LMenu<EntryTemplate> listMenu = new LMenu<>(3, TemplateHandler.getInstance(), Message.GUI_SHOP_TEMPLATE_TITLE, backContext -> openShopMenu(player, shop, fromPage));
 		listMenu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_TEMPLATE_INFO_NAME, Message.GUI_SHOP_TEMPLATE_INFO_LORE), clickContext -> {
 		});
 		listMenu.setGlowPredicate(template -> shop.getDefaultTemplate() != null && template.equals(shop.getDefaultTemplate()));
@@ -345,72 +352,69 @@ public class ShopManagementMenu {
 		listMenu.openInventory(player, page);
 	}
 
-	public void openLimitsMenu(Player player, int page) {
+	public ListMenu limitsMenu() {
+		ListMenu menu = MenuPresets.newListMenu(Message.GUI_LIMITS.getTranslation(), 3, LimitsHandler.getInstance(), Action.LEFT, clickContext -> {
+			clickContext.getMenu().openSubMenu(clickContext.getPlayer(), limitMenu(clickContext.getTarget()));
+		}, consumer -> { /* TODO open "new" menu */ });
+		menu.addPreset(MenuPresets.back(3, 8, false, Action.LEFT));
+		return menu;
+
+		/*
+
 		ListEditorMenu<Limit> menu = new ListEditorMenu<>(3, LimitsHandler.getInstance(), StatShops.getInstance().getShopsConfig().isConfirmDeletion(),
 				Message.GUI_LIMITS, Message.GUI_LIMITS_ALREADY_EDITED, Message.GUI_LIMITS_NEW_NAME, Message.GUI_LIMITS_NEW_LORE,
 				Message.GUI_LIMITS_DELETE_CONFIRM, Message.GUI_LIMITS_NEW_TITLE, backContext -> openBaseMenu(player));
-		menu.setLeftClickHandler(targetContext -> openLimitMenu(player, targetContext.getTarget(), menu.getCurrentPage()));
-		menu.openInventory(player, page);
+		menu.setLeftClickHandler(targetContext -> limitMenu(player, targetContext.getTarget(), menu.getCurrentPage()));
+		menu.openInventory(player, page);*/
 	}
 
-	public void openLimitMenu(Player player, Limit limit, int fromPage) {
-		limit.setEditor(player);
-		ChestMenu chestMenu = new ChestMenu(limit.getName(), 3);
-		chestMenu.setCloseHandler(closeContext -> {
+	public Menu limitMenu(Limit limit) {
+		//TODO limit.setEditor(player);
+		InventoryMenu menu = new InventoryMenu(3, limit.getName());
+		menu.setCloseHandler(closeContext -> {
 			limit.setEditor(null);
 			limit.saveToDatabase();
 		});
-		chestMenu.setBackHandlerAction(backContext -> openLimitsMenu(player, fromPage));
 		//Set name
-		chestMenu.setItemAndClickHandler(0, 1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT, Message.GUI_LIMIT_SET_NAME_NAME, Message.GUI_LIMIT_SET_NAME_LORE), clickContext -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.plugin(StatShops.getInstance())
-					.text(limit.getNameFormat())
-					.title(Message.GUI_LIMIT_SET_NAME_TITLE.getLegacyTranslation())
-					.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> openLimitMenu(p, limit, fromPage), 1L))
-					.onComplete((p, s) -> {
-						limit.setNameFormat(s);
-						openLimitMenu(player, limit, fromPage);
-						return AnvilGUI.Response.close();
-					}).open(player);
+		menu.setItemAndClickHandler(1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT, Message.GUI_LIMIT_SET_NAME_NAME, Message.GUI_LIMIT_SET_NAME_LORE), Action.LEFT, c -> {
+			AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_NAME_TITLE.getTranslation(), limit.getNameFormat());
+			m.setOutputClickHandler(clickContext -> {
+				limit.setNameFormat(clickContext.getTarget());
+			});
+			menu.openSubMenu(c.getPlayer(), m);
 		});
 		//Set permissions
-		chestMenu.setItemAndClickHandler(0, 2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
-				Message.GUI_LIMIT_SET_PERMISSION_NAME.getTranslation(), Message.GUI_LIMIT_SET_PERMISSION_LORE.getTranslations(
-						TagResolver.resolver("permission", Tag.inserting(Component.text(limit.getPermission() == null ? "X" : limit.getPermission())))
-				)), clickContext -> {
-			player.closeInventory();
-			new AnvilGUI.Builder()
-					.plugin(StatShops.getInstance())
-					.text("shops.limit." + limit.getNamePlain().toLowerCase() + ".")
-					.title(Message.GUI_LIMIT_SET_PERMISSION_TITLE.getLegacyTranslation())
-					.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> openLimitMenu(p, limit, fromPage), 1L))
-					.onComplete((p, s) -> {
-						limit.setPermission(s);
-						openLimitMenu(player, limit, fromPage);
-						return AnvilGUI.Response.close();
-					}).open(player);
+		menu.setItemAndClickHandler(2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
+				Message.GUI_LIMIT_SET_PERMISSION_NAME.getTranslation(),
+				Message.GUI_LIMIT_SET_PERMISSION_LORE.getTranslations(TagResolver.resolver("permission",
+								Tag.inserting(Component.text(limit.getPermission() == null ? "X" : limit.getPermission())))
+				)), Action.LEFT, c -> {
+
+			AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_PERMISSION_TITLE.getTranslation(), "shops.limit." + limit.getNamePlain().toLowerCase() + ".");
+			m.setOutputClickHandler(clickContext -> {
+				limit.setPermission(clickContext.getTarget());
+			});
+			menu.openSubMenu(c.getPlayer(), m);
 		});
 		//Open Tags menu
-		chestMenu.setItemAndClickHandler(0, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
+		menu.setItemAndClickHandler(0, 4, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS,
 						Message.GUI_LIMIT_SET_TAGS_NAME, Message.GUI_LIMIT_SET_TAGS_LORE),
 				clickContext -> new TagsEditorMenu<>(
 						limit, Message.GUI_TAGS_TITLE.getTranslation(TagResolver.resolver("name", Tag.inserting(limit.getName()))),
 						Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
-						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> openLimitMenu(player, limit, fromPage)).openInventory(player));
+						Message.GENERAL_GUI_TAGS_REMOVE_TAG, backContext -> limitMenu(player, limit, fromPage)).openInventory(player));
 
 		Supplier<ItemStack> durationStack = () -> ItemStackUtils.createItemStack(Material.COMPASS, Message.GUI_LIMIT_SET_DURATION_NAME.getTranslation(),
 				Message.GUI_LIMIT_SET_DURATION_LORE.getTranslations(TagResolver.resolver("current", Tag.inserting(Component.text(TextUtils.formatDuration(limit.getRecover()))))));
-		chestMenu.setItemAndClickHandler(0, 5, durationStack.get(), clickContext -> {
+		menu.setItemAndClickHandler(0, 5, durationStack.get(), clickContext -> {
 			player.closeInventory();
 			new AnvilGUI.Builder()
 					.plugin(StatShops.getInstance())
 					.text(TextUtils.DURATION_FORMAT)
 					.title(Message.GUI_LIMIT_SET_DURATION_TITLE.getLegacyTranslation())
 					.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> {
-						chestMenu.refresh(5);
-						chestMenu.openInventory(player);
+						menu.refresh(5);
+						menu.openInventory(player);
 					}, 1L))
 					.onComplete((p, s) -> {
 						Duration duration = TextUtils.parseDuration(s);
@@ -419,24 +423,24 @@ public class ShopManagementMenu {
 						} else {
 							player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, .5f, 1f);
 						}
-						chestMenu.setItem(5, durationStack.get());
-						chestMenu.refresh(5);
-						chestMenu.openInventory(player);
+						menu.setItem(5, durationStack.get());
+						menu.refresh(5);
+						menu.openInventory(player);
 						return AnvilGUI.Response.close();
 					}).open(player);
 		});
 
 		Supplier<ItemStack> limitStack = () -> ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_LIMIT_SET_LIMIT_NAME.getTranslation(),
 				Message.GUI_LIMIT_SET_LIMIT_LORE.getTranslations(TagResolver.resolver("current", Tag.inserting(Component.text(limit.getTransactionLimit() + "")))));
-		chestMenu.setItemAndClickHandler(0, 6, limitStack.get(), clickContext -> {
+		menu.setItemAndClickHandler(0, 6, limitStack.get(), clickContext -> {
 			player.closeInventory();
 			new AnvilGUI.Builder()
 					.plugin(StatShops.getInstance())
 					.text("64 ")
 					.title(Message.GUI_LIMIT_SET_LIMIT_TITLE.getLegacyTranslation())
 					.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> {
-						chestMenu.refresh(6);
-						chestMenu.openInventory(player);
+						menu.refresh(6);
+						menu.openInventory(player);
 					}, 1L))
 					.onComplete((p, s) -> {
 						try {
@@ -444,23 +448,23 @@ public class ShopManagementMenu {
 						} catch (NumberFormatException ignored) {
 							player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, .5f, 1f);
 						}
-						chestMenu.setItem(6, limitStack.get());
-						chestMenu.refresh(6);
-						chestMenu.openInventory(player);
+						menu.setItem(6, limitStack.get());
+						menu.refresh(6);
+						menu.openInventory(player);
 						return AnvilGUI.Response.close();
 					}).open(player);
 		});
 
 		Supplier<ItemStack> globalStack = () -> ItemStackUtils.createButtonItemStack(limit.isGlobal(), Message.GUI_LIMIT_SET_GLOBAL_NAME,
 				Message.GUI_LIMIT_SET_GLOBAL_LORE);
-		chestMenu.setItemAndClickHandler(0, 7, globalStack.get(), clickContext -> {
+		menu.setItemAndClickHandler(0, 7, globalStack.get(), clickContext -> {
 			limit.setGlobal(!limit.isGlobal());
-			chestMenu.setItem(7, globalStack.get());
-			chestMenu.refresh(7);
+			menu.setItem(7, globalStack.get());
+			menu.refresh(7);
 		});
 
 
-		chestMenu.openInventory(player);
+		menu.openInventory(player);
 	}
 
 	public void openDiscountsMenu(Player player, int page) {

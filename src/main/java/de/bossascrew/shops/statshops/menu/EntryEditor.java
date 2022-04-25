@@ -3,7 +3,7 @@ package de.bossascrew.shops.statshops.menu;
 import de.bossascrew.shops.general.menu.ChestMenu;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.general.menu.EditorMenu;
-import de.bossascrew.shops.general.menu.ListMenu;
+import de.bossascrew.shops.general.menu.LMenu;
 import de.bossascrew.shops.general.menu.contexts.BackContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.menu.contexts.TargetContext;
@@ -104,7 +104,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 				Message.GUI_ENTRY_SET_FUNCTION_LORE.getTranslations(TagResolver.resolver("function", Tag.inserting(entry.getModule() == null ?
 						Message.GUI_ENTRY_FUNCTION_STATIC_NAME.getTranslation() : entry.getModule().getDisplayName())))), clickContext -> {
 
-			ListMenu<EntryModuleHandler.EntryModuleProvider> listMenu = new ListMenu<>(3, EntryModuleHandler.getInstance(),
+			LMenu<EntryModuleHandler.EntryModuleProvider> listMenu = new LMenu<>(3, EntryModuleHandler.getInstance(),
 					Message.GUI_ENTRY_SET_FUNCTION_TITLE, backContext -> openInventory(clickContext.getPlayer()));
 
 			listMenu.setDisplayPredicate(provider -> (allowedModuleTypes == null
@@ -120,7 +120,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 		});
 		if (entry.getModule() instanceof TradeModule tm) {
 			setItemAndClickHandler(1, 2, tm.getCosts().getProvider().getListDisplayItem(), clickContext -> {
-				ListMenu<SubModulesHandler.CostsSubModuleProvider<?>> listMenu = new ListMenu<>(3, SubModulesHandler.getInstance(),
+				LMenu<SubModulesHandler.CostsSubModuleProvider<?>> listMenu = new LMenu<>(3, SubModulesHandler.getInstance(),
 						Message.GUI_ENTRY_SET_COSTS_TITLE, backContext -> openInventory(clickContext.getPlayer()));
 				listMenu.setDisplayPredicate(provider -> provider.getPermission() == null || clickContext.getPlayer().hasPermission(provider.getPermission()));
 				listMenu.setGlowPredicate(s -> tm.getCosts().getProvider().equals(s));
@@ -215,7 +215,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 	}
 
 	public void openShopLimitsMenu(Player player, int page) {
-		ListMenu<Limit> listMenu = new ListMenu<>(3, LimitsHandler.getInstance(), Message.GUI_SHOP_LIMITS_TITLE, backContext -> openInventory(player));
+		LMenu<Limit> listMenu = new LMenu<>(3, LimitsHandler.getInstance(), Message.GUI_SHOP_LIMITS_TITLE, backContext -> openInventory(player));
 		listMenu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_LIMITS_INFO_NAME, Message.GUI_SHOP_LIMITS_INFO_LORE), clickContext -> {
 		});
 		listMenu.setGlowPredicate(limit -> TagUtils.hasCommonTags(entry, limit) || TagUtils.hasCommonTags(entry.getShop(), limit));
@@ -232,7 +232,7 @@ public class EntryEditor extends ChestMenu implements EditorMenu<Player> {
 	}
 
 	public void openShopDiscountsMenu(Player player, int page) {
-		ListMenu<Discount> listMenu = new ListMenu<>(3, DiscountHandler.getInstance(), Message.GUI_SHOP_DISCOUNTS_TITLE, backContext -> openInventory(player));
+		LMenu<Discount> listMenu = new LMenu<>(3, DiscountHandler.getInstance(), Message.GUI_SHOP_DISCOUNTS_TITLE, backContext -> openInventory(player));
 		listMenu.setNavigationEntry(4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_DISCOUNTS_INFO_NAME, Message.GUI_SHOP_DISCOUNTS_INFO_LORE), clickContext -> {
 		});
 		listMenu.setGlowPredicate(discount -> TagUtils.hasCommonTags(entry.getShop(), discount) || TagUtils.hasCommonTags(entry, discount));

@@ -304,7 +304,7 @@ public class ChestShopPageEditor extends BottomTopChestMenu implements EditorMen
 	}
 
 	public void openTemplatesListMenu(Player player) {
-		ListMenu<EntryTemplate> menu = new ListMenu<>(3, TemplateHandler.getInstance(),
+		LMenu<EntryTemplate> menu = new LMenu<>(3, TemplateHandler.getInstance(),
 				Message.GUI_TEMPLATES_CHOOSE, backHandler -> openInventory(player));
 		menu.setClickHandler(clickContext -> {
 			if(clickContext.getAction().isRightClick()) {

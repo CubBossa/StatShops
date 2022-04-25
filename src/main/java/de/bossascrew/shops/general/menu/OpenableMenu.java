@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public abstract class OpenableMenu extends InventoryMenu<ClickType, ClickContext, BackContext, CloseContext> {
+public abstract class OpenableMenu extends InvMenu<ClickType, ClickContext, BackContext, CloseContext> {
 
 	@Getter
 	@Setter

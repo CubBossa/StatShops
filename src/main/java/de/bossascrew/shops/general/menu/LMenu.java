@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Predicate;
 
 @Getter
-public class ListMenu<L extends ListMenuElement> extends PagedChestMenu {
+public class LMenu<L extends ListMenuElement> extends PagedChestMenu {
 
 	private final ListMenuElementHolder<L> elementHolder;
 	@Setter
@@ -25,7 +25,7 @@ public class ListMenu<L extends ListMenuElement> extends PagedChestMenu {
 	@Nullable
 	private Predicate<L> displayPredicate = null;
 
-	public ListMenu(int rowCount, ListMenuElementHolder<L> elementHolder, Message title, ContextConsumer<BackContext> backHandler) {
+	public LMenu(int rowCount, ListMenuElementHolder<L> elementHolder, Message title, ContextConsumer<BackContext> backHandler) {
 		super(title.getTranslation(), rowCount, null, null, backHandler);
 		this.elementHolder = elementHolder;
 	}

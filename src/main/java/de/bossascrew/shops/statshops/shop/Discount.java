@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import de.bossascrew.shops.statshops.api.data.NamedObject;
 import de.bossascrew.shops.statshops.api.Taggable;
-import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.util.*;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.data.DatabaseObject;

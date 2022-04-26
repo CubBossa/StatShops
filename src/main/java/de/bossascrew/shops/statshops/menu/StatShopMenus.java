@@ -1,8 +1,12 @@
 package de.bossascrew.shops.statshops.menu;
 
+import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.handler.DiscountHandler;
+import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
+import de.bossascrew.shops.statshops.util.TagUtils;
 import de.cubbossa.guiframework.inventory.*;
 import de.cubbossa.guiframework.inventory.context.ContextConsumer;
 import de.cubbossa.guiframework.inventory.context.TargetContext;
@@ -13,8 +17,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,6 +82,30 @@ public class StatShopMenus {
             menu.addListEntry(ButtonBuilder.buttonBuilder()
                     .withItemStack(supplier.getDisplayItem(element))
                     .withClickHandler(map));
+        }
+        return menu;
+    }
+
+    public static <T extends Taggable> ListMenu newShopTaggableMenu(Shop shop, ListMenuSupplier<T> taggableSupplier, Component title, int rows,
+                                               Message infoName, Message infoLore) {
+        ListMenu menu = new ListMenu(rows, title);
+        menu.addPreset(presetApplier -> {
+            presetApplier.addItem(3 * 9 + 4, ItemStackUtils.createInfoItem(infoName, infoLore));
+        });
+        for (T taggable : taggableSupplier.getElements()) {
+            menu.addListEntry(ButtonBuilder.buttonBuilder()
+                    .withItemStack(() -> {
+                        ItemStack stack = taggableSupplier.getDisplayItem(taggable);
+                        return TagUtils.hasCommonTags(shop, taggable) ? ItemStackUtils.setGlow(stack) : stack;
+                    })
+                    .withClickHandler(Action.LEFT, c -> {
+                        taggable.addTag(shop.getUUID().toString());
+                        c.getMenu().refresh(c.getSlot());
+                    })
+                    .withClickHandler(Action.RIGHT, c -> {
+                        taggable.removeTag(shop.getUUID().toString());
+                        c.getMenu().refresh(c.getSlot());
+                    }));
         }
         return menu;
     }

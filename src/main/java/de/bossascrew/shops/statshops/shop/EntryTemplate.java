@@ -3,7 +3,6 @@ package de.bossascrew.shops.statshops.shop;
 import com.google.common.base.Preconditions;
 import de.bossascrew.shops.statshops.api.data.NamedObject;
 import de.bossascrew.shops.statshops.api.ShopEntry;
-import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.util.Duplicable;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;

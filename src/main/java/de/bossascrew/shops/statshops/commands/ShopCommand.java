@@ -146,7 +146,7 @@ public class ShopCommand extends BaseCommand {
 			Customer.wrap(player).sendMessage(Message.GENERAL_PLUGIN_LOADING);
 			return;
 		}
-		new ShopManagementMenu().openBaseMenu(player);
+		ShopManagementMenu.openBaseMenu(player);
 	}
 
 	@Subcommand("edit")
@@ -158,7 +158,7 @@ public class ShopCommand extends BaseCommand {
 			Customer.wrap(player).sendMessage(Message.GENERAL_PLUGIN_LOADING);
 			return;
 		}
-		new ShopManagementMenu().newShopMenu(player, shop, 0);
+		ShopManagementMenu.newShopMenu(shop, player).open(player);
 	}
 
 	@Subcommand("cleanup")

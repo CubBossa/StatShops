@@ -3,7 +3,6 @@ package de.bossascrew.shops.statshops.handler;
 import de.bossascrew.shops.statshops.api.PaginatedShop;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.general.menu.DefaultSpecialItem;
-import de.bossascrew.shops.general.menu.ListEditorMenuElementHolder;
 import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
@@ -11,18 +10,19 @@ import de.bossascrew.shops.statshops.data.Config;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
 import de.bossascrew.shops.web.WebAccessable;
+import de.cubbossa.guiframework.inventory.ListMenuSupplier;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.Tag;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TemplateHandler implements
 		WebAccessable<EntryTemplate>,
-		ListEditorMenuElementHolder<EntryTemplate> {
+		ListEditorMenuElementHolder<EntryTemplate>,
+		ListMenuSupplier<EntryTemplate> {
 
 	public static final Material[] DISCS = Tag.ITEMS_CREEPER_DROP_MUSIC_DISCS.getValues().stream().
 			sorted(Comparator.comparing(Material::toString)).collect(Collectors.toList()).toArray(new Material[0]);

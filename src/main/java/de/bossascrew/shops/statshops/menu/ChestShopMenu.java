@@ -19,6 +19,7 @@ import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
+import de.cubbossa.guiframework.inventory.implementations.InventoryMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -37,7 +38,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class ChestShopMenu extends ChestMenu implements ShopMenu {
+public class ChestShopMenu extends InventoryMenu implements ShopMenu {
 
 	private final ChestMenuShop shop;
 	private @Nullable ContextConsumer<BackContext> customBackHandler;
@@ -57,7 +58,7 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	}
 
 	public ChestShopMenu(ChestMenuShop shop, Customer customer, @Nullable ContextConsumer<BackContext> backHandler) {
-		super(shop.getName(), shop.getRows(), 0, null, null);
+		super(shop.getRows(), shop.getName());
 		this.shop = shop;
 		this.customBackHandler = backHandler;
 		this.interactionCooldown = new HashMap<>();
@@ -95,52 +96,12 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	}
 
 	@Override
-	public InventoryView openInventory(Player player) {
-		return openInventory(player, null);
-	}
-
-	public InventoryView openInventory(Player player, Consumer<Inventory> inventoryPreparer) {
-		return openInventory(Customer.wrap(player));
-	}
-
-	public InventoryView openInventory(Customer customer) {
-		return openInventory(customer, null);
-	}
-
-	public InventoryView openInventory(Customer customer, Consumer<Inventory> inventoryPreparer) {
-
-		Preconditions.checkNotNull(customer, "customer");
-
-		return StatShops.getInstance().callTaskSync(() -> openInventorySync(customer.getPlayer(), null, shop.getPreferredOpenPage(customer)));
-	}
-
-	@Override
-	public void setBackSlot(int backSlot) {
-		//backhandler not allowed for ShopMenu
-	}
-
-	@Override
-	public void setBackHandlerAction(@NotNull ContextConsumer<BackContext> backHandler) {
-		//backhandler not allowed for ShopMenu
-	}
-
-	@Override
-	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer) {
-		return openInventorySync(player, inventoryPreparer, shop.getDefaultShopPage());
-	}
-
-	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer, int page) {
-		Inventory inventory = Bukkit.createInventory(null, slots.length, Message.SHOP_GUI_TITLE.getLegacyTranslation(
+	public Inventory getInventory() {
+		return Bukkit.createInventory(null, getSlots().length, Message.SHOP_GUI_TITLE.getLegacyTranslation(
 				TagResolver.resolver("name", Tag.inserting(shop.getName())),
-				TagResolver.resolver("page-title", Tag.inserting(shop.getPageTitle(page))),
-				TagResolver.resolver("page", Tag.inserting(Component.text(page + 1))),
-				TagResolver.resolver("pages", Tag.inserting(Component.text(shop.getPageCount())))));
-		return openInventorySync(player, inventory, inventoryPreparer, page);
-	}
-
-	@Override
-	public InventoryView openInventorySync(@NotNull Player player, Inventory inventory, Consumer<Inventory> inventoryPreparer) {
-		return openInventorySync(player, inventory, inventoryPreparer, shop.getDefaultShopPage());
+				TagResolver.resolver("page-title", Tag.inserting(shop.getPageTitle(currentPage))),
+				TagResolver.resolver("page", Tag.inserting(Component.text(currentPage + 1))),
+				TagResolver.resolver("pages", Tag.inserting(Component.text(shop.getPageCount())))));;
 	}
 
 	public InventoryView openInventorySync(@NotNull Player player, Inventory inventory, Consumer<Inventory> inventoryPreparer, int page) {
@@ -198,10 +159,10 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 	}
 
 	@Override
-	public boolean closeInventory(Player player) {
+	public void lastClose() {
+		super.lastClose();
 		unsubscribeToDisplayUpdates();
 		cancelLimitRecoveryTasks();
-		return super.closeInventory(player);
 	}
 
 	public void unsubscribeToDisplayUpdates() {
@@ -211,7 +172,7 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
 	public void setEntry(ShopEntry entry) {
 
-		int slot = entry.getSlot() % LARGEST_INV_SIZE;
+		int slot = entry.getSlot() % (6 * 9);
 		setItemAndClickHandler(slot, ItemStackUtils.createEntryItemStack(entry, targetCustomer), clickContext -> {
 			Player player = clickContext.getPlayer();
 			Customer c = Customer.wrap(player);
@@ -237,6 +198,6 @@ public class ChestShopMenu extends ChestMenu implements ShopMenu {
 
 	public void updateEntry(ShopEntry entry) {
 		setEntry(entry);
-		refresh(entry.getSlot() % LARGEST_INV_SIZE);
+		refresh(entry.getSlot() % (6 * 9));
 	}
 }

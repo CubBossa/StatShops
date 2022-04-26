@@ -1,6 +1,5 @@
 package de.bossascrew.shops.statshops;
 
-import de.bossascrew.shops.general.menu.ListEditorMenuTypedElementHolder;
 import de.bossascrew.shops.statshops.api.data.DefaultPricingDatabase;
 import de.bossascrew.shops.statshops.handler.*;
 import lombok.Getter;

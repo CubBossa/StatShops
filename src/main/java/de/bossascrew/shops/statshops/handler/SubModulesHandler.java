@@ -1,8 +1,6 @@
 package de.bossascrew.shops.statshops.handler;
 
 import de.bossascrew.shops.statshops.api.ShopEntry;
-import de.bossascrew.shops.general.menu.ListMenuElement;
-import de.bossascrew.shops.general.menu.ListMenuElementHolder;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.StatShopsExtension;

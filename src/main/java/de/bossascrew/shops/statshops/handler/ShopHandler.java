@@ -1,6 +1,5 @@
 package de.bossascrew.shops.statshops.handler;
 
-import de.bossascrew.shops.general.menu.ListEditorMenuTypedElementHolder;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.StatShopsExtension;
 import de.bossascrew.shops.statshops.api.PaginatedShop;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
 
 public class ShopHandler implements
 		WebAccessable<Shop>,
-		ListEditorMenuTypedElementHolder<Shop>,
 		ListMenuManagerSupplier<Shop> {
 
 	@Getter

@@ -2,7 +2,6 @@ package de.bossascrew.shops.statshops.handler;
 
 import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.statshops.api.ShopEntry;
-import de.bossascrew.shops.general.menu.ListEditorMenuElementHolder;
 import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;

@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.api.data.NamedObject;
 import de.bossascrew.shops.statshops.api.Taggable;
-import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.util.Duplicable;
 import de.bossascrew.shops.general.util.Editable;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;

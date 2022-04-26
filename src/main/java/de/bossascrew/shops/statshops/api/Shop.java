@@ -1,6 +1,5 @@
 package de.bossascrew.shops.statshops.api;
 
-import de.bossascrew.shops.general.menu.ListMenuElement;
 import de.bossascrew.shops.general.menu.contexts.CloseContext;
 import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.util.Editable;

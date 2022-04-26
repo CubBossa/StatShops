@@ -11,6 +11,7 @@ import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.VillagerShop;
 import de.bossascrew.shops.web.WebAccessable;
+import de.cubbossa.guiframework.inventory.ListMenuManagerSupplier;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +23,8 @@ import java.util.stream.Collectors;
 
 public class ShopHandler implements
 		WebAccessable<Shop>,
-		ListEditorMenuTypedElementHolder<Shop> {
+		ListEditorMenuTypedElementHolder<Shop>,
+		ListMenuManagerSupplier<Shop> {
 
 	@Getter
 	private static ShopHandler instance;

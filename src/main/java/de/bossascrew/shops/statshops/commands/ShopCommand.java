@@ -15,7 +15,6 @@ import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import de.bossascrew.shops.statshops.menu.ShopManagementMenu;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentIteratorFlag;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -159,7 +158,7 @@ public class ShopCommand extends BaseCommand {
 			Customer.wrap(player).sendMessage(Message.GENERAL_PLUGIN_LOADING);
 			return;
 		}
-		new ShopManagementMenu().openShopMenu(player, shop, 0);
+		new ShopManagementMenu().newShopMenu(player, shop, 0);
 	}
 
 	@Subcommand("cleanup")

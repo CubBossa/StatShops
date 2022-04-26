@@ -8,6 +8,7 @@ import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.web.WebAccessable;
+import de.cubbossa.guiframework.inventory.ListMenuManagerSupplier;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,7 +22,8 @@ import java.util.stream.Collectors;
 
 public class DiscountHandler implements
 		WebAccessable<Discount>,
-		ListEditorMenuElementHolder<Discount> {
+		ListEditorMenuElementHolder<Discount>,
+		ListMenuManagerSupplier<Discount> {
 
 	@Getter
 	private static DiscountHandler instance;

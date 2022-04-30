@@ -65,7 +65,7 @@ public enum DefaultSpecialItem {
 		ItemStackUtils.setCustomModelData(item, customModelData);
 	}
 
-	public ItemStack createSpecialItem() {
+	public ItemStack create() {
 		return item.clone();
 	}
 

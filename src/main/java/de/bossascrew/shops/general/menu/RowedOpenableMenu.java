@@ -39,7 +39,7 @@ public abstract class RowedOpenableMenu extends OpenableMenu {
 	}
 
 	public void setItemAndClickHandler(int row, int column, DefaultSpecialItem item, @Nullable ContextConsumer<ClickContext> clickHandler) {
-		setItemAndClickHandler(calcIndex(row, column), item.createSpecialItem(), clickHandler);
+		setItemAndClickHandler(calcIndex(row, column), item.create(), clickHandler);
 	}
 
 	public void setItemAndClickHandler(int row, int column, ItemStack item, @Nullable ContextConsumer<ClickContext> clickHandler) {
@@ -96,7 +96,7 @@ public abstract class RowedOpenableMenu extends OpenableMenu {
 			});
 		}
 		if (backHandler != null) {
-			setItemAndClickHandler(backSlot, DefaultSpecialItem.BACK.createSpecialItem(), context -> backHandler.accept(new BackContext(context.getPlayer())));
+			setItemAndClickHandler(backSlot, DefaultSpecialItem.BACK.create(), context -> backHandler.accept(new BackContext(context.getPlayer())));
 		}
 	}
 
@@ -104,7 +104,7 @@ public abstract class RowedOpenableMenu extends OpenableMenu {
 	public void fillMenu(@Nullable ContextConsumer<BackContext> backHandler, DefaultSpecialItem fillItem) {
 		Preconditions.checkNotNull(fillItem, "fillItem");
 
-		Arrays.stream(getSlots()).forEach(index -> setItemAndClickHandler(index, fillItem.createSpecialItem(), (ContextConsumer<ClickContext>) null));
+		Arrays.stream(getSlots()).forEach(index -> setItemAndClickHandler(index, fillItem.create(), (ContextConsumer<ClickContext>) null));
 		if (backHandler != null) {
 			fillBottomLine(backHandler);
 		}

@@ -17,6 +17,7 @@ import de.bossascrew.shops.statshops.events.ShopTurnPageEvent;
 import de.bossascrew.shops.statshops.menu.ChestShopEditor;
 import de.bossascrew.shops.statshops.menu.ChestShopMenu;
 import de.bossascrew.shops.statshops.util.EntryInteractionType;
+import de.cubbossa.guiframework.inventory.Menu;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -150,26 +151,11 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 				return false;
 			}
 		}
-		if (closeHandler == null && menuMap.containsKey(customer)) {
-			closeHandler = ((ChestShopMenu) menuMap.get(customer)).getCloseHandler();
-		}
-		@Nullable ContextConsumer<CloseContext> finalCloseHandler = closeHandler;
+		ChestShopMenu menu = new ChestShopMenu(this, customer);
+		menu.setPage(customer.getPlayer(), page);
+		menu.openSync(customer.getPlayer());
 
-		ChestShopMenu menu = new ChestShopMenu(this, customer, null);
-		menu.setCloseHandler(closeContext -> {
-			if (!pageTurningPlayers.contains(customer.getUuid())) {
-				if (finalCloseHandler == null) {
-					if (!handleShopClose(customer)) {
-						open(customer, page, null);
-					}
-				} else {
-					finalCloseHandler.accept(closeContext);
-				}
-			}
-		});
-		menu.openInventorySync(customer.getPlayer(), null, page);
 		menuMap.put(customer, menu);
-
 		activeCustomers.add(customer);
 		customer.setActiveShop(this);
 
@@ -221,9 +207,8 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 	}
 
 	@Override
-	public void openEditorMenu(Player player, ContextConsumer<BackContext> backHandler) {
-		new ChestShopEditor(this, backHandler, closeContext -> {
-		}).openInventory(player, getDefaultShopPage());
+	public Menu newEditorMenu() {
+		return new ChestShopEditor(this, getDefaultShopPage());
 	}
 
 	public EntryInteractionResult interact(Customer customer, int slot, EntryInteractionType interactionType) {

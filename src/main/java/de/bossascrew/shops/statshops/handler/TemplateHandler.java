@@ -128,15 +128,15 @@ public class TemplateHandler implements
 		for (int i = 0; i < 9; i++) {
 			int _i = i;
 			bottomLine.put("(<row> - 1) * 9 + " + _i, new BaseEntry(UUID.randomUUID(), null,
-					DefaultSpecialItem.EMPTY_DARK_SIMPLE.createSpecialItem(), null, i));
+					DefaultSpecialItem.EMPTY_DARK_SIMPLE.create(), null, i));
 		}
 		if(prevPage) {
-			BaseEntry entryPrev1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.PREV_PAGE.createSpecialItem(), null, 0);
+			BaseEntry entryPrev1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.PREV_PAGE.create(), null, 0);
 			entryPrev1.setModule(EntryModuleHandler.openPrevPage(entryPrev1, 1));
 			bottomLine.put("(<row> - 1) * 9", entryPrev1);
 		}
 		if(nextPage) {
-			BaseEntry entryNext1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.NEXT_PAGE.createSpecialItem(), null, 1);
+			BaseEntry entryNext1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.NEXT_PAGE.create(), null, 1);
 			entryNext1.setModule(EntryModuleHandler.openNextPage(entryNext1, 1));
 			bottomLine.put("(<row> - 1) * 9 + 1", entryNext1);
 		}

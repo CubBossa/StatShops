@@ -135,7 +135,7 @@ public class PagedChestMenu {
 		ChestMenu menu = new ChestMenu(title, rowCount, defaultClickHandler, closeHandler);
 		menu.fillMenu();
 		menu.fillBottomLine(backHandler);
-		menu.setItem(rowCount - 1, 5, DefaultSpecialItem.EMPTY_DARK_RP.createSpecialItem());
+		menu.setItem(rowCount - 1, 5, DefaultSpecialItem.EMPTY_DARK_RP.create());
 
 		AtomicInteger index = new AtomicInteger();
 		menuEntries.stream().sorted(Comparator.comparing(PagedMenuEntry::getDisplayItemStack, sortingComparator)).skip((long) page * entriesPerPage)
@@ -149,7 +149,7 @@ public class PagedChestMenu {
 								menuEntry.getClickHandler()));
 
 		menu.setItemAndClickHandler(menu.getRowCount() - 1, 0, page > 0 ?
-				DefaultSpecialItem.PREV_PAGE_RP.createSpecialItem() : DefaultSpecialItem.PREV_PAGE_OFF_RP.createSpecialItem(), c -> {
+				DefaultSpecialItem.PREV_PAGE_RP.create() : DefaultSpecialItem.PREV_PAGE_OFF_RP.create(), c -> {
 			if (page > 0) {
 				openInventory(c.getPlayer(), page - 1);
 			}
@@ -157,7 +157,7 @@ public class PagedChestMenu {
 
 		boolean hasPrev = (menuEntries.size() - 1) / entriesPerPage > page;
 		menu.setItemAndClickHandler(menu.getRowCount() - 1, 1, hasPrev ?
-				DefaultSpecialItem.NEXT_PAGE_RP.createSpecialItem() : DefaultSpecialItem.NEXT_PAGE_OFF_RP.createSpecialItem(), c -> {
+				DefaultSpecialItem.NEXT_PAGE_RP.create() : DefaultSpecialItem.NEXT_PAGE_OFF_RP.create(), c -> {
 			if (hasPrev) {
 				openInventory(c.getPlayer(), page + 1);
 			}

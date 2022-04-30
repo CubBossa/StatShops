@@ -141,7 +141,7 @@ public class BottomTopChestMenu extends ChestMenu {
 
 		if (backHandler != null) {
 			(backSlot > INDEX_DIFFERENCE ? player.getInventory() : inventory).setItem(
-					backSlot > INDEX_DIFFERENCE ? backSlot - INDEX_DIFFERENCE : backSlot, DefaultSpecialItem.BACK.createSpecialItem());
+					backSlot > INDEX_DIFFERENCE ? backSlot - INDEX_DIFFERENCE : backSlot, DefaultSpecialItem.BACK.create());
 		}
 
 		if (inventoryPreparer != null) {
@@ -214,7 +214,7 @@ public class BottomTopChestMenu extends ChestMenu {
 	}
 
 	public void setItemAndClickHandlerBottom(int row, int column, DefaultSpecialItem item, @Nullable ContextConsumer<ClickContext> clickHandler) {
-		this.setItemAndClickHandler(calcIndexBottom(row, column), item.createSpecialItem(), clickHandler);
+		this.setItemAndClickHandler(calcIndexBottom(row, column), item.create(), clickHandler);
 	}
 
 	public void setItemAndClickHandlerBottom(int index, ItemStack item, @Nullable ContextConsumer<ClickContext> clickHandler) {
@@ -267,7 +267,7 @@ public class BottomTopChestMenu extends ChestMenu {
 			if (slot < INDEX_DIFFERENCE) {
 				continue;
 			}
-			setItem(slot, item.createSpecialItem());
+			setItem(slot, item.create());
 		}
 	}
 

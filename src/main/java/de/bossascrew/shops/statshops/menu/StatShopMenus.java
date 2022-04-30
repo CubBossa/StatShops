@@ -1,10 +1,9 @@
 package de.bossascrew.shops.statshops.menu;
 
+import de.bossascrew.shops.general.menu.ConfirmMenu;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.statshops.handler.DiscountHandler;
-import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.util.TagUtils;
 import de.cubbossa.guiframework.inventory.*;
@@ -20,7 +19,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +30,7 @@ public class StatShopMenus {
                                              Message infoName, Message infoLore,
                                              boolean confirmDeletion, Component confirmDeleteTitle,
                                              ContextConsumer<TargetContext<T>> leftClickHandler) {
-        ListMenu menu = new ListMenu(rows, title);
+        ListMenu menu = new ListMenu(title, rows);
         // info & new
         menu.addPreset(presetApplier -> {
             presetApplier.addItem((rows - 1) * 9 + 4, ItemStackUtils.createItemStack(Material.PAPER, infoName, infoLore));
@@ -49,7 +47,7 @@ public class StatShopMenus {
             }
         });
         // back
-        menu.addPreset(MenuPresets.back(rows - 1, 8, false, Action.LEFT));
+        menu.addPreset(MenuPresets.back(rows - 1, 8, Action.LEFT));
 
         Map<Action<? extends TargetContext<?>>, ContextConsumer<? extends TargetContext<?>>> map = new HashMap<>();
 
@@ -60,14 +58,16 @@ public class StatShopMenus {
                 map.put(Action.RIGHT, targetContext -> {
                     //  delete
                     if (confirmDeletion) {
-                        targetContext.getMenu().openSubMenu(targetContext.getPlayer(), () -> MenuPresets.newConfirmMenu(confirmDeleteTitle,
-                                c -> c.getPlayer().closeInventory(),
-                                c -> {
-                                    manager.deleteFromMenu(element);
-                                    targetContext.getMenu().refresh(targetContext.getMenu().getSlots());
-                                    c.getPlayer().closeInventory();
-                                }, c -> {
-                                }));
+                        targetContext.getMenu().openSubMenu(targetContext.getPlayer(), () -> {
+                            ConfirmMenu m = new ConfirmMenu(confirmDeleteTitle);
+                            m.setDenyHandler(c -> c.getPlayer().closeInventory());
+                            m.setAcceptHandler(c -> {
+                                manager.deleteFromMenu(element);
+                                targetContext.getMenu().refresh(targetContext.getMenu().getSlots());
+                                c.getPlayer().closeInventory();
+                            });
+                            return m;
+                        });
                     } else {
                         manager.deleteFromMenu(element);
                         targetContext.getMenu().refresh(targetContext.getMenu().getSlots());
@@ -79,7 +79,7 @@ public class StatShopMenus {
                     targetContext.getMenu().refresh(targetContext.getMenu().getSlots());
                 });
             }
-            menu.addListEntry(ButtonBuilder.buttonBuilder()
+            menu.addListEntry(Button.builder()
                     .withItemStack(supplier.getDisplayItem(element))
                     .withClickHandler(map));
         }
@@ -88,12 +88,12 @@ public class StatShopMenus {
 
     public static <T extends Taggable> ListMenu newShopTaggableMenu(Shop shop, ListMenuSupplier<T> taggableSupplier, Component title, int rows,
                                                Message infoName, Message infoLore) {
-        ListMenu menu = new ListMenu(rows, title);
+        ListMenu menu = new ListMenu(title, rows);
         menu.addPreset(presetApplier -> {
             presetApplier.addItem(3 * 9 + 4, ItemStackUtils.createInfoItem(infoName, infoLore));
         });
         for (T taggable : taggableSupplier.getElements()) {
-            menu.addListEntry(ButtonBuilder.buttonBuilder()
+            menu.addListEntry(Button.builder()
                     .withItemStack(() -> {
                         ItemStack stack = taggableSupplier.getDisplayItem(taggable);
                         return TagUtils.hasCommonTags(shop, taggable) ? ItemStackUtils.setGlow(stack) : stack;
@@ -113,7 +113,7 @@ public class StatShopMenus {
 
     public static ListMenu newTagMenu(Taggable taggable, Component title,
                                       Message newTagTitle, Message newTagName, Message newTagLore, Message confirmRemove) {
-        ListMenu menu = new ListMenu(4, title);
+        ListMenu menu = new ListMenu(title, 4);
         menu.addPreset(presetApplier -> {
             presetApplier.addItem(9 * 3 + 4, ItemStackUtils.createInfoItem(Message.GENERAL_GUI_TAGS_INFO_NAME, Message.GENERAL_GUI_TAGS_INFO_LORE));
             presetApplier.addItem(9 * 3 + 7, ItemStackUtils.createItemStack(Material.EMERALD, newTagName, newTagLore));
@@ -129,13 +129,13 @@ public class StatShopMenus {
         menu.addListEntries(taggable.getTags(), s -> ItemStackUtils.createItemStack(Material.NAME_TAG, Component.text(s, NamedTextColor.WHITE), new ArrayList<>()), Action.LEFT, clickContext -> {
             String tag = clickContext.getTarget();
             clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
-                return MenuPresets.newConfirmMenu(confirmRemove.getTranslation(TagResolver.resolver("name", Tag.inserting(Component.text(tag)))),
-                        c -> c.getPlayer().closeInventory(),
-                        c -> {
-                            taggable.removeTag(tag);
-                            c.getPlayer().closeInventory();
-                        }, c -> {
-                        });
+                ConfirmMenu m = new ConfirmMenu(confirmRemove.getTranslation(TagResolver.resolver("name", Tag.inserting(Component.text(tag)))));
+                m.setAcceptHandler(c -> {
+                    taggable.removeTag(tag);
+                    c.getPlayer().closeInventory();
+                });
+                m.setDenyHandler(c -> c.getPlayer().closeInventory());
+                return m;
             });
         });
         return menu;

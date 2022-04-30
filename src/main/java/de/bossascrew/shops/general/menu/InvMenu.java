@@ -98,7 +98,7 @@ public abstract class InvMenu<T, A extends ActionContext<T>, B extends BackConte
 	 * @param item Das Item, das gesetzt werden soll.
 	 */
 	public void setSpecialItem(int slot, @Nullable DefaultSpecialItem item) {
-		setItem(slot, item == null ? null : item.createSpecialItem());
+		setItem(slot, item == null ? null : item.create());
 	}
 
 	/**
@@ -123,7 +123,7 @@ public abstract class InvMenu<T, A extends ActionContext<T>, B extends BackConte
 	 * @param clickHandler Der Consumer, der ausgeführt wird, falls eine Interaktion stattfindet.
 	 */
 	public void setItemAndClickHandler(int slot, DefaultSpecialItem item, T action, @Nullable ContextConsumer<A> clickHandler) {
-		setItemAndClickHandler(slot, item.createSpecialItem(), action, clickHandler);
+		setItemAndClickHandler(slot, item.create(), action, clickHandler);
 	}
 
 	public void setItemAndClickHandler(int slot, DefaultSpecialItem item, @Nullable ContextConsumer<A> clickHandler) {
@@ -133,7 +133,7 @@ public abstract class InvMenu<T, A extends ActionContext<T>, B extends BackConte
 	}
 
 	public void setItemAndClickHandler(int slot, DefaultSpecialItem item, @Nullable Map<T, ContextConsumer<A>> clickHandler) {
-		setItemAndClickHandler(slot, item.createSpecialItem(), clickHandler);
+		setItemAndClickHandler(slot, item.create(), clickHandler);
 	}
 
 	/**
@@ -313,7 +313,7 @@ public abstract class InvMenu<T, A extends ActionContext<T>, B extends BackConte
 	 */
 	public void fillMenu(@Nullable ContextConsumer<B> backHandler, DefaultSpecialItem fillItem) {
 		Preconditions.checkNotNull(fillItem, "fillItem");
-		ItemStack fillItemStack = fillItem.createSpecialItem();
+		ItemStack fillItemStack = fillItem.create();
 
 		Arrays.stream(getSlots()).forEach(index -> setItem(index, fillItemStack));
 		if (backHandler != null) {

@@ -72,7 +72,7 @@ public abstract class OpenableMenu extends InvMenu<ClickType, ClickContext, Back
 		}
 
 		if (backHandler != null) {
-			inventory.setItem(backSlot, DefaultSpecialItem.BACK.createSpecialItem());
+			inventory.setItem(backSlot, DefaultSpecialItem.BACK.create());
 		}
 
 		if (inventoryPreparer != null) {

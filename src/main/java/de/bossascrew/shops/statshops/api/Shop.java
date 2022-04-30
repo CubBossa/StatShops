@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, ListMenuElement, DatabaseObject, NamedObject, DisplayedObject {
+public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, DatabaseObject, NamedObject, DisplayedObject {
 
     /**
      * @return The unique id for this shop. It also servers as a tag for the Taggable interface and allows applying limits

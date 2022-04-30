@@ -380,7 +380,7 @@ public class ItemStackUtils {
 
 	public ItemStack createShopItemStack(Shop shop) {
 		if (shop == null) {
-			return DefaultSpecialItem.ERROR.createSpecialItem();
+			return DefaultSpecialItem.ERROR.create();
 		}
 		return createItemStack(shop.getDisplayItem() == null ? new ItemStack(MATERIAL_SHOP) : shop.getDisplayItem(),
 				Message.GUI_SHOPS_NAME.getTranslation(
@@ -392,7 +392,7 @@ public class ItemStackUtils {
 
 	public ItemStack createDiscountItemStack(Discount discount) {
 		if (discount == null) {
-			return DefaultSpecialItem.ERROR.createSpecialItem();
+			return DefaultSpecialItem.ERROR.create();
 		}
 		return createItemStack(MATERIAL_DISCOUNT,
 				Message.GUI_DISCOUNTS_ENTRY_NAME.getTranslation(
@@ -409,7 +409,7 @@ public class ItemStackUtils {
 
 	public ItemStack createLimitsItemStack(Limit limit) {
 		if (limit == null) {
-			return DefaultSpecialItem.ERROR.createSpecialItem();
+			return DefaultSpecialItem.ERROR.create();
 		}
 		return createItemStack(MATERIAL_LIMIT,
 				Message.GUI_LIMITS_ENTRY_NAME.getTranslation(
@@ -423,7 +423,7 @@ public class ItemStackUtils {
 
 	public ItemStack createTemplatesItemStack(EntryTemplate template) {
 		if (template == null) {
-			return DefaultSpecialItem.ERROR.createSpecialItem();
+			return DefaultSpecialItem.ERROR.create();
 		}
 		return createItemStack(TemplateHandler.DISCS[template.getDiscIndex()],
 				Message.GUI_TEMPLATES_ENTRY_NAME.getTranslation(

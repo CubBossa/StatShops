@@ -106,7 +106,7 @@ public class VillagerMenu extends OpenableMenu {
 		}
 
 		if (backHandler != null) {
-			inventory.setItem(backSlot, DefaultSpecialItem.BACK.createSpecialItem());
+			inventory.setItem(backSlot, DefaultSpecialItem.BACK.create());
 		}
 
 		if (inventoryPreparer != null) {

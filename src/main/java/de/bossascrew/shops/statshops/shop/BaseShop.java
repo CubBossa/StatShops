@@ -247,12 +247,6 @@ public abstract class BaseShop implements Shop {
 	}
 
 	@Override
-	@JsonIgnore
-	public ItemStack getListDisplayItem() {
-		return ItemStackUtils.createShopItemStack(this);
-	}
-
-	@Override
 	public void saveToDatabase() {
 		StatShops.getInstance().runAsync(() -> StatShops.getInstance().getDatabase().saveShop(this));
 	}

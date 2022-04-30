@@ -1,6 +1,6 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.general.menu.*;
+import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
@@ -18,17 +18,16 @@ import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.web.WebSessionUtils;
 import de.bossascrew.shops.web.pasting.Paste;
 import de.cubbossa.guiframework.inventory.Action;
-import de.cubbossa.guiframework.inventory.ButtonBuilder;
+import de.cubbossa.guiframework.inventory.Button;
 import de.cubbossa.guiframework.inventory.Menu;
 import de.cubbossa.guiframework.inventory.MenuPresets;
 import de.cubbossa.guiframework.inventory.implementations.AnvilMenu;
-import de.cubbossa.guiframework.inventory.implementations.InventoryMenu;
 import de.cubbossa.guiframework.inventory.implementations.ListMenu;
+import de.cubbossa.guiframework.inventory.implementations.RectInventoryMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -44,11 +43,11 @@ public class ShopManagementMenu {
 
     public static void openBaseMenu(Player player) {
 
-        InventoryMenu menu = new InventoryMenu(3, Message.GUI_MAIN_TITLE.getTranslation());
+        RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_MAIN_TITLE.getTranslation(), 3);
         menu.addPreset(MenuPresets.fill(MenuPresets.FILLER_LIGHT));
 
         // Main menu background texture
-        ItemStack glass_rp = DefaultSpecialItem.EMPTY_LIGHT.createSpecialItem();
+        ItemStack glass_rp = DefaultSpecialItem.EMPTY_LIGHT.create();
         ItemStackUtils.setCustomModelData(glass_rp, 7122001);
         menu.setItem(1, glass_rp);
 
@@ -72,7 +71,7 @@ public class ShopManagementMenu {
                     return;
                 }
                 Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOAD_ERROR);
-                menu.setItem(14, DefaultSpecialItem.ERROR.createSpecialItem());
+                menu.setItem(14, DefaultSpecialItem.ERROR.create());
             });
         });
         menu.setClickHandler(14, Action.LEFT, clickContext -> {
@@ -122,7 +121,7 @@ public class ShopManagementMenu {
 
     public static Menu newShopMenu(Shop shop, Player viewer) {
 
-        InventoryMenu menu = new InventoryMenu(3, shop.getName());
+        RectInventoryMenu menu = new RectInventoryMenu(shop.getName(), 3);
         menu.addPreset(MenuPresets.fill(MenuPresets.FILLER_LIGHT));
 
 
@@ -228,7 +227,7 @@ public class ShopManagementMenu {
         if (shop instanceof PaginatedShop ps) {
 
             // default page
-            menu.setButton(22, ButtonBuilder.buttonBuilder()
+            menu.setButton(22, Button.builder()
                     .withItemStack(getDefaultPageItem(ps, ps.getDefaultShopPage()))
                     .withClickHandler(Action.LEFT, c -> {
                         ps.setDefaultShopPage((ps.getDefaultShopPage() - 1) % ps.getPageCount());
@@ -245,7 +244,7 @@ public class ShopManagementMenu {
             Supplier<ItemStack> rememberPage = () -> ItemStackUtils.createButtonItemStack(ps.isPageRemembered(),
                     Message.GUI_SHOP_SET_REMEMBER_PAGE_NAME, Message.GUI_SHOP_SET_REMEMBER_PAGE_LORE);
 
-            menu.setButton(24, ButtonBuilder.buttonBuilder()
+            menu.setButton(24, Button.builder()
                     .withItemStack(rememberPage.get())
                     .withClickHandler(Action.LEFT, c -> {
                         ps.setPageRemembered(!ps.isPageRemembered());
@@ -257,7 +256,7 @@ public class ShopManagementMenu {
         if (shop instanceof ChestMenuShop chestMenuShop) {
 
             // rows
-            menu.setButton(23, ButtonBuilder.buttonBuilder()
+            menu.setButton(23, Button.builder()
                     .withItemStack(getRowsItem(chestMenuShop.getRows()))
                     .withClickHandler(Action.LEFT, c -> {
                         chestMenuShop.setRows(chestMenuShop.getRows() + 1);
@@ -302,12 +301,12 @@ public class ShopManagementMenu {
     }
 
     public static Menu newDefaultTemplateMenu(TemplatableShop shop) {
-        ListMenu menu = new ListMenu(3, Message.GUI_SHOP_TEMPLATE_TITLE.getTranslation());
+        ListMenu menu = new ListMenu(Message.GUI_SHOP_TEMPLATE_TITLE.getTranslation(), 3);
         menu.addPreset(presetApplier -> {
             presetApplier.addItem(3 * 9 + 4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_TEMPLATE_INFO_NAME, Message.GUI_SHOP_TEMPLATE_INFO_LORE));
         });
         for (EntryTemplate template : TemplateHandler.getInstance().getTemplates()) {
-            menu.addListEntry(ButtonBuilder.buttonBuilder()
+            menu.addListEntry(Button.builder()
                     .withItemStack(() -> {
                         ItemStack stack = TemplateHandler.getInstance().getDisplayItem(template);
                         return shop.getDefaultTemplate() != null && template.equals(shop.getDefaultTemplate()) ? ItemStackUtils.setGlow(stack) : stack;
@@ -338,7 +337,7 @@ public class ShopManagementMenu {
 
     public static Menu newLimitMenu(Limit limit) {
 
-        InventoryMenu menu = new InventoryMenu(3, limit.getName());
+        RectInventoryMenu menu = new RectInventoryMenu(limit.getName(), 3);
         menu.setCloseHandler(closeContext -> limit.saveToDatabase());
         //Set name
         menu.setItemAndClickHandler(1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
@@ -430,7 +429,7 @@ public class ShopManagementMenu {
     }
 
     public static Menu newDiscountMenu(Discount discount) {
-        InventoryMenu menu = new InventoryMenu(3, Message.GUI_DISCOUNT.getTranslation());
+        RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_DISCOUNT.getTranslation(), 3);
         menu.setCloseHandler(closeContext -> discount.saveToDatabase());
 
         //Set name
@@ -502,7 +501,7 @@ public class ShopManagementMenu {
     }
 
     public static Menu newDiscountStartMenu(Discount discount) {
-        ListMenu menu = new ListMenu(3, Message.GUI_DISCOUNT_SET_START_TITLE.getTranslation());
+        ListMenu menu = new ListMenu(Message.GUI_DISCOUNT_SET_START_TITLE.getTranslation(), 3);
         menu.addPreset(presetApplier -> {
             presetApplier.addItem(3 * 9 + 4, ItemStackUtils.createInfoItem(Message.GUI_DISCOUNT_START_INFO_NAME, Message.GUI_DISCOUNT_START_INFO_LORE));
             presetApplier.addItem(3 * 9 + 7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_START_NEW_NAME, Message.GUI_DISCOUNT_START_NEW_LORE));
@@ -524,7 +523,7 @@ public class ShopManagementMenu {
 
         for (LocalDateTime date : discount.getStartTimes()) {
             Component dateComp = Component.text(TextUtils.formatLocalDateTime(date), NamedTextColor.WHITE);
-            menu.addListEntry(ButtonBuilder.buttonBuilder()
+            menu.addListEntry(Button.builder()
                     .withItemStack(ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DATES, dateComp, new ArrayList<>()))
                     .withClickHandler(Action.RIGHT, c -> {
                         discount.removeStartTime(date);

@@ -33,6 +33,8 @@ public class StatShopMenus {
         ListMenu menu = new ListMenu(title, rows);
         menu.addPreset(MenuPresets.fillRow(Icon.EMPTY_DARK_RP.create(), rows - 1));
 
+        Map<T, ListMenu.ListElement<T>> elementMap = new HashMap<>();
+
         // info & new
         menu.addPreset(presetApplier -> {
             presetApplier.addItem((rows - 1) * 9 + 4, ItemStackUtils.createItemStack(Material.PAPER, infoName, infoLore));
@@ -42,7 +44,7 @@ public class StatShopMenus {
                     AnvilMenu m = new AnvilMenu(newTitle, newPresetInput);
                     m.setOutputClickHandler(AnvilMenu.CONFIRM, c -> {
                         manager.newElementFromMenu(new String[]{c.getTarget()});
-                        c.getPlayer().closeInventory();
+                        m.close(c.getPlayer());
                     });
                     return m;
                 }));
@@ -65,6 +67,7 @@ public class StatShopMenus {
                             m.setDenyHandler(c -> c.getPlayer().closeInventory());
                             m.setAcceptHandler(c -> {
                                 manager.deleteFromMenu(element);
+                                elementMap.remove(element);
                                 targetContext.getMenu().refresh(targetContext.getMenu().getSlots());
                                 c.getPlayer().closeInventory();
                             });
@@ -81,9 +84,9 @@ public class StatShopMenus {
                     targetContext.getMenu().refresh(targetContext.getMenu().getSlots());
                 });
             }
-            menu.addListEntry(Button.builder()
+            elementMap.put(element, menu.addListEntry(Button.builder()
                     .withItemStack(supplier.getDisplayItem(element))
-                    .withClickHandler(map));
+                    .withClickHandler(map)));
         }
         return menu;
     }

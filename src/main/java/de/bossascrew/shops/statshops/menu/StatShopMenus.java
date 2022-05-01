@@ -42,7 +42,7 @@ public class StatShopMenus {
                     AnvilMenu m = new AnvilMenu(newTitle, newPresetInput);
                     m.setOutputClickHandler(AnvilMenu.CONFIRM, c -> {
                         manager.newElementFromMenu(new String[]{c.getTarget()});
-                        m.close(c.getPlayer());
+                        c.getPlayer().closeInventory();
                     });
                     return m;
                 }));

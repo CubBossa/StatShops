@@ -162,10 +162,22 @@
             <version>4.10.1</version>
         </dependency>
 
-        <dependency>
+        <!-- <dependency>
             <groupId>com.github.CubBossa.Minecraft-GUI-Framework</groupId>
             <artifactId>MenuFramework</artifactId>
             <version>0.2.3</version>
+        </dependency> -->
+
+        <dependency>
+            <groupId>de.cubbossa</groupId>
+            <artifactId>MenuFramework</artifactId>
+            <version>0.2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.wesjd</groupId>
+            <artifactId>anvilgui</artifactId>
+            <version>1.5.3-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -207,8 +219,10 @@
                         <includes>
                             <include>co.aikar:acf-bukkit</include>
                             <include>net.kyori:**</include>
-                            <include>de.cubbossa:MenuFramework</include>
+                            <include>com.github.CubBossa.Minecraft-GUI-Framework:MenuFramework</include>
                             <include>org.bstats</include>
+                            <include>net.wesjd:anvilgui</include>
+                            <include>de.cubbossa:MenuFramework</include>
                         </includes>
                     </artifactSet>
                     <relocations>
@@ -234,10 +248,6 @@
                         </relocation>
                         <relocation>
                             <pattern>de.cubbossa.guiframework</pattern>
-                            <shadedPattern>de.bossascrew.gui</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>de.cubbossa.</pattern>
                             <shadedPattern>de.bossascrew.gui</shadedPattern>
                         </relocation>
                     </relocations>

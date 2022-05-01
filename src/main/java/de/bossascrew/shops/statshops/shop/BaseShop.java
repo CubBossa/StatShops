@@ -1,6 +1,5 @@
 package de.bossascrew.shops.statshops.shop;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
@@ -9,7 +8,6 @@ import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -193,11 +191,6 @@ public abstract class BaseShop implements Shop {
 	@Override
 	public List<Customer> getActiveCustomers() {
 		return null;
-	}
-
-	@Override
-	public boolean open(Customer customer) {
-		return open(customer, null);
 	}
 
 	@Override

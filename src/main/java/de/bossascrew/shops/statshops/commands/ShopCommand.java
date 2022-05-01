@@ -2,7 +2,6 @@ package de.bossascrew.shops.statshops.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.PaginatedShop;
@@ -11,7 +10,6 @@ import de.bossascrew.shops.statshops.api.data.NamedObject;
 import de.bossascrew.shops.statshops.convertion.DataPreset;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.Message;
-import de.bossascrew.shops.statshops.handler.InventoryHandler;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import de.bossascrew.shops.statshops.menu.ShopManagementMenu;
 import net.kyori.adventure.text.Component;
@@ -19,6 +17,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
@@ -181,7 +180,7 @@ public class ShopCommand extends BaseCommand {
 			return;
 		}
 		long ms = System.currentTimeMillis();
-		InventoryHandler.getInstance().closeAllMenus(false);
+		Bukkit.getOnlinePlayers().forEach(Player::closeInventory);
 
 		StatShops.setBusyFor(CompletableFuture.supplyAsync(() -> StatShops.getInstance().getShopsConfig().loadConfig()).thenAcceptAsync(success -> {
 			if (success) {
@@ -251,7 +250,7 @@ public class ShopCommand extends BaseCommand {
 			if (container.getInventory().getHolder() instanceof DoubleChest doubleChest) {
 				inv = doubleChest.getLeftSide().getInventory();
 			}
-			int count = parseInventory(shop, page * RowedOpenableMenu.LARGEST_INV_SIZE, inv);
+			int count = parseInventory(shop, page * (9 * 6), inv);
 
 			Customer.wrap(player).sendMessage(Message.GENERAL_CHEST_PARSED.getKey(),
 					Message.GENERAL_CHEST_PARSED.getTranslation(

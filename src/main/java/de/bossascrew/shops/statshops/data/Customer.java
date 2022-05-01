@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -60,18 +61,18 @@ public class Customer implements DatabaseObject {
 	}
 
 	public void sendMessage(Message message) {
-		sendMessage(message.getKey(), message.getTranslation(), StatShops.getInstance().getShopsConfig().getMessageCaching());
+		sendMessage(message.getKey(), message, StatShops.getInstance().getShopsConfig().getMessageCaching());
 	}
 
-	public void sendMessage(String key, Component component) {
+	public void sendMessage(String key, ComponentLike component) {
 		sendMessage(key, component, StatShops.getInstance().getShopsConfig().getMessageCaching());
 	}
 
 	public void sendMessage(Message message, int cooldown) {
-		sendMessage(message.getKey(), message.getTranslation(), cooldown);
+		sendMessage(message.getKey(), message, cooldown);
 	}
 
-	public void sendMessage(String key, Component component, int cooldown) {
+	public void sendMessage(String key, ComponentLike component, int cooldown) {
 		if (!this.player.isOnline()) {
 			return;
 		}

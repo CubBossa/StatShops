@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandler.CostsSubModuleProvider<?>> {
+public class SubModulesHandler {
 
 	public static ArticleSubModuleProvider<ItemStack> ARTICLE_ITEM_PROVIDER;
 	public static ArticleSubModuleProvider<String> ARTICLE_CMD_PROVIDER;
@@ -88,7 +88,6 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 		return provider;
 	}
 
-	@Override
 	public List<CostsSubModuleProvider<?>> getValues() {
 		return new ArrayList<>(costsSubModules.values());
 	}
@@ -115,16 +114,12 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 			return subModule;
 		}
 
-		public Component getName() {
-			return name.getTranslation();
-		}
-
-		public ItemStack getListDisplayItem() {
+		public ItemStack getDisplayItem() {
 			return ItemStackUtils.createItemStack(itemStack.clone(), name, lore);
 		}
 	}
 
-	public static class CostsSubModuleProvider<T> implements ListMenuElement {
+	public static class CostsSubModuleProvider<T> {
 		@Getter
 		private final String key;
 		@Getter
@@ -150,12 +145,6 @@ public class SubModulesHandler implements ListMenuElementHolder<SubModulesHandle
 			return subModule;
 		}
 
-		@Override
-		public Component getName() {
-			return name.getTranslation();
-		}
-
-		@Override
 		public ItemStack getListDisplayItem() {
 			return ItemStackUtils.createItemStack(itemStack.clone(), name, lore);
 		}

@@ -1,6 +1,5 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.general.menu.ConfirmMenu;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.statshops.data.Message;
@@ -12,6 +11,7 @@ import de.cubbossa.guiframework.inventory.context.TargetContext;
 import de.cubbossa.guiframework.inventory.implementations.AnvilMenu;
 import de.cubbossa.guiframework.inventory.implementations.ListMenu;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -24,19 +24,21 @@ import java.util.Map;
 
 public class StatShopMenus {
 
-    public static <T> ListMenu newEditorMenu(ListMenuSupplier<T> supplier, Component title, int rows,
+    public static <T> ListMenu newEditorMenu(ListMenuSupplier<T> supplier, ComponentLike title, int rows,
                                              Message newName, Message newLore,
-                                             Component newTitle, String newPresetInput,
+                                             ComponentLike newTitle, String newPresetInput,
                                              Message infoName, Message infoLore,
-                                             boolean confirmDeletion, Component confirmDeleteTitle,
+                                             boolean confirmDeletion, ComponentLike confirmDeleteTitle,
                                              ContextConsumer<TargetContext<T>> leftClickHandler) {
         ListMenu menu = new ListMenu(title, rows);
+        menu.addPreset(MenuPresets.fillRow(Icon.EMPTY_DARK_RP.create(), rows - 1));
+
         // info & new
         menu.addPreset(presetApplier -> {
             presetApplier.addItem((rows - 1) * 9 + 4, ItemStackUtils.createItemStack(Material.PAPER, infoName, infoLore));
             if (supplier instanceof ListMenuManagerSupplier<T> manager) {
-                presetApplier.addItem(9 * 3 + 7, ItemStackUtils.createItemStack(Material.EMERALD, newName, newLore));
-                presetApplier.addClickHandler(9 * 3 + 7, Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
+                presetApplier.addItem((rows - 1) * 9 + 7, ItemStackUtils.createItemStack(Material.EMERALD, newName, newLore));
+                presetApplier.addClickHandler((rows - 1) * 9 + 7, Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
                     AnvilMenu m = new AnvilMenu(newTitle, newPresetInput);
                     m.setOutputClickHandler(AnvilMenu.CONFIRM, c -> {
                         manager.newElementFromMenu(new String[]{c.getTarget()});
@@ -49,7 +51,7 @@ public class StatShopMenus {
         // back
         menu.addPreset(MenuPresets.back(rows - 1, 8, Action.LEFT));
 
-        Map<Action<? extends TargetContext<?>>, ContextConsumer<? extends TargetContext<?>>> map = new HashMap<>();
+        Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> map = new HashMap<>();
 
         for (T element : supplier.getElements()) {
             map.put(Action.LEFT, t -> leftClickHandler.accept(new TargetContext<>(t.getPlayer(),
@@ -86,7 +88,7 @@ public class StatShopMenus {
         return menu;
     }
 
-    public static <T extends Taggable> ListMenu newShopTaggableMenu(Shop shop, ListMenuSupplier<T> taggableSupplier, Component title, int rows,
+    public static <T extends Taggable> ListMenu newShopTaggableMenu(Shop shop, ListMenuSupplier<T> taggableSupplier, ComponentLike title, int rows,
                                                Message infoName, Message infoLore) {
         ListMenu menu = new ListMenu(title, rows);
         menu.addPreset(presetApplier -> {
@@ -118,7 +120,7 @@ public class StatShopMenus {
             presetApplier.addItem(9 * 3 + 4, ItemStackUtils.createInfoItem(Message.GENERAL_GUI_TAGS_INFO_NAME, Message.GENERAL_GUI_TAGS_INFO_LORE));
             presetApplier.addItem(9 * 3 + 7, ItemStackUtils.createItemStack(Material.EMERALD, newTagName, newTagLore));
             presetApplier.addClickHandler(9 * 3 + 7, Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
-                AnvilMenu m = new AnvilMenu(newTagTitle.getTranslation(), "tag-me");
+                AnvilMenu m = new AnvilMenu(newTagTitle, "tag-me");
                 m.setOutputClickHandler(AnvilMenu.CONFIRM, c -> {
                     taggable.addTag(c.getTarget());
                     m.close(c.getPlayer());

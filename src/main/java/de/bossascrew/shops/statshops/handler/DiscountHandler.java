@@ -6,11 +6,15 @@ import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.shop.Discount;
+import de.bossascrew.shops.statshops.shop.Limit;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.web.WebAccessable;
 import de.cubbossa.guiframework.inventory.ListMenuManagerSupplier;
+import de.cubbossa.guiframework.inventory.ListMenuSupplier;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -21,8 +25,7 @@ import java.util.stream.Collectors;
 
 public class DiscountHandler implements
 		WebAccessable<Discount>,
-		ListEditorMenuElementHolder<Discount>,
-		ListMenuManagerSupplier<Discount> {
+		ListMenuSupplier<Discount> {
 
 	@Getter
 	private static DiscountHandler instance;
@@ -178,17 +181,10 @@ public class DiscountHandler implements
 	public void storeWebData(List<Discount> values) {
 	}
 
-	@Override
-	public List<Discount> getValues() {
-		return getDiscounts();
-	}
-
-	@Override
 	public Discount createNew(String input) {
 		return createDiscount(input, LocalDateTime.now(), Duration.of(1, ChronoUnit.DAYS), 10);
 	}
 
-	@Override
 	public Discount createDuplicate(Discount element) {
 		Discount discount = createDiscount(element.getNameFormat(), element.getStartTimes(), element.getDuration(), element.getPercent());
 		for (String tag : element.getTags()) {
@@ -198,8 +194,17 @@ public class DiscountHandler implements
 		return discount;
 	}
 
-	@Override
 	public boolean delete(Discount element) {
 		return deleteDiscount(element);
+	}
+
+	@Override
+	public Collection<Discount> getElements() {
+		return getDiscounts();
+	}
+
+	@Override
+	public ItemStack getDisplayItem(Discount object) {
+		return ItemStackUtils.createDiscountItemStack(object);
 	}
 }

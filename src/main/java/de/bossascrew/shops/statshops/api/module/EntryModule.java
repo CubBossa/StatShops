@@ -10,6 +10,7 @@ import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import de.bossascrew.shops.statshops.shop.entry.DataSlot;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +23,7 @@ public interface EntryModule extends Duplicable<EntryModule>, ConfigurationSeria
 
 	EntryModuleHandler.EntryModuleProvider getProvider();
 
-	Component getDisplayName();
+	ComponentLike getDisplayName();
 
 	ItemStack getDisplayItem();
 

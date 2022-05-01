@@ -7,9 +7,11 @@ import de.bossascrew.shops.statshops.handler.DynamicPricingHandler;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class Message {
+public class Message implements ComponentLike {
 
 	public static final Message NONE = new Message("");
 	public static final Message PREFIX = new Message("general.prefix");
@@ -346,7 +348,7 @@ public class Message {
 	public Component getTranslation(TagResolver... templates) {
 		List<TagResolver> t = new ArrayList<>(List.of(templates));
 		if (!this.equals(Message.PREFIX)) {
-			t.add(TagResolver.resolver("prefix", Tag.inserting(Message.PREFIX.getTranslation())));
+			t.add(TagResolver.resolver("prefix", Tag.inserting(Message.PREFIX)));
 		}
 		String format = TranslationHandler.getInstance().getTranslation(key);
 		return StatShops.getInstance().getMiniMessage().deserialize(format, t.toArray(TagResolver[]::new));
@@ -385,5 +387,10 @@ public class Message {
 			}
 		}
 		return messages;
+	}
+
+	@Override
+	public @NotNull Component asComponent() {
+		return getTranslation();
 	}
 }

@@ -1,24 +1,26 @@
 package de.bossascrew.shops.statshops.shop.entry;
 
-import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
-import de.bossascrew.shops.general.menu.contexts.TargetContext;
 import de.bossascrew.shops.general.util.Pair;
-import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
+import de.cubbossa.guiframework.inventory.Action;
+import de.cubbossa.guiframework.inventory.Button;
+import de.cubbossa.guiframework.inventory.context.ClickContext;
+import de.cubbossa.guiframework.inventory.context.ContextConsumer;
+import de.cubbossa.guiframework.inventory.context.TargetContext;
+import de.cubbossa.guiframework.inventory.implementations.AnvilMenu;
+import de.cubbossa.guiframework.inventory.implementations.ListMenu;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,9 +62,8 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 	private final Message typeMessage;
 	private Message name = null;
 	private Message lore = null;
-	private ContextConsumer<TargetContext<ClickType, Runnable>> clickHandler = c -> {
-	};
-	private @Nullable T data;
+	private @Nullable
+	T data;
 	private Consumer<T> updateHandler = t -> {
 	};
 	private Function<T, Component> dataFormatter = t -> Component.text("" + t);
@@ -70,6 +71,8 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 	public DataSlot(Message typeMessage) {
 		this.typeMessage = typeMessage;
 	}
+
+	public abstract Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler();
 
 	public void runUpdateHandler() {
 		updateHandler.accept(data);
@@ -89,7 +92,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		if (name == null || lore == null) {
 			return null;
 		}
-		return ItemStackUtils.setNameAndLore(displayItem, typeMessage.getTranslation(TagResolver.resolver("name", Tag.inserting(name.getTranslation()))),
+		return ItemStackUtils.setNameAndLore(displayItem, typeMessage.getTranslation(TagResolver.resolver("name", Tag.inserting(name))),
 				lore.getTranslations(TagResolver.resolver("current", Tag.inserting(dataFormatter.apply(data)))));
 	}
 
@@ -97,22 +100,22 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 		public TextSlot(String data) {
 			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING);
-			super.setClickHandler(clickContext -> {
-				Player player = clickContext.getPlayer();
-				player.closeInventory();
-				new AnvilGUI.Builder()
-						.plugin(StatShops.getInstance())
-						.text("" + getData())
-						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.getLegacyTranslation(TagResolver.resolver("name", Tag.inserting(getName().getTranslation()))))
-						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> clickContext.getTarget().run(), 1L))
-						.onComplete((p, s) -> {
-							setData(s);
-							clickContext.getTarget().run();
-							return AnvilGUI.Response.close();
-						}).open(player);
-			});
 			super.setData(data);
 			super.setDisplayItem(new ItemStack(Material.COMMAND_BLOCK));
+		}
+
+		@Override
+		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
+			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
+				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.getTranslation(TagResolver.resolver("name", Tag.inserting(getName()))),
+						"" + getData());
+				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
+					setData(s.getTarget());
+					s.getPlayer().closeInventory();
+					c.getMenu().refresh(c.getSlot());
+				});
+				return menu;
+			}));
 		}
 
 		@NotNull
@@ -131,22 +134,22 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 		public EquationSlot(String data) {
 			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION);
-			super.setClickHandler(clickContext -> {
-				Player player = clickContext.getPlayer();
-				player.closeInventory();
-				new AnvilGUI.Builder()
-						.plugin(StatShops.getInstance())
-						.text("" + getData())
-						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.getLegacyTranslation(TagResolver.resolver("name", Tag.inserting(getName().getTranslation()))))
-						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> clickContext.getTarget().run(), 1L))
-						.onComplete((p, s) -> {
-							setData(s);
-							clickContext.getTarget().run();
-							return AnvilGUI.Response.close();
-						}).open(player);
-			});
 			super.setData(data);
 			super.setDisplayItem(new ItemStack(Material.COMMAND_BLOCK));
+		}
+
+		@Override
+		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
+			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
+				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.getTranslation(TagResolver.resolver("name", Tag.inserting(getName()))),
+						"" + getData());
+				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
+					setData(s.getTarget());
+					s.getPlayer().closeInventory();
+					c.getMenu().refresh(c.getSlot());
+				});
+				return menu;
+			}));
 		}
 
 		@NotNull
@@ -165,16 +168,21 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 		public ItemStackSlot(ItemStack data) {
 			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK);
-			super.setClickHandler(clickContext -> {
-				ItemStack hand = clickContext.getPlayer().getItemOnCursor();
+			super.setData(data);
+			super.setDisplayItem(data.clone());
+		}
+
+		@Override
+		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
+			return Map.of(Action.LEFT, c -> {
+				ItemStack hand = c.getPlayer().getItemOnCursor();
 				if (hand != null && !hand.getType().equals(Material.AIR)) {
 					setData(hand.clone());
 					getData().setAmount(1);
 					setDisplayItem(getData());
+					c.getMenu().refresh(c.getSlot());
 				}
 			});
-			super.setData(data);
-			super.setDisplayItem(data.clone());
 		}
 
 		@NotNull
@@ -195,11 +203,16 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		public BooleanSlot(boolean data) {
 			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL);
 			setData(data);
-			super.setClickHandler(clickContext -> {
-				setData(Boolean.FALSE.equals(getData()));
-				super.setDisplayItem(ItemStackUtils.createButtonItemStack(Boolean.TRUE.equals(getData()), Message.NONE, Message.NONE));
-			});
 			super.setDisplayItem(ItemStackUtils.createButtonItemStack(data, Message.NONE, Message.NONE));
+		}
+
+		@Override
+		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
+			return Map.of(Action.LEFT, c -> {
+				setData(Boolean.FALSE.equals(getData()));
+				setDisplayItem(ItemStackUtils.createButtonItemStack(Boolean.TRUE.equals(getData()), Message.NONE, Message.NONE));
+				c.getMenu().refresh(c.getSlot());
+			});
 		}
 
 		@NotNull
@@ -220,27 +233,27 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 		public NumberSlot(Double data) {
 			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER);
-			super.setClickHandler(clickContext -> {
-				Player player = clickContext.getPlayer();
-				player.closeInventory();
-				new AnvilGUI.Builder()
-						.plugin(StatShops.getInstance())
-						.text("" + getData())
-						.title(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.getLegacyTranslation(TagResolver.resolver("name", Tag.inserting(getName().getTranslation()))))
-						.onClose(p -> Bukkit.getScheduler().runTaskLater(StatShops.getInstance(), () -> clickContext.getTarget().run(), 1L))
-						.onComplete((p, s) -> {
-							try {
-								setData(Double.parseDouble(s.replace(" ", "")));
-								super.setDisplayItem(new ItemStack(Material.PAPER, Integer.min(Integer.max(1, getData().intValue()), 64)));
-								clickContext.getTarget().run();
-								return AnvilGUI.Response.close();
-							} catch (NumberFormatException e) {
-								return AnvilGUI.Response.text("" + getData());
-							}
-						}).open(player);
-			});
 			super.setData(data);
 			super.setDisplayItem(new ItemStack(Material.PAPER, Integer.min(Integer.max(1, data.intValue()), 64)));
+		}
+
+		@Override
+		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
+			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
+				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.getTranslation(TagResolver.resolver("name", Tag.inserting(getName()))),
+						"" + getData());
+				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
+					try {
+						setData(Double.parseDouble(s.getTarget().replace(" ", "")));
+						super.setDisplayItem(new ItemStack(Material.PAPER, Integer.min(Integer.max(1, getData().intValue()), 64)));
+						s.getPlayer().closeInventory();
+						c.getMenu().refresh(c.getSlot());
+					} catch (NumberFormatException e) {
+						c.getPlayer().playSound(c.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+					}
+				});
+				return menu;
+			}));
 		}
 
 		public void setData(int data) {
@@ -265,28 +278,33 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 		Function<UUID, ItemStack> displayItem = uuid -> {
 			Shop shop = uuid == null ? null : ShopHandler.getInstance().getShop(uuid);
-			return shop == null ? new ItemStack(Material.VILLAGER_SPAWN_EGG) : shop.getListDisplayItem();
+			return shop == null ? new ItemStack(Material.VILLAGER_SPAWN_EGG) : ShopHandler.getInstance().getDisplayItem(shop);
 		};
 
 		public ShopSlot(UUID uuid) {
 			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_SHOP);
-
 			super.setData(uuid);
-			super.setClickHandler(clickContext -> {
-				int shops = ShopHandler.getInstance().getShops().size();
-				LMenu<Shop> menu = new LMenu<>(Integer.max(3, Integer.min(shops % 9, 6)), ShopHandler.getInstance(),
-						Message.GUI_SHOPS_TITLE, backContext -> clickContext.getTarget().run());
-				menu.setGlowPredicate(s -> Objects.equals(s.getUUID(), getData()));
-				menu.setClickHandler(cc -> {
-					this.setData(cc.getTarget().getUUID());
-					setDisplayItem(cc.getTarget().getListDisplayItem().clone());
-					clickContext.getTarget().run();
-				});
-				clickContext.getTarget().run();
-				menu.openInventory(clickContext.getPlayer());
-			});
 			super.setDataFormatter(aUuid -> aUuid == null ? Component.text("none", NamedTextColor.GRAY) : ShopHandler.getInstance().getShop(aUuid).getName());
 			super.setDisplayItem(displayItem.apply(uuid));
+		}
+
+		@Override
+		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
+			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
+				int shops = ShopHandler.getInstance().getShops().size();
+				ListMenu menu = new ListMenu(Message.GUI_SHOPS_TITLE, Integer.max(3, Integer.min(shops % 9, 6)));
+				for (Shop shop : ShopHandler.getInstance().getShops()) {
+					menu.addListEntry(Button.builder()
+							.withItemStack(() -> Objects.equals(shop.getUUID(), getData()) ?
+									ItemStackUtils.setGlow(ShopHandler.getInstance().getDisplayItem(shop)) : ShopHandler.getInstance().getDisplayItem(shop))
+							.withClickHandler(Action.LEFT, cl -> {
+								setData(shop.getUUID());
+								setDisplayItem(ShopHandler.getInstance().getDisplayItem(shop).clone());
+								menu.refresh(menu.getListSlots());
+							}));
+				}
+				return menu;
+			}));
 		}
 
 		@Override

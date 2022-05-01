@@ -108,8 +108,8 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 
 		TagResolver[] templates = {
 				TagResolver.resolver("indicator", Tag.inserting(actualAmount >= 0 ?
-						Message.SHOP_TRADE_FEEDBACK_GAIN.getTranslation() :
-						Message.SHOP_TRADE_FEEDBACK_PAY.getTranslation())),
+						Message.SHOP_TRADE_FEEDBACK_GAIN :
+						Message.SHOP_TRADE_FEEDBACK_PAY)),
 				TagResolver.resolver("transaction", Tag.inserting(price.getPriceComponent())),
 		};
 		if (tradeMessageType.equals(TradeMessageType.PROMPT)) {

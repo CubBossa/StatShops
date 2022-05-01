@@ -3,7 +3,7 @@ package de.bossascrew.shops.statshops.util;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import de.bossascrew.shops.general.menu.DefaultSpecialItem;
+import de.bossascrew.shops.statshops.menu.Icon;
 import de.bossascrew.shops.general.util.DurationParser;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.general.util.TextUtils;
@@ -25,6 +25,7 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -114,19 +115,20 @@ public class ItemStackUtils {
 		return item.getItem();
 	}
 
-	public ItemStack setDisplayName(ItemStack stack, Component name) {
+	public ItemStack setDisplayName(ItemStack stack, ComponentLike name) {
+		Component n = name.asComponent();
 		NBTItem item = new NBTItem(stack);
 		NBTCompound display = item.getCompound("display");
 		if (display == null) {
 			display = item.addCompound("display");
 		}
-		TextDecoration.State decoration = name.decoration(TextDecoration.ITALIC);
-		display.setString("Name", GSON_SERIALIZER.serialize(name.decoration(TextDecoration.ITALIC,
+		TextDecoration.State decoration = n.decoration(TextDecoration.ITALIC);
+		display.setString("Name", GSON_SERIALIZER.serialize(n.decoration(TextDecoration.ITALIC,
 				decoration.equals(TextDecoration.State.NOT_SET) ? TextDecoration.State.FALSE : decoration)));
 		return item.getItem();
 	}
 
-	public ItemStack setLore(ItemStack itemStack, List<Component> lore) {
+	public ItemStack setLore(ItemStack itemStack, List<? extends ComponentLike> lore) {
 		NBTItem item = new NBTItem(itemStack);
 		NBTCompound display = item.getCompound("display");
 		if (display == null) {
@@ -134,7 +136,7 @@ public class ItemStackUtils {
 		}
 		List<String> presentLore = display.getStringList("Lore");
 		presentLore.clear();
-		presentLore.addAll(lore.stream().map(component -> {
+		presentLore.addAll(lore.stream().map(ComponentLike::asComponent).map(component -> {
 			return component.decoration(TextDecoration.ITALIC, component.decoration(TextDecoration.ITALIC) == TextDecoration.State.NOT_SET ?
 					TextDecoration.State.FALSE : component.decoration(TextDecoration.ITALIC));
 		}).map(component -> GSON_SERIALIZER.serialize(component)).collect(Collectors.toList()));
@@ -282,7 +284,7 @@ public class ItemStackUtils {
 	private void getActionComponent(List<Component> additionalLore, String key, Message action) {
 		additionalLore.addAll(Message.SHOP_ITEM_LORE_KEYBIND.getTranslations(
 				TagResolver.resolver("keybind", Tag.inserting(Component.text(key.toLowerCase(Locale.ROOT).replace("_", "-") + "-click"))),
-				TagResolver.resolver("action", Tag.inserting(action.getTranslation()))));
+				TagResolver.resolver("action", Tag.inserting(action))));
 	}
 
 	public ItemStack createItemStack(Material material, int customModelData) {
@@ -318,26 +320,26 @@ public class ItemStackUtils {
 		return itemStack;
 	}
 
-	public ItemStack createItemStack(Material material, Component displayName, List<Component> lore) {
-		List<String> stringLore = lore.stream().map(component -> SERIALIZER.serialize(component)).collect(Collectors.toList());
-		return createItemStack(material, SERIALIZER.serialize(displayName), stringLore);
+	public ItemStack createItemStack(Material material, ComponentLike displayName, List<? extends ComponentLike> lore) {
+		List<String> stringLore = lore.stream().map(component -> SERIALIZER.serialize(component.asComponent())).collect(Collectors.toList());
+		return createItemStack(material, SERIALIZER.serialize(displayName.asComponent()), stringLore);
 	}
 
 	public ItemStack createItemStack(Material material, Message name, Message lore) {
-		return createItemStack(material, name.getTranslation(), lore.getTranslations());
+		return createItemStack(material, name, lore.getTranslations());
 	}
 
 	public static ItemStack createItemStack(ItemStack itemStack, Message name, Message lore) {
-		return createItemStack(itemStack, name.getTranslation(), lore.getTranslations());
+		return createItemStack(itemStack, name, lore.getTranslations());
 	}
 
-	public static ItemStack createItemStack(ItemStack itemStack, Component name, List<Component> lore) {
+	public static ItemStack createItemStack(ItemStack itemStack, ComponentLike name, List<? extends ComponentLike> lore) {
 		ItemMeta meta = itemStack.getItemMeta();
 		if (meta == null) {
 			meta = Bukkit.getItemFactory().getItemMeta(itemStack.getType());
 		}
-		meta.setDisplayName(TextUtils.toLegacy(name));
-		meta.setLore(lore.stream().map(TextUtils::toLegacy).collect(Collectors.toList()));
+		meta.setDisplayName(TextUtils.toLegacy(name.asComponent()));
+		meta.setLore(lore.stream().map(ComponentLike::asComponent).map(TextUtils::toLegacy).collect(Collectors.toList()));
 		itemStack.setItemMeta(meta);
 		return itemStack;
 	}
@@ -380,7 +382,7 @@ public class ItemStackUtils {
 
 	public ItemStack createShopItemStack(Shop shop) {
 		if (shop == null) {
-			return DefaultSpecialItem.ERROR.create();
+			return Icon.ERROR.create();
 		}
 		return createItemStack(shop.getDisplayItem() == null ? new ItemStack(MATERIAL_SHOP) : shop.getDisplayItem(),
 				Message.GUI_SHOPS_NAME.getTranslation(
@@ -392,7 +394,7 @@ public class ItemStackUtils {
 
 	public ItemStack createDiscountItemStack(Discount discount) {
 		if (discount == null) {
-			return DefaultSpecialItem.ERROR.create();
+			return Icon.ERROR.create();
 		}
 		return createItemStack(MATERIAL_DISCOUNT,
 				Message.GUI_DISCOUNTS_ENTRY_NAME.getTranslation(
@@ -409,7 +411,7 @@ public class ItemStackUtils {
 
 	public ItemStack createLimitsItemStack(Limit limit) {
 		if (limit == null) {
-			return DefaultSpecialItem.ERROR.create();
+			return Icon.ERROR.create();
 		}
 		return createItemStack(MATERIAL_LIMIT,
 				Message.GUI_LIMITS_ENTRY_NAME.getTranslation(
@@ -423,7 +425,7 @@ public class ItemStackUtils {
 
 	public ItemStack createTemplatesItemStack(EntryTemplate template) {
 		if (template == null) {
-			return DefaultSpecialItem.ERROR.create();
+			return Icon.ERROR.create();
 		}
 		return createItemStack(TemplateHandler.DISCS[template.getDiscIndex()],
 				Message.GUI_TEMPLATES_ENTRY_NAME.getTranslation(
@@ -434,14 +436,14 @@ public class ItemStackUtils {
 						TagResolver.resolver("size", Tag.inserting(Component.text(template.size())))));
 	}
 
-	public ItemStack setNameAndLore(ItemStack itemStack, Component name, List<Component> lore) {
+	public ItemStack setNameAndLore(ItemStack itemStack, ComponentLike name, List<? extends ComponentLike> lore) {
 		itemStack = setDisplayName(itemStack, name);
 		itemStack = setLore(itemStack, lore);
 		return itemStack;
 	}
 
 	public ItemStack setNameAndLore(ItemStack itemStack, Message name, Message lore) {
-		itemStack = setDisplayName(itemStack, name.getTranslation());
+		itemStack = setDisplayName(itemStack, name);
 		itemStack = setLore(itemStack, lore.getTranslations());
 		return itemStack;
 	}

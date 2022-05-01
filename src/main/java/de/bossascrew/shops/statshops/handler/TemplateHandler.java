@@ -2,26 +2,26 @@ package de.bossascrew.shops.statshops.handler;
 
 import de.bossascrew.shops.statshops.api.PaginatedShop;
 import de.bossascrew.shops.statshops.api.ShopEntry;
-import de.bossascrew.shops.general.menu.DefaultSpecialItem;
-import de.bossascrew.shops.general.menu.RowedOpenableMenu;
+import de.bossascrew.shops.statshops.menu.Icon;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Config;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.web.WebAccessable;
 import de.cubbossa.guiframework.inventory.ListMenuSupplier;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TemplateHandler implements
 		WebAccessable<EntryTemplate>,
-		ListEditorMenuElementHolder<EntryTemplate>,
 		ListMenuSupplier<EntryTemplate> {
 
 	public static final Material[] DISCS = Tag.ITEMS_CREEPER_DROP_MUSIC_DISCS.getValues().stream().
@@ -56,7 +56,6 @@ public class TemplateHandler implements
 		return templateMap.get(uuid);
 	}
 
-	@Override
 	public List<EntryTemplate> getValues() {
 		return new ArrayList<>(templateMap.values());
 	}
@@ -64,27 +63,16 @@ public class TemplateHandler implements
 	public EntryTemplate createNew(String nameFormat, PaginatedShop shop, int page) {
 		EntryTemplate template = createNew(nameFormat);
 		for (ShopEntry entry : shop.getEntries(page)) {
-			template.put(entry.getSlot() % RowedOpenableMenu.LARGEST_INV_SIZE, entry.duplicate());
+			template.put(entry.getSlot() % (9 * 6), entry.duplicate());
 		}
 		return template;
 	}
 
-	@Override
 	public EntryTemplate createNew(String input) {
 		EntryTemplate template = new EntryTemplate(UUID.randomUUID(), input);
 		StatShops.getInstance().getDatabase().saveTemplate(template);
 		templateMap.put(template.getUuid(), template);
 		return template;
-	}
-
-	@Override
-	public EntryTemplate createDuplicate(EntryTemplate element) {
-		return null;
-	}
-
-	@Override
-	public boolean delete(EntryTemplate element) {
-		return false;
 	}
 
 	public void registerTemplate(EntryTemplate template) {
@@ -128,19 +116,29 @@ public class TemplateHandler implements
 		for (int i = 0; i < 9; i++) {
 			int _i = i;
 			bottomLine.put("(<row> - 1) * 9 + " + _i, new BaseEntry(UUID.randomUUID(), null,
-					DefaultSpecialItem.EMPTY_DARK_SIMPLE.create(), null, i));
+					Icon.EMPTY_DARK_SIMPLE.create(), null, i));
 		}
 		if(prevPage) {
-			BaseEntry entryPrev1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.PREV_PAGE.create(), null, 0);
+			BaseEntry entryPrev1 = new BaseEntry(UUID.randomUUID(), null, Icon.PREV_PAGE.create(), null, 0);
 			entryPrev1.setModule(EntryModuleHandler.openPrevPage(entryPrev1, 1));
 			bottomLine.put("(<row> - 1) * 9", entryPrev1);
 		}
 		if(nextPage) {
-			BaseEntry entryNext1 = new BaseEntry(UUID.randomUUID(), null, DefaultSpecialItem.NEXT_PAGE.create(), null, 1);
+			BaseEntry entryNext1 = new BaseEntry(UUID.randomUUID(), null, Icon.NEXT_PAGE.create(), null, 1);
 			entryNext1.setModule(EntryModuleHandler.openNextPage(entryNext1, 1));
 			bottomLine.put("(<row> - 1) * 9 + 1", entryNext1);
 		}
 		bottomLine.setDiscIndex((short) (1 + (nextPage ? 1 : 0) + (prevPage ? 1 : 0)));
 		return bottomLine;
+	}
+
+	@Override
+	public Collection<EntryTemplate> getElements() {
+		return getTemplates();
+	}
+
+	@Override
+	public ItemStack getDisplayItem(EntryTemplate object) {
+		return ItemStackUtils.createTemplatesItemStack(object);
 	}
 }

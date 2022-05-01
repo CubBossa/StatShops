@@ -1,17 +1,13 @@
 package de.bossascrew.shops.statshops.shop;
 
-import de.bossascrew.shops.general.menu.VillagerMenu;
-import de.bossascrew.shops.general.menu.contexts.BackContext;
-import de.bossascrew.shops.general.menu.contexts.CloseContext;
-import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.menu.VillagerShopEditor;
 import de.bossascrew.shops.statshops.menu.VillagerShopMenu;
+import de.cubbossa.guiframework.inventory.Menu;
+import de.cubbossa.guiframework.inventory.implementations.VillagerMenu;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -28,8 +24,9 @@ public class VillagerShop extends BaseShop implements Shop {
 	}
 
 	@Override
-	public boolean open(Customer customer, @Nullable ContextConsumer<CloseContext> closeHandler) {
-		return new VillagerShopMenu(this, customer).openInventory(customer.getPlayer()) != null;
+	public boolean open(Customer customer) {
+		new VillagerShopMenu(this, customer).open(customer.getPlayer());
+		return true;
 	}
 
 	public boolean close(Customer customer) {
@@ -43,8 +40,7 @@ public class VillagerShop extends BaseShop implements Shop {
 		return activeCustomers.remove(customer);
 	}
 
-	@Override
-	public void openEditorMenu(Player player, ContextConsumer<BackContext> backHandler) {
-		new VillagerShopEditor(this, backHandler).openInventory(player);
+	public Menu newEditorMenu() {
+		return new VillagerShopEditor(this);
 	}
 }

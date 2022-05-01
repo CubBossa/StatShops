@@ -1,7 +1,5 @@
 package de.bossascrew.shops.statshops.api;
 
-import de.bossascrew.shops.general.menu.contexts.CloseContext;
-import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.general.util.Editable;
 import de.bossascrew.shops.statshops.api.data.DatabaseObject;
 import de.bossascrew.shops.statshops.api.data.DisplayedObject;
@@ -150,16 +148,6 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, Data
      * @return true if the shop was opened successfully, false if errors occurred
      */
     boolean open(Customer customer);
-
-    /**
-     * Opens the shop menu for the specified customer if the customer has permission to open this shop and the shop is not
-     * being edited at the moment.
-     *
-     * @param customer     The customer to open the shop for.
-     * @param closeHandler The CloseHandler that will be executed once the player closes the shop menu.
-     * @return true if the shop was opened successfully, false if errors occurred
-     */
-    boolean open(Customer customer, ContextConsumer<CloseContext> closeHandler);
 
     /**
      * Closes the shop menu for a specified customer. This will simulate the closing of the inventory by the player.

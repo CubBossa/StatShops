@@ -1,7 +1,6 @@
 package de.bossascrew.shops.statshops.menu;
 
 import com.google.common.collect.Lists;
-import de.bossascrew.shops.general.menu.VillagerMenu;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.Shop;
@@ -16,19 +15,15 @@ import de.bossascrew.shops.statshops.shop.*;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import de.bossascrew.shops.statshops.util.EntryInteractionType;
 import de.bossascrew.shops.statshops.util.TradeMessageType;
+import de.cubbossa.guiframework.inventory.implementations.VillagerMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 
@@ -41,42 +36,21 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 	private final Map<Integer, ShopEntry> entryMap;
 
 	public VillagerShopMenu(Shop villagerShop, Customer customer) {
-		super(villagerShop.getName(), null);
+		super(villagerShop.getName());
 		this.villagerShop = villagerShop;
 		this.recipeMap = new HashMap<>();
 		this.entryMap = new HashMap<>();
 		this.balanceMessenger = new SimpleBalanceMessenger(StatShops.getInstance().getShopsConfig().getTradeMessageFeedback());
 		this.targetCustomer = customer;
-
-		setTradeHandler(targetContext -> {
-			if (Arrays.stream(IGNORED).anyMatch(clickType -> targetContext.getAction().equals(clickType))) {
-				return;
-			}
-			ShopEntry entry = entryMap.get(targetContext.getTarget());
-			if (StatShops.getInstance().getShopsConfig().getTradeMessageFeedback() != TradeMessageType.NONE) {
-				TradeModule tradeModule = (TradeModule) entry.getModule();
-
-				List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(customer.getPlayer(), entry, entry.getShop());
-				double discount = DiscountHandler.getInstance().combineDiscounts(discounts, false);
-
-				Price<?> pay = tradeModule.getPayPrice(true).duplicate();
-				Price<?> gain = tradeModule.getGainPrice().duplicate();
-				pay.applyDiscount(discount);
-
-				balanceMessenger.handleTransaction(new Transaction(Customer.wrap(targetContext.getPlayer()), entry, EntryInteractionType.BUY,
-						Lists.newArrayList(pay), Lists.newArrayList(gain), LocalDateTime.now(), discount, discounts));
-			}
-			if (entry.getModule() != null) {
-				StatShops.getInstance().getLogDatabase().logToDatabase(entry.getModule().createLogEntry(Customer.wrap(targetContext.getPlayer()), EntryInteractionResult.SUCCESS), this.villagerShop);
-			}
-		});
 	}
 
 	private void prepareInventory(Player player) {
+
 		int i = 0;
 		for (Map.Entry<Integer, ShopEntry> entry : villagerShop.getEntries().entrySet()) {
 
 			ShopEntry e = entry.getValue();
+
 			//Only works with Currency<ItemStack> for now
 			if (e.getModule() instanceof TradeModule tm && tm.getCosts().getBuyPrice().getCurrency().equals(CurrencyHandler.CURRENCY_ITEM)) {
 
@@ -84,32 +58,56 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 				ItemStack price = payPrice.getObject();
 				price.setAmount(Integer.min((int) payPrice.getAmount(), 127));
 
-				MerchantRecipe recipe = new MerchantRecipe((ItemStack) tm.getGainPrice().getObject(), e.getPermission() == null || player.hasPermission(e.getPermission()) ? Integer.MAX_VALUE : 0);
-				recipeMap.put(e, i);
-				entryMap.put(i, e);
-				recipe.addIngredient(price);
-				placeEntry(e);
+				MerchantRecipe recipe = MerchantBuilder.builder()
+						.withArticle((ItemStack) tm.getGainPrice().getObject())
+						.withLeftCost(price)
+						.withUses(0, e.getPermission() == null || player.hasPermission(e.getPermission()) ? Integer.MAX_VALUE : 0)
+						.build();
+
 
 				DiscountHandler.getInstance().subscribeToDisplayUpdates(this, e);
 				LimitsHandler.getInstance().subscribeToDisplayUpdates(this, player, e);
 
-				setMerchantOffer(i++, recipe);
+				addMerchantOffer(recipe);
+				setClickHandler(i, VillagerMenu.ATTEMPT_BUY, c -> {
+					Customer customer = Customer.wrap(c.getPlayer());
+					if (Arrays.stream(IGNORED).anyMatch(clickType -> c.getAction().equals(clickType))) {
+						return;
+					}
+					if (StatShops.getInstance().getShopsConfig().getTradeMessageFeedback() != TradeMessageType.NONE) {
+						TradeModule tradeModule = (TradeModule) e.getModule();
+
+						List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(customer.getPlayer(), e, e.getShop());
+						double discount = DiscountHandler.getInstance().combineDiscounts(discounts, false);
+
+						Price<?> pay = tradeModule.getPayPrice(true).duplicate();
+						Price<?> gain = tradeModule.getGainPrice().duplicate();
+						pay.applyDiscount(discount);
+
+						balanceMessenger.handleTransaction(new Transaction(Customer.wrap(c.getPlayer()), e, EntryInteractionType.BUY,
+								Lists.newArrayList(pay), Lists.newArrayList(gain), LocalDateTime.now(), discount, discounts));
+					}
+					if (e.getModule() != null) {
+						StatShops.getInstance().getLogDatabase().logToDatabase(e.getModule().createLogEntry(Customer.wrap(c.getPlayer()), EntryInteractionResult.SUCCESS), this.villagerShop);
+					}
+				});
+				recipeMap.put(e, i++);
 			}
 		}
 	}
 
 	@Override
-	public InventoryView openInventorySync(@NotNull Player player, @Nullable Consumer<Inventory> inventoryPreparer) {
+	public void openSync(Player player, ViewMode viewMode) {
 		prepareInventory(player);
-		return super.openInventorySync(player, inventoryPreparer);
+		super.openSync(player, viewMode);
 	}
 
 	@Override
-	public boolean closeInventory(Player player) {
+	public void close(Player viewer) {
 		DiscountHandler.getInstance().unsubscribeToDisplayUpdates(this);
-		this.balanceMessenger.handlePageClose(player);
-		this.balanceMessenger.handleShopClose(player);
-		return super.closeInventory(player);
+		this.balanceMessenger.handlePageClose(viewer);
+		this.balanceMessenger.handleShopClose(viewer);
+		super.close(viewer);
 	}
 
 	public void placeEntry(ShopEntry entry) {
@@ -147,18 +145,13 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 		//TODO debug
 		recipe.setMaxUses(discount < 1 ? 0 : 1);
 
-		setMerchantOffer(entry.getSlot(), recipe);
+		insertMerchantOffer(entry.getSlot(), recipe);
 	}
 
 	@Override
 	public void updateEntry(ShopEntry entry) {
 		placeEntry(entry);
-		for (UUID uuid : openInventories.keySet()) {
-			Player player = Bukkit.getPlayer(uuid);
-			if (player != null) {
-				openInventorySync(player, null);
-			}
-		}
+		viewer.keySet().stream().map(Bukkit::getPlayer).filter(Objects::nonNull).forEach(this::openSync);
 	}
 
 	@Override

@@ -1,8 +1,6 @@
 package de.bossascrew.shops.statshops.api;
 
 import de.bossascrew.shops.statshops.data.Customer;
-import de.bossascrew.shops.general.menu.contexts.CloseContext;
-import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import net.kyori.adventure.text.Component;
 
@@ -51,6 +49,4 @@ public interface PaginatedShop extends Shop, TemplatableShop {
 	 * @return true if the shop was opened successfully, false if errors occured
 	 */
 	boolean open(Customer customer, int page);
-
-	boolean open(Customer customer, int page, ContextConsumer<CloseContext> closeHandler);
 }

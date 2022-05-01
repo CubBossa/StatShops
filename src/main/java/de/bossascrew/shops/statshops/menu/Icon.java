@@ -1,4 +1,4 @@
-package de.bossascrew.shops.general.menu;
+package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.data.Message;
@@ -6,7 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public enum DefaultSpecialItem {
+public enum Icon {
 
 	EMPTY_LIGHT(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ", null),
 	EMPTY_LIGHT_RP(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ", null, 7122000),
@@ -33,34 +33,34 @@ public enum DefaultSpecialItem {
 
 	private final ItemStack item;
 
-	DefaultSpecialItem(Material material, String displayName, @Nullable String lore) {
+	Icon(Material material, String displayName, @Nullable String lore) {
 		item = ItemStackUtils.createItemStack(material, displayName, lore);
 	}
 
-	DefaultSpecialItem(Material material, String displayName, @Nullable String lore, int customModelData) {
+	Icon(Material material, String displayName, @Nullable String lore, int customModelData) {
 		item = ItemStackUtils.createItemStack(material, displayName, lore);
 		ItemStackUtils.setCustomModelData(item, customModelData);
 	}
 
-	DefaultSpecialItem(ItemStack item, String displayName, @Nullable String lore) {
+	Icon(ItemStack item, String displayName, @Nullable String lore) {
 		this.item = item.clone();
 		ItemStackUtils.setNameAndLore(this.item, displayName, lore);
 	}
 
-	DefaultSpecialItem(Material material, Message displayName, Message lore) {
-		this.item = ItemStackUtils.createItemStack(material, displayName.getTranslation(), lore.getTranslations());
+	Icon(Material material, Message displayName, Message lore) {
+		this.item = ItemStackUtils.createItemStack(material, displayName, lore.getTranslations());
 	}
 
-	DefaultSpecialItem(Material material, Message displayName, Message lore, int customModelData) {
-		this.item = ItemStackUtils.createItemStack(material, displayName.getTranslation(), lore.getTranslations());
+	Icon(Material material, Message displayName, Message lore, int customModelData) {
+		this.item = ItemStackUtils.createItemStack(material, displayName, lore.getTranslations());
 		ItemStackUtils.setCustomModelData(item, customModelData);
 	}
 
-	DefaultSpecialItem(String headUrl, Message name, Message lore) {
+	Icon(String headUrl, Message name, Message lore) {
 		this.item = ItemStackUtils.createCustomHead(headUrl, name, lore);
 	}
 
-	DefaultSpecialItem(String headUrl, Message name, Message lore, int customModelData) {
+	Icon(String headUrl, Message name, Message lore, int customModelData) {
 		this.item = ItemStackUtils.createCustomHead(headUrl, name, lore);
 		ItemStackUtils.setCustomModelData(item, customModelData);
 	}

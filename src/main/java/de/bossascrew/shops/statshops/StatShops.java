@@ -14,6 +14,7 @@ import de.bossascrew.shops.statshops.handler.*;
 import de.bossascrew.shops.statshops.hook.CitizensHook;
 import de.bossascrew.shops.statshops.hook.VaultExtension;
 import de.bossascrew.shops.statshops.listener.PlayerListener;
+import de.cubbossa.guiframework.GUIHandler;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.audience.Audience;
@@ -181,6 +182,8 @@ public class StatShops extends JavaPlugin {
 		this.subModulesHandler = new SubModulesHandler();
 		this.subModulesHandler.registerDefaults();
 
+		new GUIHandler(this).enable();
+
 		// Setup ShopHandler and load shops and entries
 		this.shopHandler = new ShopHandler();
 
@@ -200,9 +203,6 @@ public class StatShops extends JavaPlugin {
 
 		// Setup customers
 		this.customerHandler = new CustomerHandler();
-
-		// Setup inventory handler to process menus
-		new InventoryHandler(this);
 
 		// All Listeners
 		Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
@@ -245,7 +245,6 @@ public class StatShops extends JavaPlugin {
 	@Override
 	public void onDisable() {
 
-		InventoryHandler.getInstance().closeAllMenus(true);
 		for (Shop shop : ShopHandler.getInstance().getShops()) {
 			database.saveShop(shop);
 			if (shopsConfig.isCleanupUnusedEntries()) {
@@ -266,6 +265,8 @@ public class StatShops extends JavaPlugin {
 			this.bukkitAudiences.close();
 			this.bukkitAudiences = null;
 		}
+
+		GUIHandler.getInstance().disable();
 	}
 
 	public boolean isCitizensInstalled() {
@@ -319,7 +320,7 @@ public class StatShops extends JavaPlugin {
 	}
 
 	public void sendMessage(CommandSender sender, Message message) {
-		sendMessage(sender, message.getTranslation());
+		sendMessage(sender, message);
 	}
 
 	public void sendMessage(CommandSender sender, Component message) {
@@ -327,7 +328,7 @@ public class StatShops extends JavaPlugin {
 	}
 
 	public void sendMessage(CommandSender sender, String key, Message message, int cooldown) {
-		sendMessage(sender, key, message.getTranslation(), cooldown);
+		sendMessage(sender, key, message, cooldown);
 	}
 
 	public void sendMessage(CommandSender sender, String key, Component message, int cooldown) {

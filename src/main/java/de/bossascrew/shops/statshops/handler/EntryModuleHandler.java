@@ -15,6 +15,7 @@ import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 @Getter
-public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHandler.EntryModuleProvider> {
+public class EntryModuleHandler {
 
 	public static EntryModuleProvider STATIC_PROVIDER;
 	public static EntryModuleProvider CLOSE_PROVIDER;
@@ -146,12 +147,11 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 		}
 	}
 
-	@Override
 	public List<EntryModuleProvider> getValues() {
 		return entryModules.values().stream().toList();
 	}
 
-	public static class EntryModuleProvider implements ListMenuElement {
+	public static class EntryModuleProvider {
 		@Getter
 		private final String key;
 		@Getter
@@ -170,16 +170,14 @@ public class EntryModuleHandler implements ListMenuElementHolder<EntryModuleHand
 			this.moduleSupplier = moduleSupplier;
 		}
 
+		public ComponentLike getName() {
+			return name;
+		}
+
 		public EntryModule getModule(ShopEntry shopEntry) {
 			return moduleSupplier.apply(this, shopEntry);
 		}
 
-		@Override
-		public Component getName() {
-			return name.getTranslation();
-		}
-
-		@Override
 		public ItemStack getListDisplayItem() {
 			return ItemStackUtils.createItemStack(itemStack.clone(), name, lore);
 		}

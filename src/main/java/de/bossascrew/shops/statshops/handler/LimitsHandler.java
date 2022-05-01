@@ -8,6 +8,7 @@ import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.statshops.shop.Limit;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.web.WebAccessable;
+import de.cubbossa.guiframework.inventory.ListMenuManagerSupplier;
 import de.cubbossa.guiframework.inventory.ListMenuSupplier;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -23,8 +24,7 @@ import java.util.stream.Collectors;
 @Getter
 public class LimitsHandler implements
 		WebAccessable<Limit>,
-		ListEditorMenuElementHolder<Limit>,
-		ListMenuSupplier<Limit> {
+		ListMenuManagerSupplier<Limit> {
 
 	@Getter
 	private static LimitsHandler instance;
@@ -233,11 +233,6 @@ public class LimitsHandler implements
 		//TODO
 	}
 
-	@Override
-	public List<Limit> getValues() {
-		return getLimits();
-	}
-
 	public void addLimit(Limit limit) {
 		limitMap.put(limit.getUuid(), limit);
 		for (String tag : limit.getTags()) {
@@ -250,14 +245,12 @@ public class LimitsHandler implements
 		StatShops.getInstance().getDatabase().saveLimit(limit);
 	}
 
-	@Override
 	public Limit createNew(String input) {
 		Limit limit = new Limit(input, Duration.of(1, ChronoUnit.DAYS), customer -> true, 16);
 		addLimit(limit);
 		return limit;
 	}
 
-	@Override
 	public Limit createDuplicate(Limit element) {
 		Limit limit = createNew(element.getTransactionLimit() + "");
 		limit.setRecover(element.getRecover());
@@ -266,7 +259,6 @@ public class LimitsHandler implements
 		return limit;
 	}
 
-	@Override
 	public boolean delete(Limit limit) {
 		// Automatically updates all guis. Doesn't matter because limit is deleted anyways
 		new ArrayList<>(limit.getTags()).forEach(limit::removeTag);
@@ -285,6 +277,21 @@ public class LimitsHandler implements
 	@Override
 	public ItemStack getDisplayItem(Limit limit) {
 		return ItemStackUtils.createLimitsItemStack(limit);
+	}
+
+	@Override
+	public boolean deleteFromMenu(Limit object) {
+		return delete(object);
+	}
+
+	@Override
+	public boolean duplicateElementFromMenu(Limit object) {
+		return createDuplicate(object) != null;
+	}
+
+	@Override
+	public boolean newElementFromMenu(Object[] args) {
+		return createNew((String) args[0]) != null;
 	}
 
 	public record EntryInteraction(UUID entryUuid, UUID playerUuid, long timeStamp, long duration) {

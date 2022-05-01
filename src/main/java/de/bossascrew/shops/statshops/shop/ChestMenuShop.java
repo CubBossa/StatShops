@@ -1,9 +1,5 @@
 package de.bossascrew.shops.statshops.shop;
 
-import de.bossascrew.shops.general.menu.RowedOpenableMenu;
-import de.bossascrew.shops.general.menu.contexts.BackContext;
-import de.bossascrew.shops.general.menu.contexts.CloseContext;
-import de.bossascrew.shops.general.menu.contexts.ContextConsumer;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.PaginatedShop;
 import de.bossascrew.shops.statshops.api.ShopEntry;
@@ -22,7 +18,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -60,13 +55,13 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 	@Override
 	public int getPageCount() {
 		//important to divide with largest inventory size so entries dont move to other pages when changing the row size
-		return entryMap.isEmpty() ? 1 : entryMap.lastKey() / RowedOpenableMenu.LARGEST_INV_SIZE + 1;
+		return entryMap.isEmpty() ? 1 : entryMap.lastKey() / (9 * 6) + 1;
 	}
 
 	@Override
 	public List<ShopEntry> getEntries(int shopPage) {
-		int lowerBound = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE;
-		int upperBound = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + rows * RowedOpenableMenu.ROW_SIZE;
+		int lowerBound = shopPage * (9 * 6);
+		int upperBound = shopPage * (9 * 6) + rows * 9;
 
 		return entryMap.entrySet().stream()
 				.filter(e -> e.getKey() >= lowerBound && e.getKey() < upperBound)
@@ -120,16 +115,7 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 	}
 
 	@Override
-	public boolean open(Customer customer, ContextConsumer<CloseContext> closeHandler) {
-		return open(customer, getPreferredOpenPage(customer), closeHandler);
-	}
-
 	public boolean open(Customer customer, int page) {
-		return open(customer, page, null);
-	}
-
-	@Override
-	public boolean open(Customer customer, int page, @Nullable ContextConsumer<CloseContext> closeHandler) {
 		if (editor != null && !editor.getUniqueId().equals(customer.getUuid())) {
 			customer.sendMessage(Message.SHOP_NOT_ENABLED);
 			return false;
@@ -234,7 +220,7 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 	@Override
 	public void applyTemplate(EntryTemplate template, int shopPage) {
 		for (ShopEntry entry : template.getEntries(rows).values()) {
-			int shopSlot = shopPage * RowedOpenableMenu.LARGEST_INV_SIZE + entry.getSlot();
+			int shopSlot = shopPage * (9 * 6) + entry.getSlot();
 			ShopEntry newEntry = entry.duplicate();
 			newEntry.setSlot(shopSlot);
 			newEntry.setShop(this);
@@ -251,7 +237,7 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 				continue;
 			}
 			for (ShopEntry entry : template.getEntries(rows).values()) {
-				int shopSlot = page * RowedOpenableMenu.LARGEST_INV_SIZE + entry.getSlot();
+				int shopSlot = page * (9 * 6) + entry.getSlot();
 				if (getEntry(shopSlot) != null) {
 					continue;
 				}

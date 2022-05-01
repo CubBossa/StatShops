@@ -30,7 +30,6 @@ public class Limit implements
 		Taggable,
 		Comparable<Limit>,
 		Editable<Player>,
-		ListMenuElement,
 		DatabaseObject,
 		Duplicable<Limit>,
 		NamedObject {
@@ -103,7 +102,6 @@ public class Limit implements
 		return Integer.compare(this.transactionLimit, o.transactionLimit);
 	}
 
-	@Override
 	public ItemStack getListDisplayItem() {
 		return ItemStackUtils.createLimitsItemStack(this);
 	}

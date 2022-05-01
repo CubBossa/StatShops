@@ -31,7 +31,6 @@ public class Discount implements
 		Taggable,
 		Comparable<Discount>,
 		Editable<Player>,
-		ListMenuElement,
 		DatabaseObject,
 		Duplicable<Discount>,
 		NamedObject {
@@ -201,7 +200,6 @@ public class Discount implements
 		return Double.compare(percent, o.percent);
 	}
 
-	@Override
 	@JsonIgnore
 	public ItemStack getListDisplayItem() {
 		return ItemStackUtils.createDiscountItemStack(this);

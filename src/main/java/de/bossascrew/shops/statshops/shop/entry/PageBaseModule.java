@@ -6,7 +6,6 @@ import de.bossascrew.shops.statshops.api.module.EntryModule;
 import de.bossascrew.shops.statshops.api.module.PageModule;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
-import de.bossascrew.shops.general.menu.RowedOpenableMenu;
 import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.general.util.Consumer3;
 import de.bossascrew.shops.statshops.util.EntryInteractionType;
@@ -116,7 +115,7 @@ public class PageBaseModule extends BaseModule implements PageModule {
 		}
 		int newPage = mode.getData().intValue() == 0 ?
 				page.getData().intValue() - 1 :
-				shopEntry.getSlot() / RowedOpenableMenu.LARGEST_INV_SIZE + page.getData().intValue() * mode.getData().intValue();
+				shopEntry.getSlot() / (9 * 6) + page.getData().intValue() * mode.getData().intValue();
 		this.openPageHandler.accept(customer, shopEntry, newPage);
 	}
 

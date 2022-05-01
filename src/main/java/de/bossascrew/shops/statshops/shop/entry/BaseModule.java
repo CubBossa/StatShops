@@ -6,6 +6,7 @@ import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.inventory.ItemStack;
 
 @Getter
@@ -27,7 +28,7 @@ public abstract class BaseModule {
 		}
 	}
 
-	public Component getDisplayName() {
+	public ComponentLike getDisplayName() {
 		return provider.getName();
 	}
 

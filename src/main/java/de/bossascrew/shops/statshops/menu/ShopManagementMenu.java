@@ -1,6 +1,5 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.general.menu.DefaultSpecialItem;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
@@ -43,11 +42,11 @@ public class ShopManagementMenu {
 
     public static void openBaseMenu(Player player) {
 
-        RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_MAIN_TITLE.getTranslation(), 3);
+        RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_MAIN_TITLE, 3);
         menu.addPreset(MenuPresets.fill(MenuPresets.FILLER_LIGHT));
 
         // Main menu background texture
-        ItemStack glass_rp = DefaultSpecialItem.EMPTY_LIGHT.create();
+        ItemStack glass_rp = Icon.EMPTY_LIGHT.create();
         ItemStackUtils.setCustomModelData(glass_rp, 7122001);
         menu.setItem(1, glass_rp);
 
@@ -57,9 +56,9 @@ public class ShopManagementMenu {
         menu.setItemAndClickHandler(12, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT,
                 Message.GUI_MAIN_DISCOUNTS_NAME, Message.GUI_MAIN_DISCOUNTS_LORE), Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), newDiscountsMenu()));
         menu.setItemAndClickHandler(13, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_SHOP,
-                Message.GUI_MAIN_SHOPS_NAME, Message.GUI_MAIN_SHOPS_LORE), Action.LEFT, clickContext -> newShopsMenu());
+                Message.GUI_MAIN_SHOPS_NAME, Message.GUI_MAIN_SHOPS_LORE), Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), newShopsMenu()));
         menu.setItem(14, ItemStackUtils.createItemStack(Material.WRITABLE_BOOK,
-                Message.GUI_MAIN_LANGUAGE_NAME.getTranslation(), Message.GUI_MAIN_LANGUAGE_LORE.getTranslations(TagResolver.resolver("file",
+                Message.GUI_MAIN_LANGUAGE_NAME, Message.GUI_MAIN_LANGUAGE_LORE.getTranslations(TagResolver.resolver("file",
                         Tag.inserting(Component.text(StatShops.getInstance().getShopsConfig().getLanguage() + ".yml"))))));
         menu.setClickHandler(14, Action.RIGHT, clickContext -> {
             long ms = System.currentTimeMillis();
@@ -71,7 +70,7 @@ public class ShopManagementMenu {
                     return;
                 }
                 Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOAD_ERROR);
-                menu.setItem(14, DefaultSpecialItem.ERROR.create());
+                menu.setItem(14, Icon.ERROR.create());
             });
         });
         menu.setClickHandler(14, Action.LEFT, clickContext -> {
@@ -111,11 +110,11 @@ public class ShopManagementMenu {
 
     public static Menu newShopsMenu() {
         int shops = ShopHandler.getInstance().getShops().size();
-        return StatShopMenus.newEditorMenu(ShopHandler.getInstance(), Message.GUI_SHOPS_TITLE.getTranslation(), Integer.max(3, Integer.min(shops / 9, 6)),
+        return StatShopMenus.newEditorMenu(ShopHandler.getInstance(), Message.GUI_SHOPS_TITLE, Integer.max(3, Integer.min(shops / 9, 6)),
                 Message.GUI_SHOPS_NEW_NAME, Message.GUI_SHOPS_NEW_LORE,
-                Message.GUI_SHOPS_NEW_TITLE.getTranslation(), "shop name",
+                Message.GUI_SHOPS_NEW_TITLE, "shop name",
                 Message.GENERAL_GUI_LIST_INFO_NAME, Message.GENERAL_GUI_LIST_INFO_LORE,
-                StatShops.getInstance().getShopsConfig().isConfirmDeletion(), Message.GUI_SHOPS_DELETE_CONFIRM.getTranslation(),
+                StatShops.getInstance().getShopsConfig().isConfirmDeletion(), Message.GUI_SHOPS_DELETE_CONFIRM,
                 c -> c.getMenu().openSubMenu(c.getPlayer(), newShopMenu(c.getTarget(), c.getPlayer())));
     }
 
@@ -137,7 +136,7 @@ public class ShopManagementMenu {
                         return;
                     }
                     c.getMenu().openSubMenu(c.getPlayer(), () -> {
-                        AnvilMenu m = new AnvilMenu(Message.GUI_SHOP_SET_NAME_TITLE.getTranslation(), shop.getNameFormat());
+                        AnvilMenu m = new AnvilMenu(Message.GUI_SHOP_SET_NAME_TITLE, shop.getNameFormat());
                         m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                             shop.setNameFormat(s.getTarget());
                             s.getPlayer().closeInventory();
@@ -149,10 +148,10 @@ public class ShopManagementMenu {
 
         //Set permissions
         menu.setItemAndClickHandler(2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
-                        Message.GUI_SHOP_SET_PERMISSION_NAME.getTranslation(), Message.GUI_SHOP_SET_PERMISSION_LORE.getTranslations(
+                        Message.GUI_SHOP_SET_PERMISSION_NAME, Message.GUI_SHOP_SET_PERMISSION_LORE.getTranslations(
                                 TagResolver.resolver("permission", Tag.inserting(Component.text(shop.getPermission() == null ? "X" : shop.getPermission()))))),
                 Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-                    AnvilMenu m = new AnvilMenu(Message.GUI_SHOP_SET_PERMISSION_TITLE.getTranslation(), "shops.shop." + shop.getNamePlain().toLowerCase() + ".");
+                    AnvilMenu m = new AnvilMenu(Message.GUI_SHOP_SET_PERMISSION_TITLE, "shops.shop." + shop.getNamePlain().toLowerCase() + ".");
                     m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                         shop.setPermission(s.getTarget());
                         c.getMenu().refresh(c.getSlot());
@@ -174,10 +173,10 @@ public class ShopManagementMenu {
         Pair<Limit, Limit> limits = LimitsHandler.getInstance().getMinimalLimitsWithMatchingTags(null, shop);
         ItemStackUtils.addLoreLimits(limitsLore, limits.getLeft(), limits.getRight(), 0);
         if (limitsLore.size() > 0) {
-            limitsLore.add(Message.SHOP_ITEM_LORE_SPACER.getTranslation());
+            limitsLore.add(Message.SHOP_ITEM_LORE_SPACER.asComponent());
         }
         limitsLore.addAll(Message.GUI_SHOP_SET_LIMITS_LORE.getTranslations());
-        menu.setItemAndClickHandler(5, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT, Message.GUI_SHOP_SET_LIMITS_NAME.getTranslation(), limitsLore),
+        menu.setItemAndClickHandler(5, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT, Message.GUI_SHOP_SET_LIMITS_NAME, limitsLore),
                 Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), newShopLimitsMenu(shop)));
         ;
 
@@ -186,16 +185,16 @@ public class ShopManagementMenu {
         List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(viewer, shop);
         ItemStackUtils.addLoreDiscount(discountLore, discounts);
         if (discountLore.size() > 0) {
-            discountLore.add(Message.SHOP_ITEM_LORE_SPACER.getTranslation());
+            discountLore.add(Message.SHOP_ITEM_LORE_SPACER.asComponent());
         }
         discountLore.addAll(Message.GUI_SHOP_SET_DISCOUNTS_LORE.getTranslations());
-        menu.setItemAndClickHandler(6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT, Message.GUI_SHOP_SET_DISCOUNTS_NAME.getTranslation(), discountLore),
+        menu.setItemAndClickHandler(6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT, Message.GUI_SHOP_SET_DISCOUNTS_NAME, discountLore),
                 Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), newShopDiscountsMenu(shop)));
 
         if (shop instanceof TemplatableShop tShop) {
             //Open Templates menu
             menu.setItemAndClickHandler(7, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TEMPLATE,
-                            Message.GUI_SHOP_SET_TEMPLATE_NAME.getTranslation(), Message.GUI_SHOP_SET_TEMPLATE_LORE.getTranslations(TagResolver.resolver("template",
+                            Message.GUI_SHOP_SET_TEMPLATE_NAME, Message.GUI_SHOP_SET_TEMPLATE_LORE.getTranslations(TagResolver.resolver("template",
                                     Tag.inserting(tShop.getDefaultTemplate() == null ? Component.text("none") : tShop.getDefaultTemplate().getName())))),
                     Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), newDefaultTemplateMenu(tShop)));
         }
@@ -205,7 +204,7 @@ public class ShopManagementMenu {
 
             List<String> assigned = StatShops.getInstance().getCitizensHook().getAssignedNPCs(shop);
             menu.setItemAndClickHandler(8, ItemStackUtils.createItemStack(Material.PLAYER_HEAD,
-                            Message.GUI_SHOP_SET_NPC_NAME.getTranslation(), Message.GUI_SHOP_SET_NPC_LORE.getTranslations(
+                            Message.GUI_SHOP_SET_NPC_NAME, Message.GUI_SHOP_SET_NPC_LORE.getTranslations(
                                     TagResolver.resolver("current", Tag.inserting(Component.text(assigned.isEmpty() ?
                                             "none" : String.join("<gray>, </gray>", assigned)))))),
                     Action.LEFT, c -> {
@@ -292,16 +291,16 @@ public class ShopManagementMenu {
 
     public static Menu newShopLimitsMenu(Shop shop) {
         return StatShopMenus.newShopTaggableMenu(shop, LimitsHandler.getInstance(),
-                Message.GUI_SHOP_LIMITS_TITLE.getTranslation(), 3, Message.GUI_SHOP_LIMITS_INFO_NAME, Message.GUI_SHOP_LIMITS_INFO_LORE);
+                Message.GUI_SHOP_LIMITS_TITLE, 3, Message.GUI_SHOP_LIMITS_INFO_NAME, Message.GUI_SHOP_LIMITS_INFO_LORE);
     }
 
     public static Menu newShopDiscountsMenu(Shop shop) {
         return StatShopMenus.newShopTaggableMenu(shop, DiscountHandler.getInstance(),
-                Message.GUI_SHOP_DISCOUNTS_TITLE.getTranslation(), 3, Message.GUI_SHOP_DISCOUNTS_INFO_NAME, Message.GUI_SHOP_DISCOUNTS_INFO_LORE);
+                Message.GUI_SHOP_DISCOUNTS_TITLE, 3, Message.GUI_SHOP_DISCOUNTS_INFO_NAME, Message.GUI_SHOP_DISCOUNTS_INFO_LORE);
     }
 
     public static Menu newDefaultTemplateMenu(TemplatableShop shop) {
-        ListMenu menu = new ListMenu(Message.GUI_SHOP_TEMPLATE_TITLE.getTranslation(), 3);
+        ListMenu menu = new ListMenu(Message.GUI_SHOP_TEMPLATE_TITLE, 3);
         menu.addPreset(presetApplier -> {
             presetApplier.addItem(3 * 9 + 4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_TEMPLATE_INFO_NAME, Message.GUI_SHOP_TEMPLATE_INFO_LORE));
         });
@@ -329,10 +328,10 @@ public class ShopManagementMenu {
     }
 
     public static ListMenu newLimitsMenu() {
-        return StatShopMenus.newEditorMenu(LimitsHandler.getInstance(), Message.GUI_LIMITS.getTranslation(), 3,
-                Message.GUI_LIMITS_NEW_NAME, Message.GUI_LIMITS_NEW_LORE, Message.GUI_LIMITS_NEW_TITLE.getTranslation(), "new limit",
+        return StatShopMenus.newEditorMenu(LimitsHandler.getInstance(), Message.GUI_LIMITS, 3,
+                Message.GUI_LIMITS_NEW_NAME, Message.GUI_LIMITS_NEW_LORE, Message.GUI_LIMITS_NEW_TITLE, "new limit",
                 Message.GENERAL_GUI_LIST_INFO_NAME, Message.GENERAL_GUI_LIST_INFO_LORE, StatShops.getInstance().getShopsConfig().isConfirmDeletion(),
-                Message.GUI_LIMITS_DELETE_CONFIRM.getTranslation(), c -> c.getMenu().openSubMenu(c.getPlayer(), newLimitMenu(c.getTarget())));
+                Message.GUI_LIMITS_DELETE_CONFIRM, c -> c.getMenu().openSubMenu(c.getPlayer(), newLimitMenu(c.getTarget())));
     }
 
     public static Menu newLimitMenu(Limit limit) {
@@ -342,18 +341,18 @@ public class ShopManagementMenu {
         //Set name
         menu.setItemAndClickHandler(1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
                 Message.GUI_LIMIT_SET_NAME_NAME, Message.GUI_LIMIT_SET_NAME_LORE), Action.LEFT, c -> {
-            AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_NAME_TITLE.getTranslation(), limit.getNameFormat());
+            AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_NAME_TITLE, limit.getNameFormat());
             m.setOutputClickHandler(AnvilMenu.CONFIRM, clickContext -> limit.setNameFormat(clickContext.getTarget()));
             menu.openSubMenu(c.getPlayer(), m);
         });
         //Set permissions
         menu.setItemAndClickHandler(2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
-                Message.GUI_LIMIT_SET_PERMISSION_NAME.getTranslation(),
+                Message.GUI_LIMIT_SET_PERMISSION_NAME,
                 Message.GUI_LIMIT_SET_PERMISSION_LORE.getTranslations(TagResolver.resolver("permission",
                         Tag.inserting(Component.text(limit.getPermission() == null ? "X" : limit.getPermission())))
                 )), Action.LEFT, c -> {
 
-            AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_PERMISSION_TITLE.getTranslation(), "shops.limit." + limit.getNamePlain().toLowerCase() + ".");
+            AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_PERMISSION_TITLE, "shops.limit." + limit.getNamePlain().toLowerCase() + ".");
             m.setOutputClickHandler(AnvilMenu.CONFIRM, clickContext -> limit.setPermission(clickContext.getTarget()));
             menu.openSubMenu(c.getPlayer(), m);
         });
@@ -364,11 +363,11 @@ public class ShopManagementMenu {
                         StatShopMenus.newTagMenu(limit, Message.GUI_TAGS_TITLE.getTranslation(TagResolver.resolver("name", Tag.inserting(limit.getName()))),
                                 Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE, Message.GENERAL_GUI_TAGS_REMOVE_TAG)));
 
-        Supplier<ItemStack> durationStack = () -> ItemStackUtils.createItemStack(Material.COMPASS, Message.GUI_LIMIT_SET_DURATION_NAME.getTranslation(),
+        Supplier<ItemStack> durationStack = () -> ItemStackUtils.createItemStack(Material.COMPASS, Message.GUI_LIMIT_SET_DURATION_NAME,
                 Message.GUI_LIMIT_SET_DURATION_LORE.getTranslations(TagResolver.resolver("current", Tag.inserting(Component.text(TextUtils.formatDuration(limit.getRecover()))))));
         menu.setItemAndClickHandler(5, durationStack.get(), Action.LEFT, clickContext -> {
             clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
-                AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_DURATION_TITLE.getTranslation(), TextUtils.DURATION_FORMAT);
+                AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_DURATION_TITLE, TextUtils.DURATION_FORMAT);
                 m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                     Player player = s.getPlayer();
                     Duration duration = TextUtils.parseDuration(s.getTarget());
@@ -385,12 +384,12 @@ public class ShopManagementMenu {
             });
         });
 
-        Supplier<ItemStack> limitStack = () -> ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_LIMIT_SET_LIMIT_NAME.getTranslation(),
+        Supplier<ItemStack> limitStack = () -> ItemStackUtils.createItemStack(Material.PAPER, Message.GUI_LIMIT_SET_LIMIT_NAME,
                 Message.GUI_LIMIT_SET_LIMIT_LORE.getTranslations(TagResolver.resolver("current", Tag.inserting(Component.text(limit.getTransactionLimit() + "")))));
 
         menu.setItemAndClickHandler(6, limitStack.get(), Action.LEFT, clickContext -> {
             clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
-                AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_LIMIT_TITLE.getTranslation(), "64 ");
+                AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_LIMIT_TITLE, "64 ");
                 m.setOutputClickHandler(AnvilMenu.CONFIRM, c -> {
                     Player player = c.getPlayer();
                     try {
@@ -420,21 +419,21 @@ public class ShopManagementMenu {
     }
 
     public static Menu newDiscountsMenu() {
-        return StatShopMenus.newEditorMenu(DiscountHandler.getInstance(), Message.GUI_DISCOUNTS.getTranslation(), 3,
-                Message.GUI_DISCOUNTS_NEW_NAME, Message.GUI_DISCOUNTS_NEW_LORE, Message.GUI_DISCOUNTS_NEW_TITLE.getTranslation(), "",
+        return StatShopMenus.newEditorMenu(DiscountHandler.getInstance(), Message.GUI_DISCOUNTS, 3,
+                Message.GUI_DISCOUNTS_NEW_NAME, Message.GUI_DISCOUNTS_NEW_LORE, Message.GUI_DISCOUNTS_NEW_TITLE, "",
                 Message.GENERAL_GUI_LIST_INFO_NAME, Message.GENERAL_GUI_LIST_INFO_LORE,
-                StatShops.getInstance().getShopsConfig().isConfirmDeletion(), Message.GUI_DISCOUNTS_DELETE_CONFIRM.getTranslation(), c -> {
+                StatShops.getInstance().getShopsConfig().isConfirmDeletion(), Message.GUI_DISCOUNTS_DELETE_CONFIRM, c -> {
                     c.getMenu().openSubMenu(c.getPlayer(), newDiscountMenu(c.getTarget()));
                 });
     }
 
     public static Menu newDiscountMenu(Discount discount) {
-        RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_DISCOUNT.getTranslation(), 3);
+        RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_DISCOUNT, 3);
         menu.setCloseHandler(closeContext -> discount.saveToDatabase());
 
         //Set name
         menu.setItemAndClickHandler(1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT, Message.GUI_DISCOUNT_SET_NAME_NAME, Message.GUI_DISCOUNT_SET_NAME_LORE), Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-            AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_NAME_TITLE.getTranslation(), discount.getNameFormat());
+            AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_NAME_TITLE, discount.getNameFormat());
             m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                 discount.setNameFormat(s.getTarget());
                 menu.updateTitle(discount.getName());
@@ -444,10 +443,10 @@ public class ShopManagementMenu {
         }));
 
         //Set permissions
-        menu.setItemAndClickHandler(2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS, Message.GUI_DISCOUNT_SET_PERMISSION_NAME.getTranslation(),
+        menu.setItemAndClickHandler(2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS, Message.GUI_DISCOUNT_SET_PERMISSION_NAME,
                         Message.GUI_DISCOUNT_SET_PERMISSION_LORE.getTranslations(TagResolver.resolver("permission", Tag.inserting(Component.text(discount.getPermission() == null ? "X" : discount.getPermission()))))),
                 Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-                    AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE.getTranslation(), "shops.discount." + discount.getNamePlain().toLowerCase() + ".");
+                    AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE, "shops.discount." + discount.getNamePlain().toLowerCase() + ".");
                     m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                         discount.setPermission(s.getTarget());
                         c.getMenu().refresh(c.getSlot());
@@ -469,7 +468,7 @@ public class ShopManagementMenu {
         TagResolver dur = TagResolver.resolver("duration", Tag.inserting(Component.text(TextUtils.formatDuration(discount.getDuration()))));
         menu.setItemAndClickHandler(6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DURATIONS, Message.GUI_DISCOUNT_SET_DURATION_NAME.getTranslation(dur),
                 Message.GUI_DISCOUNT_SET_DURATION_LORE.getTranslations(dur)), Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-            AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE.getTranslation(), TextUtils.DURATION_FORMAT);
+            AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE, TextUtils.DURATION_FORMAT);
             m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                 discount.setDuration(TextUtils.parseDuration(s.getTarget()));
                 c.getMenu().refresh(c.getSlot());
@@ -481,7 +480,7 @@ public class ShopManagementMenu {
         TagResolver percent = TagResolver.resolver("percent", Tag.inserting(discount.getFormattedPercent()));
         menu.setItemAndClickHandler(7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_SET_PERCENT_NAME.getTranslation(percent),
                 Message.GUI_DISCOUNT_SET_PERCENT_LORE.getTranslations(percent)), Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-            AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_PERCENT_TITLE.getTranslation(), "5%");
+            AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_PERCENT_TITLE, "5%");
             m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                 double d = 0;
                 try {
@@ -501,12 +500,12 @@ public class ShopManagementMenu {
     }
 
     public static Menu newDiscountStartMenu(Discount discount) {
-        ListMenu menu = new ListMenu(Message.GUI_DISCOUNT_SET_START_TITLE.getTranslation(), 3);
+        ListMenu menu = new ListMenu(Message.GUI_DISCOUNT_SET_START_TITLE, 3);
         menu.addPreset(presetApplier -> {
             presetApplier.addItem(3 * 9 + 4, ItemStackUtils.createInfoItem(Message.GUI_DISCOUNT_START_INFO_NAME, Message.GUI_DISCOUNT_START_INFO_LORE));
             presetApplier.addItem(3 * 9 + 7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_START_NEW_NAME, Message.GUI_DISCOUNT_START_NEW_LORE));
             presetApplier.addClickHandler(3 * 9 + 7, Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-                AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_START_NEW_TITLE.getTranslation(), TextUtils.DATE_TIME_FORMAT);
+                AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_START_NEW_TITLE, TextUtils.DATE_TIME_FORMAT);
                 m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                     LocalDateTime date = TextUtils.parseLocalDateTime(s.getTarget());
                     if (date != null) {

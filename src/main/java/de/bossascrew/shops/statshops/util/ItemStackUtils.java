@@ -160,15 +160,15 @@ public class ItemStackUtils {
 		sell.applyDiscount(discount);
 
 		if (tradeModule.isPurchasable() && tradeModule.isSellable() && buy.equals(sell)) {
-			existingLore.addAll(Message.SHOP_ITEM_LORE_BOTH_PRICE.getTranslations(TagResolver.resolver("price",
+			existingLore.addAll(Message.SHOP_ITEM_LORE_BOTH_PRICE.asComponents(TagResolver.resolver("price",
 					Tag.inserting(tradeModule.getPriceDisplay(customer, true, discount)))));
 		} else {
 			if (tradeModule.isPurchasable()) {
-				existingLore.addAll(Message.SHOP_ITEM_LORE_BUY_PRICE.getTranslations(
+				existingLore.addAll(Message.SHOP_ITEM_LORE_BUY_PRICE.asComponents(
 						TagResolver.resolver("price", Tag.inserting(tradeModule.getPriceDisplay(customer, true, discount)))));
 			}
 			if (tradeModule.isSellable()) {
-				existingLore.addAll(Message.SHOP_ITEM_LORE_SELL_PRICE.getTranslations(
+				existingLore.addAll(Message.SHOP_ITEM_LORE_SELL_PRICE.asComponents(
 						TagResolver.resolver("price", Tag.inserting(tradeModule.getPriceDisplay(customer, false, discount)))));
 			}
 		}
@@ -177,7 +177,7 @@ public class ItemStackUtils {
 	public void addLoreDiscount(List<Component> existingLore, List<Discount> discounts) {
 		discounts.sort(Discount::compareTo);
 		for (Discount discount : discounts) {
-			existingLore.addAll(Message.SHOP_ITEM_LORE_DISCOUNT.getTranslations(
+			existingLore.addAll(Message.SHOP_ITEM_LORE_DISCOUNT.asComponents(
 					TagResolver.resolver("percent", Tag.inserting(discount.getFormattedPercent())),
 					TagResolver.resolver("name", Tag.inserting(discount.getName())),
 					TagResolver.resolver("start-date", Tag.inserting(Component.text(TextUtils.formatLocalDateTime(discount.getNextStart())))),
@@ -197,7 +197,7 @@ public class ItemStackUtils {
 		Duration recovery = userLimit == null ? globalLimit.getRecover() :
 				globalLimit == null ? userLimit.getRecover() :
 						(globalLimit.getRecover().minus(userLimit.getRecover()).isNegative() ? globalLimit.getRecover() : userLimit.getRecover());
-		existingLore.addAll(message.getTranslations(
+		existingLore.addAll(message.asComponents(
 				TagResolver.resolver("transactioncount", Tag.inserting(Component.text(bought))),
 				TagResolver.resolver("userlimit", Tag.inserting(Component.text(userLimit == null ? "-" : userLimit.getTransactionLimit() + ""))),
 				TagResolver.resolver("globallimit", Tag.inserting(Component.text(globalLimit == null ? "-" : globalLimit.getTransactionLimit() + ""))),
@@ -231,8 +231,8 @@ public class ItemStackUtils {
 
 	public ItemStack createButtonItemStack(boolean val, Message name, Message lore) {
 		return ItemStackUtils.createItemStack(val ? Material.LIME_DYE : Material.GRAY_DYE,
-				name.getTranslation(TagResolver.resolver("value", Tag.inserting(Component.text(val)))),
-				lore.getTranslations(TagResolver.resolver("value", Tag.inserting(Component.text(val)))));
+				name.asComponent(TagResolver.resolver("value", Tag.inserting(Component.text(val)))),
+				lore.asComponents(TagResolver.resolver("value", Tag.inserting(Component.text(val)))));
 	}
 
 	public ItemStack createEntryItemStack(ShopEntry entry, @Nullable Customer customer) {
@@ -246,7 +246,7 @@ public class ItemStackUtils {
 		if (entry.getModule() instanceof TradeModule tradeEntry) {
 
 			List<String> order = StatShops.getInstance().getShopsConfig().getEntryLoreOrder();
-			Component spacer = Message.SHOP_ITEM_LORE_SPACER.getTranslation();
+			Component spacer = Message.SHOP_ITEM_LORE_SPACER.asComponent();
 			for (String segment : order) {
 				// Place segments in order that is provided via config
 				switch (segment) {
@@ -282,7 +282,7 @@ public class ItemStackUtils {
 	}
 
 	private void getActionComponent(List<Component> additionalLore, String key, Message action) {
-		additionalLore.addAll(Message.SHOP_ITEM_LORE_KEYBIND.getTranslations(
+		additionalLore.addAll(Message.SHOP_ITEM_LORE_KEYBIND.asComponents(
 				TagResolver.resolver("keybind", Tag.inserting(Component.text(key.toLowerCase(Locale.ROOT).replace("_", "-") + "-click"))),
 				TagResolver.resolver("action", Tag.inserting(action))));
 	}
@@ -326,11 +326,11 @@ public class ItemStackUtils {
 	}
 
 	public ItemStack createItemStack(Material material, Message name, Message lore) {
-		return createItemStack(material, name, lore.getTranslations());
+		return createItemStack(material, name, lore.asComponents());
 	}
 
 	public static ItemStack createItemStack(ItemStack itemStack, Message name, Message lore) {
-		return createItemStack(itemStack, name, lore.getTranslations());
+		return createItemStack(itemStack, name, lore.asComponents());
 	}
 
 	public static ItemStack createItemStack(ItemStack itemStack, ComponentLike name, List<? extends ComponentLike> lore) {
@@ -385,9 +385,9 @@ public class ItemStackUtils {
 			return Icon.ERROR.create();
 		}
 		return createItemStack(shop.getDisplayItem() == null ? new ItemStack(MATERIAL_SHOP) : shop.getDisplayItem(),
-				Message.GUI_SHOPS_NAME.getTranslation(
+				Message.GUI_SHOPS_NAME.asComponent(
 						TagResolver.resolver("name", Tag.inserting(shop.getName()))),
-				Message.GUI_SHOPS_LORE.getTranslations(
+				Message.GUI_SHOPS_LORE.asComponents(
 						TagResolver.resolver("permission", Tag.inserting(Component.text(shop.getPermission() == null ? "X" : shop.getPermission()))),
 						TagResolver.resolver("name", Tag.inserting(shop.getName()))));
 	}
@@ -397,9 +397,9 @@ public class ItemStackUtils {
 			return Icon.ERROR.create();
 		}
 		return createItemStack(MATERIAL_DISCOUNT,
-				Message.GUI_DISCOUNTS_ENTRY_NAME.getTranslation(
+				Message.GUI_DISCOUNTS_ENTRY_NAME.asComponent(
 						TagResolver.resolver("name", Tag.inserting(discount.getName()))),
-				Message.GUI_DISCOUNTS_ENTRY_LORE.getTranslations(
+				Message.GUI_DISCOUNTS_ENTRY_LORE.asComponents(
 						TagResolver.resolver("percent", Tag.inserting(discount.getFormattedPercent())),
 						TagResolver.resolver("uuid", Tag.inserting(Component.text(discount.getUuid().toString()))),
 						TagResolver.resolver("permission", Tag.inserting(Component.text(discount.getPermission() == null ? "X" : discount.getPermission()))),
@@ -414,9 +414,9 @@ public class ItemStackUtils {
 			return Icon.ERROR.create();
 		}
 		return createItemStack(MATERIAL_LIMIT,
-				Message.GUI_LIMITS_ENTRY_NAME.getTranslation(
+				Message.GUI_LIMITS_ENTRY_NAME.asComponent(
 						TagResolver.resolver("name", Tag.inserting(limit.getName()))),
-				Message.GUI_LIMITS_ENTRY_LORE.getTranslations(
+				Message.GUI_LIMITS_ENTRY_LORE.asComponents(
 						TagResolver.resolver("limit", Tag.inserting(Component.text(limit.getTransactionLimit()))),
 						TagResolver.resolver("uuid", Tag.inserting(Component.text(limit.getUuid().toString()))),
 						TagResolver.resolver("global", Tag.inserting(Component.text(limit.isGlobal()))),
@@ -428,9 +428,9 @@ public class ItemStackUtils {
 			return Icon.ERROR.create();
 		}
 		return createItemStack(TemplateHandler.DISCS[template.getDiscIndex()],
-				Message.GUI_TEMPLATES_ENTRY_NAME.getTranslation(
+				Message.GUI_TEMPLATES_ENTRY_NAME.asComponent(
 						TagResolver.resolver("template", Tag.inserting(template.getName()))),
-				Message.GUI_TEMPLATES_ENTRY_LORE.getTranslations(
+				Message.GUI_TEMPLATES_ENTRY_LORE.asComponents(
 						TagResolver.resolver("template", Tag.inserting(template.getName())),
 						TagResolver.resolver("uuid", Tag.inserting(Component.text(template.getUuid().toString()))),
 						TagResolver.resolver("size", Tag.inserting(Component.text(template.size())))));
@@ -444,7 +444,7 @@ public class ItemStackUtils {
 
 	public ItemStack setNameAndLore(ItemStack itemStack, Message name, Message lore) {
 		itemStack = setDisplayName(itemStack, name);
-		itemStack = setLore(itemStack, lore.getTranslations());
+		itemStack = setLore(itemStack, lore.asComponents());
 		return itemStack;
 	}
 

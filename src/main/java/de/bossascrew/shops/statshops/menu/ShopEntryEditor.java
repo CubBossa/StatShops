@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class EntryEditor extends RectInventoryMenu {
+public class ShopEntryEditor extends RectInventoryMenu {
 
 	private final ShopEntry entry;
 	private final Player targetPlayer;
@@ -42,7 +42,7 @@ public class EntryEditor extends RectInventoryMenu {
 	@Nullable
 	private Collection<Class<?>> allowedModuleTypes = null;
 
-	public EntryEditor(ShopEntry entry, Player targetPlayer) {
+	public ShopEntryEditor(ShopEntry entry, Player targetPlayer) {
 		super(Message.GUI_SHOP_ENTRY, 3);
 		this.entry = entry;
 		this.targetPlayer = targetPlayer;
@@ -56,7 +56,7 @@ public class EntryEditor extends RectInventoryMenu {
 				Message.GUI_ENTRY_SET_LORE_NAME, Message.GUI_ENTRY_SET_LORE_LORE));
 
 		setItemAndClickHandler(1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
-						Message.GUI_ENTRY_SET_PERMISSION_NAME, Message.GUI_ENTRY_SET_PERMISSION_LORE.getTranslations(
+						Message.GUI_ENTRY_SET_PERMISSION_NAME, Message.GUI_ENTRY_SET_PERMISSION_LORE.asComponents(
 								TagResolver.resolver("permission", Tag.inserting(Component.text(entry.getPermission() == null ? "X" : entry.getPermission()))))),
 				Action.LEFT, clickContext -> {
 					AnvilMenu m = new AnvilMenu(Message.GUI_ENTRY_SET_PERMISSION_TITLE, "shops.item.");
@@ -71,15 +71,15 @@ public class EntryEditor extends RectInventoryMenu {
 				.withItemStack(ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS, Message.GUI_ENTRY_SET_TAGS_NAME, Message.GUI_ENTRY_SET_TAGS_LORE))
 				.withClickHandler(Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), StatShopMenus.newTagMenu(
 						entry,
-						Message.GUI_TAGS_TITLE.getTranslation(TagResolver.resolver("name", Tag.inserting(Component.text("shop entry")))),
+						Message.GUI_TAGS_TITLE.asComponent(TagResolver.resolver("name", Tag.inserting(Component.text("shop entry")))),
 						Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
 						Message.GENERAL_GUI_TAGS_REMOVE_TAG
 				))));
 		setButton(2, Button.builder()
 				.withItemStack(ItemStackUtils.createItemStack(entry.getModule() == null ? new ItemStack(Material.BLACK_STAINED_GLASS) :
-								entry.getModule().getDisplayItem(), Message.GUI_ENTRY_SET_FUNCTION_NAME.getTranslation(TagResolver.resolver("name", Tag.inserting(entry.getModule() == null ?
+								entry.getModule().getDisplayItem(), Message.GUI_ENTRY_SET_FUNCTION_NAME.asComponent(TagResolver.resolver("name", Tag.inserting(entry.getModule() == null ?
 								Message.GUI_ENTRY_FUNCTION_STATIC_NAME : entry.getModule().getDisplayName()))),
-						Message.GUI_ENTRY_SET_FUNCTION_LORE.getTranslations(TagResolver.resolver("function", Tag.inserting(entry.getModule() == null ?
+						Message.GUI_ENTRY_SET_FUNCTION_LORE.asComponents(TagResolver.resolver("function", Tag.inserting(entry.getModule() == null ?
 								Message.GUI_ENTRY_FUNCTION_STATIC_NAME : entry.getModule().getDisplayName())))))
 				.withClickHandler(Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
 
@@ -121,7 +121,7 @@ public class EntryEditor extends RectInventoryMenu {
 			if (limitsLore.size() > 0) {
 				limitsLore.add(Message.SHOP_ITEM_LORE_SPACER.asComponent());
 			}
-			limitsLore.addAll(Message.GUI_SHOP_SET_LIMITS_LORE.getTranslations());
+			limitsLore.addAll(Message.GUI_SHOP_SET_LIMITS_LORE.asComponents());
 
 			setItemAndClickHandler(10, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT, Message.GUI_SHOP_SET_LIMITS_NAME, limitsLore),
 					Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), newShopLimitsMenu()));
@@ -133,7 +133,7 @@ public class EntryEditor extends RectInventoryMenu {
 			if (discountLore.size() > 0) {
 				discountLore.add(Message.SHOP_ITEM_LORE_SPACER.asComponent());
 			}
-			discountLore.addAll(Message.GUI_SHOP_SET_DISCOUNTS_LORE.getTranslations());
+			discountLore.addAll(Message.GUI_SHOP_SET_DISCOUNTS_LORE.asComponents());
 
 			setItemAndClickHandler(19, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT, Message.GUI_SHOP_SET_DISCOUNTS_NAME, discountLore),
 					Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), newShopDiscountsMenu()));

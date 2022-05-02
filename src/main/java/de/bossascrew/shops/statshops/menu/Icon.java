@@ -42,17 +42,12 @@ public enum Icon {
 		ItemStackUtils.setCustomModelData(item, customModelData);
 	}
 
-	Icon(ItemStack item, String displayName, @Nullable String lore) {
-		this.item = item.clone();
-		ItemStackUtils.setNameAndLore(this.item, displayName, lore);
-	}
-
 	Icon(Material material, Message displayName, Message lore) {
-		this.item = ItemStackUtils.createItemStack(material, displayName, lore.getTranslations());
+		this.item = ItemStackUtils.createItemStack(material, displayName, lore.asComponents());
 	}
 
 	Icon(Material material, Message displayName, Message lore, int customModelData) {
-		this.item = ItemStackUtils.createItemStack(material, displayName, lore.getTranslations());
+		this.item = ItemStackUtils.createItemStack(material, displayName, lore.asComponents());
 		ItemStackUtils.setCustomModelData(item, customModelData);
 	}
 

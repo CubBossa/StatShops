@@ -113,9 +113,9 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 				TagResolver.resolver("transaction", Tag.inserting(price.getPriceComponent())),
 		};
 		if (tradeMessageType.equals(TradeMessageType.PROMPT)) {
-			return Message.SHOP_TRADE_FEEDBACK_PROMPT_FORMAT.getTranslation(templates);
+			return Message.SHOP_TRADE_FEEDBACK_PROMPT_FORMAT.asComponent(templates);
 		} else {
-			return Message.SHOP_TRADE_FEEDBACK_CUMUL_FORMAT.getTranslation(templates);
+			return Message.SHOP_TRADE_FEEDBACK_CUMUL_FORMAT.asComponent(templates);
 		}
 	}
 }

@@ -53,7 +53,7 @@ public class ChestShopMenu extends RectInventoryMenu implements ShopMenu {
 
 	@Override
 	public Inventory getInventory() {
-		return Bukkit.createInventory(null, getSlots().length, Message.SHOP_GUI_TITLE.getLegacyTranslation(
+		return Bukkit.createInventory(null, getSlots().length, Message.SHOP_GUI_TITLE.asLegacyFormat(
 				TagResolver.resolver("name", Tag.inserting(shop.getName())),
 				TagResolver.resolver("page-title", Tag.inserting(shop.getPageTitle(getCurrentPage()))),
 				TagResolver.resolver("page", Tag.inserting(Component.text(getCurrentPage() + 1))),

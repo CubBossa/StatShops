@@ -163,9 +163,9 @@ public class Discount implements
 	@JsonIgnore
 	public Component getFormattedPercent() {
 		if (percent > 0) {
-			return Message.SHOP_ITEM_LORE_DISCOUNT_POSITIVE.getTranslation(TagResolver.resolver("discount", Tag.inserting(Component.text("" + percent))));
+			return Message.SHOP_ITEM_LORE_DISCOUNT_POSITIVE.asComponent(TagResolver.resolver("discount", Tag.inserting(Component.text("" + percent))));
 		}
-		return Message.SHOP_ITEM_LORE_DISCOUNT_NEGATIVE.getTranslation(TagResolver.resolver("discount", Tag.inserting(Component.text("" + percent))));
+		return Message.SHOP_ITEM_LORE_DISCOUNT_NEGATIVE.asComponent(TagResolver.resolver("discount", Tag.inserting(Component.text("" + percent))));
 	}
 
 	@Override

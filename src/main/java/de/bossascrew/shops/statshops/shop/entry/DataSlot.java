@@ -92,8 +92,8 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		if (name == null || lore == null) {
 			return null;
 		}
-		return ItemStackUtils.setNameAndLore(displayItem, typeMessage.getTranslation(TagResolver.resolver("name", Tag.inserting(name))),
-				lore.getTranslations(TagResolver.resolver("current", Tag.inserting(dataFormatter.apply(data)))));
+		return ItemStackUtils.setNameAndLore(displayItem, typeMessage.asComponent(TagResolver.resolver("name", Tag.inserting(name))),
+				lore.asComponents(TagResolver.resolver("current", Tag.inserting(dataFormatter.apply(data)))));
 	}
 
 	public static class TextSlot extends DataSlot<String> {
@@ -107,7 +107,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		@Override
 		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
 			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.getTranslation(TagResolver.resolver("name", Tag.inserting(getName()))),
+				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
 						"" + getData());
 				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 					setData(s.getTarget());
@@ -141,7 +141,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		@Override
 		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
 			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.getTranslation(TagResolver.resolver("name", Tag.inserting(getName()))),
+				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
 						"" + getData());
 				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 					setData(s.getTarget());
@@ -240,7 +240,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		@Override
 		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
 			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.getTranslation(TagResolver.resolver("name", Tag.inserting(getName()))),
+				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
 						"" + getData());
 				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 					try {

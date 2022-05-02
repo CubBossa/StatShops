@@ -3,7 +3,6 @@ package de.bossascrew.shops.statshops.handler;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.StatShopsExtension;
-import de.bossascrew.shops.statshops.data.LoadedMessage;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.web.WebAccessable;
 import lombok.Getter;
@@ -15,7 +14,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public class TranslationHandler implements WebAccessable<LoadedMessage> {
+public class TranslationHandler {
 
 	@Getter
 	private static TranslationHandler instance;
@@ -79,50 +78,5 @@ public class TranslationHandler implements WebAccessable<LoadedMessage> {
 			return messageFormats.getOrDefault(key, fallbackLanguage.getOrDefault(key, activeLanguage + "-missing:" + key));
 		}
 		return messageFormats.getOrDefault(key, activeLanguage + "-missing:" + key);
-	}
-
-	@Override
-	public List<LoadedMessage> getWebData() {
-		List<LoadedMessage> messages = new ArrayList<>();
-		for (Message message : Message.values()) {
-			messages.add(new LoadedMessage(activeLanguage, message.getKey(), getTranslation(message.getKey()), message.getComment(), message.getExamplePlaceholders()));
-		}
-		return messages;
-	}
-
-	@Override
-	public void storeWebData(List<LoadedMessage> values) {
-		Map<String, List<LoadedMessage>> messagesPerLanguage = new HashMap<>();
-		for (LoadedMessage m : values) {
-			List<LoadedMessage> messages = messagesPerLanguage.getOrDefault(m.getLanguageKey(), new ArrayList<>());
-			messages.add(m);
-			messagesPerLanguage.put(m.getLanguageKey(), messages);
-		}
-		for (Map.Entry<String, List<LoadedMessage>> entry : messagesPerLanguage.entrySet()) {
-			File file = new File(StatShops.getInstance().getDataFolder(), "lang/" + entry.getKey() + ".yml");
-			try {
-				if (file.createNewFile()) {
-					StatShops.getInstance().log(LoggingPolicy.INFO, "Created new language file: lang/" + entry.getKey() + ".yml");
-				}
-			} catch (IOException e) {
-				StatShops.getInstance().log(LoggingPolicy.ERROR, "Error while editing language file: lang/" + entry.getKey() + ".yml", e);
-				continue;
-			}
-			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-			for (LoadedMessage message : entry.getValue()) {
-				cfg.set(message.getKey(), message.getValue());
-			}
-			try {
-				cfg.save(file);
-			} catch (IOException e) {
-				StatShops.getInstance().log(LoggingPolicy.ERROR, "Error while saving to language file: lang/" + entry.getKey() + ".yml", e);
-			}
-
-			if (entry.getKey().equalsIgnoreCase(activeLanguage)) {
-				for (LoadedMessage message : entry.getValue()) {
-					messageFormats.put(message.getKey(), message.getValue());
-				}
-			}
-		}
 	}
 }

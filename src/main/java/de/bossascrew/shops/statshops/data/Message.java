@@ -315,7 +315,7 @@ public class Message implements ComponentLike {
     }
 
     public @NotNull Component asComponent() {
-        return this.asComponent();
+        return this.asComponent(new TagResolver[0]);
     }
 
     public Component asComponent(TagResolver... templates) {

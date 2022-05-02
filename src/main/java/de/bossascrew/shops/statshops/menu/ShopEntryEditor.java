@@ -63,13 +63,13 @@ public class ShopEntryEditor extends RectInventoryMenu {
 					m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 						entry.setPermission(s.getTarget());
 						entry.saveToDatabase();
-						s.getPlayer().closeInventory();
+						s.getMenu().openPreviousMenu(s.getPlayer());
 					});
 				});
 		//Set tags
 		setButton(2, Button.builder()
 				.withItemStack(ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS, Message.GUI_ENTRY_SET_TAGS_NAME, Message.GUI_ENTRY_SET_TAGS_LORE))
-				.withClickHandler(Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), StatShopMenus.newTagMenu(
+				.withClickHandler(Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), MainMenu.newTagMenu(
 						entry,
 						Message.GUI_TAGS_TITLE.asComponent(TagResolver.resolver("name", Tag.inserting(Component.text("shop entry")))),
 						Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,

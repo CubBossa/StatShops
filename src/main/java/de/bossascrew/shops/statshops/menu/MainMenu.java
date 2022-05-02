@@ -35,6 +35,7 @@ import org.bukkit.inventory.ItemStack;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -126,7 +127,7 @@ public class MainMenu {
 
         RectInventoryMenu menu = new RectInventoryMenu(shop.getName(), 3);
         menu.addPreset(MenuPresets.fill(MenuPresets.FILLER_LIGHT));
-
+        menu.addPreset(MenuPresets.back(2, 8, Action.LEFT));
 
         //Set name
         menu.setItemAndClickHandler(1, ItemStackUtils.createItemStack(shop.getDisplayItem() == null ?
@@ -143,7 +144,7 @@ public class MainMenu {
                         AnvilMenu m = new AnvilMenu(Message.GUI_SHOP_SET_NAME_TITLE, shop.getNameFormat());
                         m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                             shop.setNameFormat(s.getTarget());
-                            s.getPlayer().closeInventory();
+                            s.getMenu().openPreviousMenu(s.getPlayer());
                             menu.updateTitle(shop.getName());
                         });
                         return m;
@@ -159,7 +160,7 @@ public class MainMenu {
                     m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                         shop.setPermission(s.getTarget());
                         c.getMenu().refresh(c.getSlot());
-                        s.getPlayer().closeInventory();
+                        s.getMenu().openPreviousMenu(s.getPlayer());
                     });
                     return m;
                 }));
@@ -213,7 +214,7 @@ public class MainMenu {
                                             "none" : String.join("<gray>, </gray>", assigned)))))),
                     Action.LEFT, c -> {
                         StatShops.getInstance().getCitizensHook().addAssigningPlayer(c.getPlayer(), shop);
-                        c.getPlayer().closeInventory();
+                        c.getMenu().openPreviousMenu(c.getPlayer());
                         Customer.wrap(c.getPlayer()).sendMessage(Message.CITIZENS_CLICK_TO_ASSIGN);
                     });
         }
@@ -388,7 +389,7 @@ public class MainMenu {
                     limit.setRecover(duration);
                     menu.setItem(5, durationStack.get());
                     menu.refresh(5);
-                    player.closeInventory();
+                    s.getMenu().openPreviousMenu(s.getPlayer());
                 });
                 return m;
             });
@@ -406,7 +407,7 @@ public class MainMenu {
                         limit.setTransactionLimit(Integer.parseInt(c.getTarget()));
                         menu.setItem(6, limitStack.get());
                         menu.refresh(6);
-                        player.closeInventory();
+                        c.getMenu().openPreviousMenu(c.getPlayer());
                     } catch (NumberFormatException ignored) {
                         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, .5f, 1f);
                     }
@@ -451,7 +452,7 @@ public class MainMenu {
             m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                 discount.setNameFormat(s.getTarget());
                 menu.updateTitle(discount.getName());
-                s.getPlayer().closeInventory();
+                s.getMenu().openPreviousMenu(s.getPlayer());
             });
             return m;
         }));
@@ -464,7 +465,7 @@ public class MainMenu {
                     m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                         discount.setPermission(s.getTarget());
                         c.getMenu().refresh(c.getSlot());
-                        s.getPlayer().closeInventory();
+                        s.getMenu().openPreviousMenu(s.getPlayer());
                     });
                     return m;
                 }));
@@ -486,7 +487,7 @@ public class MainMenu {
             m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                 discount.setDuration(TextUtils.parseDuration(s.getTarget()));
                 c.getMenu().refresh(c.getSlot());
-                s.getPlayer().closeInventory();
+                s.getMenu().openPreviousMenu(s.getPlayer());
             });
             return m;
         }));
@@ -505,7 +506,7 @@ public class MainMenu {
                 }
                 discount.setPercent(d);
                 c.getMenu().refresh(c.getSlot());
-                s.getPlayer().closeInventory();
+                s.getMenu().openPreviousMenu(s.getPlayer());
             });
             return m;
         }));
@@ -525,7 +526,7 @@ public class MainMenu {
                     if (date != null) {
                         discount.addStartTime(date);
                         c.getMenu().refresh(c.getMenu().getSlots());
-                        s.getPlayer().closeInventory();
+                        s.getMenu().openPreviousMenu(s.getPlayer());
                         return;
                     }
                     c.getPlayer().playSound(c.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
@@ -548,9 +549,10 @@ public class MainMenu {
     public static <T extends Taggable> ListMenu newShopTaggableMenu(Shop shop, ListMenuSupplier<T> taggableSupplier, ComponentLike title, int rows,
                                                                     Message infoName, Message infoLore) {
         ListMenu menu = new ListMenu(title, rows);
-        menu.addPreset(presetApplier -> {
-            presetApplier.addItem(3 * 9 + 4, ItemStackUtils.createInfoItem(infoName, infoLore));
-        });
+        menu.addPreset(MenuPresets.fillRow(Icon.EMPTY_DARK_RP.create(), 2));
+        menu.addPreset(presetApplier -> presetApplier.addItem(2 * 9 + 4, ItemStackUtils.createInfoItem(infoName, infoLore)));
+        menu.addPreset(MenuPresets.back(2, 8, Action.LEFT));
+
         for (T taggable : taggableSupplier.getElements()) {
             menu.addListEntry(Button.builder()
                     .withItemStack(() -> {
@@ -572,31 +574,21 @@ public class MainMenu {
 
     public static ListMenu newTagMenu(Taggable taggable, Component title,
                                       Message newTagTitle, Message newTagName, Message newTagLore, Message confirmRemove) {
-        ListMenu menu = new ListMenu(title, 4);
-        menu.addPreset(presetApplier -> {
-            presetApplier.addItem(9 * 3 + 4, ItemStackUtils.createInfoItem(Message.GENERAL_GUI_TAGS_INFO_NAME, Message.GENERAL_GUI_TAGS_INFO_LORE));
-            presetApplier.addItem(9 * 3 + 7, ItemStackUtils.createItemStack(Material.EMERALD, newTagName, newTagLore));
-            presetApplier.addClickHandler(9 * 3 + 7, Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
-                AnvilMenu m = new AnvilMenu(newTagTitle, "tag-me");
-                m.setOutputClickHandler(AnvilMenu.CONFIRM, c -> {
-                    taggable.addTag(c.getTarget());
-                    m.close(c.getPlayer());
-                });
-                return m;
-            }));
+        ListEditorMenu<String> menu = new ListEditorMenu<>(title, 4, new ListMenuSupplier<>() {
+
+            public Collection<String> getElements() {
+                return taggable.getTags();
+            }
+
+            public ItemStack getDisplayItem(String object) {
+                return ItemStackUtils.createItemStack(Material.NAME_TAG, Component.text(object, NamedTextColor.WHITE), new ArrayList<>());
+            }
         });
-        menu.addListEntries(taggable.getTags(), s -> ItemStackUtils.createItemStack(Material.NAME_TAG, Component.text(s, NamedTextColor.WHITE), new ArrayList<>()), Action.LEFT, clickContext -> {
-            String tag = clickContext.getTarget();
-            clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
-                ConfirmMenu m = new ConfirmMenu(confirmRemove.asComponent(TagResolver.resolver("name", Tag.inserting(Component.text(tag)))));
-                m.setAcceptHandler(c -> {
-                    taggable.removeTag(tag);
-                    c.getPlayer().closeInventory();
-                });
-                m.setDenyHandler(c -> c.getPlayer().closeInventory());
-                return m;
-            });
+        menu.setInfoItem(Message.GENERAL_GUI_TAGS_INFO_NAME, Message.GENERAL_GUI_TAGS_INFO_LORE);
+        menu.setNewHandlerStringInput(newTagName, newTagLore, newTagTitle, "tag-me", c -> {
+            taggable.addTag(c.getTarget());
         });
+        menu.setDeleteHandler(confirmRemove, Action.RIGHT, s -> taggable.removeTag(s.getTarget()));
         return menu;
     }
 }

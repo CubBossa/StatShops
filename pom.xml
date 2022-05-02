@@ -223,9 +223,14 @@
                             <include>org.bstats</include>
                             <include>net.wesjd:anvilgui</include>
                             <include>de.cubbossa:MenuFramework</include>
+                            <include>de.tr7zw:item-nbt-api</include>
                         </includes>
                     </artifactSet>
                     <relocations>
+                        <relocation>
+                            <pattern>de.tr7zw</pattern>
+                            <shadedPattern>de.bossascrew.nbt</shadedPattern>
+                        </relocation>
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>de.bossascrew.bstats</shadedPattern>

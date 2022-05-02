@@ -111,7 +111,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 						"" + getData());
 				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 					setData(s.getTarget());
-					s.getPlayer().closeInventory();
+					s.getMenu().openPreviousMenu(s.getPlayer());
 					c.getMenu().refresh(c.getSlot());
 				});
 				return menu;
@@ -145,7 +145,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 						"" + getData());
 				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 					setData(s.getTarget());
-					s.getPlayer().closeInventory();
+					s.getMenu().openPreviousMenu(s.getPlayer());
 					c.getMenu().refresh(c.getSlot());
 				});
 				return menu;
@@ -246,7 +246,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 					try {
 						setData(Double.parseDouble(s.getTarget().replace(" ", "")));
 						super.setDisplayItem(new ItemStack(Material.PAPER, Integer.min(Integer.max(1, getData().intValue()), 64)));
-						s.getPlayer().closeInventory();
+						s.getMenu().openPreviousMenu(s.getPlayer());
 						c.getMenu().refresh(c.getSlot());
 					} catch (NumberFormatException e) {
 						c.getPlayer().playSound(c.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);

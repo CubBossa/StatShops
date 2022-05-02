@@ -56,20 +56,20 @@ public class ListEditorMenu<T> extends ListMenu {
             if (StatShops.getInstance().getShopsConfig().isConfirmDeletion()) {
                 c.getMenu().openSubMenu(c.getPlayer(), () -> {
                     ConfirmMenu m = new ConfirmMenu(confirmTitle);
-                    m.setDenyHandler(cl -> cl.getMenu().close(cl.getPlayer()));
+                    m.setDenyHandler(cl -> cl.getMenu().openPreviousMenu(cl.getPlayer()));
                     m.setAcceptHandler(cl -> {
                         clickHandler.accept(c);
-                        c.getMenu().close(c.getPlayer());
+                        cl.getMenu().openPreviousMenu(cl.getPlayer());
                         refreshElements();
                     });
                     return m;
                 });
             } else {
                 clickHandler.accept(c);
+                refreshElements();
             }
         };
         this.clickHandler.put(action, extended);
-        refreshElements();
     }
 
     public void setDuplicateHandler(Action<?> action, ContextConsumer<TargetContext<T>> clickHandler) {
@@ -99,7 +99,7 @@ public class ListEditorMenu<T> extends ListMenu {
             presetApplier.addClickHandler((getRows() - 1) * 9 + 7, Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
                 AnvilMenu m = new AnvilMenu(title, suggestion);
                 m.setOutputClickHandler(AnvilMenu.CONFIRM, c -> {
-                    m.close(c.getPlayer());
+                    c.getMenu().openPreviousMenu(c.getPlayer());
                     clickHandler.accept(c);
                     refreshElements();
                 });

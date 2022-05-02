@@ -138,7 +138,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 					AnvilMenu m = new AnvilMenu(Message.GUI_SHOP_EDITOR_PAGE_TITLE_TITLE, shop.getPageTitleFormat(shopPage));
 					m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 						shop.setPageTitle(shopPage, s.getTarget());
-						s.getPlayer().closeInventory();
+						s.getMenu().openPreviousMenu(s.getPlayer());
 					});
 					return m;
 				})));
@@ -164,11 +164,11 @@ public class ChestShopEditor extends RectInventoryMenu {
 								return;
 							}
 							openSubMenu(s.getPlayer(), newTemplatesListMenu());
-							s.getPlayer().closeInventory();
+							s.getMenu().openPreviousMenu(s.getPlayer());
 						});
 						return m;
 					});
-					c.getPlayer().closeInventory();
+					c.getMenu().openPreviousMenu(c.getPlayer());
 				}));
 	}
 

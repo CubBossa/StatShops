@@ -66,8 +66,8 @@ public class ChestShopEditor extends RectInventoryMenu {
 	}
 
 	@Override
-	public void close(Player viewer) {
-		super.close(viewer);
+	public void handleClose(Player viewer) {
+		super.handleClose(viewer);
 		bottomMenu.close(viewer);
 	}
 
@@ -95,12 +95,12 @@ public class ChestShopEditor extends RectInventoryMenu {
 			}
 		});
 
-		bottomMenu.addPreset(MenuPresets.fill(MenuPresets.FILLER_DARK));
-		bottomMenu.setItem(9 + 5, Icon.EMPTY_DARK_RP.create());
+		bottomMenu.addPreset(MenuPresets.fill(Icon.EMPTY_LIGHT_RP.create()));
+		bottomMenu.addPreset(buttonHandler -> buttonHandler.addItem(9 + 5, Icon.EMPTY_DARK_RP.create()));
 
 		bottomMenu.setButton(17, Button.builder()
 				.withItemStack(Icon.BACK.create())
-				.withClickHandler(Action.LEFT, c -> close(c.getPlayer())));
+				.withClickHandler(Action.LEFT, c -> openPreviousMenu(c.getPlayer())));
 
 		bottomMenu.setButton(9, Button.builder()
 				.withItemStack(() -> shopPage > 0 ? Icon.PREV_PAGE_RP.create() : Icon.PREV_PAGE_OFF_RP.create())
@@ -115,7 +115,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 		int nameSlot = 9 + 6;
 		int templateSlot = 9 + 7;
 
-		bottomMenu.setButton(4, Button.builder()
+		bottomMenu.setButton(9 + 4, Button.builder()
 				.withItemStack(() -> ItemStackUtils.createButtonItemStack(!freezeItems,
 						Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME,
 						Message.GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE))
@@ -135,7 +135,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 						Message.GUI_SHOP_EDITOR_PAGE_TITLE_NAME,
 						Message.GUI_SHOP_EDITOR_PAGE_TITLE_LORE.asComponents(TagResolver.resolver("current", Tag.inserting(shop.getPageTitle(shopPage))))))
 				.withClickHandler(Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-					AnvilMenu m = new AnvilMenu(Message.GUI_SHOP_EDITOR_PAGE_TITLE_TITLE, shop.getPageTitleFormat(shopPage));
+					AnvilMenu m = MainMenu.newAnvilMenu(Message.GUI_SHOP_EDITOR_PAGE_TITLE_TITLE, shop.getPageTitleFormat(shopPage));
 					m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 						shop.setPageTitle(shopPage, s.getTarget());
 						s.getMenu().openPreviousMenu(s.getPlayer());
@@ -157,7 +157,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 						return;
 					}
 					c.getMenu().openSubMenu(c.getPlayer(), () -> {
-						AnvilMenu m = new AnvilMenu(Message.GUI_TEMPLATES_NEW, "name");
+						AnvilMenu m = MainMenu.newAnvilMenu(Message.GUI_TEMPLATES_NEW, "name");
 						m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 							if (TemplateHandler.getInstance().createNew(s.getTarget(), shop, shopPage) == null) {
 								s.getPlayer().playSound(s.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);

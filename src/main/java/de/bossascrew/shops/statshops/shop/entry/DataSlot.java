@@ -4,6 +4,7 @@ import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
+import de.bossascrew.shops.statshops.menu.MainMenu;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.cubbossa.guiframework.inventory.Action;
 import de.cubbossa.guiframework.inventory.Button;
@@ -107,7 +108,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		@Override
 		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
 			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
+				AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
 						"" + getData());
 				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 					setData(s.getTarget());
@@ -141,7 +142,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		@Override
 		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
 			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
+				AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
 						"" + getData());
 				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 					setData(s.getTarget());
@@ -240,7 +241,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		@Override
 		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
 			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-				AnvilMenu menu = new AnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
+				AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
 						"" + getData());
 				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 					try {

@@ -11,7 +11,7 @@ public class ConfirmMenu extends RectInventoryMenu {
 
 	public ConfirmMenu(ComponentLike title) {
 		super(title, 3);
-		addPreset(MenuPresets.fill(Icon.EMPTY_DARK_RP.create()));
+		addPreset(MenuPresets.fill(Icon.EMPTY_DARK_SIMPLE.create()));
 	}
 
 	public void setAcceptHandler(ContextConsumer<ClickContext> acceptHandler) {

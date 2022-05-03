@@ -59,7 +59,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 						Message.GUI_ENTRY_SET_PERMISSION_NAME, Message.GUI_ENTRY_SET_PERMISSION_LORE.asComponents(
 								TagResolver.resolver("permission", Tag.inserting(Component.text(entry.getPermission() == null ? "X" : entry.getPermission()))))),
 				Action.LEFT, clickContext -> {
-					AnvilMenu m = new AnvilMenu(Message.GUI_ENTRY_SET_PERMISSION_TITLE, "shops.item.");
+					AnvilMenu m = MainMenu.newAnvilMenu(Message.GUI_ENTRY_SET_PERMISSION_TITLE, "shops.item.");
 					m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 						entry.setPermission(s.getTarget());
 						entry.saveToDatabase();

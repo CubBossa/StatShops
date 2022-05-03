@@ -14,10 +14,12 @@ import de.cubbossa.guiframework.inventory.implementations.AnvilMenu;
 import de.cubbossa.guiframework.inventory.implementations.ListMenu;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 public class ListEditorMenu<T> extends ListMenu {
@@ -54,6 +56,14 @@ public class ListEditorMenu<T> extends ListMenu {
 
     public void setInfoItem(Message name, Message lore) {
         addPreset(applier -> applier.addItem((getRows() - 1) * 9 + 4, ItemStackUtils.createInfoItem(name, lore)));
+    }
+
+    public void setDeleteHandler(Action<?> action, ContextConsumer<TargetContext<T>> clickHandler) {
+        ContextConsumer<TargetContext<T>> extended = c -> {
+            clickHandler.accept(c);
+            refreshElements();
+        };
+        this.clickHandler.put(action, extended);
     }
 
     public void setDeleteHandler(Message confirmTitle, Action<?> action, ContextConsumer<TargetContext<T>> clickHandler) {
@@ -99,11 +109,19 @@ public class ListEditorMenu<T> extends ListMenu {
     }
 
     public void setNewHandlerStringInput(Message name, Message lore, Message title, String suggestion, ContextConsumer<TargetContext<String>> clickHandler) {
+        setNewHandlerStringInput(name, lore, title, suggestion, null, clickHandler);
+    }
+
+    public void setNewHandlerStringInput(Message name, Message lore, Message title, String suggestion, Predicate<String> validator, ContextConsumer<TargetContext<String>> clickHandler) {
         addPreset(presetApplier -> {
             presetApplier.addItem((getRows() - 1) * 9 + 7, ItemStackUtils.createItemStack(Material.EMERALD, name, lore));
             presetApplier.addClickHandler((getRows() - 1) * 9 + 7, Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
-                AnvilMenu m = new AnvilMenu(title, suggestion);
+                AnvilMenu m = MainMenu.newAnvilMenu(title, suggestion);
                 m.setOutputClickHandler(AnvilMenu.CONFIRM, c -> {
+                    if (validator != null && !validator.test(c.getTarget())) {
+                        c.getPlayer().playSound(c.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+                        return;
+                    }
                     c.getMenu().openPreviousMenu(c.getPlayer());
                     clickHandler.accept(c);
                     refreshElements();

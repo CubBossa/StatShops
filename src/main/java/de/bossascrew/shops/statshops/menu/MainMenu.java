@@ -49,6 +49,12 @@ public class MainMenu {
         };
     }
 
+    public static AnvilMenu newAnvilMenu(ComponentLike title, String suggestion) {
+        AnvilMenu menu = new AnvilMenu(title, suggestion);
+        menu.addPreset(MenuPresets.back(1, Action.LEFT));
+        return menu;
+    }
+
     public static void openBaseMenu(Player player) {
 
         RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_MAIN_TITLE, 3);
@@ -138,33 +144,32 @@ public class MainMenu {
         menu.addPreset(MenuPresets.back(2, 8, Action.LEFT));
 
         //Set name
-        menu.setItemAndClickHandler(1, ItemStackUtils.createItemStack(shop.getDisplayItem() == null ?
+        menu.setItemAndClickHandler(1, () -> ItemStackUtils.createItemStack(shop.getDisplayItem() == null ?
                         new ItemStack(ItemStackUtils.MATERIAL_SHOP) : shop.getDisplayItem(), Message.GUI_SHOP_SET_NAME_NAME, Message.GUI_SHOP_SET_NAME_LORE),
                 Action.LEFT, c -> {
                     if (c.getPlayer().getItemOnCursor().getType() != Material.AIR) {
                         shop.setDisplayItem(c.getPlayer().getItemOnCursor().clone());
                         StatShops.getInstance().getDatabase().saveShop(shop);
-                        c.getMenu().setItem(c.getSlot(), ItemStackUtils.createItemStack(shop.getDisplayItem(), Message.GUI_SHOP_SET_NAME_NAME, Message.GUI_SHOP_SET_NAME_LORE));
                         c.getMenu().refresh(c.getSlot());
                         return;
                     }
                     c.getMenu().openSubMenu(c.getPlayer(), () -> {
-                        AnvilMenu m = new AnvilMenu(Message.GUI_SHOP_SET_NAME_TITLE, shop.getNameFormat());
+                        AnvilMenu m = newAnvilMenu(Message.GUI_SHOP_SET_NAME_TITLE, shop.getNameFormat());
                         m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                             shop.setNameFormat(s.getTarget());
-                            s.getMenu().openPreviousMenu(s.getPlayer());
                             menu.updateTitle(shop.getName());
+                            s.getMenu().openPreviousMenu(s.getPlayer());
                         });
                         return m;
                     });
                 });
 
         //Set permissions
-        menu.setItemAndClickHandler(2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
+        menu.setItemAndClickHandler(2, () -> ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
                         Message.GUI_SHOP_SET_PERMISSION_NAME, Message.GUI_SHOP_SET_PERMISSION_LORE.asComponents(
                                 TagResolver.resolver("permission", Tag.inserting(Component.text(shop.getPermission() == null ? "X" : shop.getPermission()))))),
                 Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-                    AnvilMenu m = new AnvilMenu(Message.GUI_SHOP_SET_PERMISSION_TITLE, "shops.shop." + shop.getNamePlain().toLowerCase() + ".");
+                    AnvilMenu m = newAnvilMenu(Message.GUI_SHOP_SET_PERMISSION_TITLE, "shops.shop." + shop.getNamePlain().toLowerCase() + ".");
                     m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                         shop.setPermission(s.getTarget());
                         c.getMenu().refresh(c.getSlot());
@@ -314,9 +319,12 @@ public class MainMenu {
 
     public static Menu newDefaultTemplateMenu(TemplatableShop shop) {
         ListMenu menu = new ListMenu(Message.GUI_SHOP_TEMPLATE_TITLE, 3);
-        menu.addPreset(presetApplier -> {
-            presetApplier.addItem(3 * 9 + 4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_TEMPLATE_INFO_NAME, Message.GUI_SHOP_TEMPLATE_INFO_LORE));
-        });
+
+        menu.addPreset(bottomRow(2));
+        menu.addPreset(MenuPresets.paginationRow(2, 0, 1, false, Action.LEFT));
+        menu.addPreset(MenuPresets.back(2 * 9 + 8, Action.LEFT));
+        menu.addPreset(presetApplier -> presetApplier.addItem(2 * 9 + 4, ItemStackUtils.createInfoItem(Message.GUI_SHOP_TEMPLATE_INFO_NAME, Message.GUI_SHOP_TEMPLATE_INFO_LORE)));
+
         for (EntryTemplate template : TemplateHandler.getInstance().getTemplates()) {
             menu.addListEntry(Button.builder()
                     .withItemStack(() -> {
@@ -357,10 +365,13 @@ public class MainMenu {
 
         RectInventoryMenu menu = new RectInventoryMenu(limit.getName(), 3);
         menu.setCloseHandler(closeContext -> limit.saveToDatabase());
+        menu.addPreset(MenuPresets.fill(MenuPresets.FILLER_LIGHT));
+        menu.addPreset(MenuPresets.back(2, 8, Action.LEFT));
+
         //Set name
         menu.setItemAndClickHandler(1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
                 Message.GUI_LIMIT_SET_NAME_NAME, Message.GUI_LIMIT_SET_NAME_LORE), Action.LEFT, c -> {
-            AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_NAME_TITLE, limit.getNameFormat());
+            AnvilMenu m = newAnvilMenu(Message.GUI_LIMIT_SET_NAME_TITLE, limit.getNameFormat());
             m.setOutputClickHandler(AnvilMenu.CONFIRM, clickContext -> limit.setNameFormat(clickContext.getTarget()));
             menu.openSubMenu(c.getPlayer(), m);
         });
@@ -371,7 +382,7 @@ public class MainMenu {
                         Tag.inserting(Component.text(limit.getPermission() == null ? "X" : limit.getPermission())))
                 )), Action.LEFT, c -> {
 
-            AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_PERMISSION_TITLE, "shops.limit." + limit.getNamePlain().toLowerCase() + ".");
+            AnvilMenu m = newAnvilMenu(Message.GUI_LIMIT_SET_PERMISSION_TITLE, "shops.limit." + limit.getNamePlain().toLowerCase() + ".");
             m.setOutputClickHandler(AnvilMenu.CONFIRM, clickContext -> limit.setPermission(clickContext.getTarget()));
             menu.openSubMenu(c.getPlayer(), m);
         });
@@ -386,7 +397,7 @@ public class MainMenu {
                 Message.GUI_LIMIT_SET_DURATION_LORE.asComponents(TagResolver.resolver("current", Tag.inserting(Component.text(TextUtils.formatDuration(limit.getRecover()))))));
         menu.setItemAndClickHandler(5, durationStack.get(), Action.LEFT, clickContext -> {
             clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
-                AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_DURATION_TITLE, TextUtils.DURATION_FORMAT);
+                AnvilMenu m = newAnvilMenu(Message.GUI_LIMIT_SET_DURATION_TITLE, TextUtils.DURATION_FORMAT);
                 m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                     Player player = s.getPlayer();
                     Duration duration = TextUtils.parseDuration(s.getTarget());
@@ -408,7 +419,7 @@ public class MainMenu {
 
         menu.setItemAndClickHandler(6, limitStack.get(), Action.LEFT, clickContext -> {
             clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
-                AnvilMenu m = new AnvilMenu(Message.GUI_LIMIT_SET_LIMIT_TITLE, "64 ");
+                AnvilMenu m = newAnvilMenu(Message.GUI_LIMIT_SET_LIMIT_TITLE, "64 ");
                 m.setOutputClickHandler(AnvilMenu.CONFIRM, c -> {
                     Player player = c.getPlayer();
                     try {
@@ -452,11 +463,14 @@ public class MainMenu {
 
     public static Menu newDiscountMenu(Discount discount) {
         RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_DISCOUNT, 3);
+
+        menu.addPreset(MenuPresets.fill(MenuPresets.FILLER_LIGHT));
+        menu.addPreset(MenuPresets.back(2, 8, Action.LEFT));
         menu.setCloseHandler(closeContext -> discount.saveToDatabase());
 
         //Set name
         menu.setItemAndClickHandler(1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT, Message.GUI_DISCOUNT_SET_NAME_NAME, Message.GUI_DISCOUNT_SET_NAME_LORE), Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-            AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_NAME_TITLE, discount.getNameFormat());
+            AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_NAME_TITLE, discount.getNameFormat());
             m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                 discount.setNameFormat(s.getTarget());
                 menu.updateTitle(discount.getName());
@@ -469,7 +483,7 @@ public class MainMenu {
         menu.setItemAndClickHandler(2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS, Message.GUI_DISCOUNT_SET_PERMISSION_NAME,
                         Message.GUI_DISCOUNT_SET_PERMISSION_LORE.asComponents(TagResolver.resolver("permission", Tag.inserting(Component.text(discount.getPermission() == null ? "X" : discount.getPermission()))))),
                 Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-                    AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE, "shops.discount." + discount.getNamePlain().toLowerCase() + ".");
+                    AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE, "shops.discount." + discount.getNamePlain().toLowerCase() + ".");
                     m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                         discount.setPermission(s.getTarget());
                         c.getMenu().refresh(c.getSlot());
@@ -491,7 +505,7 @@ public class MainMenu {
         TagResolver dur = TagResolver.resolver("duration", Tag.inserting(Component.text(TextUtils.formatDuration(discount.getDuration()))));
         menu.setItemAndClickHandler(6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DURATIONS, Message.GUI_DISCOUNT_SET_DURATION_NAME.asComponent(dur),
                 Message.GUI_DISCOUNT_SET_DURATION_LORE.asComponents(dur)), Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-            AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE, TextUtils.DURATION_FORMAT);
+            AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE, TextUtils.DURATION_FORMAT);
             m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                 discount.setDuration(TextUtils.parseDuration(s.getTarget()));
                 c.getMenu().refresh(c.getSlot());
@@ -503,7 +517,7 @@ public class MainMenu {
         TagResolver percent = TagResolver.resolver("percent", Tag.inserting(discount.getFormattedPercent()));
         menu.setItemAndClickHandler(7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_SET_PERCENT_NAME.asComponent(percent),
                 Message.GUI_DISCOUNT_SET_PERCENT_LORE.asComponents(percent)), Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-            AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_SET_PERCENT_TITLE, "5%");
+            AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_PERCENT_TITLE, "5%");
             m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                 double d = 0;
                 try {
@@ -523,42 +537,33 @@ public class MainMenu {
     }
 
     public static Menu newDiscountStartMenu(Discount discount) {
-        ListMenu menu = new ListMenu(Message.GUI_DISCOUNT_SET_START_TITLE, 3);
-        menu.addPreset(presetApplier -> {
-            presetApplier.addItem(3 * 9 + 4, ItemStackUtils.createInfoItem(Message.GUI_DISCOUNT_START_INFO_NAME, Message.GUI_DISCOUNT_START_INFO_LORE));
-            presetApplier.addItem(3 * 9 + 7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_START_NEW_NAME, Message.GUI_DISCOUNT_START_NEW_LORE));
-            presetApplier.addClickHandler(3 * 9 + 7, Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-                AnvilMenu m = new AnvilMenu(Message.GUI_DISCOUNT_START_NEW_TITLE, TextUtils.DATE_TIME_FORMAT);
-                m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-                    LocalDateTime date = TextUtils.parseLocalDateTime(s.getTarget());
-                    if (date != null) {
-                        discount.addStartTime(date);
-                        c.getMenu().refresh(c.getMenu().getSlots());
-                        s.getMenu().openPreviousMenu(s.getPlayer());
-                        return;
-                    }
-                    c.getPlayer().playSound(c.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
-                });
-                return m;
-            }));
-        });
+        ListEditorMenu<LocalDateTime> m = new ListEditorMenu<>(Message.GUI_DISCOUNT_SET_START_TITLE, 3, new ListMenuSupplier<LocalDateTime>() {
 
-        for (LocalDateTime date : discount.getStartTimes()) {
-            Component dateComp = Component.text(TextUtils.formatLocalDateTime(date), NamedTextColor.WHITE);
-            menu.addListEntry(Button.builder()
-                    .withItemStack(ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DATES, dateComp, new ArrayList<>()))
-                    .withClickHandler(Action.RIGHT, c -> {
-                        discount.removeStartTime(date);
-                    }));
-        }
-        return menu;
+            public Collection<LocalDateTime> getElements() {
+                return discount.getStartTimes();
+            }
+
+            public ItemStack getDisplayItem(LocalDateTime object) {
+                Component dateComp = Component.text(TextUtils.formatLocalDateTime(object), NamedTextColor.WHITE);
+                return ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DATES, dateComp, new ArrayList<>());
+            }
+        });
+        m.setInfoItem(Message.GUI_DISCOUNT_START_INFO_NAME, Message.GUI_DISCOUNT_START_INFO_LORE);
+        m.setDeleteHandler(Action.RIGHT, c -> discount.removeStartTime(c.getTarget()));
+        m.setNewHandlerStringInput(Message.GUI_DISCOUNT_START_NEW_NAME, Message.GUI_DISCOUNT_START_NEW_LORE,
+                Message.GUI_DISCOUNT_START_NEW_TITLE, TextUtils.DATE_TIME_FORMAT,
+                string -> TextUtils.parseLocalDateTime(string) != null,
+                s -> discount.addStartTime(TextUtils.parseLocalDateTime(s.getTarget())));
+        return m;
     }
 
     public static <T extends Taggable> ListMenu newShopTaggableMenu(Shop shop, ListMenuSupplier<T> taggableSupplier, ComponentLike title, int rows,
                                                                     Message infoName, Message infoLore) {
         ListMenu menu = new ListMenu(title, rows);
-        menu.addPreset(MenuPresets.fillRow(Icon.EMPTY_DARK_RP.create(), 2));
+
+        menu.addPreset(bottomRow(2));
         menu.addPreset(presetApplier -> presetApplier.addItem(2 * 9 + 4, ItemStackUtils.createInfoItem(infoName, infoLore)));
+        menu.addPreset(MenuPresets.paginationRow(2, 0, 1, false, Action.LEFT));
         menu.addPreset(MenuPresets.back(2, 8, Action.LEFT));
 
         for (T taggable : taggableSupplier.getElements()) {
@@ -582,7 +587,7 @@ public class MainMenu {
 
     public static ListMenu newTagMenu(Taggable taggable, Component title,
                                       Message newTagTitle, Message newTagName, Message newTagLore, Message confirmRemove) {
-        ListEditorMenu<String> menu = new ListEditorMenu<>(title, 4, new ListMenuSupplier<>() {
+        ListEditorMenu<String> menu = new ListEditorMenu<>(title, 3, new ListMenuSupplier<>() {
 
             public Collection<String> getElements() {
                 return taggable.getTags();

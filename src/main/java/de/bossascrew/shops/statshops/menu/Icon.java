@@ -2,6 +2,7 @@ package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.data.Message;
+import de.cubbossa.guiframework.inventory.MenuPresets;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +31,15 @@ public enum Icon {
 	BACK(Material.SPRUCE_DOOR, Message.GENERAL_GUI_BACK_NAME, Message.GENERAL_GUI_BACK_LORE),
 	ERROR(Material.BARRIER, Message.GENERAL_GUI_ERROR_NAME, Message.GENERAL_GUI_ERROR_LORE),
 	;
+
+	static {
+		MenuPresets.BACK = Icon.BACK.item;
+		MenuPresets.LEFT = Icon.PREV_PAGE_RP.item;
+		MenuPresets.LEFT_DISABLED = Icon.PREV_PAGE_OFF_RP.item;
+		MenuPresets.RIGHT = Icon.NEXT_PAGE_RP.item;
+		MenuPresets.RIGHT_DISABLED = Icon.NEXT_PAGE_OFF_RP.item;
+	}
+
 
 	private final ItemStack item;
 

@@ -38,18 +38,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public class MainMenu {
+
+    public static MenuPreset<?> bottomRow(int row) {
+        return buttonHandler -> {
+            IntStream.range(row * 9, row * 9 + 9).forEach(v -> buttonHandler.addItem(v, Icon.EMPTY_DARK.create()));
+            buttonHandler.addItem(row * 9 + 5, Icon.EMPTY_DARK_RP.create());
+        };
+    }
 
     public static void openBaseMenu(Player player) {
 
         RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_MAIN_TITLE, 3);
-        menu.addPreset(MenuPresets.fill(MenuPresets.FILLER_LIGHT));
+        menu.addPreset(MenuPresets.fill(Icon.EMPTY_LIGHT_RP.create()));
 
         // Main menu background texture
         ItemStack glass_rp = Icon.EMPTY_LIGHT.create();
         ItemStackUtils.setCustomModelData(glass_rp, 7122001);
-        menu.setItem(1, glass_rp);
+        menu.setItem(9, glass_rp);
 
         menu.setItemAndClickHandler(11, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT,
                 Message.GUI_MAIN_LIMITS_NAME, Message.GUI_MAIN_LIMITS_LORE), Action.LEFT, clickContext ->

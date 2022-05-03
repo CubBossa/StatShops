@@ -3,7 +3,10 @@ package de.bossascrew.shops.statshops.menu;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
-import de.cubbossa.guiframework.inventory.*;
+import de.cubbossa.guiframework.inventory.Action;
+import de.cubbossa.guiframework.inventory.Button;
+import de.cubbossa.guiframework.inventory.ListMenuSupplier;
+import de.cubbossa.guiframework.inventory.MenuPresets;
 import de.cubbossa.guiframework.inventory.context.ClickContext;
 import de.cubbossa.guiframework.inventory.context.ContextConsumer;
 import de.cubbossa.guiframework.inventory.context.TargetContext;
@@ -15,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class ListEditorMenu<T> extends ListMenu {
 
@@ -23,12 +27,13 @@ public class ListEditorMenu<T> extends ListMenu {
     private final Map<Action<?>, ContextConsumer<TargetContext<T>>> clickHandler;
 
     public ListEditorMenu(ComponentLike title, int rows, ListMenuSupplier<T> supplier) {
-        super(title, rows);
+        super(title, rows, IntStream.range(0, (rows - 1) * 9).toArray());
         this.supplier = supplier;
         this.clickHandler = new HashMap<>();
 
-        addPreset(MenuPresets.fillRow(Icon.EMPTY_DARK_RP.create(), rows - 1));
+        addPreset(MainMenu.bottomRow(rows - 1));
         addPreset(MenuPresets.back(rows - 1, 8, Action.LEFT));
+        addPreset(MenuPresets.paginationRow(rows - 1, 0, 1, false, Action.LEFT));
     }
 
     public void refreshElements() {
@@ -48,7 +53,7 @@ public class ListEditorMenu<T> extends ListMenu {
     }
 
     public void setInfoItem(Message name, Message lore) {
-        addPreset(applier -> applier.addItem((getRows() - 1) * 9 + 4, ItemStackUtils.createItemStack(Material.PAPER, name, lore)));
+        addPreset(applier -> applier.addItem((getRows() - 1) * 9 + 4, ItemStackUtils.createInfoItem(name, lore)));
     }
 
     public void setDeleteHandler(Message confirmTitle, Action<?> action, ContextConsumer<TargetContext<T>> clickHandler) {

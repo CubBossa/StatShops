@@ -171,7 +171,7 @@
         <dependency>
             <groupId>de.cubbossa</groupId>
             <artifactId>MenuFramework</artifactId>
-            <version>0.2.3</version>
+            <version>0.3.0</version>
         </dependency>
 
         <dependency>
@@ -224,9 +224,14 @@
                             <include>net.wesjd:anvilgui</include>
                             <include>de.cubbossa:MenuFramework</include>
                             <include>de.tr7zw:item-nbt-api</include>
+                            <include>net.objecthunter:exp4j</include>
                         </includes>
                     </artifactSet>
                     <relocations>
+                        <relocation>
+                            <pattern>net.objecthunter.exp4j</pattern>
+                            <shadedPattern>de.bossascrew.exp4j</shadedPattern>
+                        </relocation>
                         <relocation>
                             <pattern>de.tr7zw</pattern>
                             <shadedPattern>de.bossascrew.nbt</shadedPattern>

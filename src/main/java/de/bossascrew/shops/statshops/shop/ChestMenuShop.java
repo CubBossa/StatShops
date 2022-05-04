@@ -194,7 +194,7 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 
 	@Override
 	public Menu newEditorMenu() {
-		return new ChestShopEditor(this, getDefaultShopPage());
+		return new ChestShopEditor(this);
 	}
 
 	public EntryInteractionResult interact(Customer customer, int slot, EntryInteractionType interactionType) {

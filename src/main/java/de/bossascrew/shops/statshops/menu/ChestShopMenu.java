@@ -64,7 +64,7 @@ public class ChestShopMenu extends RectInventoryMenu implements ShopMenu {
 
 		List<ShopEntry> entries = shop.getEntries(getCurrentPage());
 		for (ShopEntry entry : entries) {
-			updateEntry(entry);
+			setEntry(entry);
 
 			//Subscribe to limits and discounts so changes can be displayed live
 			DiscountHandler.getInstance().subscribeToDisplayUpdates(this, entry);

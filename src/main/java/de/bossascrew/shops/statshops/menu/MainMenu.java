@@ -236,9 +236,12 @@ public class MainMenu {
                         Message.GUI_SHOP_SET_CONTENT_NAME, Message.GUI_SHOP_SET_CONTENT_LORE),
                 Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), shop.newEditorMenu()));
 
-        //TODO bottom inventory
         menu.setItemAndClickHandler(9 + 2, ItemStackUtils.createItemStack(Material.CHEST,
-                Message.GUI_SHOP_SET_PREVIEW_NAME, Message.GUI_SHOP_SET_PREVIEW_LORE), Action.LEFT, c -> shop.open(Customer.wrap(c.getPlayer())));
+                Message.GUI_SHOP_SET_PREVIEW_NAME, Message.GUI_SHOP_SET_PREVIEW_LORE), Action.LEFT, c -> {
+
+            //TODO bottom inventory
+            shop.open(Customer.wrap(c.getPlayer()));
+        });
 
 
         if (shop instanceof PaginatedShop ps) {

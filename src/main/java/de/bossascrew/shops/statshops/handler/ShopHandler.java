@@ -11,7 +11,7 @@ import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.VillagerShop;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.web.WebAccessable;
-import de.cubbossa.guiframework.inventory.ListMenuSupplier;
+import de.cubbossa.menuframework.inventory.ListMenuSupplier;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

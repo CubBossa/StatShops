@@ -4,8 +4,8 @@ import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.menu.VillagerShopEditor;
 import de.bossascrew.shops.statshops.menu.VillagerShopMenu;
-import de.cubbossa.guiframework.inventory.Menu;
-import de.cubbossa.guiframework.inventory.implementations.VillagerMenu;
+import de.cubbossa.menuframework.inventory.Menu;
+import de.cubbossa.menuframework.inventory.implementations.VillagerMenu;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class VillagerShop extends BaseShop implements Shop {
+public class VillagerShop extends BaseShop {
 
 	public VillagerShop(String nameFormat) {
 		this(UUID.randomUUID(), nameFormat);

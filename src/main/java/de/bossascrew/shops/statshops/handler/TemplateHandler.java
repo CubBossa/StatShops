@@ -10,7 +10,7 @@ import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.web.WebAccessable;
-import de.cubbossa.guiframework.inventory.ListMenuSupplier;
+import de.cubbossa.menuframework.inventory.ListMenuSupplier;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;

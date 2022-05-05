@@ -2,7 +2,7 @@ package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.data.Message;
-import de.cubbossa.guiframework.inventory.MenuPresets;
+import de.cubbossa.menuframework.inventory.MenuPresets;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

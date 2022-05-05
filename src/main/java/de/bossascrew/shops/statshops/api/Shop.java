@@ -5,7 +5,7 @@ import de.bossascrew.shops.statshops.api.data.DatabaseObject;
 import de.bossascrew.shops.statshops.api.data.DisplayedObject;
 import de.bossascrew.shops.statshops.api.data.NamedObject;
 import de.bossascrew.shops.statshops.data.Customer;
-import de.cubbossa.guiframework.inventory.Menu;
+import de.cubbossa.menuframework.inventory.Menu;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

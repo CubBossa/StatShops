@@ -13,7 +13,7 @@ import de.bossascrew.shops.statshops.events.ShopTurnPageEvent;
 import de.bossascrew.shops.statshops.menu.ChestShopEditor;
 import de.bossascrew.shops.statshops.menu.ChestShopMenu;
 import de.bossascrew.shops.statshops.util.EntryInteractionType;
-import de.cubbossa.guiframework.inventory.Menu;
+import de.cubbossa.menuframework.inventory.Menu;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;

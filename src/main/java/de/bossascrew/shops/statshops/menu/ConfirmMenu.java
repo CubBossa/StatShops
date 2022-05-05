@@ -1,10 +1,10 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.cubbossa.guiframework.inventory.Action;
-import de.cubbossa.guiframework.inventory.MenuPresets;
-import de.cubbossa.guiframework.inventory.context.ClickContext;
-import de.cubbossa.guiframework.inventory.context.ContextConsumer;
-import de.cubbossa.guiframework.inventory.implementations.RectInventoryMenu;
+import de.cubbossa.menuframework.inventory.Action;
+import de.cubbossa.menuframework.inventory.MenuPresets;
+import de.cubbossa.menuframework.inventory.context.ClickContext;
+import de.cubbossa.menuframework.inventory.context.ContextConsumer;
+import de.cubbossa.menuframework.inventory.implementations.RectInventoryMenu;
 import net.kyori.adventure.text.ComponentLike;
 
 public class ConfirmMenu extends RectInventoryMenu {

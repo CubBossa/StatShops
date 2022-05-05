@@ -2,7 +2,7 @@ package de.bossascrew.shops.statshops.util;
 
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.data.Config;
-import de.cubbossa.guiframework.inventory.Action;
+import de.cubbossa.menuframework.inventory.Action;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.inventory.ClickType;

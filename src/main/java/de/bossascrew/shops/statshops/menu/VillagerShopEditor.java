@@ -2,7 +2,7 @@ package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.VillagerShop;
-import de.cubbossa.guiframework.inventory.implementations.RectInventoryMenu;
+import de.cubbossa.menuframework.inventory.implementations.RectInventoryMenu;
 
 public class VillagerShopEditor extends RectInventoryMenu {
 

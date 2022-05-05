@@ -6,8 +6,10 @@ import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.menu.MainMenu;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
+import de.cubbossa.menuframework.GUIHandler;
 import de.cubbossa.menuframework.inventory.Action;
 import de.cubbossa.menuframework.inventory.Button;
+import de.cubbossa.menuframework.inventory.TopMenu;
 import de.cubbossa.menuframework.inventory.context.ClickContext;
 import de.cubbossa.menuframework.inventory.context.ContextConsumer;
 import de.cubbossa.menuframework.inventory.context.TargetContext;
@@ -32,6 +34,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 @Getter
 @Setter
@@ -107,16 +110,22 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 		@Override
 		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
-			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-				AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
-						"" + getData());
-				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-					setData(s.getTarget());
-					s.getMenu().openPreviousMenu(s.getPlayer());
-					c.getMenu().refresh(c.getSlot());
-				});
-				return menu;
-			}));
+			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> {
+				if(c.getMenu() instanceof TopMenu topMenu) {
+					topMenu.openSubMenu(c.getPlayer(), () -> {
+						AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
+								"" + getData());
+						menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
+							setData(s.getTarget());
+							menu.openPreviousMenu(s.getPlayer());
+							c.getMenu().refresh(c.getSlot());
+						});
+						return menu;
+					});
+				} else {
+					GUIHandler.getInstance().getLogger().log(Level.SEVERE, "TopMenu required for DataSlot click handler.");
+				}
+			});
 		}
 
 		@NotNull
@@ -141,16 +150,22 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 		@Override
 		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
-			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-				AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
-						"" + getData());
-				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-					setData(s.getTarget());
-					s.getMenu().openPreviousMenu(s.getPlayer());
-					c.getMenu().refresh(c.getSlot());
-				});
-				return menu;
-			}));
+			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> {
+				if(c.getMenu() instanceof TopMenu topMenu) {
+					topMenu.openSubMenu(c.getPlayer(), () -> {
+						AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
+								"" + getData());
+						menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
+							setData(s.getTarget());
+							menu.openPreviousMenu(s.getPlayer());
+							c.getMenu().refresh(c.getSlot());
+						});
+						return menu;
+					});
+				} else {
+					GUIHandler.getInstance().getLogger().log(Level.SEVERE, "TopMenu required for DataSlot click handler.");
+				}
+			});
 		}
 
 		@NotNull
@@ -240,21 +255,27 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 		@Override
 		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
-			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-				AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
-						"" + getData());
-				menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-					try {
-						setData(Double.parseDouble(s.getTarget().replace(" ", "")));
-						super.setDisplayItem(new ItemStack(Material.PAPER, Integer.min(Integer.max(1, getData().intValue()), 64)));
-						s.getMenu().openPreviousMenu(s.getPlayer());
-						c.getMenu().refresh(c.getSlot());
-					} catch (NumberFormatException e) {
-						c.getPlayer().playSound(c.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
-					}
-				});
-				return menu;
-			}));
+			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> {
+				if(c.getMenu() instanceof TopMenu topMenu) {
+					topMenu.openSubMenu(c.getPlayer(), () -> {
+						AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
+								"" + getData());
+						menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
+							try {
+								setData(Double.parseDouble(s.getTarget().replace(" ", "")));
+								super.setDisplayItem(new ItemStack(Material.PAPER, Integer.min(Integer.max(1, getData().intValue()), 64)));
+								menu.openPreviousMenu(s.getPlayer());
+								c.getMenu().refresh(c.getSlot());
+							} catch (NumberFormatException e) {
+								c.getPlayer().playSound(c.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+							}
+						});
+						return menu;
+					});
+				} else {
+					GUIHandler.getInstance().getLogger().log(Level.SEVERE, "TopMenu required for DataSlot click handler.");
+				}
+			});
 		}
 
 		public void setData(int data) {
@@ -291,21 +312,27 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 		@Override
 		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
-			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
-				int shops = ShopHandler.getInstance().getShops().size();
-				ListMenu menu = new ListMenu(Message.GUI_SHOPS_TITLE, Integer.max(3, Integer.min(shops % 9, 6)));
-				for (Shop shop : ShopHandler.getInstance().getShops()) {
-					menu.addListEntry(Button.builder()
-							.withItemStack(() -> Objects.equals(shop.getUUID(), getData()) ?
-									ItemStackUtils.setGlow(ShopHandler.getInstance().getDisplayItem(shop)) : ShopHandler.getInstance().getDisplayItem(shop))
-							.withClickHandler(Action.LEFT, cl -> {
-								setData(shop.getUUID());
-								setDisplayItem(ShopHandler.getInstance().getDisplayItem(shop).clone());
-								menu.refresh(menu.getListSlots());
-							}));
+			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> {
+				if(c.getMenu() instanceof TopMenu topMenu) {
+					topMenu.openSubMenu(c.getPlayer(), () -> {
+						int shops = ShopHandler.getInstance().getShops().size();
+						ListMenu menu = new ListMenu(Message.GUI_SHOPS_TITLE, Integer.max(3, Integer.min(shops % 9, 6)));
+						for (Shop shop : ShopHandler.getInstance().getShops()) {
+							menu.addListEntry(Button.builder()
+									.withItemStack(() -> Objects.equals(shop.getUUID(), getData()) ?
+											ItemStackUtils.setGlow(ShopHandler.getInstance().getDisplayItem(shop)) : ShopHandler.getInstance().getDisplayItem(shop))
+									.withClickHandler(Action.LEFT, cl -> {
+										setData(shop.getUUID());
+										setDisplayItem(ShopHandler.getInstance().getDisplayItem(shop).clone());
+										menu.refresh(menu.getListSlots());
+									}));
+						}
+						return menu;
+					});
+				} else {
+					GUIHandler.getInstance().getLogger().log(Level.SEVERE, "TopMenu required for DataSlot click handler.");
 				}
-				return menu;
-			}));
+			});
 		}
 
 		@Override

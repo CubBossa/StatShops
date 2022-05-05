@@ -85,11 +85,13 @@ public class ChestShopEditor extends RectInventoryMenu {
 		insertFrozenEntries(player);
 
 		setDefaultClickHandler(c -> {
-			ShopEntry clickedEntry = shop.getEntry(c.getSlot() + getCurrentPage() * (9 * 6));
 			c.setCancelled(freezeItems);
 
-			if (freezeItems && clickedEntry != null) {
-				new ShopEntryEditor(clickedEntry, c.getPlayer()).open(c.getPlayer());
+			if(freezeItems) {
+				ShopEntry clickedEntry = shop.getEntry(c.getSlot() + getCurrentPage() * (9 * 6));
+				if (clickedEntry != null) {
+					new ShopEntryEditor(clickedEntry, c.getPlayer()).open(c.getPlayer());
+				}
 			}
 		});
 
@@ -133,7 +135,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 						insertFrozenEntries(clickContext.getPlayer());
 					}
 					freezeItems = !freezeItems;
-					bottomMenu.refresh(clickContext.getSlot(), templateSlot);
+					clickContext.getMenu().refresh(clickContext.getSlot(), templateSlot);
 				}));
 
 		bottomMenu.setButton(nameSlot, Button.builder()
@@ -145,7 +147,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 					m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 						shop.setPageTitle(getCurrentPage(), s.getTarget());
 						c.getMenu().refresh(c.getSlot());
-						s.getMenu().openPreviousMenu(s.getPlayer());
+						m.openPreviousMenu(s.getPlayer());
 					});
 					return m;
 				})));
@@ -163,7 +165,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 					if (!freezeItems) {
 						return;
 					}
-					c.getMenu().openSubMenu(c.getPlayer(), () -> {
+					openSubMenu(c.getPlayer(), () -> {
 						AnvilMenu m = MainMenu.newAnvilMenu(Message.GUI_TEMPLATES_NEW, "name");
 						m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 							if (TemplateHandler.getInstance().createNew(s.getTarget(), shop, getCurrentPage()) == null) {
@@ -171,11 +173,10 @@ public class ChestShopEditor extends RectInventoryMenu {
 								return;
 							}
 							openSubMenu(s.getPlayer(), newTemplatesListMenu());
-							s.getMenu().openPreviousMenu(s.getPlayer());
+							m.openPreviousMenu(s.getPlayer());
 						});
 						return m;
 					});
-					c.getMenu().openPreviousMenu(c.getPlayer());
 				}));
 	}
 
@@ -303,17 +304,17 @@ public class ChestShopEditor extends RectInventoryMenu {
 		}
 	}
 
-	public Menu newTemplatesListMenu() {
+	public TopMenu newTemplatesListMenu() {
 		ListEditorMenu<EntryTemplate> menu = new ListEditorMenu<>(Message.GUI_TEMPLATES_CHOOSE, 3, TemplateHandler.getInstance());
 		menu.setClickHandler(Action.RIGHT, c -> {
 			c.getTarget().setDiscIndex((short) ((c.getTarget().getDiscIndex() + 1) % TemplateHandler.DISCS.length));
 			c.getMenu().refresh(c.getSlot());
 		});
-		menu.setClickHandler(Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), newTemplateApplyMenu(c.getPlayer(), c.getTarget())));
+		menu.setClickHandler(Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), newTemplateApplyMenu(c.getPlayer(), c.getTarget())));
 		return menu;
 	}
 
-	public Menu newTemplateApplyMenu(Player player, EntryTemplate template) {
+	public TopMenu newTemplateApplyMenu(Player player, EntryTemplate template) {
 		RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_TEMPLATES_APPLY.asComponent(TagResolver.resolver("name", Tag.inserting(template.getName()))), shop.getRows());
 		BottomInventoryMenu bottomMenu = new BottomInventoryMenu(InventoryRow.FIRST_ROW);
 

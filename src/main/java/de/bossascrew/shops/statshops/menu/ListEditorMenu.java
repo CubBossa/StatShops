@@ -69,12 +69,12 @@ public class ListEditorMenu<T> extends ListMenu {
     public void setDeleteHandler(Message confirmTitle, Action<?> action, ContextConsumer<TargetContext<T>> clickHandler) {
         ContextConsumer<TargetContext<T>> extended = c -> {
             if (StatShops.getInstance().getShopsConfig().isConfirmDeletion()) {
-                c.getMenu().openSubMenu(c.getPlayer(), () -> {
+                openSubMenu(c.getPlayer(), () -> {
                     ConfirmMenu m = new ConfirmMenu(confirmTitle);
-                    m.setDenyHandler(cl -> cl.getMenu().openPreviousMenu(cl.getPlayer()));
+                    m.setDenyHandler(cl -> m.openPreviousMenu(cl.getPlayer()));
                     m.setAcceptHandler(cl -> {
                         clickHandler.accept(c);
-                        cl.getMenu().openPreviousMenu(cl.getPlayer());
+                        m.openPreviousMenu(cl.getPlayer());
                         refreshElements();
                     });
                     return m;
@@ -115,15 +115,15 @@ public class ListEditorMenu<T> extends ListMenu {
     public void setNewHandlerStringInput(Message name, Message lore, Message title, String suggestion, Predicate<String> validator, ContextConsumer<TargetContext<String>> clickHandler) {
         addPreset(presetApplier -> {
             presetApplier.addItem((getRows() - 1) * 9 + 7, ItemStackUtils.createItemStack(Material.EMERALD, name, lore));
-            presetApplier.addClickHandler((getRows() - 1) * 9 + 7, Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
+            presetApplier.addClickHandler((getRows() - 1) * 9 + 7, Action.LEFT, c -> openSubMenu(c.getPlayer(), () -> {
                 AnvilMenu m = MainMenu.newAnvilMenu(title, suggestion);
-                m.setOutputClickHandler(AnvilMenu.CONFIRM, c -> {
-                    if (validator != null && !validator.test(c.getTarget())) {
-                        c.getPlayer().playSound(c.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+                m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
+                    if (validator != null && !validator.test(s.getTarget())) {
+                        s.getPlayer().playSound(s.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
                         return;
                     }
-                    c.getMenu().openPreviousMenu(c.getPlayer());
-                    clickHandler.accept(c);
+                    m.openPreviousMenu(s.getPlayer());
+                    clickHandler.accept(s);
                     refreshElements();
                 });
                 return m;

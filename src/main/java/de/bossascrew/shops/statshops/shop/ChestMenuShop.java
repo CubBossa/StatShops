@@ -14,6 +14,7 @@ import de.bossascrew.shops.statshops.menu.ChestShopEditor;
 import de.bossascrew.shops.statshops.menu.ChestShopMenu;
 import de.bossascrew.shops.statshops.util.EntryInteractionType;
 import de.cubbossa.menuframework.inventory.Menu;
+import de.cubbossa.menuframework.inventory.TopMenu;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -193,7 +194,7 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
 	}
 
 	@Override
-	public Menu newEditorMenu() {
+	public TopMenu newEditorMenu() {
 		return new ChestShopEditor(this);
 	}
 

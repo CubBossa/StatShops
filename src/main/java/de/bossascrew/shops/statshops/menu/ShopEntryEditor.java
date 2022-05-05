@@ -18,6 +18,7 @@ import de.bossascrew.shops.statshops.util.TagUtils;
 import de.cubbossa.menuframework.inventory.Action;
 import de.cubbossa.menuframework.inventory.Button;
 import de.cubbossa.menuframework.inventory.Menu;
+import de.cubbossa.menuframework.inventory.TopMenu;
 import de.cubbossa.menuframework.inventory.implementations.AnvilMenu;
 import de.cubbossa.menuframework.inventory.implementations.ListMenu;
 import de.cubbossa.menuframework.inventory.implementations.RectInventoryMenu;
@@ -63,13 +64,13 @@ public class ShopEntryEditor extends RectInventoryMenu {
 					m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 						entry.setPermission(s.getTarget());
 						entry.saveToDatabase();
-						s.getMenu().openPreviousMenu(s.getPlayer());
+						m.openPreviousMenu(s.getPlayer());
 					});
 				});
 		//Set tags
 		setButton(2, Button.builder()
 				.withItemStack(ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS, Message.GUI_ENTRY_SET_TAGS_NAME, Message.GUI_ENTRY_SET_TAGS_LORE))
-				.withClickHandler(Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), MainMenu.newTagMenu(
+				.withClickHandler(Action.LEFT, clickContext -> openSubMenu(clickContext.getPlayer(), MainMenu.newTagMenu(
 						entry,
 						Message.GUI_TAGS_TITLE.asComponent(TagResolver.resolver("name", Tag.inserting(Component.text("shop entry")))),
 						Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
@@ -81,7 +82,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 								Message.GUI_ENTRY_FUNCTION_STATIC_NAME : entry.getModule().getDisplayName()))),
 						Message.GUI_ENTRY_SET_FUNCTION_LORE.asComponents(TagResolver.resolver("function", Tag.inserting(entry.getModule() == null ?
 								Message.GUI_ENTRY_FUNCTION_STATIC_NAME : entry.getModule().getDisplayName())))))
-				.withClickHandler(Action.LEFT, clickContext -> clickContext.getMenu().openSubMenu(clickContext.getPlayer(), () -> {
+				.withClickHandler(Action.LEFT, clickContext -> openSubMenu(clickContext.getPlayer(), () -> {
 
 					ListMenu m = new ListMenu(Message.GUI_ENTRY_SET_FUNCTION_TITLE, 3);
 					EntryModuleHandler.getInstance().getEntryModules().values().stream()
@@ -101,7 +102,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 		if (entry.getModule() instanceof TradeModule tm) {
 			setButton(9 + 2, Button.builder()
 					.withItemStack(tm.getCosts().getProvider().getListDisplayItem())
-					.withClickHandler(c -> c.getMenu().openSubMenu(c.getPlayer(), () -> {
+					.withClickHandler(c -> openSubMenu(c.getPlayer(), () -> {
 						ListMenu m = new ListMenu(Message.GUI_ENTRY_SET_COSTS_TITLE, 3);
 						SubModulesHandler.getInstance().getValues().stream()
 								.filter(p -> p.getPermission() == null || c.getPlayer().hasPermission(p.getPermission()))
@@ -124,7 +125,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 			limitsLore.addAll(Message.GUI_SHOP_SET_LIMITS_LORE.asComponents());
 
 			setItemAndClickHandler(10, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT, Message.GUI_SHOP_SET_LIMITS_NAME, limitsLore),
-					Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), newShopLimitsMenu()));
+					Action.LEFT, c -> openSubMenu(c.getPlayer(), newShopLimitsMenu()));
 
 			//Open Discounts menu
 			List<Component> discountLore = new ArrayList<>();
@@ -136,7 +137,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 			discountLore.addAll(Message.GUI_SHOP_SET_DISCOUNTS_LORE.asComponents());
 
 			setItemAndClickHandler(19, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT, Message.GUI_SHOP_SET_DISCOUNTS_NAME, discountLore),
-					Action.LEFT, c -> c.getMenu().openSubMenu(c.getPlayer(), newShopDiscountsMenu()));
+					Action.LEFT, c -> openSubMenu(c.getPlayer(), newShopDiscountsMenu()));
 		}
 
 		int[] blackSlots = {3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25};
@@ -174,7 +175,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 		super.openSync(player, viewMode);
 	}
 
-	public Menu newShopLimitsMenu() {
+	public TopMenu newShopLimitsMenu() {
 		ListMenu menu = new ListMenu(Message.GUI_SHOP_LIMITS_TITLE, 3);
 		for (Limit limit : LimitsHandler.getInstance().getLimits()) {
 			menu.addListEntry(Button.builder()
@@ -192,7 +193,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 		return menu;
 	}
 
-	public Menu newShopDiscountsMenu() {
+	public TopMenu newShopDiscountsMenu() {
 		ListMenu menu = new ListMenu(Message.GUI_SHOP_DISCOUNTS_TITLE, 3);
 		for (Discount discount : DiscountHandler.getInstance().getDiscounts()) {
 			menu.addListEntry(Button.builder()

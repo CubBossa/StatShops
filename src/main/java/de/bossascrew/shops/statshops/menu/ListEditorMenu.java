@@ -12,21 +12,28 @@ import de.cubbossa.menuframework.inventory.context.ContextConsumer;
 import de.cubbossa.menuframework.inventory.context.TargetContext;
 import de.cubbossa.menuframework.inventory.implementations.AnvilMenu;
 import de.cubbossa.menuframework.inventory.implementations.ListMenu;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 public class ListEditorMenu<T> extends ListMenu {
 
     private final ListMenuSupplier<T> supplier;
-
     private final Map<Action<?>, ContextConsumer<TargetContext<T>>> clickHandler;
+    @Getter
+    @Setter
+    private BiFunction<T, ItemStack, ItemStack> itemModifier = (t, stack) -> stack;
 
     public ListEditorMenu(ComponentLike title, int rows, ListMenuSupplier<T> supplier) {
         super(title, rows, IntStream.range(0, (rows - 1) * 9).toArray());
@@ -49,7 +56,7 @@ public class ListEditorMenu<T> extends ListMenu {
                     c.setCancelled(context.isCancelled());
                 });
             }
-            addListEntry(Button.builder().withItemStack(supplier.getDisplayItem(t)).withClickHandler(map));
+            addListEntry(Button.builder().withItemStack(itemModifier.apply(t, supplier.getDisplayItem(t))).withClickHandler(map));
         });
         refresh(getListSlots());
     }

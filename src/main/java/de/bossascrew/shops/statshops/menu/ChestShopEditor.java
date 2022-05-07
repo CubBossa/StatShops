@@ -90,20 +90,20 @@ public class ChestShopEditor extends RectInventoryMenu {
 			if(freezeItems) {
 				ShopEntry clickedEntry = shop.getEntry(c.getSlot() + getCurrentPage() * (9 * 6));
 				if (clickedEntry != null) {
-					new ShopEntryEditor(clickedEntry, c.getPlayer()).open(c.getPlayer());
+					openSubMenu(c.getPlayer(), new ShopEntryEditor(clickedEntry, c.getPlayer()));
 				}
 			}
 		});
 
-		bottomMenu.addPreset(MenuPresets.fill(Icon.EMPTY_LIGHT_RP.create()));
-		bottomMenu.addPreset(buttonHandler -> buttonHandler.addItem(9 + 5, Icon.EMPTY_DARK_RP.create()));
+		bottomMenu.addPreset(MenuPresets.fill(Icon.EMPTY_LIGHT_RP.get()));
+		bottomMenu.addPreset(buttonHandler -> buttonHandler.addItem(9 + 5, Icon.EMPTY_DARK_RP.get()));
 
 		bottomMenu.setButton(17, Button.builder()
-				.withItemStack(Icon.BACK.create())
+				.withItemStack(Icon.BACK)
 				.withClickHandler(Action.LEFT, c -> openPreviousMenu(c.getPlayer())));
 
 		bottomMenu.setButton(9, Button.builder()
-				.withItemStack(() -> getCurrentPage() > 0 ? Icon.PREV_PAGE_RP.create() : Icon.PREV_PAGE_OFF_RP.create())
+				.withItemStack(() -> getCurrentPage() > 0 ? Icon.PREV_PAGE_RP.get() : Icon.PREV_PAGE_OFF_RP.get())
 				.withClickHandler(Action.LEFT, c -> {
 					if (getCurrentPage() <= 0) {
 						return;
@@ -113,7 +113,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 					refreshTitle();
 				}));
 		bottomMenu.setButton(10, Button.builder()
-				.withItemStack(Icon.NEXT_PAGE_RP.create())
+				.withItemStack(Icon.NEXT_PAGE_RP)
 				.withClickHandler(Action.LEFT, c -> {
 					setNextPage(c.getPlayer());
 					c.getMenu().refresh(c.getSlot() - 1);
@@ -155,7 +155,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 		bottomMenu.setButton(templateSlot, Button.builder()
 				.withItemStack(() -> freezeItems ? ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TEMPLATE,
 						Message.GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME,
-						Message.GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE) : Icon.EMPTY_DARK.create())
+						Message.GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE) : Icon.EMPTY_DARK.get())
 				.withClickHandler(Action.LEFT, c -> {
 					if (freezeItems) {
 						openSubMenu(c.getPlayer(), newTemplatesListMenu());
@@ -318,7 +318,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 		RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_TEMPLATES_APPLY.asComponent(TagResolver.resolver("name", Tag.inserting(template.getName()))), shop.getRows());
 		BottomInventoryMenu bottomMenu = new BottomInventoryMenu(InventoryRow.FIRST_ROW);
 
-		bottomMenu.addPreset(MenuPresets.fill(Icon.EMPTY_DARK.create()));
+		bottomMenu.addPreset(MenuPresets.fill(Icon.EMPTY_DARK.get()));
 
 		int dif = getCurrentPage() * 9 * 6;
 		IntStream.range(0, shop.getRows() * 9).forEach(value -> {
@@ -333,15 +333,15 @@ public class ChestShopEditor extends RectInventoryMenu {
 			menu.setItem(entry.getSlot(), entry.getDisplayItem());
 		}
 		bottomMenu.setButton(9 + 2, Button.builder()
-				.withItemStack(Icon.ACCEPT_RP.create()) //TODO conflict with underlying menu
+				.withItemStack(Icon.ACCEPT_RP) //TODO conflict with underlying menu
 				.withClickHandler(Action.LEFT, clickContext -> {
 					shop.applyTemplate(template, getCurrentPage());
 					open(clickContext.getPlayer());
 				}));
 		bottomMenu.setButton(9 + 6, Button.builder()
-				.withItemStack(Icon.DECLINE_RP.create())
+				.withItemStack(Icon.DECLINE_RP)
 				.withClickHandler(Action.LEFT, clickContext -> open(player)));
-		bottomMenu.setItem(9 + 5, Icon.EMPTY_DARK_RP.create());
+		bottomMenu.setItem(9 + 5, Icon.EMPTY_DARK_RP);
 
 		menu.setOpenHandler(o -> bottomMenu.open(o.getPlayer()));
 		menu.setCloseHandler(c -> bottomMenu.close(c.getPlayer()));

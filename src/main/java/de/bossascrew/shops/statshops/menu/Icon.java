@@ -1,77 +1,86 @@
 package de.bossascrew.shops.statshops.menu;
 
-import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.cubbossa.menuframework.inventory.MenuPresets;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public enum Icon {
+import java.util.function.Supplier;
 
-	EMPTY_LIGHT(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ", null),
-	EMPTY_LIGHT_RP(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ", null, 7122000),
-	EMPTY_MIDDLE(Material.GRAY_STAINED_GLASS_PANE, " ", null),
-	EMPTY_DARK_SIMPLE(Material.BLACK_STAINED_GLASS_PANE, " ", null),
-	EMPTY_DARK(Material.BLACK_STAINED_GLASS_PANE, " ", null, 7122000),
-	EMPTY_DARK_RP(Material.BLACK_STAINED_GLASS_PANE, " ", null, 7122001),
+public class Icon {
 
-	PREV_PAGE(ItemStackUtils.HEAD_URL_ARROW_PREV, Message.GENERAL_GUI_PREV_PAGE_NAME, Message.GENERAL_GUI_PREV_PAGE_LORE),
-	PREV_PAGE_RP(ItemStackUtils.HEAD_URL_ARROW_PREV, Message.GENERAL_GUI_PREV_PAGE_NAME, Message.GENERAL_GUI_PREV_PAGE_LORE, 7122000),
-	PREV_PAGE_OFF(ItemStackUtils.HEAD_URL_ARROW_PREV_OFF, Message.GENERAL_GUI_PREV_PAGE_NAME, Message.GENERAL_GUI_PREV_PAGE_LORE),
-	PREV_PAGE_OFF_RP(ItemStackUtils.HEAD_URL_ARROW_PREV_OFF, Message.GENERAL_GUI_PREV_PAGE_NAME, Message.GENERAL_GUI_PREV_PAGE_LORE, 7122000),
-	NEXT_PAGE(ItemStackUtils.HEAD_URL_ARROW_NEXT, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE),
-	NEXT_PAGE_RP(ItemStackUtils.HEAD_URL_ARROW_NEXT, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE, 7122000),
-	NEXT_PAGE_OFF(ItemStackUtils.HEAD_URL_ARROW_NEXT_OFF, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE),
-	NEXT_PAGE_OFF_RP(ItemStackUtils.HEAD_URL_ARROW_NEXT_OFF, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE, 7122000),
+	public static final ItemStack STACK_EMPTY_LIGHT = icon(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ", null);
+	public static final ItemStack STACK_EMPTY_LIGHT_RP = icon(Material.LIGHT_GRAY_STAINED_GLASS_PANE, " ", null, 7122000);
+	public static final ItemStack STACK_EMPTY_MIDDLE = icon(Material.GRAY_STAINED_GLASS_PANE, " ", null);
+	public static final ItemStack STACK_EMPTY_DARK_SIMPLE = icon(Material.BLACK_STAINED_GLASS_PANE, " ", null);
+	public static final ItemStack STACK_EMPTY_DARK = icon(Material.BLACK_STAINED_GLASS_PANE, " ", null, 7122000);
+	public static final ItemStack STACK_EMPTY_DARK_RP = icon(Material.BLACK_STAINED_GLASS_PANE, " ", null, 7122001);
+	public static final ItemStack STACK_PREV_PAGE = icon(ItemStackUtils.HEAD_URL_ARROW_PREV, Message.GENERAL_GUI_PREV_PAGE_NAME, Message.GENERAL_GUI_PREV_PAGE_LORE);
+	public static final ItemStack STACK_PREV_PAGE_RP = icon(ItemStackUtils.HEAD_URL_ARROW_PREV, Message.GENERAL_GUI_PREV_PAGE_NAME, Message.GENERAL_GUI_PREV_PAGE_LORE, 7122000);
+	public static final ItemStack STACK_PREV_PAGE_OFF = icon(ItemStackUtils.HEAD_URL_ARROW_PREV_OFF, Message.GENERAL_GUI_PREV_PAGE_NAME, Message.GENERAL_GUI_PREV_PAGE_LORE);
+	public static final ItemStack STACK_PREV_PAGE_OFF_RP = icon(ItemStackUtils.HEAD_URL_ARROW_PREV_OFF, Message.GENERAL_GUI_PREV_PAGE_NAME, Message.GENERAL_GUI_PREV_PAGE_LORE, 7122000);
+	public static final ItemStack STACK_NEXT_PAGE = icon(ItemStackUtils.HEAD_URL_ARROW_NEXT, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE);
+	public static final ItemStack STACK_NEXT_PAGE_RP = icon(ItemStackUtils.HEAD_URL_ARROW_NEXT, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE, 7122000);
+	public static final ItemStack STACK_NEXT_PAGE_OFF = icon(ItemStackUtils.HEAD_URL_ARROW_NEXT_OFF, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE);
+	public static final ItemStack STACK_NEXT_PAGE_OFF_RP = icon(ItemStackUtils.HEAD_URL_ARROW_NEXT_OFF, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE, 7122000);
+	public static final ItemStack STACK_ACCEPT_RP = icon(ItemStackUtils.HEAD_URL_LETTER_CHECK_MARK, Message.GENERAL_GUI_ACCEPT_NAME, Message.GENERAL_GUI_ACCEPT_LORE, 7122000);
+	public static final ItemStack STACK_DECLINE_RP = icon(ItemStackUtils.HEAD_URL_LETTER_X, Message.GENERAL_GUI_DECLINE_NAME, Message.GENERAL_GUI_DECLINE_LORE, 7122000);
+	public static final ItemStack STACK_BACK = icon(Material.SPRUCE_DOOR, Message.GENERAL_GUI_BACK_NAME, Message.GENERAL_GUI_BACK_LORE);
+	public static final ItemStack STACK_ERROR = icon(Material.BARRIER, Message.GENERAL_GUI_ERROR_NAME, Message.GENERAL_GUI_ERROR_LORE);
 
-	ACCEPT_RP(ItemStackUtils.HEAD_URL_LETTER_CHECK_MARK, Message.GENERAL_GUI_ACCEPT_NAME, Message.GENERAL_GUI_ACCEPT_LORE, 7122000),
-	DECLINE_RP(ItemStackUtils.HEAD_URL_LETTER_X, Message.GENERAL_GUI_DECLINE_NAME, Message.GENERAL_GUI_DECLINE_LORE, 7122000),
-
-	BACK(Material.SPRUCE_DOOR, Message.GENERAL_GUI_BACK_NAME, Message.GENERAL_GUI_BACK_LORE),
-	ERROR(Material.BARRIER, Message.GENERAL_GUI_ERROR_NAME, Message.GENERAL_GUI_ERROR_LORE),
-	;
+	public static final Supplier<ItemStack> EMPTY_LIGHT = () -> STACK_EMPTY_LIGHT;
+	public static final Supplier<ItemStack> EMPTY_LIGHT_RP = () -> STACK_EMPTY_LIGHT_RP;
+	public static final Supplier<ItemStack> EMPTY_MIDDLE = () -> STACK_EMPTY_MIDDLE;
+	public static final Supplier<ItemStack> EMPTY_DARK_SIMPLE = () -> STACK_EMPTY_DARK_SIMPLE;
+	public static final Supplier<ItemStack> EMPTY_DARK = () -> STACK_EMPTY_DARK;
+	public static final Supplier<ItemStack> EMPTY_DARK_RP = () -> STACK_EMPTY_DARK_RP;
+	public static final Supplier<ItemStack> PREV_PAGE = () -> STACK_PREV_PAGE;
+	public static final Supplier<ItemStack> PREV_PAGE_RP = () -> STACK_PREV_PAGE_RP;
+	public static final Supplier<ItemStack> PREV_PAGE_OFF = () -> STACK_PREV_PAGE_OFF;
+	public static final Supplier<ItemStack> PREV_PAGE_OFF_RP = () -> STACK_PREV_PAGE_OFF_RP;
+	public static final Supplier<ItemStack> NEXT_PAGE = () -> STACK_NEXT_PAGE;
+	public static final Supplier<ItemStack> NEXT_PAGE_RP = () -> STACK_NEXT_PAGE_RP;
+	public static final Supplier<ItemStack> NEXT_PAGE_OFF = () -> STACK_NEXT_PAGE_OFF;
+	public static final Supplier<ItemStack> NEXT_PAGE_OFF_RP = () -> STACK_NEXT_PAGE_OFF_RP;
+	public static final Supplier<ItemStack> ACCEPT_RP = () -> STACK_ACCEPT_RP;
+	public static final Supplier<ItemStack> DECLINE_RP = () -> STACK_DECLINE_RP;
+	public static final Supplier<ItemStack> BACK = () -> STACK_BACK;
+	public static final Supplier<ItemStack> ERROR = () -> STACK_ERROR;
 
 	static {
-		MenuPresets.BACK = Icon.BACK.item;
-		MenuPresets.LEFT = Icon.PREV_PAGE_RP.item;
-		MenuPresets.LEFT_DISABLED = Icon.PREV_PAGE_OFF_RP.item;
-		MenuPresets.RIGHT = Icon.NEXT_PAGE_RP.item;
-		MenuPresets.RIGHT_DISABLED = Icon.NEXT_PAGE_OFF_RP.item;
+		MenuPresets.BACK = Icon.STACK_BACK.clone();
+		MenuPresets.LEFT = Icon.STACK_PREV_PAGE_RP.clone();
+		MenuPresets.LEFT_DISABLED = Icon.STACK_PREV_PAGE_OFF_RP.clone();
+		MenuPresets.RIGHT = Icon.STACK_NEXT_PAGE_RP.clone();
+		MenuPresets.RIGHT_DISABLED = Icon.STACK_NEXT_PAGE_OFF_RP.clone();
 	}
 
-
-	private final ItemStack item;
-
-	Icon(Material material, String displayName, @Nullable String lore) {
-		item = ItemStackUtils.createItemStack(material, displayName, lore);
+	private static ItemStack icon(Material material, String displayName, @Nullable String lore) {
+		return ItemStackUtils.createItemStack(material, displayName, lore);
 	}
 
-	Icon(Material material, String displayName, @Nullable String lore, int customModelData) {
-		item = ItemStackUtils.createItemStack(material, displayName, lore);
-		ItemStackUtils.setCustomModelData(item, customModelData);
+	private static ItemStack icon(Material material, String displayName, @Nullable String lore, int customModelData) {
+		ItemStack item = ItemStackUtils.createItemStack(material, displayName, lore);
+		return ItemStackUtils.setCustomModelData(item, customModelData);
 	}
 
-	Icon(Material material, Message displayName, Message lore) {
-		this.item = ItemStackUtils.createItemStack(material, displayName, lore.asComponents());
+	private static ItemStack icon(Material material, Message displayName, Message lore) {
+		return ItemStackUtils.createItemStack(material, displayName, lore.asComponents());
 	}
 
-	Icon(Material material, Message displayName, Message lore, int customModelData) {
-		this.item = ItemStackUtils.createItemStack(material, displayName, lore.asComponents());
-		ItemStackUtils.setCustomModelData(item, customModelData);
+	private static ItemStack icon(Material material, Message displayName, Message lore, int customModelData) {
+		ItemStack item = ItemStackUtils.createItemStack(material, displayName, lore.asComponents());
+		return ItemStackUtils.setCustomModelData(item, customModelData);
 	}
 
-	Icon(String headUrl, Message name, Message lore) {
-		this.item = ItemStackUtils.createCustomHead(headUrl, name, lore);
+	private static ItemStack icon(String headUrl, Message name, Message lore) {
+		return ItemStackUtils.createCustomHead(headUrl, name, lore);
 	}
 
-	Icon(String headUrl, Message name, Message lore, int customModelData) {
-		this.item = ItemStackUtils.createCustomHead(headUrl, name, lore);
-		ItemStackUtils.setCustomModelData(item, customModelData);
+	private static ItemStack icon(String headUrl, Message name, Message lore, int customModelData) {
+		ItemStack item = ItemStackUtils.createCustomHead(headUrl, name, lore);
+		return ItemStackUtils.setCustomModelData(item, customModelData);
 	}
-
-	public ItemStack create() {
-		return item.clone();
-	}
-
 }

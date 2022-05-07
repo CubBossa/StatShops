@@ -44,8 +44,8 @@ public class MainMenu {
 
     public static MenuPreset<?> bottomRow(int row) {
         return buttonHandler -> {
-            IntStream.range(row * 9, row * 9 + 9).forEach(v -> buttonHandler.addItem(v, Icon.EMPTY_DARK.create()));
-            buttonHandler.addItem(row * 9 + 5, Icon.EMPTY_DARK_RP.create());
+            IntStream.range(row * 9, row * 9 + 9).forEach(v -> buttonHandler.addItem(v, Icon.EMPTY_DARK));
+            buttonHandler.addItem(row * 9 + 5, Icon.EMPTY_DARK_RP);
         };
     }
 
@@ -58,10 +58,10 @@ public class MainMenu {
     public static void openBaseMenu(Player player) {
 
         RectInventoryMenu menu = new RectInventoryMenu(Message.GUI_MAIN_TITLE, 3);
-        menu.addPreset(MenuPresets.fill(Icon.EMPTY_LIGHT_RP.create()));
+        menu.addPreset(MenuPresets.fill(Icon.EMPTY_LIGHT_RP.get()));
 
         // Main menu background texture
-        ItemStack glass_rp = Icon.EMPTY_LIGHT.create();
+        ItemStack glass_rp = Icon.EMPTY_LIGHT.get().clone();
         ItemStackUtils.setCustomModelData(glass_rp, 7122001);
         menu.setItem(9, glass_rp);
 
@@ -85,7 +85,7 @@ public class MainMenu {
                     return;
                 }
                 Customer.wrap(player).sendMessage(Message.GENERAL_LANGUAGE_RELOAD_ERROR);
-                menu.setItem(14, Icon.ERROR.create());
+                menu.setItem(14, Icon.ERROR);
             });
         });
         menu.setClickHandler(14, Action.LEFT, clickContext -> {

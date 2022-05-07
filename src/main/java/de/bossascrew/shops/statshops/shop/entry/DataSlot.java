@@ -4,11 +4,13 @@ import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
+import de.bossascrew.shops.statshops.menu.ListEditorMenu;
 import de.bossascrew.shops.statshops.menu.MainMenu;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.cubbossa.menuframework.GUIHandler;
 import de.cubbossa.menuframework.inventory.Action;
 import de.cubbossa.menuframework.inventory.Button;
+import de.cubbossa.menuframework.inventory.ListMenuSupplier;
 import de.cubbossa.menuframework.inventory.TopMenu;
 import de.cubbossa.menuframework.inventory.context.ClickContext;
 import de.cubbossa.menuframework.inventory.context.ContextConsumer;
@@ -28,10 +30,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -315,21 +314,27 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> {
 				if(c.getMenu() instanceof TopMenu topMenu) {
 					topMenu.openSubMenu(c.getPlayer(), () -> {
+
 						int shops = ShopHandler.getInstance().getShops().size();
-						ListMenu menu = new ListMenu(Message.GUI_SHOPS_TITLE, Integer.max(3, Integer.min(shops % 9, 6)));
-						for (Shop shop : ShopHandler.getInstance().getShops()) {
-							menu.addListEntry(Button.builder()
-									.withItemStack(() -> Objects.equals(shop.getUUID(), getData()) ?
-											ItemStackUtils.setGlow(ShopHandler.getInstance().getDisplayItem(shop)) : ShopHandler.getInstance().getDisplayItem(shop))
-									.withClickHandler(Action.LEFT, cl -> {
-										setData(shop.getUUID());
-										setDisplayItem(ShopHandler.getInstance().getDisplayItem(shop).clone());
-										menu.refresh(menu.getListSlots());
-									}));
-						}
+						ListEditorMenu<Shop> menu = new ListEditorMenu<>(Message.GUI_SHOPS_TITLE, Integer.max(3, Integer.min(shops / 9, 6)), new ListMenuSupplier<Shop>() {
+
+							public Collection<Shop> getElements() {
+								return ShopHandler.getInstance().getElements();
+							}
+
+							public ItemStack getDisplayItem(Shop shop) {
+								return Objects.equals(shop.getUUID(), getData()) ?
+										ItemStackUtils.setGlow(ShopHandler.getInstance().getDisplayItem(shop)) : ShopHandler.getInstance().getDisplayItem(shop);
+							}
+						});
+						menu.setClickHandler(Action.LEFT, cl -> {
+							setData(cl.getTarget().getUUID());
+							setDisplayItem(ShopHandler.getInstance().getDisplayItem(cl.getTarget()).clone());
+						});
 						return menu;
 					});
 				} else {
+
 					GUIHandler.getInstance().getLogger().log(Level.SEVERE, "TopMenu required for DataSlot click handler.");
 				}
 			});

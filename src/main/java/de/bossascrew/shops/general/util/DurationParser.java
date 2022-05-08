@@ -58,6 +58,14 @@ public class DurationParser {
 		return result.toString();
 	}
 
+	public String regex() {
+		List<String> segments = new ArrayList<>();
+		for (DurationUnit unit : units) {
+			segments.add("([0-9]+(\\Q" + unit.singular.strip() + "\\E|\\Q" + unit.plural.strip() + "\\E))?");
+		}
+		return "^" + String.join("\s*", segments) + "$";
+	}
+
 	public Duration parse(String input) {
 		input = input.toLowerCase().replace(" ", "");
 		Duration duration = Duration.ZERO;

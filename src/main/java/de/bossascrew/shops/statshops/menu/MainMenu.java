@@ -42,6 +42,7 @@ import java.util.stream.IntStream;
 
 public class MainMenu {
 
+
     public static MenuPreset<?> bottomRow(int row) {
         return buttonHandler -> {
             IntStream.range(row * 9, row * 9 + 9).forEach(v -> buttonHandler.addItem(v, Icon.EMPTY_DARK));
@@ -50,8 +51,20 @@ public class MainMenu {
     }
 
     public static AnvilMenu newAnvilMenu(ComponentLike title, String suggestion) {
+        return newAnvilMenu(title, suggestion, null);
+    }
+
+    public static <T> AnvilMenu newAnvilMenu(ComponentLike title, String suggestion, AnvilInputValidator<T> validator) {
         AnvilMenu menu = new AnvilMenu(title, suggestion);
         menu.addPreset(MenuPresets.back(1, Action.LEFT));
+        menu.setClickHandler(0, AnvilMenu.WRITE, s -> {
+            if (validator != null && !validator.getInputValidator().test(s.getTarget())) {
+                menu.setItem(2, ItemStackUtils.createErrorItem(Message.GENERAL_GUI_WARNING_NAME.asComponent(), validator.getErrorMessage().asComponents(TagResolver.resolver("format", Tag.inserting(validator.getRequiredFormat())))));
+            } else {
+                menu.setItem(2, Icon.ACCEPT_RP);
+            }
+            menu.refresh(2);
+        });
         return menu;
     }
 
@@ -169,9 +182,13 @@ public class MainMenu {
                         Message.GUI_SHOP_SET_PERMISSION_NAME, Message.GUI_SHOP_SET_PERMISSION_LORE.asComponents(
                                 TagResolver.resolver("permission", Tag.inserting(Component.text(shop.getPermission() == null ? "X" : shop.getPermission()))))),
                 Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), () -> {
-                    AnvilMenu m = newAnvilMenu(Message.GUI_SHOP_SET_PERMISSION_TITLE, "shops.shop." + shop.getNamePlain().toLowerCase() + ".");
+                    AnvilMenu m = newAnvilMenu(Message.GUI_SHOP_SET_PERMISSION_TITLE, "shops.shop." + shop.getNamePlain().toLowerCase() + ".", AnvilInputValidator.VALIDATE_PERMISSION);
                     m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-                        shop.setPermission(s.getTarget());
+                        if (!AnvilInputValidator.VALIDATE_PERMISSION.getInputValidator().test(s.getTarget())) {
+                            c.getPlayer().playSound(c.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+                            return;
+                        }
+                        shop.setPermission(s.getTarget().trim());
                         c.getMenu().refresh(c.getSlot());
                         m.openPreviousMenu(s.getPlayer());
                     });
@@ -320,7 +337,7 @@ public class MainMenu {
                 Message.GUI_SHOP_DISCOUNTS_TITLE, 3, Message.GUI_SHOP_DISCOUNTS_INFO_NAME, Message.GUI_SHOP_DISCOUNTS_INFO_LORE);
     }
 
-    public static TopMenu newDefaultTemplateMenu(TemplatableShop shop) {
+    public static TopMenu newDefaultTemplateMenu(TemplatableShop shop) { //TODO refresh icon
         ListMenu menu = new ListMenu(Message.GUI_SHOP_TEMPLATE_TITLE, 3);
 
         menu.addPreset(bottomRow(2));
@@ -385,8 +402,14 @@ public class MainMenu {
                         Tag.inserting(Component.text(limit.getPermission() == null ? "X" : limit.getPermission())))
                 )), Action.LEFT, c -> {
 
-            AnvilMenu m = newAnvilMenu(Message.GUI_LIMIT_SET_PERMISSION_TITLE, "shops.limit." + limit.getNamePlain().toLowerCase() + ".");
-            m.setOutputClickHandler(AnvilMenu.CONFIRM, clickContext -> limit.setPermission(clickContext.getTarget()));
+            AnvilMenu m = newAnvilMenu(Message.GUI_LIMIT_SET_PERMISSION_TITLE, "shops.limit." + limit.getNamePlain().toLowerCase() + ".", AnvilInputValidator.VALIDATE_PERMISSION);
+            m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
+                if (!AnvilInputValidator.VALIDATE_PERMISSION.getInputValidator().test(s.getTarget())) {
+                    s.getPlayer().playSound(s.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+                    return;
+                }
+                limit.setPermission(s.getTarget().trim());
+            });
             menu.openSubMenu(c.getPlayer(), m);
         });
         //Open Tags menu
@@ -400,14 +423,14 @@ public class MainMenu {
                 Message.GUI_LIMIT_SET_DURATION_LORE.asComponents(TagResolver.resolver("current", Tag.inserting(Component.text(TextUtils.formatDuration(limit.getRecover()))))));
         menu.setItemAndClickHandler(5, durationStack.get(), Action.LEFT, clickContext -> {
             menu.openSubMenu(clickContext.getPlayer(), () -> {
-                AnvilMenu m = newAnvilMenu(Message.GUI_LIMIT_SET_DURATION_TITLE, TextUtils.DURATION_FORMAT);
+                AnvilMenu m = newAnvilMenu(Message.GUI_LIMIT_SET_DURATION_TITLE, TextUtils.DURATION_FORMAT, AnvilInputValidator.VALIDATE_DURATION);
                 m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
                     Player player = s.getPlayer();
-                    Duration duration = TextUtils.parseDuration(s.getTarget());
-                    if (duration == null) {
+                    if (!AnvilInputValidator.VALIDATE_DURATION.getInputValidator().test(s.getTarget())) {
                         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, .5f, 1f);
                         return;
                     }
+                    Duration duration = TextUtils.parseDuration(s.getTarget().trim());
                     limit.setRecover(duration);
                     menu.setItem(5, durationStack.get());
                     menu.refresh(5);
@@ -422,17 +445,17 @@ public class MainMenu {
 
         menu.setItemAndClickHandler(6, limitStack.get(), Action.LEFT, clickContext -> {
             menu.openSubMenu(clickContext.getPlayer(), () -> {
-                AnvilMenu m = newAnvilMenu(Message.GUI_LIMIT_SET_LIMIT_TITLE, "64 ");
+                AnvilMenu m = newAnvilMenu(Message.GUI_LIMIT_SET_LIMIT_TITLE, "64 ", AnvilInputValidator.VALIDATE_INT);
                 m.setOutputClickHandler(AnvilMenu.CONFIRM, c -> {
                     Player player = c.getPlayer();
-                    try {
-                        limit.setTransactionLimit(Integer.parseInt(c.getTarget()));
-                        menu.setItem(6, limitStack.get());
-                        menu.refresh(6);
-                        menu.openPreviousMenu(c.getPlayer());
-                    } catch (NumberFormatException ignored) {
+                    if (!AnvilInputValidator.VALIDATE_INT.getInputValidator().test(c.getTarget())) {
                         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, .5f, 1f);
+                        return;
                     }
+                    limit.setTransactionLimit(Integer.parseInt(c.getTarget().trim()));
+                    menu.setItem(6, limitStack.get());
+                    menu.refresh(6);
+                    menu.openPreviousMenu(c.getPlayer());
 
                 });
                 return m;
@@ -487,9 +510,13 @@ public class MainMenu {
         menu.setItemAndClickHandler(2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS, Message.GUI_DISCOUNT_SET_PERMISSION_NAME,
                         Message.GUI_DISCOUNT_SET_PERMISSION_LORE.asComponents(TagResolver.resolver("permission", Tag.inserting(Component.text(discount.getPermission() == null ? "X" : discount.getPermission()))))),
                 Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), () -> {
-                    AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE, "shops.discount." + discount.getNamePlain().toLowerCase() + ".");
+                    AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE, "shops.discount." + discount.getNamePlain().toLowerCase() + ".", AnvilInputValidator.VALIDATE_PERMISSION);
                     m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-                        discount.setPermission(s.getTarget());
+                        if (!AnvilInputValidator.VALIDATE_PERMISSION.getInputValidator().test(s.getTarget())) {
+                            s.getPlayer().playSound(s.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+                            return;
+                        }
+                        discount.setPermission(s.getTarget().trim());
                         c.getMenu().refresh(c.getSlot());
                         m.openPreviousMenu(s.getPlayer());
                     });
@@ -509,9 +536,13 @@ public class MainMenu {
         TagResolver dur = TagResolver.resolver("duration", Tag.inserting(Component.text(TextUtils.formatDuration(discount.getDuration()))));
         menu.setItemAndClickHandler(6, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DURATIONS, Message.GUI_DISCOUNT_SET_DURATION_NAME.asComponent(dur),
                 Message.GUI_DISCOUNT_SET_DURATION_LORE.asComponents(dur)), Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), () -> {
-            AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE, TextUtils.DURATION_FORMAT);
+            AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_PERMISSION_TITLE, TextUtils.DURATION_FORMAT, AnvilInputValidator.VALIDATE_DURATION);
             m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-                discount.setDuration(TextUtils.parseDuration(s.getTarget()));
+                if (!AnvilInputValidator.VALIDATE_DURATION.getInputValidator().test(s.getTarget())) {
+                    s.getPlayer().playSound(s.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+                    return;
+                }
+                discount.setDuration(TextUtils.parseDuration(s.getTarget().trim()));
                 c.getMenu().refresh(c.getSlot());
                 m.openPreviousMenu(s.getPlayer());
             });
@@ -521,15 +552,13 @@ public class MainMenu {
         TagResolver percent = TagResolver.resolver("percent", Tag.inserting(discount.getFormattedPercent()));
         menu.setItemAndClickHandler(7, ItemStackUtils.createItemStack(Material.EMERALD, Message.GUI_DISCOUNT_SET_PERCENT_NAME.asComponent(percent),
                 Message.GUI_DISCOUNT_SET_PERCENT_LORE.asComponents(percent)), Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), () -> {
-            AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_PERCENT_TITLE, "5%");
+            AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_PERCENT_TITLE, "5%", AnvilInputValidator.VALIDATE_PERCENT);
             m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-                double d;
-                try {
-                    d = Double.parseDouble(s.getTarget().replace("%", ""));
-                } catch (NumberFormatException ignored) {
+                if (!AnvilInputValidator.VALIDATE_PERCENT.getInputValidator().test(s.getTarget())) {
                     s.getPlayer().playSound(s.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
                     return;
                 }
+                double d = Double.parseDouble(s.getTarget().replace("%", "").trim());
                 discount.setPercent(d);
                 c.getMenu().refresh(c.getSlot());
                 m.openPreviousMenu(s.getPlayer());
@@ -556,8 +585,7 @@ public class MainMenu {
         m.setDeleteHandler(Action.RIGHT, c -> discount.removeStartTime(c.getTarget()));
         m.setNewHandlerStringInput(Message.GUI_DISCOUNT_START_NEW_NAME, Message.GUI_DISCOUNT_START_NEW_LORE,
                 Message.GUI_DISCOUNT_START_NEW_TITLE, TextUtils.DATE_TIME_FORMAT,
-                string -> TextUtils.parseLocalDateTime(string) != null,
-                s -> discount.addStartTime(TextUtils.parseLocalDateTime(s.getTarget())));
+                AnvilInputValidator.VALIDATE_DATE_TIME, s -> discount.addStartTime(TextUtils.parseLocalDateTime(s.getTarget())));
         return m;
     }
 
@@ -602,9 +630,12 @@ public class MainMenu {
             }
         });
         menu.setInfoItem(Message.GENERAL_GUI_TAGS_INFO_NAME, Message.GENERAL_GUI_TAGS_INFO_LORE);
-        menu.setNewHandlerStringInput(newTagName, newTagLore, newTagTitle, "tag-me", c -> {
-            taggable.addTag(c.getTarget());
-        });
+        menu.setNewHandlerStringInput(newTagName, newTagLore, newTagTitle, "tag-me", new AnvilInputValidator<>(
+                        Message.ERROR_PARSE_STRING,
+                        Component.text("<unique tag>"),
+                        s -> !taggable.hasTag(s.toLowerCase().trim()),
+                        String::trim),
+                c -> taggable.addTag(c.getTarget()));
         menu.setDeleteHandler(confirmRemove, Action.RIGHT, s -> taggable.removeTag(s.getTarget()));
         return menu;
     }

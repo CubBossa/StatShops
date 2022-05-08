@@ -103,19 +103,23 @@ public class ChestShopEditor extends RectInventoryMenu {
 				.withClickHandler(Action.LEFT, c -> openPreviousMenu(c.getPlayer())));
 
 		bottomMenu.setButton(9, Button.builder()
-				.withItemStack(() -> getCurrentPage() > 0 ? Icon.PREV_PAGE_RP.get() : Icon.PREV_PAGE_OFF_RP.get())
+				.withItemStack(() -> getCurrentPage() > 0 ? Icon.STACK_PREV_PAGE_RP : Icon.STACK_PREV_PAGE_OFF_RP)
 				.withClickHandler(Action.LEFT, c -> {
 					if (getCurrentPage() <= 0) {
 						return;
 					}
+					handleFreeze();
 					setPreviousPage(c.getPlayer());
+					insertFrozenEntries(c.getPlayer());
 					c.getMenu().refresh(c.getSlot());
 					refreshTitle();
 				}));
 		bottomMenu.setButton(10, Button.builder()
 				.withItemStack(Icon.NEXT_PAGE_RP)
 				.withClickHandler(Action.LEFT, c -> {
+					handleFreeze();
 					setNextPage(c.getPlayer());
+					insertFrozenEntries(player.getPlayer());
 					c.getMenu().refresh(c.getSlot() - 1);
 					refreshTitle();
 				}));
@@ -181,9 +185,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 	}
 
 	private void handleUnfreeze() {
-		for (int i = 0; i < getRows() * 9; i++) {
-			removeItem(i);
-		}
+		clearContent();
 		for (ShopEntry entry : shop.getEntries(getCurrentPage())) {
 			// Set uuid tag from entry
 			NBTItem nbtItem = new NBTItem(entry.getDisplayItem().clone());
@@ -205,12 +207,12 @@ public class ChestShopEditor extends RectInventoryMenu {
 		boolean isEmpty = true;
 		boolean ignore = true;
 
+		int currentPage = getCurrentPage();
 		for (int slot : getSlots()) {
-			//code twice :p hew
 
-			int rawSlot = getCurrentPage() * 9 * 6 + slot;
+			int rawSlot = currentPage * 9 * 6 + slot;
 			// Only process not empty stacks
-			ItemStack stack = getItemStack(slot);
+			ItemStack stack = inventory.getItem(slot);
 			if (stack == null || stack.getType() == Material.AIR) {
 				continue;
 			}
@@ -224,9 +226,9 @@ public class ChestShopEditor extends RectInventoryMenu {
 
 		for (int slot : getSlots()) {
 
-			int rawSlot = getCurrentPage() * 9 * 6 + slot;
+			int rawSlot = currentPage * 9 * 6 + slot;
 			// Only process not empty stacks
-			ItemStack stack = getItemStack(slot);
+			ItemStack stack = inventory.getItem(slot);
 			if (stack == null || stack.getType() == Material.AIR) {
 				continue;
 			}
@@ -276,14 +278,12 @@ public class ChestShopEditor extends RectInventoryMenu {
 	}
 
 	private void insertFrozenEntries(Player player) {
-		for (int i = 0; i < getRows() * 9; i++) {
-			removeItem(i);
-		}
+		clearContent();
 		for (ShopEntry entry : shop.getEntries(getCurrentPage())) {
 			setItem(entry.getSlot() % (9 * 6), ItemStackUtils.createEntryItemStack(entry, Customer.wrap(player)));
 		}
 		insertTemplateOverlay();
-		refresh(IntStream.range(0, getRows() * 9).toArray());
+		refresh(getSlots());
 	}
 
 	private void insertTemplateOverlay() {
@@ -333,7 +333,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 			menu.setItem(entry.getSlot(), entry.getDisplayItem());
 		}
 		bottomMenu.setButton(9 + 2, Button.builder()
-				.withItemStack(Icon.ACCEPT_RP) //TODO conflict with underlying menu
+				.withItemStack(Icon.ACCEPT_RP)
 				.withClickHandler(Action.LEFT, clickContext -> {
 					shop.applyTemplate(template, getCurrentPage());
 					open(clickContext.getPlayer());

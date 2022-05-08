@@ -27,6 +27,7 @@ public class Icon {
 	public static final ItemStack STACK_NEXT_PAGE_OFF_RP = icon(ItemStackUtils.HEAD_URL_ARROW_NEXT_OFF, Message.GENERAL_GUI_NEXT_PAGE_NAME, Message.GENERAL_GUI_NEXT_PAGE_LORE, 7122000);
 	public static final ItemStack STACK_ACCEPT_RP = icon(ItemStackUtils.HEAD_URL_LETTER_CHECK_MARK, Message.GENERAL_GUI_ACCEPT_NAME, Message.GENERAL_GUI_ACCEPT_LORE, 7122000);
 	public static final ItemStack STACK_DECLINE_RP = icon(ItemStackUtils.HEAD_URL_LETTER_X, Message.GENERAL_GUI_DECLINE_NAME, Message.GENERAL_GUI_DECLINE_LORE, 7122000);
+	public static final ItemStack STACK_WARNING_RP = icon(ItemStackUtils.HEAD_URL_LETTER_EXCLAMATION, Message.GENERAL_GUI_WARNING_NAME, Message.GENERAL_GUI_WARNING_LORE, 7122000);
 	public static final ItemStack STACK_BACK = icon(Material.SPRUCE_DOOR, Message.GENERAL_GUI_BACK_NAME, Message.GENERAL_GUI_BACK_LORE);
 	public static final ItemStack STACK_ERROR = icon(Material.BARRIER, Message.GENERAL_GUI_ERROR_NAME, Message.GENERAL_GUI_ERROR_LORE);
 
@@ -46,6 +47,7 @@ public class Icon {
 	public static final Supplier<ItemStack> NEXT_PAGE_OFF_RP = () -> STACK_NEXT_PAGE_OFF_RP;
 	public static final Supplier<ItemStack> ACCEPT_RP = () -> STACK_ACCEPT_RP;
 	public static final Supplier<ItemStack> DECLINE_RP = () -> STACK_DECLINE_RP;
+	public static final Supplier<ItemStack> WARNING_RP = () -> STACK_WARNING_RP;
 	public static final Supplier<ItemStack> BACK = () -> STACK_BACK;
 	public static final Supplier<ItemStack> ERROR = () -> STACK_ERROR;
 

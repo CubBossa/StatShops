@@ -39,6 +39,7 @@ public class TextUtils {
 
 	private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.builder().build();
 
+	public static final String DURATION_FORMAT_REGEX = new DurationParser(true).regex();
 	public static final String DURATION_FORMAT = new DurationParser(true).format(0);
 
 	public static final String DATE_TIME_FORMAT_SHORT = "dd.MM.yy HH:mm";
@@ -92,16 +93,16 @@ public class TextUtils {
 	}
 
 	public @Nullable LocalDateTime parseLocalDateTime(String string) {
+		LocalDateTime result = null;
 		try {
-			return LocalDateTime.parse(string, DATE_TIME_FORMATTER_SHORT);
+			result = LocalDateTime.parse(string, DATE_TIME_FORMATTER_SHORT);
 		} catch (DateTimeParseException e) {
 			try {
-				return LocalDateTime.parse(string, DATE_TIME_FORMATTER);
-			} catch (DateTimeParseException eInner) {
-				eInner.printStackTrace();
-				return null;
+				result = LocalDateTime.parse(string, DATE_TIME_FORMATTER);
+			} catch (DateTimeParseException ignored) {
 			}
 		}
+		return result;
 	}
 
 	/**

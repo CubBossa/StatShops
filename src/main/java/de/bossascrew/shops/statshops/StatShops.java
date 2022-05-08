@@ -15,6 +15,7 @@ import de.bossascrew.shops.statshops.hook.CitizensHook;
 import de.bossascrew.shops.statshops.hook.VaultExtension;
 import de.bossascrew.shops.statshops.listener.PlayerListener;
 import de.cubbossa.menuframework.GUIHandler;
+import de.cubbossa.menuframework.protocol.ProtocolLibListener;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.audience.Audience;
@@ -109,6 +110,8 @@ public class StatShops extends JavaPlugin {
 
 	private Audience consoleAudience;
 
+	private ProtocolLibListener protocolLibListener;
+
 	public StatShops() {
 		instance = this;
 	}
@@ -183,6 +186,7 @@ public class StatShops extends JavaPlugin {
 		this.subModulesHandler.registerDefaults();
 
 		new GUIHandler(this).enable();
+		protocolLibListener = new ProtocolLibListener(this);
 
 		// Setup ShopHandler and load shops and entries
 		this.shopHandler = new ShopHandler();
@@ -245,6 +249,7 @@ public class StatShops extends JavaPlugin {
 	@Override
 	public void onDisable() {
 
+
 		for (Shop shop : ShopHandler.getInstance().getShops()) {
 			database.saveShop(shop);
 			if (shopsConfig.isCleanupUnusedEntries()) {
@@ -267,6 +272,7 @@ public class StatShops extends JavaPlugin {
 		}
 
 		GUIHandler.getInstance().disable();
+		protocolLibListener.removePacketListener();
 	}
 
 	public boolean isCitizensInstalled() {

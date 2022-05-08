@@ -119,13 +119,13 @@ public class ListEditorMenu<T> extends ListMenu {
         setNewHandlerStringInput(name, lore, title, suggestion, null, clickHandler);
     }
 
-    public void setNewHandlerStringInput(Message name, Message lore, Message title, String suggestion, Predicate<String> validator, ContextConsumer<TargetContext<String>> clickHandler) {
+    public void setNewHandlerStringInput(Message name, Message lore, Message title, String suggestion, AnvilInputValidator<T> validator, ContextConsumer<TargetContext<String>> clickHandler) {
         addPreset(presetApplier -> {
             presetApplier.addItem((getRows() - 1) * 9 + 7, ItemStackUtils.createItemStack(Material.EMERALD, name, lore));
             presetApplier.addClickHandler((getRows() - 1) * 9 + 7, Action.LEFT, c -> openSubMenu(c.getPlayer(), () -> {
-                AnvilMenu m = MainMenu.newAnvilMenu(title, suggestion);
+                AnvilMenu m = MainMenu.newAnvilMenu(title, suggestion, validator);
                 m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-                    if (validator != null && !validator.test(s.getTarget())) {
+                    if (validator != null && !validator.getInputValidator().test(s.getTarget())) {
                         s.getPlayer().playSound(s.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
                         return;
                     }

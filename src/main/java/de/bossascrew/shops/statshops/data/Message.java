@@ -40,6 +40,8 @@ public class Message implements ComponentLike {
     public static final Message GENERAL_GUI_ACCEPT_LORE = new Message("general.gui.accept.lore");
     public static final Message GENERAL_GUI_DECLINE_NAME = new Message("general.gui.decline.name");
     public static final Message GENERAL_GUI_DECLINE_LORE = new Message("general.gui.decline.lore");
+    public static final Message GENERAL_GUI_WARNING_NAME = new Message("general.gui.warning.name");
+    public static final Message GENERAL_GUI_WARNING_LORE = new Message("general.gui.warning.lore");
     public static final Message GENERAL_GUI_LIST_INFO_NAME = new Message("general.gui.list_info.name");
     public static final Message GENERAL_GUI_LIST_INFO_LORE = new Message("general.gui.list_info.lore");
     public static final Message GENERAL_WEBINTERFACE_LOADING = new Message("general.webinterface.loading");
@@ -48,6 +50,13 @@ public class Message implements ComponentLike {
     public static final Message GENERAL_EDITABLE_CURRENTLY_EDITED = new Message("general.editable_edited");
     public static final Message GENERAL_CHEST_PARSED = new Message("general.chest_content_parsed");
     public static final Message GENERAL_NO_CHEST = new Message("general.no_chest_found");
+
+    public static final Message ERROR_PARSE_STRING = new Message("error.parse.string");
+    public static final Message ERROR_PARSE_INTEGER = new Message("error.parse.integer");
+    public static final Message ERROR_PARSE_DOUBLE = new Message("error.parse.double");
+    public static final Message ERROR_PARSE_PERCENT = new Message("error.parse.percent");
+    public static final Message ERROR_PARSE_DATE = new Message("error.parse.date");
+    public static final Message ERROR_PARSE_DURATION = new Message("error.parse.duration");
 
     public static final Message DATA_PRESET_EXPORT_SUCCESS = new Message("general.data_presets.export_success");
     public static final Message DATA_PRESET_EXPORT_CONFIRM = new Message("general.data_presets.export_confirmation");

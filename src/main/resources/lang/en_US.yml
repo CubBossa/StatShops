@@ -57,9 +57,22 @@ general:
     decline:
       name: "<red>Decline"
       lore: ""
+    warning:
+      name: "<#F97C1B>Invalid"
+      lore: ""
     list_info:
       name: "<gold>Info"
       lore: "<gray>» <yellow>left-click: <gray>edit element\n<gray>» <yellow>middle-click: <gray>duplicate element\n<gray>» <yellow>right-click: <gray>delete element"
+
+error:
+  # <format>
+  parse:
+    date: "<gray>A date with the following\n<gray>format is required:\n<aqua><format>"
+    string: "<gray>A string of the following\n<gray>type is required:\n<aqua><format>"
+    integer: "<gray>An integer number is required."
+    double: "<gray>A float number is required."
+    percent: "<gray>A percentage is required:\n<aqua><format>"
+    duration: "<gray>A duration with the following\n<gray>format is required:\n<aqua><format>"
 
 citizens:
   assign:

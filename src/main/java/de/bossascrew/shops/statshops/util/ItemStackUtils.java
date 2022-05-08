@@ -3,7 +3,6 @@ package de.bossascrew.shops.statshops.util;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import de.bossascrew.shops.statshops.menu.Icon;
 import de.bossascrew.shops.general.util.DurationParser;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.general.util.TextUtils;
@@ -17,6 +16,7 @@ import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.handler.TemplateHandler;
+import de.bossascrew.shops.statshops.menu.Icon;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.Limit;
@@ -64,6 +64,7 @@ public class ItemStackUtils {
 
 	public static String HEAD_URL_LETTER_CHECK_MARK = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTkyZTMxZmZiNTljOTBhYjA4ZmM5ZGMxZmUyNjgwMjAzNWEzYTQ3YzQyZmVlNjM0MjNiY2RiNDI2MmVjYjliNiJ9fX0=";
 	public static String HEAD_URL_LETTER_X = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==";
+	public static String HEAD_URL_LETTER_EXCLAMATION = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjYyNDVmYjM5N2I3YzJiM2EzNmUyYTI0ZDQ5NmJlMjU4ZjFjZGY0MTA1NGY5OWU5YzY1ZTFhNjczYWRkN2I0In19fQ==";
 
 	public static Material MATERIAL_SHOP = Material.VILLAGER_SPAWN_EGG;
 	public static Material MATERIAL_LIMIT = Material.HOPPER;
@@ -373,6 +374,11 @@ public class ItemStackUtils {
 		return itemStack;
 	}
 
+	public ItemStack createErrorItem(ComponentLike errorName, List<? extends ComponentLike> errorDescription) {
+		ItemStack stack = Icon.STACK_WARNING_RP.clone();
+		return setNameAndLore(stack, errorName, errorDescription);
+	}
+
 	public ItemStack createInfoItem(Message name, Message lore) {
 		ItemStack stack = new ItemStack(Material.PAPER, 1);
 		stack = setNameAndLore(stack, name, lore);
@@ -384,19 +390,27 @@ public class ItemStackUtils {
 		if (shop == null) {
 			return Icon.ERROR.get();
 		}
-		return createItemStack(shop.getDisplayItem() == null ? new ItemStack(MATERIAL_SHOP) : shop.getDisplayItem(),
+		ItemStack stack = createItemStack(shop.getDisplayItem() == null ? new ItemStack(MATERIAL_SHOP) : shop.getDisplayItem(),
 				Message.GUI_SHOPS_NAME.asComponent(
 						TagResolver.resolver("name", Tag.inserting(shop.getName()))),
 				Message.GUI_SHOPS_LORE.asComponents(
 						TagResolver.resolver("permission", Tag.inserting(Component.text(shop.getPermission() == null ? "X" : shop.getPermission()))),
 						TagResolver.resolver("name", Tag.inserting(shop.getName()))));
+		return setFlags(stack);
+	}
+
+	public ItemStack setFlags(ItemStack stack) {
+		ItemMeta meta = stack.getItemMeta();
+		meta.addItemFlags(ItemFlag.values());
+		stack.setItemMeta(meta);
+		return stack;
 	}
 
 	public ItemStack createDiscountItemStack(Discount discount) {
 		if (discount == null) {
 			return Icon.ERROR.get();
 		}
-		return createItemStack(MATERIAL_DISCOUNT,
+		ItemStack stack = createItemStack(MATERIAL_DISCOUNT,
 				Message.GUI_DISCOUNTS_ENTRY_NAME.asComponent(
 						TagResolver.resolver("name", Tag.inserting(discount.getName()))),
 				Message.GUI_DISCOUNTS_ENTRY_LORE.asComponents(
@@ -407,13 +421,14 @@ public class ItemStackUtils {
 						TagResolver.resolver("remaining", Tag.inserting(Component.text(DURATION_PARSER.format(discount.getRemaining())))),
 						TagResolver.resolver("start-date", Tag.inserting(Component.text(TextUtils.formatLocalDateTime(discount.getNextStart())))),
 						TagResolver.resolver("duration", Tag.inserting(Component.text(DURATION_PARSER.format(discount.getDuration()))))));
+		return setFlags(stack);
 	}
 
 	public ItemStack createLimitsItemStack(Limit limit) {
 		if (limit == null) {
 			return Icon.ERROR.get();
 		}
-		return createItemStack(MATERIAL_LIMIT,
+		ItemStack stack = createItemStack(MATERIAL_LIMIT,
 				Message.GUI_LIMITS_ENTRY_NAME.asComponent(
 						TagResolver.resolver("name", Tag.inserting(limit.getName()))),
 				Message.GUI_LIMITS_ENTRY_LORE.asComponents(
@@ -421,19 +436,21 @@ public class ItemStackUtils {
 						TagResolver.resolver("uuid", Tag.inserting(Component.text(limit.getUuid().toString()))),
 						TagResolver.resolver("global", Tag.inserting(Component.text(limit.isGlobal()))),
 						TagResolver.resolver("recover", Tag.inserting(Component.text(DURATION_PARSER.format(limit.getRecover()))))));
+		return setFlags(stack);
 	}
 
 	public ItemStack createTemplatesItemStack(EntryTemplate template) {
 		if (template == null) {
 			return Icon.ERROR.get();
 		}
-		return createItemStack(TemplateHandler.DISCS[template.getDiscIndex()],
+		ItemStack stack = createItemStack(TemplateHandler.DISCS[template.getDiscIndex()],
 				Message.GUI_TEMPLATES_ENTRY_NAME.asComponent(
 						TagResolver.resolver("template", Tag.inserting(template.getName()))),
 				Message.GUI_TEMPLATES_ENTRY_LORE.asComponents(
 						TagResolver.resolver("template", Tag.inserting(template.getName())),
 						TagResolver.resolver("uuid", Tag.inserting(Component.text(template.getUuid().toString()))),
 						TagResolver.resolver("size", Tag.inserting(Component.text(template.size())))));
+		return setFlags(stack);
 	}
 
 	public ItemStack setNameAndLore(ItemStack itemStack, ComponentLike name, List<? extends ComponentLike> lore) {

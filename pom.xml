@@ -171,7 +171,13 @@
         <dependency>
             <groupId>de.cubbossa</groupId>
             <artifactId>MenuFramework</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.cubbossa</groupId>
+            <artifactId>MenuFramework-Protocol-Extension</artifactId>
+            <version>1.0.2</version>
         </dependency>
 
         <dependency>
@@ -227,6 +233,7 @@
                             <include>org.bstats</include>
                             <include>net.wesjd:anvilgui</include>
                             <include>de.cubbossa:MenuFramework</include>
+                            <include>de.cubbossa:MenuFramework-Protocol-Extension</include>
                             <include>de.tr7zw:item-nbt-api</include>
                             <include>net.objecthunter:exp4j</include>
                         </includes>

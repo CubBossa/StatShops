@@ -233,7 +233,6 @@
                             <include>org.bstats</include>
                             <include>net.wesjd:anvilgui</include>
                             <include>de.cubbossa:MenuFramework</include>
-                            <include>de.cubbossa:MenuFramework-Protocol-Extension</include>
                             <include>de.tr7zw:item-nbt-api</include>
                             <include>net.objecthunter:exp4j</include>
                         </includes>

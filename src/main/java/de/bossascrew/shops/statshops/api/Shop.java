@@ -82,6 +82,16 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, Data
     boolean moveEntry(ShopEntry entry, int slot);
 
     /**
+     * Swaps two shop entries and saves them to database with their new slots.
+     * Entries at the given slots might be null, the entry that is not null will then simply be moved.s
+     *
+     * @param slot  The slot of the first entry.
+     * @param other The slot of the second entry.
+     * @return true if other was not null.
+     */
+    boolean swapEntries(int slot, int other);
+
+    /**
      * Removes and deletes a {@link ShopEntry} from this shop.
      *
      * @param slot the slot to get the ShopEntry from.
@@ -149,6 +159,12 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, Data
      * @return true if the shop was opened successfully, false if errors occurred
      */
     boolean open(Customer customer);
+
+    /**
+     * @param customer The customer to open this menu for.
+     * @return An instance of the shop menu.
+     */
+    Menu newShopMenu(Customer customer);
 
     /**
      * Closes the shop menu for a specified customer. This will simulate the closing of the inventory by the player.

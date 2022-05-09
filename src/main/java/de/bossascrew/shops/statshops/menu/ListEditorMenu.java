@@ -29,7 +29,10 @@ import java.util.stream.IntStream;
 
 public class ListEditorMenu<T> extends ListMenu {
 
-    private final ListMenuSupplier<T> supplier;
+    @Getter
+    @Setter
+    private ListMenuSupplier<T> supplier;
+
     private final Map<Action<?>, ContextConsumer<TargetContext<T>>> clickHandler;
     @Getter
     @Setter

@@ -20,6 +20,7 @@ import de.bossascrew.shops.web.WebSessionUtils;
 import de.bossascrew.shops.web.pasting.Paste;
 import de.cubbossa.menuframework.inventory.*;
 import de.cubbossa.menuframework.inventory.implementations.AnvilMenu;
+import de.cubbossa.menuframework.inventory.implementations.BottomInventoryMenu;
 import de.cubbossa.menuframework.inventory.implementations.ListMenu;
 import de.cubbossa.menuframework.inventory.implementations.RectInventoryMenu;
 import net.kyori.adventure.text.Component;
@@ -234,7 +235,13 @@ public class MainMenu {
 
         menu.setItemAndClickHandler(9 + 1, ItemStackUtils.createItemStack(Material.SMITHING_TABLE,
                         Message.GUI_SHOP_SET_CONTENT_NAME, Message.GUI_SHOP_SET_CONTENT_LORE),
-                Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), shop.newEditorMenu()));
+                Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), () -> {
+                    TopMenu m = shop.newEditorMenu();
+                    m.setOpenHandler(x);
+                    BottomMenu bottom = new BottomInventoryMenu(InventoryRow.FIRST_ROW);
+                    bottom.addPreset(MenuPresets.fill(Icon.EMPTY_DARK.create()));
+                    m.setCloseHandler(x);
+                }));
 
         menu.setItemAndClickHandler(9 + 2, ItemStackUtils.createItemStack(Material.CHEST,
                 Message.GUI_SHOP_SET_PREVIEW_NAME, Message.GUI_SHOP_SET_PREVIEW_LORE), Action.LEFT, c -> {

@@ -3,6 +3,7 @@ package de.bossascrew.shops.statshops.shop;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.menu.VillagerShopEditor;
 import de.bossascrew.shops.statshops.menu.VillagerShopMenu;
+import de.cubbossa.menuframework.inventory.Menu;
 import de.cubbossa.menuframework.inventory.TopMenu;
 import de.cubbossa.menuframework.inventory.implementations.VillagerMenu;
 import lombok.Getter;
@@ -23,9 +24,12 @@ public class VillagerShop extends BaseShop {
     }
 
     @Override
-    public boolean open(Customer customer) {
-        new VillagerShopMenu(this, customer).open(customer.getPlayer());
-        return true;
+    public Menu newShopMenu(Customer customer) {
+        return new VillagerShopMenu(this, customer);
+    }
+
+    public TopMenu newEditorMenu() {
+        return new VillagerShopEditor(this);
     }
 
     public boolean close(Customer customer) {
@@ -37,9 +41,5 @@ public class VillagerShop extends BaseShop {
             menuMap.remove(customer);
         }
         return activeCustomers.remove(customer);
-    }
-
-    public TopMenu newEditorMenu() {
-        return new VillagerShopEditor(this);
     }
 }

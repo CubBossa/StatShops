@@ -247,6 +247,24 @@ manager:
       unused_items: "<prefix><gray>This shop contains <amount> unused shop entries. Use <white><italic><click:suggest_command:/statshops cleanup >/shops cleanup</click></italic></white> to remove them."
       # Valid placeholders: <amount>
       removed_unused: "<prefix><gray>Removed <white><amount> </white>unused shop entries from <white><shop></white>."
+
+    villager_shop_editor:
+      info:
+        name: "<gold>Info"
+        lore: "<gray>Villager Shops are setup like a\n<gray>stack. The trade offer index = row * 9 + column."
+      new:
+        name: "<green>New"
+        lore: "<gray>Take an itemstack from your\n<gray>inventory and click this button\n<gray>to add an offer to the stack."
+      edit:
+        name: "<white>Edit"
+        lore: "<gray>Edit the currently selected entry."
+      left:
+        name: "<gold>Move Left"
+        lore: "<gray>Move the currently selected entry\n<gray>one offer up in the trader menu."
+      right:
+        name: "<gold>Move Right"
+        lore: "<gray>Move the currently selected entry\n<gray>one offer down in the trader menu."
+
     shop_entry:
       title: "Edit Shop Entry"
 

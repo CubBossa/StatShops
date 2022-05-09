@@ -22,4 +22,3 @@ public class ConfirmMenu extends RectInventoryMenu {
 		setItemAndClickHandler(9 + 6, Icon.DECLINE_RP.create(), Action.LEFT, denyHandler);
 	}
 }
-

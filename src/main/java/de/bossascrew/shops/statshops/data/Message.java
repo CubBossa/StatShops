@@ -166,6 +166,18 @@ public class Message implements ComponentLike {
     public static final Message GUI_SHOP_EDITOR_UNUSED_INFO = new Message("manager.gui.shop_editor.unused_items");
     public static final Message GUI_SHOP_EDITOR_REMOVED_UNUSED = new Message("manager.gui.shop_editor.removed_unused");
 
+    public static final Message GUI_VILLAGER_EDITOR_INFO_NAME = new Message("manager.gui.villager_shop_editor.info.name");
+    public static final Message GUI_VILLAGER_EDITOR_INFO_LORE = new Message("manager.gui.villager_shop_editor.info.lore");
+    public static final Message GUI_VILLAGER_EDITOR_NEW_NAME = new Message("manager.gui.villager_shop_editor.new.name");
+    public static final Message GUI_VILLAGER_EDITOR_NEW_LORE = new Message("manager.gui.villager_shop_editor.new.lore");
+    public static final Message GUI_VILLAGER_EDITOR_EDIT_NAME = new Message("manager.gui.villager_shop_editor.edit.name");
+    public static final Message GUI_VILLAGER_EDITOR_EDIT_LORE = new Message("manager.gui.villager_shop_editor.edit.lore");
+    public static final Message GUI_VILLAGER_EDITOR_LEFT_NAME = new Message("manager.gui.villager_shop_editor.left.name");
+    public static final Message GUI_VILLAGER_EDITOR_LEFT_LORE = new Message("manager.gui.villager_shop_editor.left.lore");
+    public static final Message GUI_VILLAGER_EDITOR_RIGHT_NAME = new Message("manager.gui.villager_shop_editor.right.name");
+    public static final Message GUI_VILLAGER_EDITOR_RIGHT_LORE = new Message("manager.gui.villager_shop_editor.right.lore");
+
+
     public static final Message GUI_LIMITS = new Message("manager.gui.limits.title");
     public static final Message GUI_LIMITS_ALREADY_EDITED = new Message("manager.gui.limits.already_edited");
     public static final Message GUI_LIMITS_DELETE_CONFIRM = new Message("manager.gui.limits.confirm_delete");

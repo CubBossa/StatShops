@@ -3,11 +3,13 @@ package de.bossascrew.shops.statshops.shop;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
+import de.bossascrew.shops.statshops.api.PaginatedShop;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
+import de.cubbossa.menuframework.inventory.Menu;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -72,7 +74,7 @@ public abstract class BaseShop implements Shop {
 	}
 
 	@Override
-	public Map<Integer, ShopEntry> getEntries() {
+	public SortedMap<Integer, ShopEntry> getEntries() {
 		return entryMap;
 	}
 
@@ -144,6 +146,28 @@ public abstract class BaseShop implements Shop {
 	}
 
 	@Override
+	public boolean swapEntries(int slot, int other) {
+		if(slot == other) {
+			return true;
+		}
+		ShopEntry a = entryMap.get(slot);
+		ShopEntry b = entryMap.get(other);
+
+		if(a != null) {
+			a.setSlot(other);
+			a.saveToDatabase();
+		}
+		if(b != null) {
+			b.setSlot(slot);
+			b.saveToDatabase();
+		}
+		entryMap.put(other, a);
+		entryMap.put(slot, b);
+
+		return b != null;
+	}
+
+	@Override
 	public boolean deleteEntry(int slot) {
 		return deleteEntry(getEntry(slot));
 	}
@@ -191,6 +215,14 @@ public abstract class BaseShop implements Shop {
 	@Override
 	public List<Customer> getActiveCustomers() {
 		return null;
+	}
+
+	@Override
+	public boolean open(Customer customer) {
+		Menu menu = newEditorMenu();
+		menu.setPage(customer.getPlayer(), this instanceof PaginatedShop ? customer.getPage(this, ((PaginatedShop) this).getDefaultShopPage()) : 0);
+		menu.open(customer.getPlayer());
+		return true;
 	}
 
 	@Override

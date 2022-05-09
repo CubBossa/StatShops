@@ -12,6 +12,8 @@ import de.cubbossa.menuframework.inventory.context.ContextConsumer;
 import de.cubbossa.menuframework.inventory.context.TargetContext;
 import de.cubbossa.menuframework.inventory.implementations.AnvilMenu;
 import de.cubbossa.menuframework.inventory.implementations.ListMenu;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -24,7 +26,9 @@ import java.util.stream.IntStream;
 
 public class ListEditorMenu<T> extends ListMenu {
 
-    private final ListMenuSupplier<T> supplier;
+    @Getter
+    @Setter
+    private ListMenuSupplier<T> supplier;
 
     private final Map<Action<?>, ContextConsumer<TargetContext<T>>> clickHandler;
 

@@ -1,10 +1,12 @@
 package de.bossascrew.shops.statshops.api;
 
+import de.cubbossa.menuframework.inventory.Menu;
+
 /**
  * The menu that will be opened by an according shop. This does not necessarily have to be a GUI.
  * Images on maps, although not easy to set up, could also serve as ShopMenus.
  */
-public interface ShopMenu {
+public interface ShopMenu extends Menu {
 
 	/**
 	 * Updates a {@link ShopEntry} and resets its display item with custom name and lore.

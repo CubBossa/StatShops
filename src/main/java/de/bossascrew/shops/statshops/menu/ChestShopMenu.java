@@ -46,8 +46,6 @@ public class ChestShopMenu extends RectInventoryMenu implements ShopMenu {
 		this.targetCustomer = customer;
 		this.schedulers = new ArrayList<>();
 
-		setCloseHandler(closeContext -> Customer.wrap(closeContext.getPlayer()).setActiveShop(null));
-
 		setupEntries(targetCustomer.getPlayer());
 	}
 
@@ -62,8 +60,7 @@ public class ChestShopMenu extends RectInventoryMenu implements ShopMenu {
 
 	public void setupEntries(Player player) {
 
-		List<ShopEntry> entries = shop.getEntries(getCurrentPage());
-		for (ShopEntry entry : entries) {
+		for (ShopEntry entry : shop.getEntries().values()) {
 			setEntry(entry);
 
 			//Subscribe to limits and discounts so changes can be displayed live
@@ -75,7 +72,7 @@ public class ChestShopMenu extends RectInventoryMenu implements ShopMenu {
 		customer.setPage(shop, getCurrentPage());
 
 		long now = System.currentTimeMillis();
-		for (ShopEntry entry : entries) {
+		for (ShopEntry entry : shop.getEntries().values()) {
 			if (!(entry.getModule() instanceof TradeModule)) {
 				continue;
 			}

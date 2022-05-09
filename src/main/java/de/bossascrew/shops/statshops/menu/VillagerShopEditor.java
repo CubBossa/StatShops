@@ -42,8 +42,8 @@ public class VillagerShopEditor extends ListEditorMenu<ShopEntry> {
         int edit = 2 * 9 + 6;
 
         ItemStack editStack = ItemStackUtils.createItemStack(Material.COMMAND_BLOCK, Message.GUI_VILLAGER_EDITOR_EDIT_NAME, Message.GUI_VILLAGER_EDITOR_EDIT_LORE);
-        ItemStack leftStack = ItemStackUtils.setNameAndLore(Icon.PREV_PAGE_RP.create(), Message.GUI_VILLAGER_EDITOR_LEFT_NAME, Message.GUI_VILLAGER_EDITOR_LEFT_LORE);
-        ItemStack rightStack = ItemStackUtils.setNameAndLore(Icon.NEXT_PAGE_RP.create(), Message.GUI_VILLAGER_EDITOR_RIGHT_NAME, Message.GUI_VILLAGER_EDITOR_RIGHT_LORE);
+        ItemStack leftStack = ItemStackUtils.setNameAndLore(Icon.STACK_PREV_PAGE_RP.clone(), Message.GUI_VILLAGER_EDITOR_LEFT_NAME, Message.GUI_VILLAGER_EDITOR_LEFT_LORE);
+        ItemStack rightStack = ItemStackUtils.setNameAndLore(Icon.STACK_NEXT_PAGE_RP.clone(), Message.GUI_VILLAGER_EDITOR_RIGHT_NAME, Message.GUI_VILLAGER_EDITOR_RIGHT_LORE);
 
         addPreset(buttonHandler -> {
             // edit stack

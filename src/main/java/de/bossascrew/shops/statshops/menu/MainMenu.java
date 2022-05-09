@@ -252,21 +252,21 @@ public class MainMenu {
 
         menu.setItemAndClickHandler(9 + 1, ItemStackUtils.createItemStack(Material.SMITHING_TABLE,
                         Message.GUI_SHOP_SET_CONTENT_NAME, Message.GUI_SHOP_SET_CONTENT_LORE),
-                Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), () -> {
-                    TopMenu m = shop.newEditorMenu();
-                    m.setOpenHandler(x);
-                    BottomMenu bottom = new BottomInventoryMenu(InventoryRow.FIRST_ROW);
-                    bottom.addPreset(MenuPresets.fill(Icon.EMPTY_DARK.create()));
-                    m.setCloseHandler(x);
-                }));
+                Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), shop.newEditorMenu()));
 
         menu.setItemAndClickHandler(9 + 2, ItemStackUtils.createItemStack(Material.CHEST,
-                Message.GUI_SHOP_SET_PREVIEW_NAME, Message.GUI_SHOP_SET_PREVIEW_LORE), Action.LEFT, c -> {
-
-            //TODO bottom inventory
-            shop.open(Customer.wrap(c.getPlayer()));
-        });
-
+                Message.GUI_SHOP_SET_PREVIEW_NAME, Message.GUI_SHOP_SET_PREVIEW_LORE), Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), () -> {
+            TopMenu m = shop.newEditorMenu();
+            BottomMenu bottom = new BottomInventoryMenu(InventoryRow.FIRST_ROW);
+            bottom.addPreset(MenuPresets.fill(Icon.STACK_EMPTY_DARK));
+            bottom.setItem(9 + 5, Icon.STACK_EMPTY_DARK_RP);
+            bottom.setButton(17, Button.builder()
+                    .withItemStack(Icon.BACK)
+                    .withClickHandler(Action.LEFT, cc -> m.openPreviousMenu(cc.getPlayer())));
+            m.setOpenHandler(o -> bottom.open(o.getPlayer()));
+            m.setCloseHandler(o -> bottom.close(o.getPlayer()));
+            return m;
+        }));
 
         if (shop instanceof PaginatedShop ps) {
 
@@ -504,14 +504,14 @@ public class MainMenu {
         //Set name
         menu.setItemAndClickHandler(1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT, Message.GUI_DISCOUNT_SET_NAME_NAME, Message.GUI_DISCOUNT_SET_NAME_LORE),
                 Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), () -> {
-            AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_NAME_TITLE, discount.getNameFormat());
-            m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-                discount.setNameFormat(s.getTarget());
-                menu.updateTitle(discount.getName());
-                m.openPreviousMenu(s.getPlayer());
-            });
-            return m;
-        }));
+                    AnvilMenu m = newAnvilMenu(Message.GUI_DISCOUNT_SET_NAME_TITLE, discount.getNameFormat());
+                    m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
+                        discount.setNameFormat(s.getTarget());
+                        menu.updateTitle(discount.getName());
+                        m.openPreviousMenu(s.getPlayer());
+                    });
+                    return m;
+                }));
 
         //Set permissions
         menu.setItemAndClickHandler(2, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS, Message.GUI_DISCOUNT_SET_PERMISSION_NAME,

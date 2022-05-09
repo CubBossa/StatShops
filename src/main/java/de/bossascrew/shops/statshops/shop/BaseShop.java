@@ -219,9 +219,7 @@ public abstract class BaseShop implements Shop {
 
 	@Override
 	public boolean open(Customer customer) {
-		Menu menu = newEditorMenu();
-		menu.setPage(customer.getPlayer(), this instanceof PaginatedShop ? customer.getPage(this, ((PaginatedShop) this).getDefaultShopPage()) : 0);
-		menu.open(customer.getPlayer());
+		newEditorMenu().open(customer.getPlayer());
 		return true;
 	}
 

@@ -214,14 +214,10 @@ public class ShopCommand extends BaseCommand {
 	@CommandPermission(StatShops.PERM_CMD_OPEN)
 	@CommandCompletion(StatShops.COMPLETION_SHOPS + " 1|2|3")
 	public void onOpen(Player player, Shop shop, @Optional Integer page) {
-		if (page == null) {
-			shop.open(Customer.wrap(player));
+		if (page != null && shop instanceof PaginatedShop ps) {
+			ps.open(Customer.wrap(player), page);
 		} else {
-			if (shop instanceof PaginatedShop ps) {
-				ps.open(Customer.wrap(player), page);
-			} else {
-				shop.open(Customer.wrap(player));
-			}
+			shop.open(Customer.wrap(player));
 		}
 	}
 

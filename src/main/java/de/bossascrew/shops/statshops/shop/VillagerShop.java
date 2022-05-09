@@ -24,7 +24,7 @@ public class VillagerShop extends BaseShop {
     }
 
     @Override
-    public Menu newShopMenu(Customer customer) {
+    public TopMenu newShopMenu(Customer customer) {
         return new VillagerShopMenu(this, customer);
     }
 

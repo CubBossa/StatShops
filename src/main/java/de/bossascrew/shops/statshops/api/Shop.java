@@ -164,7 +164,7 @@ public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, Data
      * @param customer The customer to open this menu for.
      * @return An instance of the shop menu.
      */
-    Menu newShopMenu(Customer customer);
+    TopMenu newShopMenu(Customer customer);
 
     /**
      * Closes the shop menu for a specified customer. This will simulate the closing of the inventory by the player.

@@ -162,13 +162,19 @@
             <version>4.10.1</version>
         </dependency>
 
-        <!-- <dependency>
-            <groupId>com.github.CubBossa.Minecraft-GUI-Framework</groupId>
+        <dependency>
+            <groupId>com.github.CubBossa.MenuFramework</groupId>
             <artifactId>MenuFramework</artifactId>
-            <version>1.0.1</version>
-        </dependency> -->
+            <version>1.1.0</version>
+        </dependency>
 
         <dependency>
+            <groupId>com.github.CubBossa.MenuFramework</groupId>
+            <artifactId>MenuFramework-Protocol-Extension</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+        <!--<dependency>
             <groupId>de.cubbossa</groupId>
             <artifactId>MenuFramework</artifactId>
             <version>1.1.0</version>
@@ -178,7 +184,7 @@
             <groupId>de.cubbossa</groupId>
             <artifactId>MenuFramework-Protocol-Extension</artifactId>
             <version>1.1.0</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>net.wesjd</groupId>
@@ -229,7 +235,8 @@
                         <includes>
                             <include>co.aikar:acf-bukkit</include>
                             <include>net.kyori:**</include>
-                            <include>com.github.CubBossa.Minecraft-GUI-Framework:MenuFramework</include>
+                            <include>com.github.CubBossa.MenuFramework:MenuFramework</include>
+                            <include>com.github.CubBossa.MenuFramework:MenuFramework-Protocol-Extension</include>
                             <include>org.bstats</include>
                             <include>net.wesjd:anvilgui</include>
                             <include>de.cubbossa:MenuFramework</include>
@@ -267,7 +274,7 @@
                             <shadedPattern>de.bossascrew</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>de.cubbossa.guiframework</pattern>
+                            <pattern>de.cubbossa.menuframework</pattern>
                             <shadedPattern>de.bossascrew.gui</shadedPattern>
                         </relocation>
                     </relocations>

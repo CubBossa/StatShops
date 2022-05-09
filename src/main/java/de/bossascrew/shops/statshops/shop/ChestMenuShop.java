@@ -149,7 +149,7 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
     }
 
     @Override
-    public Menu newShopMenu(Customer customer) {
+    public TopMenu newShopMenu(Customer customer) {
         return new ChestShopMenu(this, customer);
     }
 

@@ -144,10 +144,25 @@ public class MainMenu {
         menu.setDeleteHandler(Message.GUI_SHOPS_DELETE_CONFIRM, Action.RIGHT, c -> ShopHandler.getInstance().deleteShop(c.getTarget()));
         menu.setDuplicateHandler(Action.MIDDLE, c -> ShopHandler.getInstance().createDuplicate(c.getTarget()));
         menu.setInfoItem(Message.GENERAL_GUI_LIST_INFO_NAME, Message.GENERAL_GUI_LIST_INFO_LORE);
-        menu.setNewHandlerStringInput(
-                Message.GUI_SHOPS_NEW_NAME, Message.GUI_SHOPS_NEW_LORE,
-                Message.GUI_SHOPS_NEW_TITLE, "shop name",
-                s -> ShopHandler.getInstance().createShop(s.getTarget(), ChestMenuShop.class));
+        menu.setNewHandler(Message.GUI_SHOPS_NEW_NAME, Message.GUI_SHOPS_NEW_LORE, c -> menu.openSubMenu(c.getPlayer(), newShopTypeMenu()));
+        return menu;
+    }
+
+    public static TopMenu newShopTypeMenu() {
+        ListMenu menu = new ListMenu(Message.GUI_SHOPS_TYPE_TITLE, 2);
+        menu.addPreset(bottomRow(1));
+        for (ShopHandler.ShopTypeProvider p : ShopHandler.getInstance().getTypes()) {
+            menu.addListEntry(Button.builder()
+                    .withItemStack(ItemStackUtils.createItemStack(p.displayMaterial(), p.name(), p.lore()))
+                    .withClickHandler(Action.LEFT, c -> {
+                        AnvilMenu m = newAnvilMenu(Message.GUI_SHOPS_NEW_TITLE, "shop name", new AnvilInputValidator<>(Message.NONE, Component.empty(), s -> true, s -> s));
+                        m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
+                            ShopHandler.getInstance().createShop(s.getTarget(), p.type());
+                            menu.openPreviousMenu(s.getPlayer());
+                        });
+                        menu.openSubMenu(c.getPlayer(), m);
+                    }));
+        }
         return menu;
     }
 
@@ -256,7 +271,7 @@ public class MainMenu {
 
         menu.setItemAndClickHandler(9 + 2, ItemStackUtils.createItemStack(Material.CHEST,
                 Message.GUI_SHOP_SET_PREVIEW_NAME, Message.GUI_SHOP_SET_PREVIEW_LORE), Action.LEFT, c -> menu.openSubMenu(c.getPlayer(), () -> {
-            TopMenu m = shop.newEditorMenu();
+            TopMenu m = shop.newShopMenu(Customer.wrap(viewer));
             BottomMenu bottom = new BottomInventoryMenu(InventoryRow.FIRST_ROW);
             bottom.addPreset(MenuPresets.fill(Icon.STACK_EMPTY_DARK));
             bottom.setItem(9 + 5, Icon.STACK_EMPTY_DARK_RP);

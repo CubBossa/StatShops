@@ -45,9 +45,12 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
 
     private void prepareInventory(Player player) {
 
-        for (Map.Entry<Integer, ShopEntry> entry : villagerShop.getEntries().entrySet()) {
+        clearContent();
 
-            ShopEntry e = entry.getValue();
+        for (ShopEntry e : villagerShop.getEntries().values()) {
+            if(e == null) {
+                continue;
+            }
 
             //Only works with Currency<ItemStack> for now
             if (e.getModule() instanceof TradeModule tm && tm.getCosts().getBuyPrice().getCurrency().equals(CurrencyHandler.CURRENCY_ITEM)) {
@@ -62,6 +65,7 @@ public class VillagerShopMenu extends VillagerMenu implements ShopMenu {
                         .withUses(0, e.getPermission() == null || player.hasPermission(e.getPermission()) ? Integer.MAX_VALUE : 0)
                         .build();
 
+                System.out.println("Adding recipe with " + recipe.getResult().getType());
 
                 DiscountHandler.getInstance().subscribeToDisplayUpdates(this, e);
                 LimitsHandler.getInstance().subscribeToDisplayUpdates(this, player, e);

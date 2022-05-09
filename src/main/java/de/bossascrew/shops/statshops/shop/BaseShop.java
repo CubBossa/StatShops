@@ -156,13 +156,17 @@ public abstract class BaseShop implements Shop {
 		if(a != null) {
 			a.setSlot(other);
 			a.saveToDatabase();
+			entryMap.put(other, a);
+		} else {
+			entryMap.remove(other);
 		}
 		if(b != null) {
 			b.setSlot(slot);
 			b.saveToDatabase();
+			entryMap.put(slot, b);
+		} else {
+			entryMap.remove(slot);
 		}
-		entryMap.put(other, a);
-		entryMap.put(slot, b);
 
 		return b != null;
 	}
@@ -219,7 +223,7 @@ public abstract class BaseShop implements Shop {
 
 	@Override
 	public boolean open(Customer customer) {
-		newEditorMenu().open(customer.getPlayer());
+		newShopMenu(customer).open(customer.getPlayer());
 		return true;
 	}
 

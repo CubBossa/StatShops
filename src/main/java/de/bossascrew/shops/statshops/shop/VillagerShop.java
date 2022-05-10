@@ -1,6 +1,7 @@
 package de.bossascrew.shops.statshops.shop;
 
 import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.menu.VillagerShopEditor;
 import de.bossascrew.shops.statshops.menu.VillagerShopMenu;
 import de.cubbossa.menuframework.inventory.Menu;
@@ -9,7 +10,10 @@ import de.cubbossa.menuframework.inventory.implementations.VillagerMenu;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Getter
 @Setter
@@ -20,7 +24,7 @@ public class VillagerShop extends BaseShop {
     }
 
     public VillagerShop(UUID uuid, String nameFormat) {
-        super(uuid, nameFormat);
+        super(uuid, nameFormat, ShopHandler.VILLAGER_MENU_SHOP_TYPE);
     }
 
     @Override
@@ -41,5 +45,20 @@ public class VillagerShop extends BaseShop {
             menuMap.remove(customer);
         }
         return activeCustomers.remove(customer);
+    }
+
+    @Override
+    public void loadData(Map<String, DataSlot<?>> data) {
+
+    }
+
+    @Override
+    public Map<String, DataSlot<?>> getData() {
+        return new HashMap<>();
+    }
+
+    @Override
+    public <T extends DataSlot<?>> T getData(Class<T> clazz, String key, Supplier<T> fallbackValue) {
+        return fallbackValue.get();
     }
 }

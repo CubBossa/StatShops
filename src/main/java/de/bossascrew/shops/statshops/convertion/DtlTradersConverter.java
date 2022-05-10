@@ -102,9 +102,9 @@ public class DtlTradersConverter implements Converter {
 			String partTitle = shopTitleFormat.replace("%shop-name%", title);
 			partTitle.replace("%page-name%", "");
 
-			Shop shopBuy = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeBuyName), ChestMenuShop.class);
-			Shop shopSell = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeSellName), ChestMenuShop.class);
-			Shop shopTrade = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeTradeName), ChestMenuShop.class);
+			Shop shopBuy = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeBuyName), ShopHandler.CHEST_MENU_SHOP_TYPE);
+			Shop shopSell = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeSellName), ShopHandler.CHEST_MENU_SHOP_TYPE);
+			Shop shopTrade = !modeBuy ? null : ShopHandler.getInstance().createShop(partTitle.replace("%shop-mode%", modeTradeName), ShopHandler.CHEST_MENU_SHOP_TYPE);
 			List<Shop> shops = new ArrayList<>();
 			if (modeBuy) {
 				shops.add(shopBuy);

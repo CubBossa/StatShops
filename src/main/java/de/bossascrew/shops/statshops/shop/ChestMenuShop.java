@@ -10,6 +10,7 @@ import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.events.ShopCloseEvent;
 import de.bossascrew.shops.statshops.events.ShopOpenEvent;
 import de.bossascrew.shops.statshops.events.ShopTurnPageEvent;
+import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.menu.ChestShopEditor;
 import de.bossascrew.shops.statshops.menu.ChestShopMenu;
 import de.bossascrew.shops.statshops.util.EntryInteractionType;
@@ -28,14 +29,22 @@ import java.util.stream.Collectors;
 @Setter
 public class ChestMenuShop extends BaseShop implements PaginatedShop {
 
+    //TODO data
     private @Nullable EntryTemplate defaultTemplate = null;
+
+    //TODO to baseclass
     private TransactionBalanceMessenger balanceMessenger;
 
+    //TODO data
     private int rows = 3;
 
+    //TODO data
     private boolean isPageRemembered = false;
+
+    //TODO data
     private int defaultPage = 0;
 
+    //TODO data
     private final Map<Integer, String> pageTitles;
 
     public ChestMenuShop(String nameFormat) {
@@ -43,7 +52,7 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
     }
 
     public ChestMenuShop(UUID uuid, String nameFormat) {
-        super(uuid, nameFormat);
+        super(uuid, nameFormat, ShopHandler.CHEST_MENU_SHOP_TYPE);
 
         this.balanceMessenger = new SimpleBalanceMessenger(StatShops.getInstance().getShopsConfig().getTradeMessageFeedback());
         this.pageTitles = new HashMap<>();

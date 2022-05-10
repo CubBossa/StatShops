@@ -334,7 +334,7 @@ public class FlatFileDatabase implements Database {
         entry.setInfoLoreFormat(infoLoreFormat);
 
         if (!dataMap.isEmpty()) {
-            entry.getData().putAll(dataMap);
+            entry.loadData(dataMap);
         }
         if (module != null) {
             module.setShopEntry(entry);

@@ -71,6 +71,12 @@ public class BaseEntry implements ShopEntry {
 	}
 
 	@Override
+	public void loadData(Map<String, DataSlot<?>> data) {
+		dataSlots.clear();
+		dataSlots.putAll(data);
+	}
+
+	@Override
 	public Map<String, DataSlot<?>> getData() {
 		return dataSlots;
 	}

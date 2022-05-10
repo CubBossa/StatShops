@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -148,13 +149,13 @@ public class MainMenu {
     public static TopMenu newShopTypeMenu() {
         ListMenu menu = new ListMenu(Message.GUI_SHOPS_TYPE_TITLE, 2);
         menu.addPreset(bottomRow(1));
-        for (ShopType t : ShopHandler.getInstance().getShopTypes()) {
+        for (ShopType<?> t : ShopHandler.getInstance().getShopTypes()) {
             menu.addListEntry(Button.builder()
                     .withItemStack(ItemStackUtils.createItemStack(t.getIconType(), t.getIconName(), t.getIconLore()))
                     .withClickHandler(Action.LEFT, c -> {
                         AnvilMenu m = newAnvilMenu(Message.GUI_SHOPS_NEW_TITLE, "shop name", new AnvilInputValidator<>(Message.NONE, Component.empty(), s -> true, s -> s));
                         m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-                            ShopHandler.getInstance().createShop(s.getTarget(), t.getShopClass());
+                            ShopHandler.getInstance().createShop(s.getTarget(), t);
                             menu.openPreviousMenu(s.getPlayer());
                         });
                         menu.openSubMenu(c.getPlayer(), m);

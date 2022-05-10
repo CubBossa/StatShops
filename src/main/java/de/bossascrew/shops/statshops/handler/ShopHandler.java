@@ -29,6 +29,13 @@ import java.util.stream.Collectors;
 public class ShopHandler implements
         ListMenuSupplier<Shop> {
 
+    public static final ShopType<ChestMenuShop> CHEST_MENU_SHOP_TYPE = new ShopType<>(new NamespacedKey(StatShops.getInstance(), "chest_menu_shop"),
+            ChestMenuShop.class, Message.SHOP_TYPE_CHEST_NAME, Message.SHOP_TYPE_CHEST_LORE,
+            Material.CHEST, StatShops.PERM_SHOP_TYPE_ + "chest_menu_shop");
+    public static final ShopType<VillagerShop> VILLAGER_MENU_SHOP_TYPE = new ShopType<>(new NamespacedKey(StatShops.getInstance(), "villager_menu_shop"),
+            VillagerShop.class, Message.SHOP_TYPE_VILLAGER_NAME, Message.SHOP_TYPE_VILLAGER_LORE,
+            Material.VILLAGER_SPAWN_EGG, StatShops.PERM_SHOP_TYPE_ + "villager_menu_shop");
+
     @Getter
     private static ShopHandler instance;
 
@@ -43,12 +50,8 @@ public class ShopHandler implements
         this.shopMap = new HashMap<>();
         this.registeredShopTypes = new ArrayList<>();
 
-        registerShopType(new ShopType<>(new NamespacedKey(StatShops.getInstance(), "chest_menu_shop"),
-                ChestMenuShop.class, Message.SHOP_TYPE_CHEST_NAME, Message.SHOP_TYPE_CHEST_LORE,
-                Material.CHEST, StatShops.PERM_SHOP_TYPE_ + "chest_menu_shop"));
-        registerShopType(new ShopType<>(new NamespacedKey(StatShops.getInstance(), "villager_menu_shop"),
-                VillagerShop.class, Message.SHOP_TYPE_VILLAGER_NAME, Message.SHOP_TYPE_VILLAGER_LORE,
-                Material.VILLAGER_SPAWN_EGG, StatShops.PERM_SHOP_TYPE_ + "villager_menu_shop"));
+        registerShopType(CHEST_MENU_SHOP_TYPE);
+        registerShopType(VILLAGER_MENU_SHOP_TYPE);
 
         for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
             extension.registerShopTypes(this);
@@ -85,6 +88,17 @@ public class ShopHandler implements
         shopMap.put(shop.getUUID(), shop);
     }
 
+    public Shop createShop(String nameFormat, NamespacedKey type) {
+        return createShop(nameFormat, getShopType(type));
+    }
+
+    public Shop createShop(String nameFormat, ShopType<?> type) {
+        Shop shop = type.supplyShop(UUID.randomUUID(), nameFormat, new HashMap<>());
+        shop.saveToDatabase();
+        addShop(shop);
+        return shop;
+    }
+
     public boolean deleteShop(Shop shop) {
         shop.closeAll();
         StatShops.getInstance().getDatabase().deleteShop(shop);
@@ -117,19 +131,20 @@ public class ShopHandler implements
     }
 
     public Shop createDuplicate(Shop element) {
-        Shop shop = create(element.getNameFormat(), element.getClass());
+
+        //TODO data kopieren nicht nur referenz übergeben
+        Shop shop = getShopType(element.getShopType()).supplyShop(UUID.randomUUID(), element.getNameFormat(), element.getData());
+
         shop.setDisplayItem(element.getDisplayItem());
         shop.setPermission(element.getPermission());
-        if (element instanceof PaginatedShop ps) { //TODO pro shop einen copy constructor -> via reflection aufrufen
-            ps.setDefaultShopPage(ps.getDefaultShopPage());
-            ps.setPageRemembered(ps.isPageRemembered());
-        }
         for (String tag : element.getTags()) {
             shop.addTag(tag);
         }
         for (Map.Entry<Integer, ShopEntry> entry : element.getEntries().entrySet()) {
             shop.addEntry(entry.getValue().duplicate(), entry.getKey());
         }
+
+        addShop(shop);
         StatShops.getInstance().getDatabase().saveShop(shop);
         return shop;
     }

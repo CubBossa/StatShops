@@ -1,6 +1,7 @@
 package de.bossascrew.shops.statshops.shop;
 
 import de.bossascrew.shops.general.util.LoggingPolicy;
+import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.PaginatedShop;
@@ -8,7 +9,9 @@ import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.statshops.data.Customer;
+import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.shop.entry.BaseEntry;
+import de.cubbossa.menuframework.inventory.AbstractMenu;
 import de.cubbossa.menuframework.inventory.Menu;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 @Getter
 @Setter
@@ -49,8 +53,10 @@ public abstract class BaseShop implements Shop {
 
 	protected @Nullable Player editor = null;
 
-	public BaseShop(UUID uuid, String nameFormat, NamespacedKey shopType) {
-		this.shopType = shopType;
+	protected Map<String, DataSlot<?>> data;
+
+	public BaseShop(UUID uuid, String nameFormat, ShopType<?> shopType) {
+		this.shopType = shopType.getKey();
 		this.uuid = uuid;
 		setNameFormat(nameFormat);
 
@@ -60,6 +66,7 @@ public abstract class BaseShop implements Shop {
 		this.activeCustomers = new ArrayList<>();
 		this.menuMap = new HashMap<>();
 		this.tags = new ArrayList<>();
+		this.data = new HashMap<>();
 	}
 
 	@Override
@@ -276,5 +283,28 @@ public abstract class BaseShop implements Shop {
 	@Override
 	public void saveToDatabase() {
 		StatShops.getInstance().runAsync(() -> StatShops.getInstance().getDatabase().saveShop(this));
+	}
+
+	@Override
+	public <T extends DataSlot<?>> T getData(Class<T> clazz, String key, Supplier<T> fallbackValue) {
+		DataSlot<?> dataSlot = data.get(key);
+		if (dataSlot == null) {
+			dataSlot = fallbackValue.get();
+			data.put(key, dataSlot);
+		}
+		Pair<Message, Message> messagePair = DataSlot.DATA_MESSAGE_MAP.get(key);
+		if (messagePair != null && dataSlot.getName() == null) {
+			dataSlot.setName(messagePair.getLeft());
+		}
+		if (messagePair != null && dataSlot.getLore() == null) {
+			dataSlot.setLore(messagePair.getRight());
+		}
+		return (T) dataSlot;
+	}
+
+	@Override
+	public void loadData(Map<String, DataSlot<?>> data) {
+		this.data.clear();
+		this.data.putAll(data);
 	}
 }

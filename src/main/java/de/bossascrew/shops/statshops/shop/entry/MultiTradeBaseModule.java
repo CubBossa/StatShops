@@ -12,6 +12,7 @@ import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
+import de.bossascrew.shops.statshops.shop.DataSlot;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import de.bossascrew.shops.statshops.shop.Transaction;

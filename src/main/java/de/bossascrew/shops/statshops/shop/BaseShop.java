@@ -13,6 +13,7 @@ import de.cubbossa.menuframework.inventory.Menu;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,8 @@ import java.util.*;
 @Getter
 @Setter
 public abstract class BaseShop implements Shop {
+
+	protected final NamespacedKey shopType;
 
 	protected final UUID uuid;
 	protected String nameFormat;
@@ -39,13 +42,15 @@ public abstract class BaseShop implements Shop {
 	 */
 	protected final Map<UUID, ShopEntry> unusedEntryCache;
 
+	@Getter
 	protected final List<Customer> activeCustomers;
 	protected final Map<Customer, ShopMenu> menuMap;
 	protected final List<String> tags;
 
 	protected @Nullable Player editor = null;
 
-	public BaseShop(UUID uuid, String nameFormat) {
+	public BaseShop(UUID uuid, String nameFormat, NamespacedKey shopType) {
+		this.shopType = shopType;
 		this.uuid = uuid;
 		setNameFormat(nameFormat);
 
@@ -214,11 +219,6 @@ public abstract class BaseShop implements Shop {
 		int count = unusedEntryCache.size();
 		unusedEntryCache.clear();
 		return count;
-	}
-
-	@Override
-	public List<Customer> getActiveCustomers() {
-		return null;
 	}
 
 	@Override

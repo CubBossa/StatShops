@@ -6,6 +6,7 @@ import de.bossascrew.shops.statshops.api.module.EntryModule;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.module.TradeModule;
 import de.bossascrew.shops.statshops.api.ShopMenu;
+import de.bossascrew.shops.statshops.shop.DataSlot;
 import de.bossascrew.shops.statshops.util.EntryInteractionType;
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.util.TagUtils;

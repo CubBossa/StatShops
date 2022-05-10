@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.handler.CurrencyHandler;
 import de.bossascrew.shops.statshops.handler.SubModulesHandler;
+import de.bossascrew.shops.statshops.shop.DataSlot;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import lombok.Getter;
 import org.bukkit.Material;

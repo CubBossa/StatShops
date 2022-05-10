@@ -54,6 +54,7 @@ public class StatShops extends JavaPlugin {
 	public static final String PERM_CMD_OPEN_FOR = "statshops.command.openfor";
 	public static final String PERM_CMD_EDITOR = "statshops.command.editor";
 	public static final String PERM_CMD_RELOAD = "statshops.command.reload";
+	public static final String PERM_SHOP_TYPE_ = "statshops.shoptype.";
 
 	public static final String TAG_GLOBAL = "global";
 	public static final String COMPLETION_SHOPS = "@shops";

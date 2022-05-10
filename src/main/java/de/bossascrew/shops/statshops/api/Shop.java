@@ -7,6 +7,7 @@ import de.bossascrew.shops.statshops.api.data.NamedObject;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.cubbossa.menuframework.inventory.Menu;
 import de.cubbossa.menuframework.inventory.TopMenu;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, DatabaseObject, NamedObject, DisplayedObject {
+public interface Shop extends Taggable, Comparable<Shop>, Editable<Player>, DatabaseObject, NamedObject, DisplayedObject, DataSlotHolder {
+
+    /**
+     * @return The unique key for the shop type. Required to read and write shops to database.
+     */
+    NamespacedKey getShopType();
 
     /**
      * @return The unique id for this shop. It also servers as a tag for the Taggable interface and allows applying limits

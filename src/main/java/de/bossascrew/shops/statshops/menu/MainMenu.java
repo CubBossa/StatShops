@@ -10,10 +10,7 @@ import de.bossascrew.shops.statshops.api.TemplatableShop;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.Message;
 import de.bossascrew.shops.statshops.handler.*;
-import de.bossascrew.shops.statshops.shop.ChestMenuShop;
-import de.bossascrew.shops.statshops.shop.Discount;
-import de.bossascrew.shops.statshops.shop.EntryTemplate;
-import de.bossascrew.shops.statshops.shop.Limit;
+import de.bossascrew.shops.statshops.shop.*;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.util.TagUtils;
 import de.bossascrew.shops.web.WebSessionUtils;
@@ -151,13 +148,13 @@ public class MainMenu {
     public static TopMenu newShopTypeMenu() {
         ListMenu menu = new ListMenu(Message.GUI_SHOPS_TYPE_TITLE, 2);
         menu.addPreset(bottomRow(1));
-        for (ShopHandler.ShopTypeProvider p : ShopHandler.getInstance().getTypes()) {
+        for (ShopType t : ShopHandler.getInstance().getShopTypes()) {
             menu.addListEntry(Button.builder()
-                    .withItemStack(ItemStackUtils.createItemStack(p.displayMaterial(), p.name(), p.lore()))
+                    .withItemStack(ItemStackUtils.createItemStack(t.getIconType(), t.getIconName(), t.getIconLore()))
                     .withClickHandler(Action.LEFT, c -> {
                         AnvilMenu m = newAnvilMenu(Message.GUI_SHOPS_NEW_TITLE, "shop name", new AnvilInputValidator<>(Message.NONE, Component.empty(), s -> true, s -> s));
                         m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
-                            ShopHandler.getInstance().createShop(s.getTarget(), p.type());
+                            ShopHandler.getInstance().createShop(s.getTarget(), t.getShopClass());
                             menu.openPreviousMenu(s.getPlayer());
                         });
                         menu.openSubMenu(c.getPlayer(), m);

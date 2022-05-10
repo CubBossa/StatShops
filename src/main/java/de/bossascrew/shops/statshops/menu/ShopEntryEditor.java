@@ -12,7 +12,7 @@ import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.handler.SubModulesHandler;
 import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.Limit;
-import de.bossascrew.shops.statshops.shop.entry.DataSlot;
+import de.bossascrew.shops.statshops.shop.DataSlot;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.util.TagUtils;
 import de.cubbossa.menuframework.inventory.*;

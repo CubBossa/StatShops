@@ -9,6 +9,7 @@ import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.data.LogEntry;
 import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
+import de.bossascrew.shops.statshops.shop.DataSlot;
 import de.bossascrew.shops.statshops.shop.EntryInteractionResult;
 import de.bossascrew.shops.statshops.util.EntryInteractionType;
 import lombok.Getter;

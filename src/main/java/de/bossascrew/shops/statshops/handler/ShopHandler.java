@@ -26,8 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ShopHandler implements
-        ListMenuSupplier<Shop> {
+public class ShopHandler implements ListMenuSupplier<Shop> {
 
     public static final ShopType<ChestMenuShop> CHEST_MENU_SHOP_TYPE = new ShopType<>(new NamespacedKey(StatShops.getInstance(), "chest_menu_shop"),
             ChestMenuShop.class, Message.SHOP_TYPE_CHEST_NAME, Message.SHOP_TYPE_CHEST_LORE,

@@ -154,6 +154,9 @@ public class StatShops extends JavaPlugin {
 		// Load translations
 		this.translationHandler = new TranslationHandler("en_US");
 
+		// Setup ShopHandler and load shops and entries
+		this.shopHandler = new ShopHandler();
+
 		// Setup Database
 		File data = new File(getDataFolder(), "data");
 		data.mkdir();
@@ -188,9 +191,6 @@ public class StatShops extends JavaPlugin {
 
 		new GUIHandler(this).enable();
 		protocolLibListener = new ProtocolLibListener(this);
-
-		// Setup ShopHandler and load shops and entries
-		this.shopHandler = new ShopHandler();
 
 		// Setup and load shop templates
 		this.templateHandler = new TemplateHandler();

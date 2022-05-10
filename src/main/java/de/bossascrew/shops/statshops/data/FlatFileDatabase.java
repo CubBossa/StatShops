@@ -160,7 +160,7 @@ public class FlatFileDatabase implements Database {
                     }
                 }
 
-                ShopType shopType = ShopHandler.getInstance().getShopType(NamespacedKey.fromString(type));
+                ShopType<?> shopType = ShopHandler.getInstance().getShopType(NamespacedKey.fromString(type));
                 Map<String, DataSlot<?>> dataMap = new HashMap<>();
                 ConfigurationSection dataSection = cfg.getConfigurationSection("data-slots");
                 if (dataSection != null) {
@@ -246,7 +246,7 @@ public class FlatFileDatabase implements Database {
             }
         }
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(shopFile);
-        cfg.set("type", shop.getShopType());
+        cfg.set("type", shop.getShopType().toString());
         cfg.set("name-format", shop.getNameFormat());
         cfg.set("permission", shop.getPermission() == null ? "" : shop.getPermission());
         /*TODO if (shop instanceof TemplatableShop tShop) {

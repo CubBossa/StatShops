@@ -71,6 +71,11 @@ public class Limit implements
 	}
 
 
+	@Override
+	public UUID getUUID() {
+		return uuid;
+	}
+
 	public List<String> getTags(boolean generated) {
 		return new ArrayList<>(tags);
 	}

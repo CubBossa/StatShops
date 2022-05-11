@@ -439,7 +439,7 @@ public class FlatFileDatabase implements Database {
 
     @Override
     public void saveDiscount(Discount discount) {
-        File file = new File(dirDiscounts, discount.getUuid() + ".yml");
+        File file = new File(dirDiscounts, discount.getUUID() + ".yml");
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -462,13 +462,13 @@ public class FlatFileDatabase implements Database {
         try {
             cfg.save(file);
         } catch (IOException e) {
-            StatShops.getInstance().log(LoggingPolicy.ERROR, "An error occurred while saving discount: " + discount.getUuid(), e);
+            StatShops.getInstance().log(LoggingPolicy.ERROR, "An error occurred while saving discount: " + discount.getUUID(), e);
         }
     }
 
     @Override
     public void deleteDiscount(Discount discount) {
-        File file = new File(dirDiscounts, discount.getUuid() + ".yml");
+        File file = new File(dirDiscounts, discount.getUUID() + ".yml");
         if (file.exists()) {
             file.delete();
         }
@@ -511,7 +511,7 @@ public class FlatFileDatabase implements Database {
 
     @Override
     public void saveLimit(Limit limit) {
-        File file = new File(dirLimits, limit.getUuid() + ".yml");
+        File file = new File(dirLimits, limit.getUUID() + ".yml");
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -532,13 +532,13 @@ public class FlatFileDatabase implements Database {
         try {
             cfg.save(file);
         } catch (IOException e) {
-            StatShops.getInstance().log(LoggingPolicy.ERROR, "An error occurred while saving limit: " + limit.getUuid(), e);
+            StatShops.getInstance().log(LoggingPolicy.ERROR, "An error occurred while saving limit: " + limit.getUUID(), e);
         }
     }
 
     @Override
     public void deleteLimit(Limit limit) {
-        File file = new File(dirLimits, limit.getUuid() + ".yml");
+        File file = new File(dirLimits, limit.getUUID() + ".yml");
         if (file.exists()) {
             file.delete();
         }

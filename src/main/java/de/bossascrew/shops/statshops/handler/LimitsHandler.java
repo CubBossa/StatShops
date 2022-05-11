@@ -234,7 +234,7 @@ public class LimitsHandler implements
 	}
 
 	public void addLimit(Limit limit) {
-		limitMap.put(limit.getUuid(), limit);
+		limitMap.put(limit.getUUID(), limit);
 		for (String tag : limit.getTags()) {
 			Collection<Limit> limits = tagMap.getOrDefault(tag, new ArrayList<>());
 			if (!limits.contains(limit)) {
@@ -265,7 +265,7 @@ public class LimitsHandler implements
 
 		StatShops.getInstance().getDatabase().deleteLimit(limit);
 		subscribers.remove(limit);
-		limitMap.remove(limit.getUuid());
+		limitMap.remove(limit.getUUID());
 		return true;
 	}
 

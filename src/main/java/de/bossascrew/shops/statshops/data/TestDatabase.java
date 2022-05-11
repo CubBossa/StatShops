@@ -128,7 +128,7 @@ public class TestDatabase implements Database, LogDatabase {
 		Map<UUID, Discount> map = new HashMap<>();
 		Discount d1 = new Discount(UUID.randomUUID(), "XMas Discount", LocalDateTime.now(), Duration.of(3, ChronoUnit.DAYS), 80, null);
 		//d1.addTag("global");
-		map.put(d1.getUuid(), d1);
+		map.put(d1.getUUID(), d1);
 		return map;
 	}
 
@@ -154,8 +154,8 @@ public class TestDatabase implements Database, LogDatabase {
 		Limit limit2 = createLimit("Example Limit");
 		limit2.setGlobal(true);
 		limit2.addTag("global");
-		map.put(limit.getUuid(), limit);
-		map.put(limit2.getUuid(), limit2);
+		map.put(limit.getUUID(), limit);
+		map.put(limit2.getUUID(), limit2);
 		return map;
 	}
 

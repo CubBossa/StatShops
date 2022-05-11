@@ -58,7 +58,7 @@ public class VillagerShopEditor extends ListEditorMenu<ShopEntry> {
             buttonHandler.addItemOnTop(edit, () -> selectedEntry != null ? editStack.clone() : null);
             buttonHandler.addClickHandlerOnTop(edit, Action.LEFT, c -> {
                 if (getSelectedEntry() != null)
-                    openSubMenu(c.getPlayer(), new ShopEntryEditor(getSelectedEntry(), c.getPlayer()));
+                    openSubMenu(c.getPlayer(), MainMenu.newShopEntryEditor(getSelectedEntry(), c.getPlayer()));
             });
 
             // move up

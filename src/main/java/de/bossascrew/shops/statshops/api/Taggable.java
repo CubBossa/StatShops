@@ -1,12 +1,15 @@
 package de.bossascrew.shops.statshops.api;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Contains 'tags' aka Strings. Tags can be added, removed and listed and will be used to check if for example a
  * limit or discount applies to a shop entry.
  */
 public interface Taggable {
+
+	UUID getUUID();
 
 	/**
 	 * @return a copied List of all tags, including generated tags;

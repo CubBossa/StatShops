@@ -90,7 +90,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 			if(freezeItems) {
 				ShopEntry clickedEntry = shop.getEntry(c.getSlot() + getCurrentPage() * (9 * 6));
 				if (clickedEntry != null) {
-					openSubMenu(c.getPlayer(), new ShopEntryEditor(clickedEntry, c.getPlayer()));
+					openSubMenu(c.getPlayer(), MainMenu.newShopEntryEditor(clickedEntry, c.getPlayer()));
 				}
 			}
 		});

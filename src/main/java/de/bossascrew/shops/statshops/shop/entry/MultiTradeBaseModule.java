@@ -156,7 +156,7 @@ public class MultiTradeBaseModule extends BaseModule implements MultiTradeModule
 					"}, gain: {" + t.getGainPrice().toString() +
 					"}, time: '" + t.getLocalDateTime().toString() +
 					"', discount: '" + t.getDiscount() +
-					"', discounts: {" + t.getAccountedDiscounts().stream().map(discount -> discount.getUuid().toString()).collect(Collectors.joining(",")) +
+					"', discounts: {" + t.getAccountedDiscounts().stream().map(discount -> discount.getUUID().toString()).collect(Collectors.joining(",")) +
 					"}, limits: not implemented"); //TODO
 		}
 		return null;

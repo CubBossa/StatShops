@@ -415,7 +415,7 @@ public class ItemStackUtils {
 						TagResolver.resolver("name", Tag.inserting(discount.getName()))),
 				Message.GUI_DISCOUNTS_ENTRY_LORE.asComponents(
 						TagResolver.resolver("percent", Tag.inserting(discount.getFormattedPercent())),
-						TagResolver.resolver("uuid", Tag.inserting(Component.text(discount.getUuid().toString()))),
+						TagResolver.resolver("uuid", Tag.inserting(Component.text(discount.getUUID().toString()))),
 						TagResolver.resolver("permission", Tag.inserting(Component.text(discount.getPermission() == null ? "X" : discount.getPermission()))),
 						TagResolver.resolver("name", Tag.inserting(discount.getName())),
 						TagResolver.resolver("remaining", Tag.inserting(Component.text(DURATION_PARSER.format(discount.getRemaining())))),
@@ -433,7 +433,7 @@ public class ItemStackUtils {
 						TagResolver.resolver("name", Tag.inserting(limit.getName()))),
 				Message.GUI_LIMITS_ENTRY_LORE.asComponents(
 						TagResolver.resolver("limit", Tag.inserting(Component.text(limit.getTransactionLimit()))),
-						TagResolver.resolver("uuid", Tag.inserting(Component.text(limit.getUuid().toString()))),
+						TagResolver.resolver("uuid", Tag.inserting(Component.text(limit.getUUID().toString()))),
 						TagResolver.resolver("global", Tag.inserting(Component.text(limit.isGlobal()))),
 						TagResolver.resolver("recover", Tag.inserting(Component.text(DURATION_PARSER.format(limit.getRecover()))))));
 		return setFlags(stack);

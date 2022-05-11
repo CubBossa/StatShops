@@ -48,7 +48,7 @@ public class DiscountHandler implements
 	}
 
 	public void addDiscount(Discount discount) {
-		discountMap.put(discount.getUuid(), discount);
+		discountMap.put(discount.getUUID(), discount);
 		for (String tag : discount.getTags()) {
 			List<Discount> discounts = tagMap.getOrDefault(tag, new ArrayList<>());
 			if (!discounts.contains(discount)) {
@@ -90,7 +90,7 @@ public class DiscountHandler implements
 			discount.removeTag(tag);
 		}
 		StatShops.getInstance().getDatabase().deleteDiscount(discount);
-		return discountMap.remove(discount.getUuid()) != null;
+		return discountMap.remove(discount.getUUID()) != null;
 	}
 
 	public void handleDiscountStart(Discount discount) {

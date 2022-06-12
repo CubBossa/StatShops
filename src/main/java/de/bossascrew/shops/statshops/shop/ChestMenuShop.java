@@ -6,7 +6,7 @@ import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.statshops.api.TransactionBalanceMessenger;
 import de.bossascrew.shops.statshops.data.Customer;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.events.ShopCloseEvent;
 import de.bossascrew.shops.statshops.events.ShopOpenEvent;
 import de.bossascrew.shops.statshops.events.ShopTurnPageEvent;
@@ -117,11 +117,11 @@ public class ChestMenuShop extends BaseShop implements PaginatedShop {
     @Override
     public boolean open(Customer customer, int page) {
         if (editor != null && !editor.getUniqueId().equals(customer.getUuid())) {
-            customer.sendMessage(Message.SHOP_NOT_ENABLED);
+            customer.sendMessage(Messages.SHOP_NOT_ENABLED);
             return false;
         }
         if (permission != null && !customer.getPlayer().hasPermission(permission)) {
-            customer.sendMessage(Message.SHOP_NO_PERMISSION);
+            customer.sendMessage(Messages.SHOP_NO_PERMISSION);
             return false;
         }
         if (!(page >= 0 && page < getPageCount())) {

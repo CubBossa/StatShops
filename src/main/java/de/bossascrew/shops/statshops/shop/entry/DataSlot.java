@@ -2,7 +2,7 @@ package de.bossascrew.shops.statshops.shop.entry;
 
 import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.api.Shop;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.handler.ShopHandler;
 import de.bossascrew.shops.statshops.menu.ListEditorMenu;
 import de.bossascrew.shops.statshops.menu.MainMenu;
@@ -17,6 +17,7 @@ import de.cubbossa.menuframework.inventory.context.ContextConsumer;
 import de.cubbossa.menuframework.inventory.context.TargetContext;
 import de.cubbossa.menuframework.inventory.implementations.AnvilMenu;
 import de.cubbossa.menuframework.inventory.implementations.ListMenu;
+import de.cubbossa.translations.Message;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -42,22 +43,22 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 	public static final Map<String, Pair<Message, Message>> DATA_MESSAGE_MAP = new HashMap<>();
 
 	static {
-		DATA_MESSAGE_MAP.put("sell_pay_price_amount", new Pair<>(Message.GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_LORE));
-		DATA_MESSAGE_MAP.put("buy_pay_price_amount", new Pair<>(Message.GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_LORE));
-		DATA_MESSAGE_MAP.put("buy_pay_price_equation", new Pair<>(Message.GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_LORE));
-		DATA_MESSAGE_MAP.put("sell_pay_price_equation", new Pair<>(Message.GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_LORE));
-		DATA_MESSAGE_MAP.put("buy_pay_price_item", new Pair<>(Message.GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_LORE));
-		DATA_MESSAGE_MAP.put("sell_pay_price_item", new Pair<>(Message.GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_LORE));
-		DATA_MESSAGE_MAP.put("pagination_page", new Pair<>(Message.GUI_ENTRY_FUNCTION_PAGE_NAME, Message.GUI_ENTRY_FUNCTION_PAGE_LORE));
-		DATA_MESSAGE_MAP.put("pagination_mode", new Pair<>(Message.NONE, Message.NONE));
-		DATA_MESSAGE_MAP.put("open_shop", new Pair<>(Message.GUI_ENTRY_FUNCTION_OPENED_SHOP_NAME, Message.GUI_ENTRY_FUNCTION_OPENED_SHOP_LORE));
-		DATA_MESSAGE_MAP.put("purchasable", new Pair<>(Message.GUI_ENTRY_FUNCTION_PURCHASABLE_NAME, Message.GUI_ENTRY_FUNCTION_PURCHASABLE_LORE));
-		DATA_MESSAGE_MAP.put("sellable", new Pair<>(Message.GUI_ENTRY_FUNCTION_SELLABLE_NAME, Message.GUI_ENTRY_FUNCTION_SELLABLE_LORE));
-		DATA_MESSAGE_MAP.put("purchasable_stacked", new Pair<>(Message.GUI_ENTRY_FUNCTION_PURCHASABLE_STACKED_NAME, Message.GUI_ENTRY_FUNCTION_PURCHASABLE_STACKED_LORE));
-		DATA_MESSAGE_MAP.put("sellable_stacked", new Pair<>(Message.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_NAME, Message.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_LORE));
-		DATA_MESSAGE_MAP.put("gain_price_item", new Pair<>(Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_NAME, Message.GUI_ENTRY_FUNCTION_GAIN_ITEM_LORE));
-		DATA_MESSAGE_MAP.put("gain_price_amount", new Pair<>(Message.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_NAME, Message.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_LORE));
-		DATA_MESSAGE_MAP.put("command", new Pair<>(Message.GUI_ENTRY_FUNCTION_COMMAND_NAME, Message.GUI_ENTRY_FUNCTION_COMMAND_LORE));
+		DATA_MESSAGE_MAP.put("sell_pay_price_amount", new Pair<>(Messages.GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_NAME, Messages.GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_LORE));
+		DATA_MESSAGE_MAP.put("buy_pay_price_amount", new Pair<>(Messages.GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_NAME, Messages.GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_LORE));
+		DATA_MESSAGE_MAP.put("buy_pay_price_equation", new Pair<>(Messages.GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_NAME, Messages.GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_LORE));
+		DATA_MESSAGE_MAP.put("sell_pay_price_equation", new Pair<>(Messages.GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_NAME, Messages.GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_LORE));
+		DATA_MESSAGE_MAP.put("buy_pay_price_item", new Pair<>(Messages.GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_NAME, Messages.GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_LORE));
+		DATA_MESSAGE_MAP.put("sell_pay_price_item", new Pair<>(Messages.GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_NAME, Messages.GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_LORE));
+		DATA_MESSAGE_MAP.put("pagination_page", new Pair<>(Messages.GUI_ENTRY_FUNCTION_PAGE_NAME, Messages.GUI_ENTRY_FUNCTION_PAGE_LORE));
+		DATA_MESSAGE_MAP.put("pagination_mode", new Pair<>(Messages.NONE, Messages.NONE));
+		DATA_MESSAGE_MAP.put("open_shop", new Pair<>(Messages.GUI_ENTRY_FUNCTION_OPENED_SHOP_NAME, Messages.GUI_ENTRY_FUNCTION_OPENED_SHOP_LORE));
+		DATA_MESSAGE_MAP.put("purchasable", new Pair<>(Messages.GUI_ENTRY_FUNCTION_PURCHASABLE_NAME, Messages.GUI_ENTRY_FUNCTION_PURCHASABLE_LORE));
+		DATA_MESSAGE_MAP.put("sellable", new Pair<>(Messages.GUI_ENTRY_FUNCTION_SELLABLE_NAME, Messages.GUI_ENTRY_FUNCTION_SELLABLE_LORE));
+		DATA_MESSAGE_MAP.put("purchasable_stacked", new Pair<>(Messages.GUI_ENTRY_FUNCTION_PURCHASABLE_STACKED_NAME, Messages.GUI_ENTRY_FUNCTION_PURCHASABLE_STACKED_LORE));
+		DATA_MESSAGE_MAP.put("sellable_stacked", new Pair<>(Messages.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_NAME, Messages.GUI_ENTRY_FUNCTION_SELLABLE_STACKED_LORE));
+		DATA_MESSAGE_MAP.put("gain_price_item", new Pair<>(Messages.GUI_ENTRY_FUNCTION_GAIN_ITEM_NAME, Messages.GUI_ENTRY_FUNCTION_GAIN_ITEM_LORE));
+		DATA_MESSAGE_MAP.put("gain_price_amount", new Pair<>(Messages.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_NAME, Messages.GUI_ENTRY_FUNCTION_GAIN_AMOUNT_LORE));
+		DATA_MESSAGE_MAP.put("command", new Pair<>(Messages.GUI_ENTRY_FUNCTION_COMMAND_NAME, Messages.GUI_ENTRY_FUNCTION_COMMAND_LORE));
 	}
 
 
@@ -102,7 +103,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 	public static class TextSlot extends DataSlot<String> {
 
 		public TextSlot(String data) {
-			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING);
+			super(Messages.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING);
 			super.setData(data);
 			super.setDisplayItem(new ItemStack(Material.COMMAND_BLOCK));
 		}
@@ -112,7 +113,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> {
 				if(c.getMenu() instanceof TopMenu topMenu) {
 					topMenu.openSubMenu(c.getPlayer(), () -> {
-						AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
+						AnvilMenu menu = MainMenu.newAnvilMenu(Messages.GUI_ENTRY_FUNCTION_DATA_TYPE_STRING.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
 								"" + getData());
 						menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 							setData(s.getTarget());
@@ -142,7 +143,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 
 
 		public EquationSlot(String data) {
-			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION);
+			super(Messages.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION);
 			super.setData(data);
 			super.setDisplayItem(new ItemStack(Material.COMMAND_BLOCK));
 		}
@@ -152,7 +153,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> {
 				if(c.getMenu() instanceof TopMenu topMenu) {
 					topMenu.openSubMenu(c.getPlayer(), () -> {
-						AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
+						AnvilMenu menu = MainMenu.newAnvilMenu(Messages.GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
 								"" + getData());
 						menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 							setData(s.getTarget());
@@ -182,7 +183,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 	public static class ItemStackSlot extends DataSlot<ItemStack> {
 
 		public ItemStackSlot(ItemStack data) {
-			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK);
+			super(Messages.GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK);
 			super.setData(data);
 			super.setDisplayItem(data.clone());
 		}
@@ -216,16 +217,16 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 	public static class BooleanSlot extends DataSlot<Boolean> {
 
 		public BooleanSlot(boolean data) {
-			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL);
+			super(Messages.GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL);
 			setData(data);
-			super.setDisplayItem(ItemStackUtils.createButtonItemStack(data, Message.NONE, Message.NONE));
+			super.setDisplayItem(ItemStackUtils.createButtonItemStack(data, Messages.NONE, Messages.NONE));
 		}
 
 		@Override
 		public Map<Action<?>, ContextConsumer<? extends TargetContext<?>>> getClickHandler() {
 			return Map.of(Action.LEFT, c -> {
 				setData(Boolean.FALSE.equals(getData()));
-				setDisplayItem(ItemStackUtils.createButtonItemStack(Boolean.TRUE.equals(getData()), Message.NONE, Message.NONE));
+				setDisplayItem(ItemStackUtils.createButtonItemStack(Boolean.TRUE.equals(getData()), Messages.NONE, Messages.NONE));
 				c.getMenu().refresh(c.getSlot());
 			});
 		}
@@ -247,7 +248,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 	public static class NumberSlot extends DataSlot<Double> {
 
 		public NumberSlot(Double data) {
-			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER);
+			super(Messages.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER);
 			super.setData(data);
 			super.setDisplayItem(new ItemStack(Material.PAPER, Integer.min(Integer.max(1, data.intValue()), 64)));
 		}
@@ -257,7 +258,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 			return Map.of(Action.LEFT, (ContextConsumer<ClickContext>) c -> {
 				if(c.getMenu() instanceof TopMenu topMenu) {
 					topMenu.openSubMenu(c.getPlayer(), () -> {
-						AnvilMenu menu = MainMenu.newAnvilMenu(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
+						AnvilMenu menu = MainMenu.newAnvilMenu(Messages.GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER.asComponent(TagResolver.resolver("name", Tag.inserting(getName()))),
 								"" + getData());
 						menu.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 							try {
@@ -303,7 +304,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 		};
 
 		public ShopSlot(UUID uuid) {
-			super(Message.GUI_ENTRY_FUNCTION_DATA_TYPE_SHOP);
+			super(Messages.GUI_ENTRY_FUNCTION_DATA_TYPE_SHOP);
 			super.setData(uuid);
 			super.setDataFormatter(aUuid -> aUuid == null ? Component.text("none", NamedTextColor.GRAY) : ShopHandler.getInstance().getShop(aUuid).getName());
 			super.setDisplayItem(displayItem.apply(uuid));
@@ -316,7 +317,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 					topMenu.openSubMenu(c.getPlayer(), () -> {
 
 						int shops = ShopHandler.getInstance().getShops().size();
-						ListEditorMenu<Shop> menu = new ListEditorMenu<>(Message.GUI_SHOPS_TITLE, Integer.max(3, Integer.min(shops / 9, 6)), new ListMenuSupplier<Shop>() {
+						ListEditorMenu<Shop> menu = new ListEditorMenu<>(Messages.GUI_SHOPS_TITLE, Integer.max(3, Integer.min(shops / 9, 6)), new ListMenuSupplier<Shop>() {
 
 							public Collection<Shop> getElements() {
 								return ShopHandler.getInstance().getElements();

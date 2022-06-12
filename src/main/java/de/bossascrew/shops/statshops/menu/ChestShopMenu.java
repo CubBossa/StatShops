@@ -1,11 +1,12 @@
 package de.bossascrew.shops.statshops.menu;
 
+import de.bossascrew.shops.general.util.TextUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.ShopMenu;
 import de.bossascrew.shops.statshops.api.module.TradeModule;
 import de.bossascrew.shops.statshops.data.Customer;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
@@ -51,11 +52,14 @@ public class ChestShopMenu extends RectInventoryMenu implements ShopMenu {
 
 	@Override
 	public Inventory getInventory() {
-		return Bukkit.createInventory(null, getSlots().length, Message.SHOP_GUI_TITLE.asLegacyFormat(
-				TagResolver.resolver("name", Tag.inserting(shop.getName())),
-				TagResolver.resolver("page-title", Tag.inserting(shop.getPageTitle(getCurrentPage()))),
-				TagResolver.resolver("page", Tag.inserting(Component.text(getCurrentPage() + 1))),
-				TagResolver.resolver("pages", Tag.inserting(Component.text(shop.getPageCount())))));
+		return Bukkit.createInventory(null, getSlots().length, TextUtils.toLegacy(
+				Messages.SHOP_GUI_TITLE.format(TagResolver.builder()
+						.tag("name", Tag.inserting(shop.getName()))
+						.tag("page-title", Tag.inserting(shop.getPageTitle(getCurrentPage())))
+						.tag("page", Tag.inserting(Component.text(getCurrentPage() + 1)))
+						.tag("pages", Tag.inserting(Component.text(shop.getPageCount())))
+						.build()
+				).asComponent()));
 	}
 
 	public void setupEntries(Player player) {
@@ -129,7 +133,7 @@ public class ChestShopMenu extends RectInventoryMenu implements ShopMenu {
 						long dif = now - last;
 						if (dif < cooldown) {
 							if (showCooldownMessage) {
-								c.sendMessage(Message.SHOP_COOLDOWN);
+								c.sendMessage(Messages.SHOP_COOLDOWN);
 							}
 							return;
 						}

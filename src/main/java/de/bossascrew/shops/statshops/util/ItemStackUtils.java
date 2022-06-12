@@ -12,7 +12,7 @@ import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.module.TradeModule;
 import de.bossascrew.shops.statshops.data.Config;
 import de.bossascrew.shops.statshops.data.Customer;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
 import de.bossascrew.shops.statshops.handler.TemplateHandler;
@@ -21,6 +21,7 @@ import de.bossascrew.shops.statshops.shop.Discount;
 import de.bossascrew.shops.statshops.shop.EntryTemplate;
 import de.bossascrew.shops.statshops.shop.Limit;
 import de.bossascrew.shops.statshops.shop.currency.Price;
+import de.cubbossa.translations.Message;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.experimental.UtilityClass;
@@ -161,15 +162,15 @@ public class ItemStackUtils {
 		sell.applyDiscount(discount);
 
 		if (tradeModule.isPurchasable() && tradeModule.isSellable() && buy.equals(sell)) {
-			existingLore.addAll(Message.SHOP_ITEM_LORE_BOTH_PRICE.asComponents(TagResolver.resolver("price",
+			existingLore.addAll(Messages.SHOP_ITEM_LORE_BOTH_PRICE.asComponents(TagResolver.resolver("price",
 					Tag.inserting(tradeModule.getPriceDisplay(customer, true, discount)))));
 		} else {
 			if (tradeModule.isPurchasable()) {
-				existingLore.addAll(Message.SHOP_ITEM_LORE_BUY_PRICE.asComponents(
+				existingLore.addAll(Messages.SHOP_ITEM_LORE_BUY_PRICE.asComponents(
 						TagResolver.resolver("price", Tag.inserting(tradeModule.getPriceDisplay(customer, true, discount)))));
 			}
 			if (tradeModule.isSellable()) {
-				existingLore.addAll(Message.SHOP_ITEM_LORE_SELL_PRICE.asComponents(
+				existingLore.addAll(Messages.SHOP_ITEM_LORE_SELL_PRICE.asComponents(
 						TagResolver.resolver("price", Tag.inserting(tradeModule.getPriceDisplay(customer, false, discount)))));
 			}
 		}
@@ -178,7 +179,7 @@ public class ItemStackUtils {
 	public void addLoreDiscount(List<Component> existingLore, List<Discount> discounts) {
 		discounts.sort(Discount::compareTo);
 		for (Discount discount : discounts) {
-			existingLore.addAll(Message.SHOP_ITEM_LORE_DISCOUNT.asComponents(
+			existingLore.addAll(Messages.SHOP_ITEM_LORE_DISCOUNT.asComponents(
 					TagResolver.resolver("percent", Tag.inserting(discount.getFormattedPercent())),
 					TagResolver.resolver("name", Tag.inserting(discount.getName())),
 					TagResolver.resolver("start-date", Tag.inserting(Component.text(TextUtils.formatLocalDateTime(discount.getNextStart())))),
@@ -192,9 +193,9 @@ public class ItemStackUtils {
 		if (userLimit == null && globalLimit == null) {
 			return;
 		}
-		Message message = userLimit == null ? Message.SHOP_ITEM_LORE_LIMIT_GLOBAL :
-				globalLimit == null ? Message.SHOP_ITEM_LORE_LIMIT_PERSONAL :
-						Message.SHOP_ITEM_LORE_LIMIT;
+		Message message = userLimit == null ? Messages.SHOP_ITEM_LORE_LIMIT_GLOBAL :
+				globalLimit == null ? Messages.SHOP_ITEM_LORE_LIMIT_PERSONAL :
+						Messages.SHOP_ITEM_LORE_LIMIT;
 		Duration recovery = userLimit == null ? globalLimit.getRecover() :
 				globalLimit == null ? userLimit.getRecover() :
 						(globalLimit.getRecover().minus(userLimit.getRecover()).isNegative() ? globalLimit.getRecover() : userLimit.getRecover());
@@ -210,21 +211,21 @@ public class ItemStackUtils {
 		Config sc = StatShops.getInstance().getShopsConfig();
 		if (tradeEntry.isPurchasable()) {
 			if (!sc.getBuyKeyBinding().isEmpty()) {
-				getActionComponent(existingLore, sc.getBuyKeyBinding().get(0), Message.ACTION_BUY);
+				getActionComponent(existingLore, sc.getBuyKeyBinding().get(0), Messages.ACTION_BUY);
 			}
 			if (tradeEntry.isPurchasableStacked()) {
 				if (!sc.getBuyStackKeyBinding().isEmpty()) {
-					getActionComponent(existingLore, sc.getBuyStackKeyBinding().get(0), Message.ACTION_BUY_STACK);
+					getActionComponent(existingLore, sc.getBuyStackKeyBinding().get(0), Messages.ACTION_BUY_STACK);
 				}
 			}
 		}
 		if (tradeEntry.isSellable()) {
 			if (!sc.getSellKeyBinding().isEmpty()) {
-				getActionComponent(existingLore, sc.getSellKeyBinding().get(0), Message.ACTION_SELL);
+				getActionComponent(existingLore, sc.getSellKeyBinding().get(0), Messages.ACTION_SELL);
 			}
 			if (tradeEntry.isPurchasableStacked()) {
 				if (!sc.getSellStackKeyBinding().isEmpty()) {
-					getActionComponent(existingLore, sc.getSellStackKeyBinding().get(0), Message.ACTION_SELL_STACK);
+					getActionComponent(existingLore, sc.getSellStackKeyBinding().get(0), Messages.ACTION_SELL_STACK);
 				}
 			}
 		}
@@ -247,7 +248,7 @@ public class ItemStackUtils {
 		if (entry.getModule() instanceof TradeModule tradeEntry) {
 
 			List<String> order = StatShops.getInstance().getShopsConfig().getEntryLoreOrder();
-			Component spacer = Message.SHOP_ITEM_LORE_SPACER.asComponent();
+			Component spacer = Messages.SHOP_ITEM_LORE_SPACER.asComponent();
 			for (String segment : order) {
 				// Place segments in order that is provided via config
 				switch (segment) {
@@ -283,7 +284,7 @@ public class ItemStackUtils {
 	}
 
 	private void getActionComponent(List<Component> additionalLore, String key, Message action) {
-		additionalLore.addAll(Message.SHOP_ITEM_LORE_KEYBIND.asComponents(
+		additionalLore.addAll(Messages.SHOP_ITEM_LORE_KEYBIND.asComponents(
 				TagResolver.resolver("keybind", Tag.inserting(Component.text(key.toLowerCase(Locale.ROOT).replace("_", "-") + "-click"))),
 				TagResolver.resolver("action", Tag.inserting(action))));
 	}
@@ -374,7 +375,7 @@ public class ItemStackUtils {
 		return itemStack;
 	}
 
-	public ItemStack createErrorItem(ComponentLike errorName, List<? extends ComponentLike> errorDescription) {
+	public ItemStack createErrorItem(Message errorName, Message errorDescription) {
 		ItemStack stack = Icon.STACK_WARNING_RP.clone();
 		return setNameAndLore(stack, errorName, errorDescription);
 	}
@@ -391,9 +392,9 @@ public class ItemStackUtils {
 			return Icon.ERROR.get();
 		}
 		ItemStack stack = createItemStack(shop.getDisplayItem() == null ? new ItemStack(MATERIAL_SHOP) : shop.getDisplayItem(),
-				Message.GUI_SHOPS_NAME.asComponent(
+				Messages.GUI_SHOPS_NAME.asComponent(
 						TagResolver.resolver("name", Tag.inserting(shop.getName()))),
-				Message.GUI_SHOPS_LORE.asComponents(
+				Messages.GUI_SHOPS_LORE.asComponents(
 						TagResolver.resolver("permission", Tag.inserting(Component.text(shop.getPermission() == null ? "X" : shop.getPermission()))),
 						TagResolver.resolver("name", Tag.inserting(shop.getName()))));
 		return setFlags(stack);
@@ -411,9 +412,9 @@ public class ItemStackUtils {
 			return Icon.ERROR.get();
 		}
 		ItemStack stack = createItemStack(MATERIAL_DISCOUNT,
-				Message.GUI_DISCOUNTS_ENTRY_NAME.asComponent(
+				Messages.GUI_DISCOUNTS_ENTRY_NAME.asComponent(
 						TagResolver.resolver("name", Tag.inserting(discount.getName()))),
-				Message.GUI_DISCOUNTS_ENTRY_LORE.asComponents(
+				Messages.GUI_DISCOUNTS_ENTRY_LORE.asComponents(
 						TagResolver.resolver("percent", Tag.inserting(discount.getFormattedPercent())),
 						TagResolver.resolver("uuid", Tag.inserting(Component.text(discount.getUuid().toString()))),
 						TagResolver.resolver("permission", Tag.inserting(Component.text(discount.getPermission() == null ? "X" : discount.getPermission()))),
@@ -429,9 +430,9 @@ public class ItemStackUtils {
 			return Icon.ERROR.get();
 		}
 		ItemStack stack = createItemStack(MATERIAL_LIMIT,
-				Message.GUI_LIMITS_ENTRY_NAME.asComponent(
+				Messages.GUI_LIMITS_ENTRY_NAME.asComponent(
 						TagResolver.resolver("name", Tag.inserting(limit.getName()))),
-				Message.GUI_LIMITS_ENTRY_LORE.asComponents(
+				Messages.GUI_LIMITS_ENTRY_LORE.asComponents(
 						TagResolver.resolver("limit", Tag.inserting(Component.text(limit.getTransactionLimit()))),
 						TagResolver.resolver("uuid", Tag.inserting(Component.text(limit.getUuid().toString()))),
 						TagResolver.resolver("global", Tag.inserting(Component.text(limit.isGlobal()))),
@@ -444,9 +445,9 @@ public class ItemStackUtils {
 			return Icon.ERROR.get();
 		}
 		ItemStack stack = createItemStack(TemplateHandler.DISCS[template.getDiscIndex()],
-				Message.GUI_TEMPLATES_ENTRY_NAME.asComponent(
+				Messages.GUI_TEMPLATES_ENTRY_NAME.asComponent(
 						TagResolver.resolver("template", Tag.inserting(template.getName()))),
-				Message.GUI_TEMPLATES_ENTRY_LORE.asComponents(
+				Messages.GUI_TEMPLATES_ENTRY_LORE.asComponents(
 						TagResolver.resolver("template", Tag.inserting(template.getName())),
 						TagResolver.resolver("uuid", Tag.inserting(Component.text(template.getUuid().toString()))),
 						TagResolver.resolver("size", Tag.inserting(Component.text(template.size())))));

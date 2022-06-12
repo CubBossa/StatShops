@@ -1,43 +1,49 @@
 package de.bossascrew.shops.statshops.data;
 
-import de.bossascrew.shops.general.util.TextUtils;
-import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.handler.TranslationHandler;
-import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.Tag;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.jetbrains.annotations.NotNull;
+import de.cubbossa.translations.Message;
+import de.cubbossa.translations.MessageMeta;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class Message implements ComponentLike {
+public class Messages {
 
     public static final Message NONE = new Message("");
-    public static final Message PREFIX = new Message("general.prefix");
 
+    @MessageMeta(value = "<bold><gold>StatShops</gold> </bold><gray>» ")
+    public static final Message PREFIX = new Message("general.prefix");
+    @MessageMeta(value = "<prefix><red>You don't have permission to do this.")
     public static final Message GENERAL_NO_PERMISSION = new Message("general.no_permission");
+    @MessageMeta(value = "<prefix><red>The plugin is currently loading. Try again in a few seconds.")
     public static final Message GENERAL_PLUGIN_LOADING = new Message("general.plugin_loading");
+    @MessageMeta(value = "<prefix><gray>Config file reloaded in <green><ms><dark_green>ms<gray>.",
+            placeholders = "ms")
     public static final Message GENERAL_CONFIG_RELOADED_IN_MS = new Message("general.config_reloaded");
+    @MessageMeta(value = "<prefix><red>Could not reload the config file.")
     public static final Message GENERAL_CONFIG_RELOAD_ERROR = new Message("general.config_error");
+    @MessageMeta(value = "<prefix><gray>Language file reloaded in <green><ms><dark_green>ms<gray>.",
+            placeholders = "ms")
     public static final Message GENERAL_LANGUAGE_RELOADED_IN_MS = new Message("general.language_reloaded");
+    @MessageMeta(value = "<prefix><red>Could not reload the language file.")
     public static final Message GENERAL_LANGUAGE_RELOAD_ERROR = new Message("general.language_error");
+    @MessageMeta(value = "<gold>Back")
     public static final Message GENERAL_GUI_BACK_NAME = new Message("general.gui.back.name");
     public static final Message GENERAL_GUI_BACK_LORE = new Message("general.gui.back.lore");
+    @MessageMeta(value = "<red>Error")
     public static final Message GENERAL_GUI_ERROR_NAME = new Message("general.gui.error.name");
     public static final Message GENERAL_GUI_ERROR_LORE = new Message("general.gui.error.lore");
+    @MessageMeta(value = "<gold>Next page")
     public static final Message GENERAL_GUI_NEXT_PAGE_NAME = new Message("general.gui.next_page.name");
     public static final Message GENERAL_GUI_NEXT_PAGE_LORE = new Message("general.gui.next_page.lore");
+    @MessageMeta(value = "<gold>Previous page")
     public static final Message GENERAL_GUI_PREV_PAGE_NAME = new Message("general.gui.prev_page.name");
     public static final Message GENERAL_GUI_PREV_PAGE_LORE = new Message("general.gui.prev_page.lore");
+    @MessageMeta(value = "<green>Accept")
     public static final Message GENERAL_GUI_ACCEPT_NAME = new Message("general.gui.accept.name");
     public static final Message GENERAL_GUI_ACCEPT_LORE = new Message("general.gui.accept.lore");
+    @MessageMeta(value = "<red>Decline")
     public static final Message GENERAL_GUI_DECLINE_NAME = new Message("general.gui.decline.name");
     public static final Message GENERAL_GUI_DECLINE_LORE = new Message("general.gui.decline.lore");
     public static final Message GENERAL_GUI_WARNING_NAME = new Message("general.gui.warning.name");
@@ -326,48 +332,6 @@ public class Message implements ComponentLike {
     public static final Message GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_LORE = new Message("manager.gui.entry.function.data.sell_price_item.lore");
     public static final Message GUI_ENTRY_FUNCTION_COMMAND_NAME = new Message("manager.gui.entry.function.data.command.name");
     public static final Message GUI_ENTRY_FUNCTION_COMMAND_LORE = new Message("manager.gui.entry.function.data.command.lore");
-
-
-    @Getter
-    private final String key;
-
-    public Message(String key) {
-        this.key = key;
-    }
-
-    public @NotNull Component asComponent() {
-        return this.asComponent(new TagResolver[0]);
-    }
-
-    public Component asComponent(TagResolver... templates) {
-        List<TagResolver> t = new ArrayList<>(List.of(templates));
-        if (!this.equals(Message.PREFIX)) {
-            t.add(TagResolver.resolver("prefix", Tag.inserting(Message.PREFIX)));
-        }
-        String format = TranslationHandler.getInstance().getTranslation(key);
-        return StatShops.getInstance().getMiniMessage().deserialize(format, t.toArray(TagResolver[]::new));
-    }
-
-    public List<Component> asComponents(TagResolver... templates) {
-        String[] toFormat = TranslationHandler.getInstance().getTranslation(key).split("\n");
-        List<Component> result = new ArrayList<>();
-        MiniMessage miniMessage = StatShops.getInstance().getMiniMessage();
-        for (String string : toFormat) {
-            result.add(miniMessage.deserialize(string, templates));
-        }
-        if (result.stream().allMatch(component -> component.equals(Component.text("")))) {
-            return new ArrayList<>();
-        }
-        return result;
-    }
-
-    public String asLegacyFormat(TagResolver... templates) {
-        return TextUtils.toLegacy(asComponent(templates));
-    }
-
-    public List<String> asLegacyFormats(TagResolver... templates) {
-        return asComponents(templates).stream().map(TextUtils::toLegacy).collect(Collectors.toList());
-    }
 
     public static List<Message> values() {
         List<Message> messages = new ArrayList<>();

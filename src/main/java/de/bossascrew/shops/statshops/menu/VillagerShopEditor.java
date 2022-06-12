@@ -1,7 +1,7 @@
 package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.statshops.api.ShopEntry;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
 import de.bossascrew.shops.statshops.handler.SubModulesHandler;
 import de.bossascrew.shops.statshops.shop.VillagerShop;
@@ -25,7 +25,7 @@ public class VillagerShopEditor extends ListEditorMenu<ShopEntry> {
     private ShopEntry selectedEntry = null;
 
     public VillagerShopEditor(VillagerShop shop) {
-        super(Message.VILLAGER_SHOP_TITLE, 3, null);
+        super(Messages.VILLAGER_SHOP_TITLE, 3, null);
         super.setSupplier(new ListMenuSupplier<>() {
             @Override
             public Collection<ShopEntry> getElements() {
@@ -46,13 +46,13 @@ public class VillagerShopEditor extends ListEditorMenu<ShopEntry> {
         final int left = 2 * 9 + 3;
         final int right = 2 * 9 + 4;
 
-        ItemStack editStack = ItemStackUtils.createItemStack(Material.COMMAND_BLOCK, Message.GUI_VILLAGER_EDITOR_EDIT_NAME, Message.GUI_VILLAGER_EDITOR_EDIT_LORE);
-        ItemStack leftStack = ItemStackUtils.setNameAndLore(Icon.STACK_PREV_PAGE_RP.clone(), Message.GUI_VILLAGER_EDITOR_LEFT_NAME, Message.GUI_VILLAGER_EDITOR_LEFT_LORE);
-        ItemStack rightStack = ItemStackUtils.setNameAndLore(Icon.STACK_NEXT_PAGE_RP.clone(), Message.GUI_VILLAGER_EDITOR_RIGHT_NAME, Message.GUI_VILLAGER_EDITOR_RIGHT_LORE);
+        ItemStack editStack = ItemStackUtils.createItemStack(Material.COMMAND_BLOCK, Messages.GUI_VILLAGER_EDITOR_EDIT_NAME, Messages.GUI_VILLAGER_EDITOR_EDIT_LORE);
+        ItemStack leftStack = ItemStackUtils.setNameAndLore(Icon.STACK_PREV_PAGE_RP.clone(), Messages.GUI_VILLAGER_EDITOR_LEFT_NAME, Messages.GUI_VILLAGER_EDITOR_LEFT_LORE);
+        ItemStack rightStack = ItemStackUtils.setNameAndLore(Icon.STACK_NEXT_PAGE_RP.clone(), Messages.GUI_VILLAGER_EDITOR_RIGHT_NAME, Messages.GUI_VILLAGER_EDITOR_RIGHT_LORE);
 
         addPreset(buttonHandler -> {
             // info
-            buttonHandler.addItemOnTop(9 * 2 + 7, ItemStackUtils.createInfoItem(Message.GUI_VILLAGER_EDITOR_INFO_NAME, Message.GUI_VILLAGER_EDITOR_INFO_LORE));
+            buttonHandler.addItemOnTop(9 * 2 + 7, ItemStackUtils.createInfoItem(Messages.GUI_VILLAGER_EDITOR_INFO_NAME, Messages.GUI_VILLAGER_EDITOR_INFO_LORE));
 
             // edit stack
             buttonHandler.addItemOnTop(edit, () -> selectedEntry != null ? editStack.clone() : null);
@@ -96,7 +96,7 @@ public class VillagerShopEditor extends ListEditorMenu<ShopEntry> {
                 refresh(left, right, edit);
             }
         });
-        setNewHandler(Message.GUI_VILLAGER_EDITOR_NEW_NAME, Message.GUI_VILLAGER_EDITOR_NEW_LORE, c -> {
+        setNewHandler(Messages.GUI_VILLAGER_EDITOR_NEW_NAME, Messages.GUI_VILLAGER_EDITOR_NEW_LORE, c -> {
             Player player = c.getPlayer();
             if (player.getItemOnCursor() != null && !player.getItemOnCursor().getType().equals(Material.AIR)) {
                 ShopEntry entry = shop.createEntry(player.getItemOnCursor(), shop.getEntries().size() == 0 ? 0 : shop.getEntries().lastKey() + 1);

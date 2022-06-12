@@ -3,7 +3,7 @@ package de.bossascrew.shops.statshops.hook;
 import de.bossascrew.shops.statshops.data.Customer;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -61,7 +61,7 @@ public class CitizensHook implements Listener {
 			if (assigningPlayers.remove(event.getPlayer()) != null) {
 				event.setUseItemInHand(Event.Result.DENY);
 				event.setUseInteractedBlock(Event.Result.DENY);
-				Customer.wrap(event.getPlayer()).sendMessage(Message.CITIZENS_CANCELLED);
+				Customer.wrap(event.getPlayer()).sendMessage(Messages.CITIZENS_CANCELLED);
 			}
 		}
 	}
@@ -75,7 +75,7 @@ public class CitizensHook implements Listener {
 		if (shop != null) {
 			if (event.getNPC().hasTrait(ShopTrait.class)) {
 				confirmingPlayers.put(player, shop);
-				customer.sendMessage(Message.CITIZENS_CONFIRM_OVERRIDE);
+				customer.sendMessage(Messages.CITIZENS_CONFIRM_OVERRIDE);
 				return;
 			}
 			ShopTrait trait = new ShopTrait();
@@ -90,7 +90,7 @@ public class CitizensHook implements Listener {
 			event.setCancelled(true);
 			event.getNPC().getTrait(ShopTrait.class).setShop(shop);
 		}
-		customer.sendMessage(Message.CITIZENS_ASSIGNED);
+		customer.sendMessage(Messages.CITIZENS_ASSIGNED);
 	}
 
 	public void addAssigningPlayer(Player player, Shop shop) {

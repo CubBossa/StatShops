@@ -3,7 +3,7 @@ package de.bossascrew.shops.statshops.shop;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.TransactionBalanceMessenger;
 import de.bossascrew.shops.statshops.data.Customer;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.shop.currency.Price;
 import de.bossascrew.shops.statshops.util.TradeMessageType;
 import lombok.Getter;
@@ -90,7 +90,7 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 			return;
 		}
 		if (header) {
-			customer.sendMessage(Message.SHOP_TRADE_FEEDBACK_CUMUL_TITLE, 0);
+			customer.sendMessage(Messages.SHOP_TRADE_FEEDBACK_CUMUL_TITLE, 0);
 		}
 		cache = cache.stream().sorted().collect(Collectors.toList());
 		for (Price<?> price : cache) {
@@ -108,14 +108,14 @@ public class SimpleBalanceMessenger implements TransactionBalanceMessenger {
 
 		TagResolver[] templates = {
 				TagResolver.resolver("indicator", Tag.inserting(actualAmount >= 0 ?
-						Message.SHOP_TRADE_FEEDBACK_GAIN :
-						Message.SHOP_TRADE_FEEDBACK_PAY)),
+						Messages.SHOP_TRADE_FEEDBACK_GAIN :
+						Messages.SHOP_TRADE_FEEDBACK_PAY)),
 				TagResolver.resolver("transaction", Tag.inserting(price.getPriceComponent())),
 		};
 		if (tradeMessageType.equals(TradeMessageType.PROMPT)) {
-			return Message.SHOP_TRADE_FEEDBACK_PROMPT_FORMAT.asComponent(templates);
+			return Messages.SHOP_TRADE_FEEDBACK_PROMPT_FORMAT.asComponent(templates);
 		} else {
-			return Message.SHOP_TRADE_FEEDBACK_CUMUL_FORMAT.asComponent(templates);
+			return Messages.SHOP_TRADE_FEEDBACK_CUMUL_FORMAT.asComponent(templates);
 		}
 	}
 }

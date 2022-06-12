@@ -6,12 +6,13 @@ import de.bossascrew.shops.statshops.api.PaginatedShop;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.data.Database;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.shop.ChestMenuShop;
 import de.bossascrew.shops.statshops.shop.VillagerShop;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.web.WebAccessable;
 import de.cubbossa.menuframework.inventory.ListMenuSupplier;
+import de.cubbossa.translations.Message;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -45,8 +46,8 @@ public class ShopHandler implements
 		this.shopMap = new HashMap<>();
 		this.registeredShopTypes = new ArrayList<>();
 
-		registeredShopTypes.add(new ShopTypeProvider(ChestMenuShop.class, Material.CHEST, Message.SHOP_TYPE_CHEST_NAME, Message.SHOP_TYPE_CHEST_LORE));
-		registeredShopTypes.add(new ShopTypeProvider(VillagerShop.class, Material.VILLAGER_SPAWN_EGG, Message.SHOP_TYPE_VILLAGER_NAME, Message.SHOP_TYPE_VILLAGER_LORE));
+		registeredShopTypes.add(new ShopTypeProvider(ChestMenuShop.class, Material.CHEST, Messages.SHOP_TYPE_CHEST_NAME, Messages.SHOP_TYPE_CHEST_LORE));
+		registeredShopTypes.add(new ShopTypeProvider(VillagerShop.class, Material.VILLAGER_SPAWN_EGG, Messages.SHOP_TYPE_VILLAGER_NAME, Messages.SHOP_TYPE_VILLAGER_LORE));
 
 		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
 			extension.registerShopTypes(this);

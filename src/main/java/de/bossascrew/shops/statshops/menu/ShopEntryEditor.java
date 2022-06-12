@@ -5,7 +5,7 @@ import de.bossascrew.shops.general.util.Pair;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.module.TradeModule;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.handler.EntryModuleHandler;
 import de.bossascrew.shops.statshops.handler.LimitsHandler;
@@ -38,10 +38,10 @@ public class ShopEntryEditor extends RectInventoryMenu {
 	private final Collection<Class<?>> allowedModuleTypes;
 
 	public ShopEntryEditor(ShopEntry entry, Player targetPlayer) {
-		super(Message.GUI_SHOP_ENTRY, 3);
+		super(Messages.GUI_SHOP_ENTRY, 3);
 		this.entry = entry;
 		this.targetPlayer = targetPlayer;
-		this.closeHandler = closeContext -> entry.saveToDatabase();
+		this.closeHandlers.add(closeContext -> entry.saveToDatabase());
 		this.allowedModuleTypes = EntryModuleHandler.getInstance().getEntryModules().values().stream()
 				.filter(e -> e.getPermission() == null || targetPlayer.hasPermission(e.getPermission()))
 				.map(EntryModuleHandler.EntryModuleProvider::getClass)
@@ -56,13 +56,13 @@ public class ShopEntryEditor extends RectInventoryMenu {
 		//TODO i suppose
 		// Set deco lore
 		setItem(0, ItemStackUtils.createItemStack(entry.getDisplayItem().getType(),
-				Message.GUI_ENTRY_SET_LORE_NAME, Message.GUI_ENTRY_SET_LORE_LORE));
+				Messages.GUI_ENTRY_SET_LORE_NAME, Messages.GUI_ENTRY_SET_LORE_LORE));
 
 		setItemAndClickHandler(1, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_PERMISSIONS,
-						Message.GUI_ENTRY_SET_PERMISSION_NAME, Message.GUI_ENTRY_SET_PERMISSION_LORE.asComponents(
+						Messages.GUI_ENTRY_SET_PERMISSION_NAME, Messages.GUI_ENTRY_SET_PERMISSION_LORE.asComponents(
 								TagResolver.resolver("permission", Tag.inserting(Component.text(entry.getPermission() == null ? "X" : entry.getPermission()))))),
 				Action.LEFT, clickContext -> {
-					AnvilMenu m = MainMenu.newAnvilMenu(Message.GUI_ENTRY_SET_PERMISSION_TITLE, "shops.item.");
+					AnvilMenu m = MainMenu.newAnvilMenu(Messages.GUI_ENTRY_SET_PERMISSION_TITLE, "shops.item.");
 					m.setOutputClickHandler(AnvilMenu.CONFIRM, s -> {
 						entry.setPermission(s.getTarget());
 						entry.saveToDatabase();
@@ -71,26 +71,26 @@ public class ShopEntryEditor extends RectInventoryMenu {
 				});
 		//Set tags
 		setButton(2, Button.builder()
-				.withItemStack(ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS, Message.GUI_ENTRY_SET_TAGS_NAME, Message.GUI_ENTRY_SET_TAGS_LORE))
+				.withItemStack(ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_TAGS, Messages.GUI_ENTRY_SET_TAGS_NAME, Messages.GUI_ENTRY_SET_TAGS_LORE))
 				.withClickHandler(Action.LEFT, clickContext -> openSubMenu(clickContext.getPlayer(), MainMenu.newTagMenu(
 						entry,
-						Message.GUI_TAGS_TITLE.asComponent(TagResolver.resolver("name", Tag.inserting(Component.text("shop entry")))),
-						Message.GUI_TAGS_NEW_TAG_TITLE, Message.GUI_TAGS_NEW_TAG_NAME, Message.GUI_TAGS_NEW_TAG_LORE,
-						Message.GENERAL_GUI_TAGS_REMOVE_TAG
+						Messages.GUI_TAGS_TITLE.asComponent(TagResolver.resolver("name", Tag.inserting(Component.text("shop entry")))),
+						Messages.GUI_TAGS_NEW_TAG_TITLE, Messages.GUI_TAGS_NEW_TAG_NAME, Messages.GUI_TAGS_NEW_TAG_LORE,
+						Messages.GENERAL_GUI_TAGS_REMOVE_TAG
 				))));
 		setButton(2, Button.builder()
 				.withItemStack(ItemStackUtils.createItemStack(entry.getModule() == null ? new ItemStack(Material.BLACK_STAINED_GLASS) :
-								entry.getModule().getDisplayItem(), Message.GUI_ENTRY_SET_FUNCTION_NAME.asComponent(TagResolver.resolver("name", Tag.inserting(entry.getModule() == null ?
-								Message.GUI_ENTRY_FUNCTION_STATIC_NAME : entry.getModule().getDisplayName()))),
-						Message.GUI_ENTRY_SET_FUNCTION_LORE.asComponents(TagResolver.resolver("function", Tag.inserting(entry.getModule() == null ?
-								Message.GUI_ENTRY_FUNCTION_STATIC_NAME : entry.getModule().getDisplayName())))))
+								entry.getModule().getDisplayItem(), Messages.GUI_ENTRY_SET_FUNCTION_NAME.asComponent(TagResolver.resolver("name", Tag.inserting(entry.getModule() == null ?
+								Messages.GUI_ENTRY_FUNCTION_STATIC_NAME : entry.getModule().getDisplayName()))),
+						Messages.GUI_ENTRY_SET_FUNCTION_LORE.asComponents(TagResolver.resolver("function", Tag.inserting(entry.getModule() == null ?
+								Messages.GUI_ENTRY_FUNCTION_STATIC_NAME : entry.getModule().getDisplayName())))))
 				.withClickHandler(Action.LEFT, clickContext -> openSubMenu(clickContext.getPlayer(), newEntryFunctionMenu())));
 
 		if (entry.getModule() instanceof TradeModule tm) {
 			setButton(9 + 2, Button.builder()
 					.withItemStack(tm.getCosts().getProvider().getListDisplayItem())
 					.withClickHandler(c -> openSubMenu(c.getPlayer(), () -> {
-						ListMenu m = new ListMenu(Message.GUI_ENTRY_SET_COSTS_TITLE, 3);
+						ListMenu m = new ListMenu(Messages.GUI_ENTRY_SET_COSTS_TITLE, 3);
 						SubModulesHandler.getInstance().getValues().stream()
 								.filter(p -> p.getPermission() == null || c.getPlayer().hasPermission(p.getPermission()))
 								.forEach(p -> {
@@ -107,11 +107,11 @@ public class ShopEntryEditor extends RectInventoryMenu {
 			Pair<Limit, Limit> limits = LimitsHandler.getInstance().getMinimalLimitsWithMatchingTags(targetPlayer, entry, entry.getShop());
 			ItemStackUtils.addLoreLimits(limitsLore, limits.getLeft(), limits.getRight(), 0);
 			if (limitsLore.size() > 0) {
-				limitsLore.add(Message.SHOP_ITEM_LORE_SPACER.asComponent());
+				limitsLore.add(Messages.SHOP_ITEM_LORE_SPACER.asComponent());
 			}
-			limitsLore.addAll(Message.GUI_SHOP_SET_LIMITS_LORE.asComponents());
+			limitsLore.addAll(Messages.GUI_SHOP_SET_LIMITS_LORE.asComponents());
 
-			setItemAndClickHandler(10, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT, Message.GUI_SHOP_SET_LIMITS_NAME, limitsLore),
+			setItemAndClickHandler(10, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_LIMIT, Messages.GUI_SHOP_SET_LIMITS_NAME, limitsLore),
 					Action.LEFT, c -> openSubMenu(c.getPlayer(), newShopLimitsMenu()));
 
 			//Open Discounts menu
@@ -119,11 +119,11 @@ public class ShopEntryEditor extends RectInventoryMenu {
 			List<Discount> discounts = DiscountHandler.getInstance().getDiscountsWithMatchingTags(targetPlayer, entry, entry.getShop());
 			ItemStackUtils.addLoreDiscount(discountLore, discounts);
 			if (discountLore.size() > 0) {
-				discountLore.add(Message.SHOP_ITEM_LORE_SPACER.asComponent());
+				discountLore.add(Messages.SHOP_ITEM_LORE_SPACER.asComponent());
 			}
-			discountLore.addAll(Message.GUI_SHOP_SET_DISCOUNTS_LORE.asComponents());
+			discountLore.addAll(Messages.GUI_SHOP_SET_DISCOUNTS_LORE.asComponents());
 
-			setItemAndClickHandler(19, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT, Message.GUI_SHOP_SET_DISCOUNTS_NAME, discountLore),
+			setItemAndClickHandler(19, ItemStackUtils.createItemStack(ItemStackUtils.MATERIAL_DISCOUNT, Messages.GUI_SHOP_SET_DISCOUNTS_NAME, discountLore),
 					Action.LEFT, c -> openSubMenu(c.getPlayer(), newShopDiscountsMenu()));
 		}
 
@@ -158,7 +158,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 	}
 
 	public TopMenu newEntryFunctionMenu() {
-		ListEditorMenu<EntryModuleHandler.EntryModuleProvider> menu = new ListEditorMenu<>(Message.GUI_ENTRY_SET_FUNCTION_TITLE, 3, new ListMenuSupplier<>() {
+		ListEditorMenu<EntryModuleHandler.EntryModuleProvider> menu = new ListEditorMenu<>(Messages.GUI_ENTRY_SET_FUNCTION_TITLE, 3, new ListMenuSupplier<>() {
 
 			public Collection<EntryModuleHandler.EntryModuleProvider> getElements() {
 				return EntryModuleHandler.getInstance().getEntryModules().values().stream()
@@ -184,7 +184,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 	}
 
 	public TopMenu newShopLimitsMenu() {
-		ListEditorMenu<Limit> menu = new ListEditorMenu<>(Message.GUI_SHOP_LIMITS_TITLE, 3, LimitsHandler.getInstance());
+		ListEditorMenu<Limit> menu = new ListEditorMenu<>(Messages.GUI_SHOP_LIMITS_TITLE, 3, LimitsHandler.getInstance());
 		menu.setItemModifier((limit, stack) -> TagUtils.hasCommonTags(entry, limit) || TagUtils.hasCommonTags(entry.getShop(), limit) ?
 				ItemStackUtils.setGlow(stack) : stack);
 		menu.setClickHandler(Action.LEFT, c -> {
@@ -199,7 +199,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 	}
 
 	public TopMenu newShopDiscountsMenu() {
-		ListEditorMenu<Discount> menu = new ListEditorMenu<>(Message.GUI_SHOP_DISCOUNTS_TITLE, 3, DiscountHandler.getInstance());
+		ListEditorMenu<Discount> menu = new ListEditorMenu<>(Messages.GUI_SHOP_DISCOUNTS_TITLE, 3, DiscountHandler.getInstance());
 		menu.setItemModifier((discount, stack) -> TagUtils.hasCommonTags(entry, discount) || TagUtils.hasCommonTags(entry.getShop(), discount) ?
 				ItemStackUtils.setGlow(stack) : stack);
 		menu.setClickHandler(Action.LEFT, c -> {

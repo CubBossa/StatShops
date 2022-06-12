@@ -4,6 +4,7 @@ import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.data.DatabaseObject;
 import de.bossascrew.shops.statshops.handler.CustomerHandler;
+import de.cubbossa.translations.Message;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

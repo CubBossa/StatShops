@@ -16,6 +16,7 @@ import de.bossascrew.shops.statshops.hook.VaultExtension;
 import de.bossascrew.shops.statshops.listener.PlayerListener;
 import de.cubbossa.menuframework.GUIHandler;
 import de.cubbossa.menuframework.protocol.ProtocolLibListener;
+import de.cubbossa.translations.Message;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.audience.Audience;
@@ -116,6 +117,7 @@ public class StatShops extends JavaPlugin {
 		instance = this;
 	}
 
+	@SneakyThrows
 	@Override
 	public void onEnable() {
 
@@ -149,6 +151,12 @@ public class StatShops extends JavaPlugin {
 			citizensHook = new CitizensHook(this);
 			log(LoggingPolicy.INFO, "Citizens found and successfully hooked");
 		}
+
+		de.cubbossa.translations.TranslationHandler translationHandler = new de.cubbossa.translations.TranslationHandler(this, bukkitAudiences, miniMessage, new File(getDataFolder(), "lang/"));
+		translationHandler.setFallbackLanguage("en_US");
+		translationHandler.setUseClientLanguage(true); //TODO config
+		translationHandler.registerAnnotatedLanguageClass(Messages.class);
+		translationHandler.loadLanguages();
 
 		// Load translations
 		this.translationHandler = new TranslationHandler("en_US");

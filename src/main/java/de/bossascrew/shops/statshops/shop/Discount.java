@@ -7,7 +7,7 @@ import de.bossascrew.shops.statshops.api.Taggable;
 import de.bossascrew.shops.general.util.*;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.api.data.DatabaseObject;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.handler.DiscountHandler;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import lombok.Getter;
@@ -163,9 +163,9 @@ public class Discount implements
 	@JsonIgnore
 	public Component getFormattedPercent() {
 		if (percent > 0) {
-			return Message.SHOP_ITEM_LORE_DISCOUNT_POSITIVE.asComponent(TagResolver.resolver("discount", Tag.inserting(Component.text("" + percent))));
+			return Messages.SHOP_ITEM_LORE_DISCOUNT_POSITIVE.asComponent(TagResolver.resolver("discount", Tag.inserting(Component.text("" + percent))));
 		}
-		return Message.SHOP_ITEM_LORE_DISCOUNT_NEGATIVE.asComponent(TagResolver.resolver("discount", Tag.inserting(Component.text("" + percent))));
+		return Messages.SHOP_ITEM_LORE_DISCOUNT_NEGATIVE.asComponent(TagResolver.resolver("discount", Tag.inserting(Component.text("" + percent))));
 	}
 
 	@Override

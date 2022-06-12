@@ -4,10 +4,11 @@ import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.StatShopsExtension;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.shop.entry.ArticleSubModule;
 import de.bossascrew.shops.statshops.shop.entry.CostsSubModule;
 import de.bossascrew.shops.statshops.shop.entry.TradeBaseModule;
+import de.cubbossa.translations.Message;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -53,17 +54,17 @@ public class SubModulesHandler {
 
 	public void registerDefaults() {
 
-		COSTS_ITEM_PROVIDER = registerCostsSubModule("item", StatShops.PERM_COSTS_ITEM, new ItemStack(Material.EMERALD), Message.GUI_ENTRY_FUNCTION_COSTS_ITEM_NAME,
-				Message.GUI_ENTRY_FUNCTION_COSTS_ITEM_LORE, (provider, shopEntry) -> new CostsSubModule.ItemCosts(provider));
-		COSTS_XP_PROVIDER = registerCostsSubModule("exp", StatShops.PERM_COSTS_XP, new ItemStack(Material.EXPERIENCE_BOTTLE), Message.GUI_ENTRY_FUNCTION_COSTS_XP_NAME,
-				Message.GUI_ENTRY_FUNCTION_COSTS_XP_LORE, (provider, shopEntry) -> new CostsSubModule.ExpCosts(provider));
+		COSTS_ITEM_PROVIDER = registerCostsSubModule("item", StatShops.PERM_COSTS_ITEM, new ItemStack(Material.EMERALD), Messages.GUI_ENTRY_FUNCTION_COSTS_ITEM_NAME,
+				Messages.GUI_ENTRY_FUNCTION_COSTS_ITEM_LORE, (provider, shopEntry) -> new CostsSubModule.ItemCosts(provider));
+		COSTS_XP_PROVIDER = registerCostsSubModule("exp", StatShops.PERM_COSTS_XP, new ItemStack(Material.EXPERIENCE_BOTTLE), Messages.GUI_ENTRY_FUNCTION_COSTS_XP_NAME,
+				Messages.GUI_ENTRY_FUNCTION_COSTS_XP_LORE, (provider, shopEntry) -> new CostsSubModule.ExpCosts(provider));
 
-		ARTICLE_ITEM_PROVIDER = registerArticleSubModule(EntryModuleHandler.TRADE_ITEM, StatShops.PERM_ARTICLE_TRADE_ITEM, new ItemStack(Material.AZURE_BLUET), Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_NAME,
-				Message.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_LORE, (provider, shopEntry) -> new ArticleSubModule.ItemArticle(provider));
-		ARTICLE_CMD_PROVIDER = registerArticleSubModule(EntryModuleHandler.TRADE_CMD, StatShops.PERM_ARTICLE_TRADE_CMD, new ItemStack(Material.REDSTONE), Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_NAME,
-				Message.GUI_ENTRY_FUNCTION_ARTICLE_CMD_LORE, (provider, shopEntry) -> new ArticleSubModule.CommandArticle(provider));
-		ARTICLE_CONSOLE_CMD_PROVIDER = registerArticleSubModule(EntryModuleHandler.TRADE_CONSOLE_CMD, StatShops.PERM_ARTICLE_TRADE_CONSOLE_CMD, new ItemStack(Material.REPEATER), Message.GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_NAME,
-				Message.GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_LORE, (provider, shopEntry) -> new ArticleSubModule.ConsoleCommandArticle(provider));
+		ARTICLE_ITEM_PROVIDER = registerArticleSubModule(EntryModuleHandler.TRADE_ITEM, StatShops.PERM_ARTICLE_TRADE_ITEM, new ItemStack(Material.AZURE_BLUET), Messages.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_NAME,
+				Messages.GUI_ENTRY_FUNCTION_ARTICLE_ITEM_LORE, (provider, shopEntry) -> new ArticleSubModule.ItemArticle(provider));
+		ARTICLE_CMD_PROVIDER = registerArticleSubModule(EntryModuleHandler.TRADE_CMD, StatShops.PERM_ARTICLE_TRADE_CMD, new ItemStack(Material.REDSTONE), Messages.GUI_ENTRY_FUNCTION_ARTICLE_CMD_NAME,
+				Messages.GUI_ENTRY_FUNCTION_ARTICLE_CMD_LORE, (provider, shopEntry) -> new ArticleSubModule.CommandArticle(provider));
+		ARTICLE_CONSOLE_CMD_PROVIDER = registerArticleSubModule(EntryModuleHandler.TRADE_CONSOLE_CMD, StatShops.PERM_ARTICLE_TRADE_CONSOLE_CMD, new ItemStack(Material.REPEATER), Messages.GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_NAME,
+				Messages.GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_LORE, (provider, shopEntry) -> new ArticleSubModule.ConsoleCommandArticle(provider));
 
 		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
 			extension.registerTradeSubModules(this);

@@ -1,7 +1,7 @@
 package de.bossascrew.shops.statshops.menu;
 
 import de.bossascrew.shops.statshops.StatShops;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.cubbossa.menuframework.inventory.Action;
 import de.cubbossa.menuframework.inventory.Button;
@@ -12,6 +12,7 @@ import de.cubbossa.menuframework.inventory.context.ContextConsumer;
 import de.cubbossa.menuframework.inventory.context.TargetContext;
 import de.cubbossa.menuframework.inventory.implementations.AnvilMenu;
 import de.cubbossa.menuframework.inventory.implementations.ListMenu;
+import de.cubbossa.translations.Message;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.ComponentLike;

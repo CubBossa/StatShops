@@ -6,11 +6,12 @@ import de.bossascrew.shops.statshops.api.PaginatedShop;
 import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.ShopEntry;
 import de.bossascrew.shops.statshops.api.module.EntryModule;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.shop.entry.CloseModule;
 import de.bossascrew.shops.statshops.shop.entry.OpenShopModule;
 import de.bossascrew.shops.statshops.shop.entry.PageBaseModule;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
+import de.cubbossa.translations.Message;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.ComponentLike;
@@ -100,23 +101,23 @@ public class EntryModuleHandler {
 
     public void registerDefaults() {
 
-        STATIC_PROVIDER = registerEntryModule("static", new ItemStack(Material.BLACK_STAINED_GLASS), Message.GUI_ENTRY_FUNCTION_STATIC_NAME,
-                Message.GUI_ENTRY_FUNCTION_STATIC_LORE, (provider, shopEntry) -> null);
+        STATIC_PROVIDER = registerEntryModule("static", new ItemStack(Material.BLACK_STAINED_GLASS), Messages.GUI_ENTRY_FUNCTION_STATIC_NAME,
+                Messages.GUI_ENTRY_FUNCTION_STATIC_LORE, (provider, shopEntry) -> null);
         STATIC_PROVIDER.setPermission(StatShops.PERM_ARTICLE_STATIC);
-        CLOSE_PROVIDER = registerEntryModule("close", new ItemStack(Material.SPRUCE_DOOR), Message.GUI_ENTRY_FUNCTION_CLOSE_NAME,
-                Message.GUI_ENTRY_FUNCTION_CLOSE_LORE, (provider, shopEntry) -> closeShop(shopEntry));
+        CLOSE_PROVIDER = registerEntryModule("close", new ItemStack(Material.SPRUCE_DOOR), Messages.GUI_ENTRY_FUNCTION_CLOSE_NAME,
+                Messages.GUI_ENTRY_FUNCTION_CLOSE_LORE, (provider, shopEntry) -> closeShop(shopEntry));
         CLOSE_PROVIDER.setPermission(StatShops.PERM_ARTICLE_CLOSE_SHOP);
-        OPEN_SHOP_PROVIDER = registerEntryModule("open_shop", new ItemStack(Material.VILLAGER_SPAWN_EGG), Message.GUI_ENTRY_FUNCTION_OPEN_SHOP_NAME,
-                Message.GUI_ENTRY_FUNCTION_OPEN_SHOP_LORE, (provider, shopEntry) -> openShop(shopEntry, shopEntry.getShop()));
+        OPEN_SHOP_PROVIDER = registerEntryModule("open_shop", new ItemStack(Material.VILLAGER_SPAWN_EGG), Messages.GUI_ENTRY_FUNCTION_OPEN_SHOP_NAME,
+                Messages.GUI_ENTRY_FUNCTION_OPEN_SHOP_LORE, (provider, shopEntry) -> openShop(shopEntry, shopEntry.getShop()));
         OPEN_SHOP_PROVIDER.setPermission(StatShops.PERM_ARTICLE_OPEN_SHOP);
-        EXACT_PAGE_PROVIDER = registerEntryModule("exact_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
-                Message.GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, (provider, shopEntry) -> openExactPage(shopEntry, 1));
+        EXACT_PAGE_PROVIDER = registerEntryModule("exact_page", new ItemStack(Material.BOOK), Messages.GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME,
+                Messages.GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE, (provider, shopEntry) -> openExactPage(shopEntry, 1));
         EXACT_PAGE_PROVIDER.setPermission(StatShops.PERM_ARTICLE_EXACT_PAGE);
-        NEXT_PAGE_PROVIDER = registerEntryModule("next_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
-                Message.GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, (provider, shopEntry) -> openNextPage(shopEntry, 1));
+        NEXT_PAGE_PROVIDER = registerEntryModule("next_page", new ItemStack(Material.BOOK), Messages.GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME,
+                Messages.GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE, (provider, shopEntry) -> openNextPage(shopEntry, 1));
         NEXT_PAGE_PROVIDER.setPermission(StatShops.PERM_ARTICLE_NEXT_PAGE);
-        PREV_PAGE_PROVIDER = registerEntryModule("prev_page", new ItemStack(Material.BOOK), Message.GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
-                Message.GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, (provider, shopEntry) -> openPrevPage(shopEntry, 1));
+        PREV_PAGE_PROVIDER = registerEntryModule("prev_page", new ItemStack(Material.BOOK), Messages.GUI_ENTRY_FUNCTION_PREV_PAGE_NAME,
+                Messages.GUI_ENTRY_FUNCTION_PREV_PAGE_LORE, (provider, shopEntry) -> openPrevPage(shopEntry, 1));
         PREV_PAGE_PROVIDER.setPermission(StatShops.PERM_ARTICLE_PREV_PAGE);
 
         // All trade modules are automatically registered by the submodules handler

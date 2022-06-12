@@ -9,7 +9,7 @@ import de.bossascrew.shops.statshops.api.Shop;
 import de.bossascrew.shops.statshops.api.data.NamedObject;
 import de.bossascrew.shops.statshops.convertion.DataPreset;
 import de.bossascrew.shops.statshops.data.Customer;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.handler.TranslationHandler;
 import de.bossascrew.shops.statshops.menu.MainMenu;
 import net.kyori.adventure.text.Component;
@@ -90,7 +90,7 @@ public class ShopCommand extends BaseCommand {
 			return dataPreset;
 
 		}).thenAccept(dataPreset -> {
-			StatShops.getInstance().sendMessage(sender, Message.DATA_PRESET_EXPORT_CONFIRM.asComponent(
+			StatShops.getInstance().sendMessage(sender, Messages.DATA_PRESET_EXPORT_CONFIRM.asComponent(
 					TagResolver.resolver("shops", Tag.inserting(listElements(dataPreset.getShops(), new Pair<>("Shop", "Shops")))),
 					TagResolver.resolver("discounts", Tag.inserting(listElements(dataPreset.getDiscounts(), new Pair<>("Discount", "Discounts")))),
 					TagResolver.resolver("limits", Tag.inserting(listElements(dataPreset.getLimits(), new Pair<>("Limit", "Limits")))),
@@ -100,7 +100,7 @@ public class ShopCommand extends BaseCommand {
 			UUID uuid = sender instanceof Player player ? player.getUniqueId() : consoleUuid;
 			confirmingPlayers.put(uuid, () -> {
 				dataPreset.toFile();
-				StatShops.getInstance().sendMessage(sender, Message.DATA_PRESET_EXPORT_SUCCESS.asComponent(TagResolver.resolver("name", Tag.inserting(Component.text(dataPreset.getName())))));
+				StatShops.getInstance().sendMessage(sender, Messages.DATA_PRESET_EXPORT_SUCCESS.asComponent(TagResolver.resolver("name", Tag.inserting(Component.text(dataPreset.getName())))));
 				confirmingPlayers.remove(uuid);
 			});
 		});
@@ -113,7 +113,7 @@ public class ShopCommand extends BaseCommand {
 			return new DataPreset(new File(StatShops.getInstance().getDataFolder(), "presets/" + fileName));
 
 		}).thenAccept(dataPreset -> {
-			StatShops.getInstance().sendMessage(sender, Message.DATA_PRESET_IMPORT_CONFIRM.asComponent(
+			StatShops.getInstance().sendMessage(sender, Messages.DATA_PRESET_IMPORT_CONFIRM.asComponent(
 					TagResolver.resolver("shops", Tag.inserting(listElements(dataPreset.getShops(), new Pair<>("Shop", "Shops")))),
 					TagResolver.resolver("discounts", Tag.inserting(listElements(dataPreset.getDiscounts(), new Pair<>("Discount", "Discounts")))),
 					TagResolver.resolver("limits", Tag.inserting(listElements(dataPreset.getLimits(), new Pair<>("Limit", "Limits")))),
@@ -123,7 +123,7 @@ public class ShopCommand extends BaseCommand {
 			UUID uuid = sender instanceof Player player ? player.getUniqueId() : consoleUuid;
 			confirmingPlayers.put(uuid, () -> {
 				dataPreset.apply();
-				StatShops.getInstance().sendMessage(sender, Message.DATA_PRESET_IMPORT_SUCCESS.asComponent(TagResolver.resolver("name", Tag.inserting(Component.text(dataPreset.getName())))));
+				StatShops.getInstance().sendMessage(sender, Messages.DATA_PRESET_IMPORT_SUCCESS.asComponent(TagResolver.resolver("name", Tag.inserting(Component.text(dataPreset.getName())))));
 				confirmingPlayers.remove(uuid);
 			});
 		});
@@ -142,7 +142,7 @@ public class ShopCommand extends BaseCommand {
 	@CommandPermission(StatShops.PERM_CMD_EDITOR)
 	public void onDefault(Player player) {
 		if (StatShops.busy()) {
-			Customer.wrap(player).sendMessage(Message.GENERAL_PLUGIN_LOADING);
+			Customer.wrap(player).sendMessage(Messages.GENERAL_PLUGIN_LOADING);
 			return;
 		}
 		MainMenu.openBaseMenu(player);
@@ -154,7 +154,7 @@ public class ShopCommand extends BaseCommand {
 	@CommandCompletion(StatShops.COMPLETION_SHOPS)
 	public void onEdit(Player player, Shop shop) {
 		if (StatShops.busy()) {
-			Customer.wrap(player).sendMessage(Message.GENERAL_PLUGIN_LOADING);
+			Customer.wrap(player).sendMessage(Messages.GENERAL_PLUGIN_LOADING);
 			return;
 		}
 		MainMenu.newShopMenu(shop, player).open(player);
@@ -165,8 +165,8 @@ public class ShopCommand extends BaseCommand {
 	@Syntax("<Shop>")
 	@CommandCompletion(StatShops.COMPLETION_SHOPS)
 	public void onCleanUp(CommandSender sender, Shop shop) {
-		StatShops.getInstance().sendMessage(sender, Message.GUI_SHOP_EDITOR_REMOVED_UNUSED.getKey(),
-				Message.GUI_SHOP_EDITOR_REMOVED_UNUSED.asComponent(
+		StatShops.getInstance().sendMessage(sender, Messages.GUI_SHOP_EDITOR_REMOVED_UNUSED.getKey(),
+				Messages.GUI_SHOP_EDITOR_REMOVED_UNUSED.asComponent(
 						TagResolver.resolver("amount", Tag.inserting(Component.text(shop.cleanupUnusedEntries()))),
 						TagResolver.resolver("shop", Tag.inserting(shop.getName()))
 				), 0);
@@ -176,7 +176,7 @@ public class ShopCommand extends BaseCommand {
 	@CommandPermission(StatShops.PERM_CMD_RELOAD)
 	public void reloadConfig(CommandSender sender) {
 		if (StatShops.busy()) {
-			StatShops.getInstance().sendMessage(sender, Message.GENERAL_PLUGIN_LOADING);
+			StatShops.getInstance().sendMessage(sender, Messages.GENERAL_PLUGIN_LOADING);
 			return;
 		}
 		long ms = System.currentTimeMillis();
@@ -184,11 +184,11 @@ public class ShopCommand extends BaseCommand {
 
 		StatShops.setBusyFor(CompletableFuture.supplyAsync(() -> StatShops.getInstance().getShopsConfig().loadConfig()).thenAcceptAsync(success -> {
 			if (success) {
-				StatShops.getInstance().sendMessage(sender, Message.GENERAL_CONFIG_RELOADED_IN_MS.getKey(),
-						Message.GENERAL_CONFIG_RELOADED_IN_MS.asComponent(TagResolver.resolver("ms", Tag.inserting(Component.text(System.currentTimeMillis() - ms)))), 0);
+				StatShops.getInstance().sendMessage(sender, Messages.GENERAL_CONFIG_RELOADED_IN_MS.getKey(),
+						Messages.GENERAL_CONFIG_RELOADED_IN_MS.asComponent(TagResolver.resolver("ms", Tag.inserting(Component.text(System.currentTimeMillis() - ms)))), 0);
 				return;
 			}
-			StatShops.getInstance().sendMessage(sender, Message.GENERAL_CONFIG_RELOAD_ERROR);
+			StatShops.getInstance().sendMessage(sender, Messages.GENERAL_CONFIG_RELOAD_ERROR);
 		}));
 	}
 
@@ -196,17 +196,17 @@ public class ShopCommand extends BaseCommand {
 	@CommandPermission(StatShops.PERM_CMD_RELOAD)
 	public void reloadTranslations(CommandSender sender) {
 		if (StatShops.busy()) {
-			StatShops.getInstance().sendMessage(sender, Message.GENERAL_PLUGIN_LOADING);
+			StatShops.getInstance().sendMessage(sender, Messages.GENERAL_PLUGIN_LOADING);
 			return;
 		}
 		long ms = System.currentTimeMillis();
 		StatShops.setBusyFor(TranslationHandler.getInstance().loadLanguage(StatShops.getInstance().getShopsConfig().getLanguage()).thenAcceptAsync(success -> {
 			if (success) {
-				StatShops.getInstance().sendMessage(sender, Message.GENERAL_LANGUAGE_RELOADED_IN_MS.getKey(),
-						Message.GENERAL_LANGUAGE_RELOADED_IN_MS.asComponent(TagResolver.resolver("ms", Tag.inserting(Component.text(System.currentTimeMillis() - ms)))), 0);
+				StatShops.getInstance().sendMessage(sender, Messages.GENERAL_LANGUAGE_RELOADED_IN_MS.getKey(),
+						Messages.GENERAL_LANGUAGE_RELOADED_IN_MS.asComponent(TagResolver.resolver("ms", Tag.inserting(Component.text(System.currentTimeMillis() - ms)))), 0);
 				return;
 			}
-			StatShops.getInstance().sendMessage(sender, Message.GENERAL_LANGUAGE_RELOAD_ERROR);
+			StatShops.getInstance().sendMessage(sender, Messages.GENERAL_LANGUAGE_RELOAD_ERROR);
 		}));
 	}
 
@@ -248,12 +248,12 @@ public class ShopCommand extends BaseCommand {
 			}
 			int count = parseInventory(shop, page * (9 * 6), inv);
 
-			Customer.wrap(player).sendMessage(Message.GENERAL_CHEST_PARSED.getKey(),
-					Message.GENERAL_CHEST_PARSED.asComponent(
+			Customer.wrap(player).sendMessage(Messages.GENERAL_CHEST_PARSED.getKey(),
+					Messages.GENERAL_CHEST_PARSED.asComponent(
 							TagResolver.resolver("amount", Tag.inserting(Component.text(count))),
 							TagResolver.resolver("shop", Tag.inserting(shop.getName()))));
 		} else {
-			Customer.wrap(player).sendMessage(Message.GENERAL_NO_CHEST);
+			Customer.wrap(player).sendMessage(Messages.GENERAL_NO_CHEST);
 		}
 	}
 

@@ -3,8 +3,9 @@ package de.bossascrew.shops.statshops.handler;
 import de.bossascrew.shops.general.util.LoggingPolicy;
 import de.bossascrew.shops.statshops.StatShops;
 import de.bossascrew.shops.statshops.StatShopsExtension;
-import de.bossascrew.shops.statshops.data.Message;
+import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.web.WebAccessable;
+import de.cubbossa.translations.Message;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -24,18 +25,17 @@ public class TranslationHandler {
 	private final Map<String, String> messageFormats;
 	private final Map<String, String> fallbackLanguage;
 
-	public TranslationHandler(String startlanguage) {
+	public TranslationHandler(String startLanguage) {
 		instance = this;
 		messageMap = new HashMap<>();
 		for (StatShopsExtension extension : StatShops.getRegisteredExtensions()) {
 			extension.registerMessages(this);
 		}
-		messageMap.putAll(Message.values().stream().collect(Collectors.toMap(Message::getKey, message -> message)));
+		messageMap.putAll(Messages.values().stream().collect(Collectors.toMap(Message::getKey, message -> message)));
 		messageFormats = new HashMap<>();
 		loadLanguage("en_US");
 		fallbackLanguage = new HashMap<>(messageFormats);
-		loadLanguage(startlanguage);
-
+		loadLanguage(startLanguage);
 	}
 
 	public void registerMessages(Message... messages) {
@@ -70,7 +70,7 @@ public class TranslationHandler {
 	}
 
 	public Message getMessage(String key) {
-		return messageMap.getOrDefault(key, Message.NONE);
+		return messageMap.getOrDefault(key, Messages.NONE);
 	}
 
 	public String getTranslation(String key) {

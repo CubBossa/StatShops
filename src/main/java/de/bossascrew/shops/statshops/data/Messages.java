@@ -416,25 +416,69 @@ public class Messages {
 	@MessageMeta(value = "Remove Tag <tag>?", placeholders = "tag")
 	public static final Message GENERAL_GUI_TAGS_REMOVE_TAG = new Message("manager.gui.tags.remove_tag");
 
+	@MessageMeta("Enter a page title")
 	public static final Message GUI_SHOP_EDITOR_PAGE_TITLE_TITLE = new Message("manager.gui.shop_editor.page_title.title");
+	@MessageMeta("<white>Change the page title")
 	public static final Message GUI_SHOP_EDITOR_PAGE_TITLE_NAME = new Message("manager.gui.shop_editor.page_title.name");
+	@MessageMeta("""
+			<gray>Current: <current>
+			<gray>Change the display title
+			<gray>for the actual page.
+			<gray>If not set, an empty string
+			<gray>will be inserted.""")
 	public static final Message GUI_SHOP_EDITOR_PAGE_TITLE_LORE = new Message("manager.gui.shop_editor.page_title.lore");
+	@MessageMeta("<white>Apply Templates to this Page")
 	public static final Message GUI_SHOP_EDITOR_APPLY_TEMPLATE_NAME = new Message("manager.gui.shop_editor.template.name");
+	@MessageMeta("""
+			<gray>You can speed up your
+			<gray>work by using shop templates.
+			<gray>You can create custom templates
+			<gray>and apply them easily to
+			<gray>your shop page.
+
+			<gray>» <yellow>left-click: <gray>load template
+			<gray>» <yellow>right-click: <gray>save page as template""")
 	public static final Message GUI_SHOP_EDITOR_APPLY_TEMPLATE_LORE = new Message("manager.gui.shop_editor.template.lore");
+	@MessageMeta("<white>Move items: <value>")
 	public static final Message GUI_SHOP_EDITOR_TOGGLE_FREEZE_NAME = new Message("manager.gui.shop_editor.freeze.name");
+	@MessageMeta("""
+			<gray>You can toggle between
+			<gray>Move and Edit Mode.
+			<gray>Freeze your shop to edit
+			<gray>price, discounts etc.""")
 	public static final Message GUI_SHOP_EDITOR_TOGGLE_FREEZE_LORE = new Message("manager.gui.shop_editor.freeze.lore");
+	@MessageMeta(value = "<prefix><gray>This shop contains <amount> unused shop entries. Use <white><italic><click:suggest_command:/statshops cleanup >/shops cleanup</click></italic></white> to remove them.",
+			placeholders = "amount")
 	public static final Message GUI_SHOP_EDITOR_UNUSED_INFO = new Message("manager.gui.shop_editor.unused_items");
+	@MessageMeta(value = "<prefix><gray>Removed <white><amount> </white>unused shop entries from <white><shop></white>.",
+			placeholders = "amount")
 	public static final Message GUI_SHOP_EDITOR_REMOVED_UNUSED = new Message("manager.gui.shop_editor.removed_unused");
 
+	@MessageMeta("<gold>Info")
 	public static final Message GUI_VILLAGER_EDITOR_INFO_NAME = new Message("manager.gui.villager_shop_editor.info.name");
+	@MessageMeta("<gray>Villager Shops are setup like a\n" +
+			"<gray>stack. The trade offer index = row * 9 + column.")
 	public static final Message GUI_VILLAGER_EDITOR_INFO_LORE = new Message("manager.gui.villager_shop_editor.info.lore");
+	@MessageMeta("<green>New")
 	public static final Message GUI_VILLAGER_EDITOR_NEW_NAME = new Message("manager.gui.villager_shop_editor.new.name");
+	@MessageMeta("""
+			<gray>Take an itemstack from your
+			<gray>inventory and click this button
+			<gray>to add an offer to the stack.""")
 	public static final Message GUI_VILLAGER_EDITOR_NEW_LORE = new Message("manager.gui.villager_shop_editor.new.lore");
+	@MessageMeta("<white>Edit")
 	public static final Message GUI_VILLAGER_EDITOR_EDIT_NAME = new Message("manager.gui.villager_shop_editor.edit.name");
+	@MessageMeta("<gray>Edit the currently selected entry.")
 	public static final Message GUI_VILLAGER_EDITOR_EDIT_LORE = new Message("manager.gui.villager_shop_editor.edit.lore");
+	@MessageMeta("<gold>Move Left")
 	public static final Message GUI_VILLAGER_EDITOR_LEFT_NAME = new Message("manager.gui.villager_shop_editor.left.name");
+	@MessageMeta("<gray>Move the currently selected entry\n" +
+			"<gray>one offer up in the trader menu.")
 	public static final Message GUI_VILLAGER_EDITOR_LEFT_LORE = new Message("manager.gui.villager_shop_editor.left.lore");
+	@MessageMeta("<gold>Move Right")
 	public static final Message GUI_VILLAGER_EDITOR_RIGHT_NAME = new Message("manager.gui.villager_shop_editor.right.name");
+	@MessageMeta("<gray>Move the currently selected entry\n" +
+			"<gray>one offer down in the trader menu.")
 	public static final Message GUI_VILLAGER_EDITOR_RIGHT_LORE = new Message("manager.gui.villager_shop_editor.right.lore");
 
 
@@ -640,84 +684,221 @@ public class Messages {
 	public static final Message GUI_DISCOUNT_START_DELETE_CONFIRM = new Message("manager.gui.discount.start.confirm_delete");
 
 	public static final Message GUI_SHOP_ENTRY = new Message("manager.gui.shop_entry.title");
+
+	@MessageMeta("Choose a Template")
 	public static final Message GUI_TEMPLATES_CHOOSE = new Message("manager.gui.templates.choose_title");
+	@MessageMeta(value = "Apply template <name>?", placeholders = "name")
 	public static final Message GUI_TEMPLATES_APPLY = new Message("manager.gui.templates.apply_title");
+	@MessageMeta("Save as template?")
 	public static final Message GUI_TEMPLATES_NEW = new Message("manager.gui.templates.new_title");
+	@MessageMeta(value = "<template>", placeholders = "template")
 	public static final Message GUI_TEMPLATES_ENTRY_NAME = new Message("manager.gui.templates.entry.name");
+	@MessageMeta(value = "<gray>Size: <size>", placeholders = "size")
 	public static final Message GUI_TEMPLATES_ENTRY_LORE = new Message("manager.gui.templates.entry.lore");
 
+	@MessageMeta
 	public static final Message GUI_ENTRY_TITLE = new Message("manager.gui.entry.title");
+	@MessageMeta("<white>Set Info Lore")
 	public static final Message GUI_ENTRY_SET_LORE_NAME = new Message("manager.gui.entry.set_lore.name");
+	@MessageMeta("""
+			<gray>Click to change the
+			<gray>description of the entry.
+
+			<gray>This is NOT similar to setting a
+			<gray>lore for your item beforehand.
+			<gray>This lore will not be on the
+			<gray>purchased Item.
+
+			<gray>To <rainbow>format</rainbow> your name
+			<gray>use the Kyori MiniMessage format""")
 	public static final Message GUI_ENTRY_SET_LORE_LORE = new Message("manager.gui.entry.set_lore.lore");
+	@MessageMeta("Change Entry Permission")
 	public static final Message GUI_ENTRY_SET_PERMISSION_TITLE = new Message("manager.gui.entry.set_permission.title");
+	@MessageMeta("<white>Set Entry Permission")
 	public static final Message GUI_ENTRY_SET_PERMISSION_NAME = new Message("manager.gui.entry.set_permission.name");
+	@MessageMeta(value = """
+			<gray>Current: <red><permission>
+
+			<gray>Only players with this\s
+			<gray>permission will be able to\s
+			<gray>use this entry.
+
+			<gray>Type "null" to reset.""", placeholders = "permission")
 	public static final Message GUI_ENTRY_SET_PERMISSION_LORE = new Message("manager.gui.entry.set_permission.lore");
+	@MessageMeta("<white>Open Tag Menu")
 	public static final Message GUI_ENTRY_SET_TAGS_NAME = new Message("manager.gui.entry.set_tags.name");
+	@MessageMeta("""
+			<gray>Discounts and Limits can be
+			<gray>applied to all Shops and Shopentries
+			<gray>that have certain tags.
+
+			<gray>Use the tags menu to configure
+			<gray>tags for this entry.""")
 	public static final Message GUI_ENTRY_SET_TAGS_LORE = new Message("manager.gui.entry.set_tags.lore");
+	@MessageMeta("Choose an Entry Function")
 	public static final Message GUI_ENTRY_SET_FUNCTION_TITLE = new Message("manager.gui.entry.set_function.title");
+	@MessageMeta(value = "<name>", placeholders = "name")
 	public static final Message GUI_ENTRY_SET_FUNCTION_NAME = new Message("manager.gui.entry.set_function.name");
+	@MessageMeta(value = """
+			<gray>Click to choose a function
+			<gray>for this Shop Entry.
+
+			<gray>Current: <function>""", placeholders = "function")
 	public static final Message GUI_ENTRY_SET_FUNCTION_LORE = new Message("manager.gui.entry.set_function.lore");
+	@MessageMeta("Choose Costs")
 	public static final Message GUI_ENTRY_SET_COSTS_TITLE = new Message("manager.gui.entry.set_costs.title");
 
+	@MessageMeta("<white>Static Item")
 	public static final Message GUI_ENTRY_FUNCTION_STATIC_NAME = new Message("manager.gui.entry.defaults.static.name");
+	@MessageMeta("<gray>Simply does nothing.")
 	public static final Message GUI_ENTRY_FUNCTION_STATIC_LORE = new Message("manager.gui.entry.defaults.static.lore");
+	@MessageMeta("<white>Close Shop")
 	public static final Message GUI_ENTRY_FUNCTION_CLOSE_NAME = new Message("manager.gui.entry.defaults.close.name");
+	@MessageMeta("<gray>Closes the shop window.")
 	public static final Message GUI_ENTRY_FUNCTION_CLOSE_LORE = new Message("manager.gui.entry.defaults.close.lore");
+	@MessageMeta("<white>Open Shop")
 	public static final Message GUI_ENTRY_FUNCTION_OPEN_SHOP_NAME = new Message("manager.gui.entry.defaults.open_shop.name");
+	@MessageMeta("<gray>Opens another shop.")
 	public static final Message GUI_ENTRY_FUNCTION_OPEN_SHOP_LORE = new Message("manager.gui.entry.defaults.open_shop.lore");
+	@MessageMeta("<white>Previous Page")
 	public static final Message GUI_ENTRY_FUNCTION_PREV_PAGE_NAME = new Message("manager.gui.entry.defaults.prev_page.name");
+	@MessageMeta("<gray>Turns n pages back.")
 	public static final Message GUI_ENTRY_FUNCTION_PREV_PAGE_LORE = new Message("manager.gui.entry.defaults.prev_page.lore");
+	@MessageMeta("<white>Next Page")
 	public static final Message GUI_ENTRY_FUNCTION_NEXT_PAGE_NAME = new Message("manager.gui.entry.defaults.next_page.name");
+	@MessageMeta("<gray>Turns n pages ahead.")
 	public static final Message GUI_ENTRY_FUNCTION_NEXT_PAGE_LORE = new Message("manager.gui.entry.defaults.next_page.lore");
+	@MessageMeta("<white>Exact Page")
 	public static final Message GUI_ENTRY_FUNCTION_EXACT_PAGE_NAME = new Message("manager.gui.entry.defaults.exact_page.name");
+	@MessageMeta("<gray>Opens an exact page.")
 	public static final Message GUI_ENTRY_FUNCTION_EXACT_PAGE_LORE = new Message("manager.gui.entry.defaults.exact_page.lore");
+	@MessageMeta("<white>Buy Item")
 	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_ITEM_NAME = new Message("manager.gui.entry.defaults.article_item.name");
+	@MessageMeta("<gray>Simply buy items.")
 	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_ITEM_LORE = new Message("manager.gui.entry.defaults.article_item.lore");
+	@MessageMeta("<white>Buy Commands")
 	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_CMD_NAME = new Message("manager.gui.entry.defaults.article_cmd.name");
+	@MessageMeta("<gray>Buy the execution of a command.")
 	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_CMD_LORE = new Message("manager.gui.entry.defaults.article_cmd.lore");
+	@MessageMeta("<white>Buy Console Commands")
 	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_NAME = new Message("manager.gui.entry.defaults.article_console_cmd.name");
+	@MessageMeta("<gray>Buy the execution of a command\n<gray>that is executed in console.")
 	public static final Message GUI_ENTRY_FUNCTION_ARTICLE_CONSOLE_CMD_LORE = new Message("manager.gui.entry.defaults.article_console_cmd.lore");
+	@MessageMeta("<white>Item Costs")
 	public static final Message GUI_ENTRY_FUNCTION_COSTS_ITEM_NAME = new Message("manager.gui.entry.defaults.costs_item.name");
+	@MessageMeta("<gray>Pay items to buy articles.")
 	public static final Message GUI_ENTRY_FUNCTION_COSTS_ITEM_LORE = new Message("manager.gui.entry.defaults.costs_item.lore");
+	@MessageMeta("<white>XP Costs")
 	public static final Message GUI_ENTRY_FUNCTION_COSTS_XP_NAME = new Message("manager.gui.entry.defaults.costs_xp.name");
+	@MessageMeta("<gray>Pay XP to buy articles.")
 	public static final Message GUI_ENTRY_FUNCTION_COSTS_XP_LORE = new Message("manager.gui.entry.defaults.costs_xp.lore");
 
+	@MessageGroupMeta(path = "manager.gui.entry.function.type", placeholders = "name")
+	@MessageMeta("<white>Boolean: <name>")
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_BOOL = new Message("manager.gui.entry.function.type.bool");
+	@MessageMeta("<white>Number: <name>")
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_INTEGER = new Message("manager.gui.entry.function.type.int");
+	@MessageMeta("<white>Term: <name>")
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_EQUATION = new Message("manager.gui.entry.function.type.equation");
+	@MessageMeta("<white>Text: <name>")
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_STRING = new Message("manager.gui.entry.function.type.string");
+	@MessageMeta("<white>Shop: <name>")
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_SHOP = new Message("manager.gui.entry.function.type.shop");
+	@MessageMeta("<white>Item: <name>")
 	public static final Message GUI_ENTRY_FUNCTION_DATA_TYPE_ITEMSTACK = new Message("manager.gui.entry.function.type.itemstack");
 
+	@MessageGroupMeta(path = "manager.gui.entry.function.data", placeholders = "current")
+	@MessageMeta("Open Shop")
 	public static final Message GUI_ENTRY_FUNCTION_OPENED_SHOP_NAME = new Message("manager.gui.entry.function.data.open_shop.name");
+	@MessageMeta("<gray>Current: <gold><current>\n<gray>The shop to open when interacted.")
 	public static final Message GUI_ENTRY_FUNCTION_OPENED_SHOP_LORE = new Message("manager.gui.entry.function.data.open_shop.lore");
+	@MessageMeta("Page")
 	public static final Message GUI_ENTRY_FUNCTION_PAGE_NAME = new Message("manager.gui.entry.function.data.page.name");
+	@MessageMeta("<gray>Current: <gold><current>\n<gray>The amount of pages.")
 	public static final Message GUI_ENTRY_FUNCTION_PAGE_LORE = new Message("manager.gui.entry.function.data.page.lore");
+	@MessageMeta("Purchasable")
 	public static final Message GUI_ENTRY_FUNCTION_PURCHASABLE_NAME = new Message("manager.gui.entry.function.data.purchasable.name");
+	@MessageMeta("<gray>If this entry can be purchased.")
 	public static final Message GUI_ENTRY_FUNCTION_PURCHASABLE_LORE = new Message("manager.gui.entry.function.data.purchasable.lore");
+	@MessageMeta("Purchasable stacked")
 	public static final Message GUI_ENTRY_FUNCTION_PURCHASABLE_STACKED_NAME = new Message("manager.gui.entry.function.data.purchasable_stacked.name");
+	@MessageMeta("<gray>If this entry can be purchased\n<gray>in stacks.")
 	public static final Message GUI_ENTRY_FUNCTION_PURCHASABLE_STACKED_LORE = new Message("manager.gui.entry.function.data.purchasable_stacked.lore");
+	@MessageMeta("Sellable")
 	public static final Message GUI_ENTRY_FUNCTION_SELLABLE_NAME = new Message("manager.gui.entry.function.data.sellable.name");
+	@MessageMeta("<gray>If customers can sell items on\n<gray>this entry.")
 	public static final Message GUI_ENTRY_FUNCTION_SELLABLE_LORE = new Message("manager.gui.entry.function.data.sellable.lore");
+	@MessageMeta("Sellable stacked")
 	public static final Message GUI_ENTRY_FUNCTION_SELLABLE_STACKED_NAME = new Message("manager.gui.entry.function.data.sellable_stacked.name");
+	@MessageMeta("<gray>If customers can sell items as\n<gray>stacks on this entry.")
 	public static final Message GUI_ENTRY_FUNCTION_SELLABLE_STACKED_LORE = new Message("manager.gui.entry.function.data.sellable_stacked.lore");
+	@MessageMeta("Article Amount")
 	public static final Message GUI_ENTRY_FUNCTION_GAIN_AMOUNT_NAME = new Message("manager.gui.entry.function.data.gain_amount.name");
+	@MessageMeta("""
+			<gray>Current: <gold><current>
+			<gray>The amount of articles to sell in
+			<gray>one interaction with the entry.
+			<gray>Most likely 1.""")
 	public static final Message GUI_ENTRY_FUNCTION_GAIN_AMOUNT_LORE = new Message("manager.gui.entry.function.data.gain_amount.lore");
+	@MessageMeta("Buy Price Item")
 	public static final Message GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_NAME = new Message("manager.gui.entry.function.data.buy_price_amount.name");
+	@MessageMeta("<gray>The item that the customer\n<gray>pays to get the article.")
 	public static final Message GUI_ENTRY_FUNCTION_BUY_PRICE_AMOUNT_LORE = new Message("manager.gui.entry.function.data.buy_price_amount.lore");
+	@MessageMeta("Sell Price Item")
 	public static final Message GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_NAME = new Message("manager.gui.entry.function.data.sell_price_amount.name");
+	@MessageMeta("""
+			<gray>The item that the customer
+			<gray>gets when selling the article.
+
+			<gray>Only necessary when "sellable"
+			<gray>is active.""")
 	public static final Message GUI_ENTRY_FUNCTION_SELL_PRICE_AMOUNT_LORE = new Message("manager.gui.entry.function.data.sell_price_amount.lore");
+	@MessageMeta("Buy Price Equation")
 	public static final Message GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_NAME = new Message("manager.gui.entry.function.data.buy_price_equation.name");
+	@MessageMeta("""
+			<gray>Current: <gold><current>
+			<gray>The amount of pay items to
+			<gray>pay to get the article.
+
+			<gray>You may want to use an external
+			<gray>database for prices. Reference
+			<gray>entries with <white><db:diamond></white> for example.""")
 	public static final Message GUI_ENTRY_FUNCTION_BUY_PRICE_EQUATION_LORE = new Message("manager.gui.entry.function.data.buy_price_equation.lore");
+	@MessageMeta("Sell Price Equation")
 	public static final Message GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_NAME = new Message("manager.gui.entry.function.data.sell_price_equation.name");
+	@MessageMeta("""
+			<gray>Current: <gold><current>
+			<gray>The amount of sell price items
+			<gray>that the customer gets when selling
+			<gray>the article.
+
+			<gray>You may want to use an external
+			<gray>database for prices. Reference
+			<gray>entries with <white><db:diamond></white> for example.""")
 	public static final Message GUI_ENTRY_FUNCTION_SELL_PRICE_EQUATION_LORE = new Message("manager.gui.entry.function.data.sell_price_equation.lore");
+	@MessageMeta("Article")
 	public static final Message GUI_ENTRY_FUNCTION_GAIN_ITEM_NAME = new Message("manager.gui.entry.function.data.gain_item.name");
+	@MessageMeta("<gray>The item that will be sold\n<gray>to the customer.")
 	public static final Message GUI_ENTRY_FUNCTION_GAIN_ITEM_LORE = new Message("manager.gui.entry.function.data.gain_item.lore");
+	@MessageMeta("Buy Price Item")
 	public static final Message GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_NAME = new Message("manager.gui.entry.function.data.buy_price_item.name");
+	@MessageMeta("<gray>The item that the customer\n<gray>pays to get the article.")
 	public static final Message GUI_ENTRY_FUNCTION_BUY_PRICE_ITEM_LORE = new Message("manager.gui.entry.function.data.buy_price_item.lore");
+	@MessageMeta("Sell Price Item")
 	public static final Message GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_NAME = new Message("manager.gui.entry.function.data.sell_price_item.name");
+	@MessageMeta("""
+			<gray>The item that the customer
+			<gray>gets when selling the article.
+
+			<gray>Only necessary when "sellable"
+			<gray>is active.""")
 	public static final Message GUI_ENTRY_FUNCTION_SELL_PRICE_ITEM_LORE = new Message("manager.gui.entry.function.data.sell_price_item.lore");
+	@MessageMeta("Command")
 	public static final Message GUI_ENTRY_FUNCTION_COMMAND_NAME = new Message("manager.gui.entry.function.data.command.name");
+	@MessageMeta("""
+			<gray>Current: <gold><current>
+			<gray>The command to execute. Use <player>
+			<gray>to reference the customer.""")
 	public static final Message GUI_ENTRY_FUNCTION_COMMAND_LORE = new Message("manager.gui.entry.function.data.command.lore");
 
 	public static List<Message> values() {

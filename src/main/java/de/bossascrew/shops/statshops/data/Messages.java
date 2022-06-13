@@ -354,24 +354,66 @@ public class Messages {
 			<gray>» <yellow>left-click: <gray>Increase
 			<gray>» <yellow>right-click: Decrease""")
 	public static final Message GUI_SHOP_SET_DEFAULT_PAGE_LORE = new Message("manager.gui.shop.set_default_page.lore");
+	@MessageGroupMeta(path = "manager.gui.shop.set_rows", placeholders = "rows")
+	@MessageMeta("<white>Menu Size: <rows> Rows")
 	public static final Message GUI_SHOP_SET_ROWS_NAME = new Message("manager.gui.shop.set_rows.name");
-	public static final Message GUI_SHOP_SET_ROWS_LORE = new Message("manager.gui.shop.set_rows.lore");
-	public static final Message GUI_SHOP_LIMITS_TITLE = new Message("manager.gui.shop.limits.title");
-	public static final Message GUI_SHOP_LIMITS_INFO_NAME = new Message("manager.gui.shop.limits.info.name");
-	public static final Message GUI_SHOP_LIMITS_INFO_LORE = new Message("manager.gui.shop.limits.info.lore");
-	public static final Message GUI_SHOP_DISCOUNTS_TITLE = new Message("manager.gui.shop.discounts.title");
-	public static final Message GUI_SHOP_DISCOUNTS_INFO_NAME = new Message("manager.gui.shop.discounts.info.name");
-	public static final Message GUI_SHOP_DISCOUNTS_INFO_LORE = new Message("manager.gui.shop.discounts.info.lore");
-	public static final Message GUI_SHOP_TEMPLATE_TITLE = new Message("manager.gui.shop.template.title");
-	public static final Message GUI_SHOP_TEMPLATE_INFO_NAME = new Message("manager.gui.shop.template.info.name");
-	public static final Message GUI_SHOP_TEMPLATE_INFO_LORE = new Message("manager.gui.shop.template.info.lore");
-	public static final Message GUI_TAGS_TITLE = new Message("manager.gui.tags.title");
-	public static final Message GUI_TAGS_NEW_TAG_TITLE = new Message("manager.gui.tags.new_tag.title");
-	public static final Message GUI_TAGS_NEW_TAG_NAME = new Message("manager.gui.tags.new_tag.name");
-	public static final Message GUI_TAGS_NEW_TAG_LORE = new Message("manager.gui.tags.new_tag.lore");
+	@MessageMeta("""
+			<gray>Current: <gold><rows>
+			<gray>Templates that are already applied
+			<gray>will not fit to the lowest row
+			<gray>anymore!
 
+			<gray>» <yellow>left-click: <gray>Increase
+			<gray>» <yellow>right-click: Decrease""")
+	public static final Message GUI_SHOP_SET_ROWS_LORE = new Message("manager.gui.shop.set_rows.lore");
+	@MessageMeta("Manage Limits for this Shop")
+	public static final Message GUI_SHOP_LIMITS_TITLE = new Message("manager.gui.shop.limits.title");
+	@MessageMeta("<gold>Info")
+	public static final Message GUI_SHOP_LIMITS_INFO_NAME = new Message("manager.gui.shop.limits.info.name");
+	@MessageMeta("""
+			<gray>» <yellow>left-click: <gray>add this shops
+			<gray>  UUID-tag to the clicked limit
+			<gray>» <yellow>right-click: <gray>remove this shops
+			<gray>  UUID-tag from the clicked limit""")
+	public static final Message GUI_SHOP_LIMITS_INFO_LORE = new Message("manager.gui.shop.limits.info.lore");
+	@MessageMeta("Manage Discounts for this Shop")
+	public static final Message GUI_SHOP_DISCOUNTS_TITLE = new Message("manager.gui.shop.discounts.title");
+	@MessageMeta("<gold>Info")
+	public static final Message GUI_SHOP_DISCOUNTS_INFO_NAME = new Message("manager.gui.shop.discounts.info.name");
+	@MessageMeta("""
+			<gray>» <yellow>left-click: <gray>add this shops
+			<gray>UUID-tag to the clicked discount
+			<gray>» <yellow>right-click: <gray>remove this shops
+			<gray>UUID-tag from the clicked discount""")
+	public static final Message GUI_SHOP_DISCOUNTS_INFO_LORE = new Message("manager.gui.shop.discounts.info.lore");
+	@MessageMeta("Set the Default Template")
+	public static final Message GUI_SHOP_TEMPLATE_TITLE = new Message("manager.gui.shop.template.title");
+	@MessageMeta("<gold>Info")
+	public static final Message GUI_SHOP_TEMPLATE_INFO_NAME = new Message("manager.gui.shop.template.info.name");
+	@MessageMeta("<gray>» <yellow>left-click: <gray>Sets the default Template\n<gray>or resets if already set.")
+	public static final Message GUI_SHOP_TEMPLATE_INFO_LORE = new Message("manager.gui.shop.template.info.lore");
+	@MessageMeta(value = "Manage Tags for <name>", placeholders = "name")
+	public static final Message GUI_TAGS_TITLE = new Message("manager.gui.tags.title");
+	@MessageMeta("Add New Tag")
+	public static final Message GUI_TAGS_NEW_TAG_TITLE = new Message("manager.gui.tags.new_tag.title");
+	@MessageMeta("<white>Create New Tag")
+	public static final Message GUI_TAGS_NEW_TAG_NAME = new Message("manager.gui.tags.new_tag.name");
+	@MessageMeta("""
+			<gray>Click here to create a
+			<gray>new tag.
+			<gray>Right click tags in the list
+			<gray>to delete them.""")
+	public static final Message GUI_TAGS_NEW_TAG_LORE = new Message("manager.gui.tags.new_tag.lore");
+	@MessageMeta("<gold>Info")
 	public static final Message GENERAL_GUI_TAGS_INFO_NAME = new Message("manager.gui.tags.info.name");
+	@MessageMeta("""
+			<gray>» <yellow>right-click: <gray>delete element
+
+			<gray>If you cannot delete a tag,
+			<gray>the tag might be autogenerated or
+			<gray>provided by a higher instance.""")
 	public static final Message GENERAL_GUI_TAGS_INFO_LORE = new Message("manager.gui.tags.info.lore");
+	@MessageMeta(value = "Remove Tag <tag>?", placeholders = "tag")
 	public static final Message GENERAL_GUI_TAGS_REMOVE_TAG = new Message("manager.gui.tags.remove_tag");
 
 	public static final Message GUI_SHOP_EDITOR_PAGE_TITLE_TITLE = new Message("manager.gui.shop_editor.page_title.title");
@@ -396,63 +438,205 @@ public class Messages {
 	public static final Message GUI_VILLAGER_EDITOR_RIGHT_LORE = new Message("manager.gui.villager_shop_editor.right.lore");
 
 
+	@MessageMeta("Create and Manage Shop Limits")
 	public static final Message GUI_LIMITS = new Message("manager.gui.limits.title");
-	public static final Message GUI_LIMITS_ALREADY_EDITED = new Message("manager.gui.limits.already_edited");
+	@MessageMeta(value = "<red>Delete <name>?</red>", placeholders = "name")
 	public static final Message GUI_LIMITS_DELETE_CONFIRM = new Message("manager.gui.limits.confirm_delete");
+	@MessageMeta(value = "<white><name>", placeholders = "name")
 	public static final Message GUI_LIMITS_ENTRY_NAME = new Message("manager.gui.limits.entry.name");
+	@MessageMeta(value = """
+			<gray>Limit: <yellow><limit>
+			<gray>Recover: <yellow><recover>
+			<gray>Global: <yellow><global>""",
+			placeholders = {"<limit>", "<global>", "<uuid>", "<recover>"})
 	public static final Message GUI_LIMITS_ENTRY_LORE = new Message("manager.gui.limits.entry.lore");
+	@MessageMeta("Create New Limit")
 	public static final Message GUI_LIMITS_NEW_TITLE = new Message("manager.gui.limits.new.title");
+	@MessageMeta("<green>Create New Limit")
 	public static final Message GUI_LIMITS_NEW_NAME = new Message("manager.gui.limits.new.name");
+	@MessageMeta("""
+			<gray>Click to create a new
+			<gray>Limit, that can be applied to
+			<gray>Shops and ShopEntries.""")
 	public static final Message GUI_LIMITS_NEW_LORE = new Message("manager.gui.limits.new.lore");
+	@MessageMeta("Change Limit Name")
 	public static final Message GUI_LIMIT_SET_NAME_TITLE = new Message("manager.gui.limit.set_name.title");
+	@MessageMeta("<white>Set Limit Name")
 	public static final Message GUI_LIMIT_SET_NAME_NAME = new Message("manager.gui.limit.set_name.name");
+	@MessageMeta("""
+			<gray>Click to change the
+			<gray>Name of this limit.
+
+			<gray>To <rainbow>format</rainbow> your name
+			<gray>use the kyori minimessage format.""")
 	public static final Message GUI_LIMIT_SET_NAME_LORE = new Message("manager.gui.limit.set_name.lore");
+	@MessageMeta("<white>Open Tag Menu")
 	public static final Message GUI_LIMIT_SET_TAGS_NAME = new Message("manager.gui.limit.set_tags.name");
+	@MessageMeta("""
+			<gray>Discounts and Limits can be
+			<gray>applied to all Shops and Shopentries
+			<gray>that have certain tags.
+
+			<gray>Use the tags menu to configure
+			<gray>tags for this limit.""")
 	public static final Message GUI_LIMIT_SET_TAGS_LORE = new Message("manager.gui.limit.set_tags.lore");
+	@MessageMeta("Change Limit Permission")
 	public static final Message GUI_LIMIT_SET_PERMISSION_TITLE = new Message("manager.gui.limit.set_permission.title");
+	@MessageMeta("<white>Set Limit Permission")
 	public static final Message GUI_LIMIT_SET_PERMISSION_NAME = new Message("manager.gui.limit.set_permission.name");
+	@MessageMeta(value = """
+			<gray>Current: <red><permission>
+
+			<gray>Only players with this
+			<gray>permission will be affected by
+			<gray>this limit.
+
+			<gray>Type "null" to reset.""",
+			placeholders = "permission")
 	public static final Message GUI_LIMIT_SET_PERMISSION_LORE = new Message("manager.gui.limit.set_permission.lore");
+	@MessageMeta("Define a transaction limit")
 	public static final Message GUI_LIMIT_SET_LIMIT_TITLE = new Message("manager.gui.limit.set_limit.title");
+	@MessageMeta("<white>Transaction Limit")
 	public static final Message GUI_LIMIT_SET_LIMIT_NAME = new Message("manager.gui.limit.set_limit.name");
+	@MessageMeta(value = """
+			<gray>Current:<gold> <current>
+			<gray>Define a transaction limit.
+
+			<gray>Customers cannot buy more than
+			<gray>the smallest limit of all
+			<gray>applied limits.""",
+			placeholders = "current")
 	public static final Message GUI_LIMIT_SET_LIMIT_LORE = new Message("manager.gui.limit.set_limit.lore");
+	@MessageMeta("Define a Cooldown")
 	public static final Message GUI_LIMIT_SET_DURATION_TITLE = new Message("manager.gui.limit.set_duration.title");
+	@MessageMeta("<white>Cooldown")
 	public static final Message GUI_LIMIT_SET_DURATION_NAME = new Message("manager.gui.limit.set_duration.name");
+	@MessageMeta(value = """
+			<gray>Current:<gold> <current>
+			<gray>Every time a customer interacts,
+			<gray>the user limit will be increased.
+			<gray>After the provided cooldown the
+			<gray>customers limit will be
+			<gray>decreased.""",
+			placeholders = "current")
 	public static final Message GUI_LIMIT_SET_DURATION_LORE = new Message("manager.gui.limit.set_duration.lore");
+	@MessageMeta("<white>Global")
 	public static final Message GUI_LIMIT_SET_GLOBAL_NAME = new Message("manager.gui.limit.set_global.name");
+	@MessageMeta(value = """
+			<gray>Current: <gold><value>
+			<gray>If set to true, all players with
+			<gray>the limit permission will share
+			<gray>this limit.
+			<gray>-> One player can buy all stock
+			<gray>items for all players.""",
+			placeholders = "value")
 	public static final Message GUI_LIMIT_SET_GLOBAL_LORE = new Message("manager.gui.limit.set_global.lore");
 
+	@MessageMeta("Create and Manage Discounts")
 	public static final Message GUI_DISCOUNTS = new Message("manager.gui.discounts.title");
+	@MessageMeta(value = "<red>Delete <name>?</red>", placeholders = "name")
 	public static final Message GUI_DISCOUNTS_DELETE_CONFIRM = new Message("manager.gui.discounts.confirm_delete");
-	public static final Message GUI_DISCOUNTS_ALREADY_EDITED = new Message("manager.gui.discounts.already_edited");
+	@MessageGroupMeta(path = "manager.gui.discounts.entry", comment = "Defines, how each discount will be displayed in the list")
 	public static final Message GUI_DISCOUNTS_ENTRY_NAME = new Message("manager.gui.discounts.entry.name");
 	public static final Message GUI_DISCOUNTS_ENTRY_LORE = new Message("manager.gui.discounts.entry.lore");
+	@MessageMeta("Create a new discount")
 	public static final Message GUI_DISCOUNTS_NEW_TITLE = new Message("manager.gui.discounts.new.title");
+	@MessageMeta("<green>Create New Discount")
 	public static final Message GUI_DISCOUNTS_NEW_NAME = new Message("manager.gui.discounts.new.name");
+	@MessageMeta("<gray>Click to create a \n<gray>new discount.")
 	public static final Message GUI_DISCOUNTS_NEW_LORE = new Message("manager.gui.discounts.new.lore");
 
+	@MessageMeta("Edit Discount")
 	public static final Message GUI_DISCOUNT = new Message("manager.gui.discount.title");
+	@MessageMeta("Set Discount Name")
 	public static final Message GUI_DISCOUNT_SET_NAME_TITLE = new Message("manager.gui.discount.set_name.title");
+	@MessageMeta("<white>Set Name")
 	public static final Message GUI_DISCOUNT_SET_NAME_NAME = new Message("manager.gui.discount.set_name.name");
+	@MessageMeta("""
+			<gray>Click to change the
+			<gray>name of the discount.
+
+			<gray>To <rainbow>format</rainbow> your name
+			<gray>use the kyori minimessage format""")
 	public static final Message GUI_DISCOUNT_SET_NAME_LORE = new Message("manager.gui.discount.set_name.lore");
+	@MessageMeta("Set Discount Permission")
 	public static final Message GUI_DISCOUNT_SET_PERMISSION_TITLE = new Message("manager.gui.discount.set_permission.title");
+	@MessageMeta("<white>Set Permission")
 	public static final Message GUI_DISCOUNT_SET_PERMISSION_NAME = new Message("manager.gui.discount.set_permission.name");
+	@MessageMeta(value = """
+			<gray>Current: <red><permission>
+
+			<gray>Only players with this
+			<gray>permission will be able to
+			<gray>use this discount.
+
+			<gray>Type "null" to reset.""",
+			placeholders = "permission")
 	public static final Message GUI_DISCOUNT_SET_PERMISSION_LORE = new Message("manager.gui.discount.set_permission.lore");
+	@MessageMeta("<white>Open Tag Menu")
 	public static final Message GUI_DISCOUNT_SET_TAGS_NAME = new Message("manager.gui.discount.set_tags.name");
+	@MessageMeta("""
+			<gray>Apply this discount to all
+			<gray>shops and shopentries with
+			<gray>certain tags like "swords" or "food".""")
 	public static final Message GUI_DISCOUNT_SET_TAGS_LORE = new Message("manager.gui.discount.set_tags.lore");
+	@MessageMeta("Set a Duration")
 	public static final Message GUI_DISCOUNT_SET_DURATION_TITLE = new Message("manager.gui.discount.set_duration.title");
+	@MessageMeta("<white>Set Duration")
 	public static final Message GUI_DISCOUNT_SET_DURATION_NAME = new Message("manager.gui.discount.set_duration.name");
+	@MessageMeta(value = """
+			<gray>Current: <gold><duration>
+
+			<gray>Set the duration the discount
+			<gray>will be active for.
+
+			<red><bold>!</bold></red><gray> If your provided duration is too long
+			<gray>and start dates would overlap
+			<gray>the action will be cancelled!""",
+			placeholders = "duration")
 	public static final Message GUI_DISCOUNT_SET_DURATION_LORE = new Message("manager.gui.discount.set_duration.lore");
+	@MessageMeta("Add New Start Dates")
 	public static final Message GUI_DISCOUNT_SET_START_TITLE = new Message("manager.gui.discount.set_start.title");
+	@MessageMeta("<white>Start Dates")
 	public static final Message GUI_DISCOUNT_SET_START_NAME = new Message("manager.gui.discount.set_start.name");
+	@MessageMeta("""
+			<gray>You can set many different
+			<gray>start dates for one discount.
+			<gray>Every start date has to be
+			<gray>at least the duration apart
+			<gray>from the next and previous.""")
 	public static final Message GUI_DISCOUNT_SET_START_LORE = new Message("manager.gui.discount.set_start.lore");
+	@MessageMeta("Set a Percentage")
 	public static final Message GUI_DISCOUNT_SET_PERCENT_TITLE = new Message("manager.gui.discount.set_percent.title");
+	@MessageMeta("<white>Set Percent")
 	public static final Message GUI_DISCOUNT_SET_PERCENT_NAME = new Message("manager.gui.discount.set_percent.name");
+	@MessageMeta(value = """
+			<gray>Current: <gold><percent>%
+
+			<gray>Sets the percentage to multiply with the pirce.
+			<gray>50% -> The item costs 1.5x as much.
+			<gray>-50% -> The item costs half as much.""", placeholders = "percent")
 	public static final Message GUI_DISCOUNT_SET_PERCENT_LORE = new Message("manager.gui.discount.set_percent.lore");
+	@MessageMeta("<gold>Info")
 	public static final Message GUI_DISCOUNT_START_INFO_NAME = new Message("manager.gui.discount.start.info.name");
+	@MessageMeta("""
+			<gray>You can create multiple start dates
+			<gray>for your discount. The discount will
+			<gray>start at every start date for
+			<gray>the given duration.
+
+			<gray>If you want varying durations, you
+			<gray>have to create multiple discounts.
+
+			<gray>» <yellow>right-click: <gray>delete element""")
 	public static final Message GUI_DISCOUNT_START_INFO_LORE = new Message("manager.gui.discount.start.info.lore");
+	@MessageMeta("Enter a Start Date")
 	public static final Message GUI_DISCOUNT_START_NEW_TITLE = new Message("manager.gui.discount.start.new.title");
+	@MessageMeta("<green>New Start Date")
 	public static final Message GUI_DISCOUNT_START_NEW_NAME = new Message("manager.gui.discount.start.new.name");
+	@MessageMeta("<gray>Click to add a\n<gray>start date.")
 	public static final Message GUI_DISCOUNT_START_NEW_LORE = new Message("manager.gui.discount.start.new.lore");
+	@MessageMeta(value = "<red>Delete start-date <date>?</red>", placeholders = "date")
 	public static final Message GUI_DISCOUNT_START_DELETE_CONFIRM = new Message("manager.gui.discount.start.confirm_delete");
 
 	public static final Message GUI_SHOP_ENTRY = new Message("manager.gui.shop_entry.title");

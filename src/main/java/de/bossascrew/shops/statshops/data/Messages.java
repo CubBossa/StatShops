@@ -130,7 +130,7 @@ public class Messages {
 	@MessageMeta("<red>Please slow down.")
 	public static final Message SHOP_COOLDOWN = new Message("shop.cooldown");
 	@MessageMeta(value = "<name> <page-title> - Page <page>/<pages>",
-			placeholders = {"<name>", "<page-title>", "<page>", "<pages>"})
+			placeholders = {"name", "page-title", "page", "pages"})
 	public static final Message SHOP_GUI_TITLE = new Message("shop.gui.title");
 	@MessageMeta("<gradient:#24054F:#2F0768:#24054F>---------------------------</gradient>")
 	public static final Message SHOP_ITEM_LORE_SPACER = new Message("shop.gui.item.lore.spacer");
@@ -143,7 +143,7 @@ public class Messages {
 	@MessageMeta(value = "<gray>» <yellow><keybind>: <gray><action>", placeholders = {"keybind", "action"})
 	public static final Message SHOP_ITEM_LORE_KEYBIND = new Message("shop.gui.item.lore.keybinding");
 	@MessageMeta(value = "<white><percent>% <name>",
-			placeholders = {"<name>", "<percent>", "<start-date>", "<duration>", "<remaining>"})
+			placeholders = {"name", "percent", "start-date", "duration", "remaining"})
 	public static final Message SHOP_ITEM_LORE_DISCOUNT = new Message("shop.gui.item.lore.discount");
 	@MessageMeta(
 			value = "<red>+<discount>",
@@ -156,7 +156,7 @@ public class Messages {
 	@MessageMeta(value = """
 			<gray><red><transactioncount></red>/<dark_red><userlimit></dark_red> personal limit</gray>
 			<gray><red><transactioncount></red>/<dark_red><globallimit></dark_red> global limit
-			<gray>Recover: <yellow><recovery_duration>""", placeholders = {"<transactioncount>", "<userlimit>", "<globallimit>", "<recovery_duration>"})
+			<gray>Recover: <yellow><recovery_duration>""", placeholders = {"transactioncount", "userlimit", "globallimit", "recovery_duration"})
 	public static final Message SHOP_ITEM_LORE_LIMIT = new Message("shop.gui.item.lore.limit_both");
 	@MessageMeta("<gray><red><transactioncount></red>/<dark_red><userlimit></dark_red> personal limit</gray>\n<gray>Recover: <yellow><recovery_duration>")
 	public static final Message SHOP_ITEM_LORE_LIMIT_PERSONAL = new Message("shop.gui.item.lore.limit_personal");
@@ -495,7 +495,7 @@ public class Messages {
 			<gray>Limit: <yellow><limit>
 			<gray>Recover: <yellow><recover>
 			<gray>Global: <yellow><global>""",
-			placeholders = {"<limit>", "<global>", "<uuid>", "<recover>"})
+			placeholders = {"limit", "global", "uuid", "recover"})
 	public static final Message GUI_LIMITS_ENTRY_LORE = new Message("manager.gui.limits.entry.lore");
 	@MessageMeta("Create New Limit")
 	public static final Message GUI_LIMITS_NEW_TITLE = new Message("manager.gui.limits.new.title");

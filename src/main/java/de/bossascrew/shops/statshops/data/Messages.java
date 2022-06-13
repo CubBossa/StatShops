@@ -13,11 +13,14 @@ public class Messages {
 
 	public static final Message NONE = new Message("");
 
+	@MessageMeta("<gray>")
 	public static final Message COL_BASE = new Message("color.base");
+	@MessageMeta("<white>")
 	public static final Message COL_HIGHLIGHT = new Message("color.highlight");
+	@MessageMeta("<yellow>")
 	public static final Message COL_WARNING = new Message("color.warn");
+	@MessageMeta("<red>")
 	public static final Message COL_SEVERE = new Message("color.severe");
-	//TODO
 
 	@MessageMeta("<bold><gold>StatShops</gold> </bold><gray>» ")
 	public static final Message PREFIX = new Message("general.prefix");

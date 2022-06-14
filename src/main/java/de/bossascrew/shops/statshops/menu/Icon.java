@@ -4,6 +4,7 @@ import de.bossascrew.shops.statshops.data.Messages;
 import de.bossascrew.shops.statshops.util.ItemStackUtils;
 import de.cubbossa.menuframework.inventory.MenuPresets;
 import de.cubbossa.translations.Message;
+import de.cubbossa.translations.TranslatedItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -70,20 +71,20 @@ public class Icon {
 	}
 
 	private static ItemStack icon(Material material, Message displayName, Message lore) {
-		return ItemStackUtils.createItemStack(material, displayName, lore.asComponents());
+		return new TranslatedItem(material, displayName, lore).createItem();
 	}
 
 	private static ItemStack icon(Material material, Message displayName, Message lore, int customModelData) {
-		ItemStack item = ItemStackUtils.createItemStack(material, displayName, lore.asComponents());
+		ItemStack item = new TranslatedItem(material, displayName, lore).createItem();
 		return ItemStackUtils.setCustomModelData(item, customModelData);
 	}
 
 	private static ItemStack icon(String headUrl, Message name, Message lore) {
-		return ItemStackUtils.createCustomHead(headUrl, name, lore);
+		return new TranslatedItem(ItemStackUtils.createCustomHead(headUrl), name, lore).createItem();
 	}
 
 	private static ItemStack icon(String headUrl, Message name, Message lore, int customModelData) {
-		ItemStack item = ItemStackUtils.createCustomHead(headUrl, name, lore);
+		ItemStack item = new TranslatedItem(ItemStackUtils.createCustomHead(headUrl), name, lore).createItem();
 		return ItemStackUtils.setCustomModelData(item, customModelData);
 	}
 }

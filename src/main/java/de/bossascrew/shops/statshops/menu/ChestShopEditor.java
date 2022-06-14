@@ -305,7 +305,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 	}
 
 	public TopMenu newTemplatesListMenu() {
-		ListEditorMenu<EntryTemplate> menu = new ListEditorMenu<>(Messages.GUI_TEMPLATES_CHOOSE, 3, TemplateHandler.getInstance());
+		ListEditorMenu<EntryTemplate> menu = new ListEditorMenu<>(Messages.GUI_TEMPLATES_CHOOSE.asTranslatable(), 3, TemplateHandler.getInstance());
 		menu.setClickHandler(Action.RIGHT, c -> {
 			c.getTarget().setDiscIndex((short) ((c.getTarget().getDiscIndex() + 1) % TemplateHandler.DISCS.length));
 			c.getMenu().refresh(c.getSlot());
@@ -315,7 +315,7 @@ public class ChestShopEditor extends RectInventoryMenu {
 	}
 
 	public TopMenu newTemplateApplyMenu(Player player, EntryTemplate template) {
-		RectInventoryMenu menu = new RectInventoryMenu(Messages.GUI_TEMPLATES_APPLY.asComponent(TagResolver.resolver("name", Tag.inserting(template.getName()))), shop.getRows());
+		RectInventoryMenu menu = new RectInventoryMenu(Messages.GUI_TEMPLATES_APPLY.asTranslatable(TagResolver.resolver("name", Tag.inserting(template.getName()))), shop.getRows());
 		BottomInventoryMenu bottomMenu = new BottomInventoryMenu(InventoryRow.FIRST_ROW);
 
 		bottomMenu.addPreset(MenuPresets.fill(Icon.EMPTY_DARK.get()));

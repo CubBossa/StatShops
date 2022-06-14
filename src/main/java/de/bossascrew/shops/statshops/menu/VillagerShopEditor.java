@@ -25,7 +25,7 @@ public class VillagerShopEditor extends ListEditorMenu<ShopEntry> {
     private ShopEntry selectedEntry = null;
 
     public VillagerShopEditor(VillagerShop shop) {
-        super(Messages.VILLAGER_SHOP_TITLE, 3, null);
+        super(Messages.VILLAGER_SHOP_TITLE.asTranslatable(), 3, null);
         super.setSupplier(new ListMenuSupplier<>() {
             @Override
             public Collection<ShopEntry> getElements() {

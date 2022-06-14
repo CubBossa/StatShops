@@ -90,7 +90,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 			setButton(9 + 2, Button.builder()
 					.withItemStack(tm.getCosts().getProvider().getListDisplayItem())
 					.withClickHandler(c -> openSubMenu(c.getPlayer(), () -> {
-						ListMenu m = new ListMenu(Messages.GUI_ENTRY_SET_COSTS_TITLE, 3);
+						ListMenu m = new ListMenu(Messages.GUI_ENTRY_SET_COSTS_TITLE.asTranslatable(), 3);
 						SubModulesHandler.getInstance().getValues().stream()
 								.filter(p -> p.getPermission() == null || c.getPlayer().hasPermission(p.getPermission()))
 								.forEach(p -> {
@@ -158,7 +158,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 	}
 
 	public TopMenu newEntryFunctionMenu() {
-		ListEditorMenu<EntryModuleHandler.EntryModuleProvider> menu = new ListEditorMenu<>(Messages.GUI_ENTRY_SET_FUNCTION_TITLE, 3, new ListMenuSupplier<>() {
+		ListEditorMenu<EntryModuleHandler.EntryModuleProvider> menu = new ListEditorMenu<>(Messages.GUI_ENTRY_SET_FUNCTION_TITLE.asTranslatable(), 3, new ListMenuSupplier<>() {
 
 			public Collection<EntryModuleHandler.EntryModuleProvider> getElements() {
 				return EntryModuleHandler.getInstance().getEntryModules().values().stream()
@@ -184,7 +184,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 	}
 
 	public TopMenu newShopLimitsMenu() {
-		ListEditorMenu<Limit> menu = new ListEditorMenu<>(Messages.GUI_SHOP_LIMITS_TITLE, 3, LimitsHandler.getInstance());
+		ListEditorMenu<Limit> menu = new ListEditorMenu<>(Messages.GUI_SHOP_LIMITS_TITLE.asTranslatable(), 3, LimitsHandler.getInstance());
 		menu.setItemModifier((limit, stack) -> TagUtils.hasCommonTags(entry, limit) || TagUtils.hasCommonTags(entry.getShop(), limit) ?
 				ItemStackUtils.setGlow(stack) : stack);
 		menu.setClickHandler(Action.LEFT, c -> {
@@ -199,7 +199,7 @@ public class ShopEntryEditor extends RectInventoryMenu {
 	}
 
 	public TopMenu newShopDiscountsMenu() {
-		ListEditorMenu<Discount> menu = new ListEditorMenu<>(Messages.GUI_SHOP_DISCOUNTS_TITLE, 3, DiscountHandler.getInstance());
+		ListEditorMenu<Discount> menu = new ListEditorMenu<>(Messages.GUI_SHOP_DISCOUNTS_TITLE.asTranslatable(), 3, DiscountHandler.getInstance());
 		menu.setItemModifier((discount, stack) -> TagUtils.hasCommonTags(entry, discount) || TagUtils.hasCommonTags(entry.getShop(), discount) ?
 				ItemStackUtils.setGlow(stack) : stack);
 		menu.setClickHandler(Action.LEFT, c -> {

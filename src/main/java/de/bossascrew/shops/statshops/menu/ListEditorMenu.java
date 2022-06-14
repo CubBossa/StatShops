@@ -81,7 +81,7 @@ public class ListEditorMenu<T> extends ListMenu {
         ContextConsumer<TargetContext<T>> extended = c -> {
             if (StatShops.getInstance().getShopsConfig().isConfirmDeletion()) {
                 openSubMenu(c.getPlayer(), () -> {
-                    ConfirmMenu m = new ConfirmMenu(confirmTitle);
+                    ConfirmMenu m = new ConfirmMenu(confirmTitle.asTranslatable());
                     m.setDenyHandler(cl -> m.openPreviousMenu(cl.getPlayer()));
                     m.setAcceptHandler(cl -> {
                         clickHandler.accept(c);

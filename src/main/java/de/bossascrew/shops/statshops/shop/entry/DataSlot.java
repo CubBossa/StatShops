@@ -317,7 +317,7 @@ public abstract class DataSlot<T> implements ConfigurationSerializable {
 					topMenu.openSubMenu(c.getPlayer(), () -> {
 
 						int shops = ShopHandler.getInstance().getShops().size();
-						ListEditorMenu<Shop> menu = new ListEditorMenu<>(Messages.GUI_SHOPS_TITLE, Integer.max(3, Integer.min(shops / 9, 6)), new ListMenuSupplier<Shop>() {
+						ListEditorMenu<Shop> menu = new ListEditorMenu<>(Messages.GUI_SHOPS_TITLE.asTranslatable(), Integer.max(3, Integer.min(shops / 9, 6)), new ListMenuSupplier<Shop>() {
 
 							public Collection<Shop> getElements() {
 								return ShopHandler.getInstance().getElements();
